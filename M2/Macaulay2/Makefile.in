@@ -1,10 +1,10 @@
 # @configure_input@
 ############################### targets to use
-.PHONY: check all clean config initialize doc html book distclean justM2
+.PHONY: check all clean initialize doc html book distclean justM2
 ################################# prologue
 all ::
 install ::
-justM2 all :: initialize config
+justM2 all :: initialize
 
 include ../include/config.Makefile
 VPATH = @srcdir@
@@ -13,10 +13,6 @@ $(packagedir)/COPYING : COPYING $(packagedir) ; $(INSTALL_DATA) $< "$@"
 $(packagedir)/CHANGES : CHANGES $(packagedir) ; $(INSTALL_DATA) $< "$@"
 $(packagedir)/README  : README  $(packagedir) ; $(INSTALL_DATA) $< "$@"
 $(packagedir):; $(INSTALL) -d "$@"
-################################# libexec
-libexec :; mkdir $@
-clean ::; rm -rf libexec
-initialize :: libexec
 ################################# cache
 initialize :: cache
 cache :; mkdir $@
@@ -28,21 +24,26 @@ $(packagedir)/cache/Macaulay2-doc : cache/Macaulay2-doc; $(INSTALL_DATA) $^ "$(p
 ################################# util
 initialize::; $(MAKE) -C util all
 distclean clean ::; $(MAKE) DEPENDS=no -C util $@
+################################# html-check-links
+initialize::; $(MAKE) -C html-check-links all
+distclean clean ::; $(MAKE) DEPENDS=no -C html-check-links $@
 ################################# c
 distclean clean ::; $(MAKE) DEPENDS=no -C c $@
 all justM2 ::; $(MAKE) -C c all
 ################################# e
 justM2 ::; $(MAKE) -C e all
 all check ::; $(MAKE) -C e $@
-distclean clean ::; $(MAKE) DEPENDS=no -C e $@
+initialize distclean clean ::; $(MAKE) DEPENDS=no -C e $@
 ################################# dumpdata
 ifeq "$(DUMPDATA)" "yes"
 justM2 ::; $(MAKE) -C dumpdata all
 all check ::; $(MAKE) -C dumpdata $@
 endif
 distclean clean ::; $(MAKE) DEPENDS=no -C dumpdata $@
+################################# compat
+all clean distclean ::; $(MAKE) -C compat $@
 ################################# d
-config ::; $(MAKE) DEPENDS=no -C d compat.h
+initialize ::; $(MAKE) DEPENDS=no -C d compat.h
 justM2 all ::; util/restart d/restart.tmp $(MAKE) -C d all
 distclean clean ::; $(MAKE) DEPENDS=no -C d $@
 ################################# basictests
@@ -52,6 +53,8 @@ distclean clean ::; $(MAKE) -C basictests $@
 #### keep this before 'm2' so the final/*.out files get made
 justM2::; $(MAKE) -C tutorial all
 install all distclean clean::; $(MAKE) -C tutorial $@
+################################# html
+all install distclean clean ::; $(MAKE) -C html $@
 ################################# m2
 install distclean clean check justM2 all ::; $(MAKE) -C m2 $@
 ################################# test
@@ -63,11 +66,7 @@ all :: setup
 install ::; $(INSTALL_PROGRAM) setup $(packagedir)
 distclean ::; rm -f setup
 ################################# packages
-install check clean distclean ::; $(MAKE) -C packages $@
-################################# html
-doc :: html
-html ::; $(MAKE) -C html all
-install distclean clean ::; $(MAKE) -C html $@
+all install check clean distclean ::; $(MAKE) -C packages $@
 ################################# book
 # doc :: book
 book ::;  $(MAKE) -C book all
@@ -75,12 +74,18 @@ distclean clean ::; $(MAKE) -C book $@
 ################################# emacs
 all ::;  $(MAKE) -C emacs all
 install distclean clean ::; $(MAKE) -C emacs $@
+################################# bin
+bin :; mkdir $@
+clean ::; rm -rf bin
+initialize :: bin
+install :: $(packagedir)/bin/Macaulay2$(EXE)
+$(packagedir)/bin/Macaulay2 : bin/Macaulay2$(EXE); $(INSTALL_PROGRAM) $^ $(packagedir)/bin/Macaulay2$(EXE)
 ################################# libexec
+libexec :; mkdir $@
+clean ::; rm -rf libexec
+initialize :: libexec
 install :: $(packagedir)/libexec
 $(packagedir)/libexec:; $(INSTALL) -d "$@"
-install :: $(packagedir)/libexec/Macaulay2
-$(packagedir)/libexec/Macaulay2 : libexec/Macaulay2
-	$(INSTALL_PROGRAM) $^ $(packagedir)/libexec
 ifeq "$(DUMPDATA)" "yes"
 ifeq "$(encap)" "no"
 install :: $(packagedir)/$(DUMPDATAFILE)

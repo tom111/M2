@@ -14,14 +14,13 @@ document { symbol phase,
      "The value 0 indicates that we are running as an interpreter, as usual.
      The value 1 indicates that we are loading setup.m2 and will dump data
      afterward.  The value 2 indicates that we are loading setup.m2, creating a
-     preliminary version of the help file whose name is
-     Macaulay2-pre, and creating example input files.  The value 3 indicates 
+     preliminary version of the help file (whose name is
+     ", TT "Macaulay2-pre", "), and creating example input files.  The value 3 indicates 
      that we are running an example input file, and referring to Macaulay2.pre.
-     The value 4 indicates that we are loading setup.m2, reading the
-     example output files, and creating the final version of the help file,
-     called Macaulay2-doc.  The value 5 indicates that we are running the
-     interpreter as usual, but reading the example output files when
-     ", TO "document", " is used."
+     The value 4 indicates that we are loading setup.m2, printing warning
+     messages if the example output files are missing, and creating the final
+     version of the help file, called Macaulay2-doc.  The value 5 indicates
+     that we are reading creating the html files."
      }
 
 document { lineNumber,
@@ -113,15 +112,6 @@ document { instance,
      of the class of x, or a grandparent, and so on.",
      PARA,
      SEEALSO { "classes and types", "class", "parent" }
-     }
-
-document { symbol "pathSeparator",
-     Headline => "path separator for filenames",
-     TT "pathSeparator", " -- the character used under the current operating
-     system to separate the component directory names in a file path.",
-     PARA,
-     "Under unix it is ", TT ///"/"///, ", and on a Macintosh it is
-     ", TT ///":"///, "."
      }
 
 document { alarm,
@@ -560,3 +550,89 @@ document { CacheTable,
      operator ", TT "===", ".  To that end, any two cache tables with the same
      class and parent are considered equal to each other and have hash code equal to 0."
      }
+
+
+document { cacheFileName,
+     Headline => "produce the name of a cache file",
+     "Macaulay 2 needs to remember some bits of data from one invocation to the next,
+     so it stores this data in cache files.  The name and directory of the cache file
+     depend on the data being stored.  For example, the input code for examples associated
+     with one of the documentation node will be stored in a file whose name depends on
+     the name of the node."
+     }
+
+document { (cacheFileName, String, String),
+     Synopsis => {
+	  ///fn = cacheFileName(prefix,key)///,
+	  "prefix" => "the prefix from which to construct the file name",
+	  "key" => "a key, which can be anything"
+	  },
+     "A file name is returned that depends only on the prefix and the key.  The
+     prefix should be the path to a directory, together with a terminating path component
+     separator.  When the program terminates, a file called
+     ", TT "Macaulay2-index-cache", " will be created or updated, if
+     necessary, in which to store the table of correspondences between keys
+     and filenames.",
+     EXAMPLE {
+	  ///cacheFileName("./tmp/","algebra")///,
+	  ///cacheFileName("./tmp/","14")///,
+	  ///cacheFileName("./tmp/","14")///
+	  }
+     }
+
+document { (cacheFileName, String, String, String),
+     Synopsis => {
+	  ///fn = cacheFileName(prefix,key,base)///,
+	  "prefix" => "the prefix from which to construct the file name",
+	  "key" => "a key, which can be anything",
+	  "base" => "the base part of the file name",
+	  "fn" => "a new file name"
+	  },
+     "A file name ", TT "fn", " is constructed by concatenating ", TT "prefix", " and
+     ", TT "base", " and associate with the key for future retrieval with
+     ", TT "cacheFileName", ".  The prefix should be the path to a directory,
+     together with a terminating path component
+     separator.  When the program terminates, a file called
+     ", TT "Macaulay2-index-cache", " will be created or updated, if
+     necessary, in which to store the table of correspondences between keys
+     and filenames.",
+     EXAMPLE {
+	  ///cacheFileName("./tmp/","K-theory","motives")///,
+	  ///cacheFileName("./tmp/","K-theory")///,
+	  }
+     }
+
+document { (cacheFileName, List, String),
+     Synopsis => {
+	  ///fn = cacheFileName(path,key)///,
+	  "path" => "a search path (list) of prefixes from which to construct the
+	        file name",
+	  "key" => "a key",
+	  "fn" => "a new file name"
+	  },
+     "The path should be a list of prefixes which correspond to existing
+     directories.  A list of those file names for the given key that have already been
+     assigned (see ", TO (cacheFileName, String, String), ") in one of
+     the directories on the path will be returned.  In case no previous assignments
+     to this key have occurred yet, one will be made using the first element of the
+     search path.",
+     EXAMPLE {
+	  ///documentationPath///,
+	  ///cacheFileName ( documentationPath, "sin" )///,
+	  ///cacheFileName ( documentationPath, "xxxxx" )///
+	  },
+     SEEALSO { "documentationPath" }
+     }
+
+document { symbol documentationPath,
+     Headline => "search path for documentation",
+     Synopsis => {
+	  ///documentationPath = x///,
+	  "x" => "a list of paths to directories where documentation is stored"
+	  },
+     EXAMPLE {
+	  ///documentationPath = unique append (documentationPath, "tmp/cache/doc/")///
+	  },
+     SEEALSO {cacheFileName}
+     }
+

@@ -17,6 +17,7 @@
 #include "map.h"
 #include "warning.h"
 #include "std.h"
+#include "maputil.h"
 
 #define DRYRUN 0
 
@@ -27,51 +28,6 @@
 #define PAGESIZE 4096
 #endif
 #endif
-
-static char mapfmt[] = "%p-%p %c%c%c %u\n";
-
-static int isStack(map m) {
-  void *p = &p;
-  return p - m->from >= 0 && m->to - p > 0;
-}
-
-static int isDumpable(map m) {
-  return m->w && m->r && !isStack(m);
-}
-  
-static unsigned int checksum(unsigned char *p, unsigned int len) {
-  unsigned int c = 0;
-  while (0 < len--) c = 23 * c + *p++;
-  return c;
-}
-
-static int isCheckable(map m) {
-  return !m->w && m->r && !isStack(m);
-}
-
-static void checkmap(map m) {
-  m->checksum = isCheckable(m) ? checksum(m->from, m->to - m->from) : 0;
-}
-
-static void checkmaps(int nmaps, struct MAP m[nmaps]) {
-  int i;
-  for (i=0; i<nmaps; i++) {
-    checkmap(&m[i]);
-  }
-}
-
-static void sprintmap(char *s, map m) {
-  sprintf(s,mapfmt, 
-	  m->from, m->to,
-	  m->r ? 'r' : '-', m->w ? 'w' : '-', m->x ? 'x' : '-',
-	  m->checksum);
-}
-
-static void fdprintmap(int fd, map m) {
-  char buf[200];
-  sprintmap(buf,m);
-  write(fd,buf,strlen(buf));
-}
 
 static void trim(char *s) {
   if (s == NULL) return;
@@ -137,8 +93,8 @@ int dumpdata(char const *dumpfilename) {
   n = ((pos + PAGESIZE - 1)/PAGESIZE) * PAGESIZE - pos;
   {
     char buf[n];
-    int i;
-    for (i=0; i<n; i++) buf[i] = '\n';
+    int k;
+    for (k=0; k<n; k++) buf[k] = '\n';
     write(fd,buf,n);
   }
   for (i=0; i<nmaps; i++) {
@@ -165,7 +121,7 @@ int loaddata(char const *filename) {
   if (fd == ERROR || f == NULL) { warning("loaddata: can't open file '%s'\n", filename); return ERROR; }
   while (TRUE) {
     char fbuf[200];
-    int n, f_end, ret;
+    int n=0, f_end, ret;
     char r, w, x;
     fbuf[0]=0;
     f_end = NULL == fgets(fbuf,sizeof fbuf,f) || fbuf[0]=='\n';
@@ -180,6 +136,7 @@ int loaddata(char const *filename) {
     }
     if (f_end) break;
     trim(fbuf);
+    n++;
     ret = sscanf(fbuf, mapfmt, &dumpedmap.from, &dumpedmap.to, &r, &w, &x, &dumpedmap.checksum);
     if (6 != ret) {
       warning("loaddata: in data file %s: invalid map: %s\n", filename, fbuf, n);
@@ -215,8 +172,10 @@ int loaddata(char const *filename) {
 	return ERROR;
       }
       if (dumpedmap.checksum != currmap[j].checksum) {
-	warning("loaddata: checksum for map has changed from %u to %u\n",
-		dumpedmap.checksum, currmap[j].checksum);
+	char buf[100];
+	sprintmap(buf,&currmap[j]);
+	warning("loaddata: checksum has changed from %u to %u for map %s\n",
+		dumpedmap.checksum, currmap[j].checksum, buf);
 	if (getenv("LOADDATA_IGNORE_CHECKSUMS") == NULL) {
 	  fclose(f);
 	  return ERROR;

@@ -1,0 +1,1 @@
+--		Copyright 2002 by Daniel R. Grayson

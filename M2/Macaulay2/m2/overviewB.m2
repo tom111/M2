@@ -127,7 +127,7 @@ document { "ideals to and from modules",
 	       polynomial of the module ", TT "I", " if the input 
 	       is ", TT "hilbertPolynomial I", ".",     
 	       PARA, "For basic information about working with 
-	       modules see ", TO "modules I", "."
+	       modules see ", TO "modules: part I", "."
 	       }
 	  }
      }
@@ -438,7 +438,7 @@ document { "primary decomposition",
 	  SECTION { "introduction",
 	       "It is now possible to find the primary decomposition 
      	       of an ideal in Macaulay 2.  The 
-     	       function ", TO "primaryDecompostion", " applied to an 
+     	       function ", TO "primaryDecomposition", " applied to an 
      	       ideal ", TT "I", " returns a list of ideals.  These ideals 
      	       have two key features, first, their intersection is equal to 
      	       the ideal ", TT "I", " and second the ideals are primary.  Therefore 

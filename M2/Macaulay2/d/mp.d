@@ -1,11 +1,12 @@
 --		Copyright 1995 by Daniel R. Grayson
 
+use C;
 use system; 
 use convertr;
 use binding;
 use parser;
 use lex;
-use arith;
+use gmp;
 use nets;
 use tokens;
 use err;
@@ -19,7 +20,6 @@ use actors;
 use actors2;
 use struct;
 use objects;
-use GB;
 
 import OpenLink(args:array(string)):int;
 import CloseLink(link:int):int;
@@ -42,7 +42,7 @@ openlink1(a:Sequence):Expr := (
      foreach x at i in a do (
 	  when x
 	  is s:string do newargv.i = s
-	  else return(WrongArg(i+1,"a string")));
+	  else return(WrongArgString(i+1)));
      Expr(toInteger(OpenLink(newargv))));
 
 openlink(e:Expr):Expr := (
@@ -75,7 +75,7 @@ writePacket(h:int,x:Expr):Expr := (
      is j:Integer do (
 	  if isInt(j)
 	  then Expr(toInteger(PutSint32(h,toInt(j))))
-	  else WrongArg(2,"a small integer"))
+	  else WrongArgSmallInteger(2))
      else (
 	  method := lookupBinaryMethod(integerClass,Class(x),WritePacketS);
      	  if method != nullE 
@@ -91,8 +91,8 @@ writePacket(e:Expr):Expr := (
 	  is link:Integer do (
 	       if isInt(link) 
 	       then writePacket(toInt(link),a.1)
-	       else WrongArg(1,"a small integer"))
-     	  else WrongArg(1,"an integer")
+	       else WrongArgSmallInteger(1))
+     	  else WrongArgInteger(1)
 	  else WrongNumArgs(2)
 	  )
      else WrongNumArgs(2));
@@ -111,8 +111,8 @@ writeRawPacket(h:int,x:Expr):Expr := (
      is j:Integer do (
 	  if isInt(j)
 	  then Expr(toInteger(RawPutSint32(h,toInt(j))))
-	  else WrongArg(2,"a small integer"))
-     else WrongArg(2,"a small integer"));
+	  else WrongArgSmallInteger(2))
+     else WrongArgSmallInteger(2));
 
 writeRawPacket(e:Expr):Expr := (
      when e
@@ -122,8 +122,8 @@ writeRawPacket(e:Expr):Expr := (
 	  is link:Integer do (
 	       if isInt(link) 
 	       then writeRawPacket(toInt(link),a.1)
-	       else WrongArg(1,"a small integer"))
-     	  else WrongArg(1,"an integer")
+	       else WrongArgSmallInteger(1))
+     	  else WrongArgInteger(1)
 	  else WrongNumArgs(2)
 	  )
      else WrongNumArgs(2));
@@ -141,8 +141,8 @@ writeMessage(e:Expr):Expr := (
 		    r := writePacket(h,a.1);
 		    EndMsgReset(h);
 		    r)
-	       else WrongArg(0+1,"a small integer"))
-     	  else WrongArg(0+1,"an integer")
+	       else WrongArgSmallInteger(0+1))
+     	  else WrongArgInteger(0+1)
 	  else WrongNumArgs(2)
 	  )
      else WrongNumArgs(2));
@@ -153,8 +153,8 @@ closelink(e:Expr):Expr := (
      is link:Integer do (
 	  if isInt(link) 
 	  then Expr(toInteger(CloseLink(toInt(link))))
-	  else WrongArg(0+1,"a small integer"))
-     else WrongArg(0+1,"an integer"));
+	  else WrongArgSmallInteger(0+1))
+     else WrongArgInteger(0+1));
 setupfun("closeLink",closelink);	       
 
 putCommonOperatorPacket(e:Expr):Expr := (
@@ -175,16 +175,16 @@ putCommonOperatorPacket(e:Expr):Expr := (
 		    toInt(oper),
 		    toInt(numannot),
 		    toInt(leng))))
-     else WrongArg(5,"a small integer")
-     else WrongArg(5,"an integer")
-     else WrongArg(4,"a small integer")
-     else WrongArg(4,"an integer")
-     else WrongArg(3,"a small integer")
-     else WrongArg(3,"an integer")
-     else WrongArg(2,"a small integer")
-     else WrongArg(2,"an integer")
-     else WrongArg(1,"a small integer")
-     else WrongArg(1,"an integer")
+     else WrongArgSmallInteger(5)
+     else WrongArgInteger(5)
+     else WrongArgSmallInteger(4)
+     else WrongArgInteger(4)
+     else WrongArgSmallInteger(3)
+     else WrongArgInteger(3)
+     else WrongArgSmallInteger(2)
+     else WrongArgInteger(2)
+     else WrongArgSmallInteger(1)
+     else WrongArgInteger(1)
      else WrongNumArgs(4)
      else WrongNumArgs(4));
 setupfun("PutCommonOperatorPacket",putCommonOperatorPacket);
@@ -206,14 +206,14 @@ putAnnotationPacket(e:Expr):Expr := (
 		    toInt(atype),
 		    toInt(annotflags) -- MPAnnotRequired, MPAnnotValuated, or MPAnnotTreeScope
 		    )))
-     else WrongArg(4,"a small integer")
-     else WrongArg(4,"an integer")
-     else WrongArg(3,"a small integer")
-     else WrongArg(3,"an integer")
-     else WrongArg(2,"a small integer")
-     else WrongArg(2,"an integer")
-     else WrongArg(1,"a small integer")
-     else WrongArg(1,"an integer")
+     else WrongArgSmallInteger(4)
+     else WrongArgInteger(4)
+     else WrongArgSmallInteger(3)
+     else WrongArgInteger(3)
+     else WrongArgSmallInteger(2)
+     else WrongArgInteger(2)
+     else WrongArgSmallInteger(1)
+     else WrongArgInteger(1)
      else WrongNumArgs(4)
      else WrongNumArgs(4));
 setupfun("PutAnnotationPacket",putAnnotationPacket);
@@ -237,16 +237,16 @@ putCommonMetaOperatorPacket(e:Expr):Expr := (
 		    toInt(oper),
 		    toInt(numannot),
 		    toInt(numchildren))))
-     else WrongArg(5,"a small integer")
-     else WrongArg(5,"an integer")
-     else WrongArg(4,"a small integer")
-     else WrongArg(4,"an integer")
-     else WrongArg(3,"a small integer")
-     else WrongArg(3,"an integer")
-     else WrongArg(2,"a small integer")
-     else WrongArg(2,"an integer")
-     else WrongArg(1,"a small integer")
-     else WrongArg(1,"an integer")
+     else WrongArgSmallInteger(5)
+     else WrongArgInteger(5)
+     else WrongArgSmallInteger(4)
+     else WrongArgInteger(4)
+     else WrongArgSmallInteger(3)
+     else WrongArgInteger(3)
+     else WrongArgSmallInteger(2)
+     else WrongArgInteger(2)
+     else WrongArgSmallInteger(1)
+     else WrongArgInteger(1)
      else WrongNumArgs(4)
      else WrongNumArgs(4));
 setupfun("PutCommonMetaOperatorPacket",putCommonMetaOperatorPacket);
@@ -269,16 +269,16 @@ putCommonMetaTypePacket(e:Expr):Expr := (
 		    toInt(dict),
 		    toInt(oper),
 		    toInt(numannot))))
-     else WrongArg(5,"a small integer")
-     else WrongArg(5,"an integer")
-     else WrongArg(4,"a small integer")
-     else WrongArg(4,"an integer")
-     else WrongArg(3,"a small integer")
-     else WrongArg(3,"an integer")
-     else WrongArg(2,"a small integer")
-     else WrongArg(2,"an integer")
-     else WrongArg(1,"a small integer")
-     else WrongArg(1,"an integer")
+     else WrongArgSmallInteger(5)
+     else WrongArgInteger(5)
+     else WrongArgSmallInteger(4)
+     else WrongArgInteger(4)
+     else WrongArgSmallInteger(3)
+     else WrongArgInteger(3)
+     else WrongArgSmallInteger(2)
+     else WrongArgInteger(2)
+     else WrongArgSmallInteger(1)
+     else WrongArgInteger(1)
      else WrongNumArgs(4)
      else WrongNumArgs(4));
 setupfun("PutCommonMetaTypePacket",putCommonMetaTypePacket);
@@ -300,15 +300,15 @@ putOperatorPacket(e:Expr):Expr := (
 		    oper,
 		    toInt(numannot),
 		    toInt(leng))))
-     else WrongArg(5,"a small integer")
-     else WrongArg(5,"an integer")
-     else WrongArg(4,"a small integer")
-     else WrongArg(4,"an integer")
-     else WrongArg(3,"a string")
-     else WrongArg(2,"a small integer")
-     else WrongArg(2,"an integer")
-     else WrongArg(1,"a small integer")
-     else WrongArg(1,"an integer")
+     else WrongArgSmallInteger(5)
+     else WrongArgInteger(5)
+     else WrongArgSmallInteger(4)
+     else WrongArgInteger(4)
+     else WrongArgString(3)
+     else WrongArgSmallInteger(2)
+     else WrongArgInteger(2)
+     else WrongArgSmallInteger(1)
+     else WrongArgInteger(1)
      else WrongNumArgs(4)
      else WrongNumArgs(4));
 setupfun("PutOperatorPacket",putOperatorPacket);

@@ -1,4 +1,6 @@
-document { symbol Ddual,
+needs "D-modules.m2"
+
+document { Ddual,
      TT "Ddual M", " -- 
      computes the holonomic dual of a D-module M",
      BR, NOINDENT,
@@ -14,6 +16,7 @@ document { symbol Ddual,
 
      PARA,
      "A simple example:",
+     EXAMPLE ///needs "D-modules.m2"///,
      EXAMPLE "I = AppellF1({1,0,-3,2})",
      EXAMPLE "Ddual I",
      

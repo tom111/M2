@@ -1,4 +1,4 @@
---		Copyright 1993-1999 by Daniel R. Grayson
+--		Copyright 1993-2002 by Daniel R. Grayson
 
 document { odd,
      Headline => "tell whether an integer is odd",
@@ -159,10 +159,6 @@ document { FractionField,
      may be equal without displaying the same numerator and denominator."
      }
 
-document { symbol frac,
-     "A symbol used as a key under which is stored the fraction field of a ring."
-     }
-
 document { frac,
      Headline => "construct a fraction field",
      TT "frac R", " -- construct the fraction field of the ring ", TT "R", ".",
@@ -179,7 +175,10 @@ document { frac,
      EXAMPLE {
 	  "R = ZZ[x,y]",
 	  "x/y"
-	  }
+	  },
+     PARA,
+     "The symbol ", TT "frac", " is also used as a key under which is stored 
+     the fraction field of a ring."
      }
 
 document { ZZ,
@@ -304,7 +303,7 @@ document { OrderedMonoid,
      See ", TO "PolynomialRing", ".",
      PARA,
      "A free commutative ordered monoid can be created with ", TO "monoid", ".",
-     SEEALSO  {"Monoid", "group"}
+     SEEALSO  {"Monoid"}
      }
 
 document { binomial,
@@ -810,39 +809,6 @@ document { monoid,
      SEEALSO {"OrderedMonoid","IndexedVariable","Symbol"}
      }
 
-document { GeneralOrderedGroup,
-     Headline => "the class of all ordered free commutative groups",
-     "This is the class of free commutative groups that can be 
-     handled by the ", TO "engine", ".",
-     PARA,
-     SEEALSO { "group", "Degrees" }
-     }     
-
-document { group,
-     Headline => "make a group (monoid with inverses)",
-     TT "group R      ", " -- yields the underlying group of a group ring.",
-     PARA,
-     "group [a,b,c] -- makes a free ordered commutative group on the
-     variables listed.",
-     PARA,
-     "group [a,b,c,Degrees=>{2,3,4}] 
-     -- makes a free ordered commutative group on the
-        variables listed, with degrees 2, 3, and 4, respectively.",
-     PARA,
-     "group [a,b,c,Degrees=>{{1,2},{3,-3},{0,4}}] 
-     -- makes a free ordered commutative group on the
-        variables listed, with multi-degrees as listed.",
-     PARA,
-     "group [a,b,c,Degrees=>{{},{},{}}] 
-          -- makes a free ordered commutative group on the
-	     variables listed, ungraded.",
-     PARA,
-     "The class of all groups created this way is ",
-     TO "GeneralOrderedGroup", ".",
-     PARA,
-     SEEALSO { "Degrees", "OrderedMonoid", "monoid" }
-     }
-
 document { (symbol **, Monoid, Monoid),
      Headline => "tensor product of monoids",
      TT "M ** N", " -- tensor product of monoids.",
@@ -910,7 +876,7 @@ document { subtable,
 
 document { transpose,
      Headline => "transpose",
-     TT "transpose m", " -- yields the transpose n of the table or homomorphism m."
+     TT "transpose m", " -- yields the transpose ", TT "n", " of the table or homomorphism ", TT "m", "."
      }
 
 document { vector,
@@ -923,15 +889,15 @@ document { vector,
 
 document { Module,
      Headline => "the class of all modules",
-     SEEALSO "ideals and modules",
      PARA,
      "Common ways to make a module:",
-     MENU {
+     SHIELD MENU {
 	  TO (symbol ^, Ring, ZZ),
 	  TO (symbol ^, Ring, List),
 	  TO (cokernel, Matrix),
 	  TO (image, Matrix),
 	  TO (kernel, Matrix),
+	  TO (homology, Matrix, Matrix)
 	  },
      "Common ways to get information about modules:",
      MENU {
@@ -981,8 +947,7 @@ document { Module,
 	  TO "Hom",
 	  TO (homomorphism,Matrix),
 	  TO (Ext,ZZ,Module,Module),
-	  TO (Tor,ZZ,Module,Module),
-	  TO (homology, Matrix, Matrix),
+	  TO (Tor,ZZ,Module,Module)
 	  },
      "Common ways to use a module:",
      MENU {

@@ -264,7 +264,7 @@ document { "Reference Manual",
      PARA,
      "In line with that advice, we list here some types of things
      with particular mathematical interest.",
-     MENU {
+     SHIELD MENU {
 	  TO "Ring",
 	  TO "Ideal",
 	  TO "Matrix",
@@ -275,14 +275,14 @@ document { "Reference Manual",
 	  TO "Variety",
 	  },
      "Some types of things of interest to the programmer and user:",
-     MENU {
+     SHIELD MENU {
 	  TO "Function",
 	  TO "VisibleList",
 	  TO "File"
 	  },
      "A list of the operators:",
      MENU {
-	  TO "operators",
+	  SHIELD TO "operators",
 	  },
      "We've mentioned that our software is organized according to the
      types of things there are.  The types form a hierarchy; for example,
@@ -305,7 +305,8 @@ document {  "Developer's Corner",
      }
 
 document { "Macaulay 2",
-     IMG "9planets.gif", PARA,
+     FileName => "index",
+     IMG "../html/9planets.gif", PARA,
      "Macaulay 2 is a software system devoted to supporting research in 
      algebraic geometry and commutative algebra, developed with funding
      from the National Science Foundation.  The current version is 
@@ -376,7 +377,7 @@ document { "David Eisenbud",
      }
 
 document { "Daniel R. Grayson",
-     HREF {"http://www.math.uiuc.edu/~dan", "Daniel R. Grayson"}, " ",
+     HREF {"http://www.math.uiuc.edu/~dan/", "Daniel R. Grayson"}, " ",
      HREF {"mailto:dan@math.uiuc.edu", "<dan@math.uiuc.edu>"}, ".",
      PARA,
      "Daniel Grayson received his PhD in Mathematics from MIT in 1976, taught
@@ -388,11 +389,11 @@ document { "Daniel R. Grayson",
      its introduction in 1988 has become the pre-eminent system for
      mathematics on the computer.",
      PARA,
-     IMG "Grayson2.jpg"
+     IMG "../html/Grayson2.jpg"
      }
 
 document { "Michael E. Stillman",
-     HREF { "http://www.math.cornell.edu/~mike", "Michael E. Stillman"}, " ",
+     HREF { "http://www.math.cornell.edu/~mike/", "Michael E. Stillman"}, " ",
      HREF {"mailto:mike@math.cornell.edu", "<mike@math.cornell.edu>"},
      PARA,
      "Michael E. Stillman received his PhD in Mathematics from Harvard in 1983,
@@ -413,7 +414,7 @@ document { "Resources required",
 document { "How to get this program",
      "The program is available over the web at the Macaulay 2 home page",
      PARA, 
-     CENTER HREF {"http://www.math.uiuc.edu/Macaulay2"}, 
+     CENTER HREF {"http://www.math.uiuc.edu/Macaulay2/"}, 
      PARA,
      NOINDENT,
      "or by ftp to the host ", TT "ftp.math.uiuc.edu", " with user name ", TT "Macaulay2", " 
@@ -541,7 +542,6 @@ document { "system",
 	  TO "getenv",
 	  TO "processID",
 	  TO "path",
-	  TO "pathSeparator",
 	  TO "quit",
 	  TO "run",
 	  TO "sleep",

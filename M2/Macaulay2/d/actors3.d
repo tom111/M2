@@ -1,11 +1,13 @@
 --		Copyright 1994 by Daniel R. Grayson
 
+use C;
 use system; 
 use convertr;
+use engine;
 use binding;
 use parser;
 use lex;
-use arith;
+use gmp;
 use nets;
 use tokens;
 use err;
@@ -19,7 +21,6 @@ use actors;
 use basic;
 use struct;
 use objects;
-use GB;
 -----------------------------------------------------------------------------
 isOption(c:HashTable,e:Expr):bool := (
      when e
@@ -93,12 +94,12 @@ EqualEqualfun(lhs:Code,rhs:Code):Expr := (
 		    cx == symbolClass ||
 		    cx == rationalClass ||
 		    cx == doubleClass ||
+		    cx == bigRealClass ||
 		    cx == booleanClass ||
 		    cx == netClass ||
 		    cx == stringClass ||
 		    cx == functionClass ||
-		    cx == booleanClass ||
-		    cx == handleClass
+		    cx == booleanClass
 		    )
 	       then False
 	       else (
@@ -125,6 +126,10 @@ compare(left:Expr,right:Expr):Expr := (
 	  if x < y then LessE else if x > y then GreaterE else EqualE
 	  is y:Rational do
 	  if x < y then LessE else if x > y then GreaterE else EqualE
+	  is y:BigReal do (
+	       r := compare(toBigReal(x),y);
+	       if r < 0 then LessE else if r > 0 then GreaterE else EqualE
+	       )
      	  is Error do right
 	  else binarymethod(left,right,QuestionS))
      is x:SymbolClosure do (
@@ -152,6 +157,30 @@ compare(left:Expr,right:Expr):Expr := (
 	  if x < y then LessE else if x > y then GreaterE else EqualE
 	  is y:Rational do
 	  if x < y then LessE else if x > y then GreaterE else EqualE
+	  is y:BigReal do (
+	       r := compare(toBigReal(x),y);
+	       if r < 0 then LessE else if r > 0 then GreaterE else EqualE
+	       )
+     	  is Error do right
+	  else binarymethod(left,right,QuestionS))
+     is x:BigReal do (
+	  when right
+	  is y:Real do (
+	       r := compare(x,toBigReal(y.v));
+	       if r < 0 then LessE else if r > 0 then GreaterE else EqualE
+	       )
+	  is y:Integer do (
+	       r := compare(x,toBigReal(y));
+	       if r < 0 then LessE else if r > 0 then GreaterE else EqualE
+	       )
+	  is y:Rational do (
+	       r := compare(x,toBigReal(y));
+	       if r < 0 then LessE else if r > 0 then GreaterE else EqualE
+	       )
+	  is y:BigReal do (
+	       r := compare(x,y);
+	       if r < 0 then LessE else if r > 0 then GreaterE else EqualE
+	       )
      	  is Error do right
 	  else binarymethod(left,right,QuestionS))
      is x:Real do (
@@ -162,6 +191,10 @@ compare(left:Expr,right:Expr):Expr := (
 	  if x.v < y then LessE else if x.v > y then GreaterE else EqualE
 	  is y:Rational do
 	  if x.v < y then LessE else if x.v > y then GreaterE else EqualE
+	  is y:BigReal do (
+	       r := compare(toBigReal(x.v),y);
+	       if r < 0 then LessE else if r > 0 then GreaterE else EqualE
+	       )
      	  is Error do right
 	  else binarymethod(left,right,QuestionS))
      is x:string do (
@@ -172,6 +205,14 @@ compare(left:Expr,right:Expr):Expr := (
      is x:Net do (
 	  when right
 	  is y:Net do if x < y then LessE else if x > y then GreaterE else EqualE
+     	  is Error do right
+	  else binarymethod(left,right,QuestionS))
+     is x:RawMonomial do (
+	  when right
+	  is y:RawMonomial do (
+	       r := Ccode(int, "IM2_Monomial_compare((Monomial *)", x, ",(Monomial *)", y, ")");
+	       if r < 0 then LessE else if r > 0 then GreaterE else EqualE
+	       )
      	  is Error do right
 	  else binarymethod(left,right,QuestionS))
      is Error do left
@@ -521,7 +562,7 @@ floor(e:Expr):Expr := (
 	  if finite(x.v) then Expr(Floor(x.v))
 	  else WrongArg("a finite real number")
 	  )
-     is x:Rational do Expr(x.numerator//x.denominator)
+     is x:Rational do Expr(floor(x))
      is x:Error do Expr(x)
      else buildErrorPacket("expected a number")
      );
@@ -538,6 +579,7 @@ setupfun("run",run);
 sqrt(a:Expr):Expr := (
      when a
      is x:Real do Expr(Real(sqrt(x.v)))
+     is x:BigReal do Expr(sqrt(x))
      is Error do a
      else buildErrorPacket("expected a double"));
 setupfun("sqrt",sqrt);
@@ -989,7 +1031,7 @@ map(a:Sequence,f:Expr):Expr := (
      else WrongArg(2,"a function")
      );
 map(n:int,f:Expr):Expr := (
-     if n <= 0 then return(emptylist);
+     if n <= 0 then return(emptyList);
      haderror := false;
      errret := nullE;
      recursiondepth = recursiondepth + 1;
@@ -1724,12 +1766,6 @@ sequencefun(e:Expr):Expr := (
      is a:Sequence do e
      else Expr(Sequence(e)));
 setupfun("sequence",sequencefun);
-
-gbprocess(e:Expr):Expr := (
-     when e
-     is s:string do Expr(gbprocess(s))
-     else WrongArgString());
-setupfun("sendToEngine",gbprocess);
 
 adjacentfun(lhs:Code,rhs:Code):Expr := (
      left := eval(lhs);

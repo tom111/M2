@@ -1,4 +1,6 @@
-document { symbol gkz,
+needs "D-modules.m2"
+
+document { gkz,
      TT "gkz (A,b)", " -- 
      computes the Gel'fand-Kapranov-Zelevinsky hypergeometric ideal
      associated to the matrix A and parameter b",
@@ -18,6 +20,7 @@ document { symbol gkz,
 
      PARA,
      "A simple example:",
+     EXAMPLE ///needs "D-modules.m2"///,
      EXAMPLE "A = matrix{{1,1,1},{0,1,2}}",
      EXAMPLE "b = {3,4}", 
      EXAMPLE "I = gkz (A,b)",
@@ -39,13 +42,14 @@ document { symbol gkz,
 --     MENU{HREF{"/HOME/AppellF1.html","AppellF1"}}
      },
 
-document { symbol AppellF1,
+document { AppellF1,
      TT "AppellF1 {a0,a1,a2,a3}", " -- 
      compute the Appell F1 system of PDE's associated to the
      parameters a0, a1, a2, and a3.",
 
      PARA,
      "A simple example:",
+     EXAMPLE ///needs "D-modules.m2"///,
      EXAMPLE "w = {1,4/5,-2,3/2}",
      EXAMPLE "I = AppellF1(w)",
 
@@ -66,12 +70,13 @@ document { symbol AppellF1,
 --     MENU{HREF{"/HOME/gkz.html","gkz"}}
      }
 
-document { symbol PolyAnn,
+document { PolyAnn,
      TT "PolyAnn f", " -- 
      compute the annihilator ideal in the Weyl algebra of the polynomial f",
 
      PARA,
      "A simple example:",
+     EXAMPLE ///needs "D-modules.m2"///,
      EXAMPLE "W = QQ[x,y,Dx,Dy, WeylAlgebra => {x=>Dx, y=>Dy}]",
      EXAMPLE "f = x^2-y^3",
      EXAMPLE "I = PolyAnn f",
@@ -94,7 +99,7 @@ document { symbol PolyAnn,
 --     MENU{HREF{"/HOME/RatAnn.html","RatAnn"}}
      }
 
-document { symbol RatAnn,
+document { RatAnn,
      TT "RatAnn f", " -- 
      compute the annihilator ideal in the Weyl algebra of the rational
      function 1/f",
@@ -105,6 +110,7 @@ document { symbol RatAnn,
 
      PARA,
      "A simple example:",
+     EXAMPLE ///needs "D-modules.m2"///,
      EXAMPLE "W = QQ[x,y,Dx,Dy, WeylAlgebra => {x=>Dx, y=>Dy}]",
      EXAMPLE "f = x^2-y^3",
      EXAMPLE "g = 2*x*y",

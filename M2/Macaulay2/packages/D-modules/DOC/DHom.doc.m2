@@ -1,4 +1,6 @@
-document { symbol DHom,
+needs "D-modules.m2"
+
+document { DHom,
      TT "DHom (M, N)", " -- computes a basis of
      D-homomorphisms between holonomic D-modules M and N.",
      BR, NOINDENT,
@@ -22,10 +24,12 @@ document { symbol DHom,
 
      PARA,
      "A simple example:",
-     EXAMPLE "W = QQ[x, D, WeylAlgebra=>{x=>D}]",
-     EXAMPLE "M = W^1/ideal(D-1)",
-     EXAMPLE "N = W^1/ideal((D-1)^2)",
-     EXAMPLE "DHom(M,N)",
+     EXAMPLE {
+	  ///needs "D-modules.m2"///,
+	  "W = QQ[x, D, WeylAlgebra=>{x=>D}]",
+      	  "M = W^1/ideal(D-1)",
+      	  "N = W^1/ideal((D-1)^2)",
+      	  "DHom(M,N)"},
 
      PARA,
      "Optional arguments :",     
@@ -50,7 +54,7 @@ document { symbol DHom,
 --	  HREF{"/HOME/Drestriction.html","Drestriction"}}
      },
 
-document { symbol DExt,
+document { DExt,
      --BIG "Drestriction",
      TT "DExt (M, N)", " -- 
      computes the dimensions of the Ext groups between
@@ -73,10 +77,12 @@ document { symbol DExt,
 
      PARA,
      "A simple example:",
-     EXAMPLE "W = QQ[x, D, WeylAlgebra=>{x=>D}]",
-     EXAMPLE "M = W^1/ideal(x*(D-1))",
-     EXAMPLE "N = W^1/ideal((D-1)^2)",
-     EXAMPLE "DExt(M,N)",
+     EXAMPLE {
+	  ///needs "D-modules.m2"///,
+	  "W = QQ[x, D, WeylAlgebra=>{x=>D}]",
+      	  "M = W^1/ideal(x*(D-1))",
+      	  "N = W^1/ideal((D-1)^2)",
+      	  "DExt(M,N)"},
 
      PARA,
      PARA,
@@ -104,7 +110,7 @@ document { symbol DExt,
 --	  HREF{"/HOME/Drestriction.html","Drestriction"}}
      }
 
-document { symbol PolySols,
+document { PolySols,
      TT "PolySols I", " -- computes a basis of the polynomial solutions
      of a holonomic ideal I",
      BR, NOINDENT,
@@ -130,9 +136,10 @@ document { symbol PolySols,
 
      PARA,
      "A simple example:",
+     EXAMPLE ///needs "D-modules.m2"///,
      EXAMPLE "W = QQ[x, D, WeylAlgebra=>{x=>D}]",
      EXAMPLE "I = ideal(D^2, (x-1)*D-1)",
-     EXAMPLE "PolySols I)",
+     EXAMPLE "PolySols I",
 
      PARA,
      "Optional arguments :",     
@@ -160,7 +167,7 @@ document { symbol PolySols,
 --	  HREF{"/HOME/DHom.html","DHom"}}     
      },
 
-document { symbol PolyExt,
+document { PolyExt,
      TT "PolyExt M", " -- 
      computes the dimensions of the Ext groups between
      holonomic M and the polynomial ring.",
@@ -182,6 +189,7 @@ document { symbol PolyExt,
 
      PARA,
      "A simple example:",
+     EXAMPLE ///needs "D-modules.m2"///,
      EXAMPLE "W = QQ[x, D, WeylAlgebra=>{x=>D}]",
      EXAMPLE "M = W^1/ideal(x^2*D^2)",
      EXAMPLE "PolyExt(M)",
@@ -210,7 +218,7 @@ document { symbol PolyExt,
 --	  HREF{"/HOME/Drestriction.html","Drestriction"}}     
      }
 
-document { symbol RatSols,
+document { RatSols,
      TT "RatSols I", " -- computes a basis of the rational solutions
      of a holonomic ideal I",
      BR, NOINDENT,
@@ -238,9 +246,12 @@ document { symbol RatSols,
      
      PARA,
      "A simple example:",
-     EXAMPLE "W = QQ[x, D, WeylAlgebra=>{x=>D}]",
-     EXAMPLE "I = ideal((x+1)*D+5)",
-     EXAMPLE "RatSols I)",
+     EXAMPLE {
+	  ///needs "D-modules.m2"///,
+      	  "W = QQ[x, D, WeylAlgebra=>{x=>D}]",
+      	  "I = ideal((x+1)*D+5)",
+      	  "RatSols I"
+	  },
 
      PARA,
      "Caveats and known problems :",     
@@ -253,7 +264,7 @@ document { symbol RatSols,
      SEEALSO {"PolySols", "RatExt", "DHom"} 
      },
 
-document { symbol RatExt,
+document { RatExt,
      --BIG "Drestriction",
      TT "RatExt M", "-- 
      computes the dimensions of the Ext groups between
@@ -286,6 +297,7 @@ document { symbol RatExt,
 
      PARA,
      "A simple example:",
+     EXAMPLE ///needs "D-modules.m2"///,
      EXAMPLE "W = QQ[x, D, WeylAlgebra=>{x=>D}]",
      EXAMPLE "M = W^1/ideal(x*D+5)",
      EXAMPLE "RatExt(M)",

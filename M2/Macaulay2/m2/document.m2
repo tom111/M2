@@ -1,55 +1,39 @@
---		Copyright 1994-1999 by Daniel R. Grayson
+--		Copyright 1994-2002 by Daniel R. Grayson
 
 -----------------------------------------------------------------------------
 -- configuration
 -----------------------------------------------------------------------------
-maximumCodeWidth := 200
-CachePrefix          := "cache/"
-DocumentationPrefix  := CachePrefix | "doc/"
-TestsPrefix          := CachePrefix | "tests/"
+maximumCodeWidth := 120
+TestsPrefix := "cache/tests/"
+-----------------------------------------------------------------------------
+-- the phase encoding (we have to get rid of this)
+-----------------------------------------------------------------------------
+writingInputFiles         := () -> phase === 2
+readingExampleOutputFiles := () -> phase === 4
+writingFinalDocDatabase   := () -> phase === 4
+writing                   := () -> phase === 2 or phase === 4 or phase === 5
 -----------------------------------------------------------------------------
 -- initialization and finalization
 -----------------------------------------------------------------------------
-DocDatabase := null
-addEndFunction(() -> (
-	  if class DocDatabase === Database then (
-	       close DocDatabase;
-	       DocDatabase = null;
-	       )))
-docExtension := () -> (
-     if phase === 2 then "-tmp"		  -- writing, to be renamed -pre externally
-     else if phase === 3 then "-pre"	  -- reading
-     else if phase === 4 then "-tmp"	  -- writing, to be renamed -doc externally
-     else "-doc"			  -- reading
-     )
-docFilename := () -> (
-     progname := commandLine#0;
-     if substring(progname,0,1) === "\"" then progname = substring(progname,1);
-     if version#"operating system" === "MACOS" then "::cache:Macaulay2-doc"
-     else (
-	  if getenv "M2HOME" === "" 
-	  then error "environment variable M2HOME not set";
-	  concatenate(getenv "M2HOME", pathSeparator, "cache", pathSeparator, "Macaulay2", docExtension())
-	  )
-     )
+DocDatabase = null
+local nodeBaseFilename
+local exampleOutputFilename				    -- nodeBaseFilename | ".out"
+local exampleCounter
+local exampleInputFile
+local exampleResultsFound
+local exampleResults
+docFilename := () -> buildHomeDirectory | "cache/Macaulay2-doc"
 
-if phase === 1 then addStartFunction( 
-     () -> DocDatabase = (
-	  t := docFilename();
-	  try openDatabase t
-	  else ( 
-	       stderr << "--warning: couldn't open help file " << t << endl;
-	       new MutableHashTable))
+addStartFunction( 
+     () -> DocDatabase = try openDatabase docFilename() else (
+	  stderr << "--warning: couldn't open help file " << docFilename() << endl;
+	  new HashTable)
      )
-
-if phase === 2 or phase === 4 then DocDatabase = openDatabaseOut docFilename()
 Documentation = new MutableHashTable
 duplicateDocError := nodeName -> (
      stderr << concatenate ("warning: documentation already provided for '", nodeName, "'") 
      << newline << flush; )
 storeDoc := (nodeName,docBody) -> (
-     -- note: nodeName and docBody should both be strings which can be evaluated with 'value'.
-     -- That usually means making then with 'toExternalString'.
      if mutable DocDatabase then (
 	  if DocDatabase#?nodeName then duplicateDocError nodeName;
 	  DocDatabase#nodeName = docBody;
@@ -61,6 +45,19 @@ storeDoc := (nodeName,docBody) -> (
      )
 
 -----------------------------------------------------------------------------
+-- unformatting document tags
+-----------------------------------------------------------------------------
+unformatTag := new MutableHashTable
+record      := f -> x -> (val := f x; unformatTag#val = x; val)
+unformat    := s -> (
+     if isGlobalSymbol s 
+     and value getGlobalSymbol s =!= null	  -- keywords have null value
+     then value getGlobalSymbol s
+     else if unformatTag#?s then unformatTag#s
+     else s
+     )
+
+-----------------------------------------------------------------------------
 -- getting database records
 -----------------------------------------------------------------------------
 
@@ -68,43 +65,21 @@ getRecord := key -> (
      if Documentation#?key then Documentation#key else if DocDatabase#?key then DocDatabase#key
      )
 
-betterStringKey := key -> (
-     if class key === String and (
-     	  d := getRecord key;
-	  d =!= null and substring(d,0,5) === "goto "
-	  )
-     then substring(d,5)
-     else key)
-
-betterKey  := key -> value           betterStringKey toExternalString key
-getDoc     := key -> value getRecord betterStringKey toExternalString key
-getDocBody := key -> (
-     a := getDoc key;
-     if a =!= null then select(a, s -> class s =!= Option))
-
 -----------------------------------------------------------------------------
 -- formatting document tags
 -----------------------------------------------------------------------------
 Strings := hashTable { Sequence => "(...)", List => "{...}", Array => "[...]" }
 toStr := s -> if Strings#?s then Strings#s else toString s
 formatDocumentTag           = method(SingleArgumentDispatch => true)
-unformatTag                := new MutableHashTable
-unformat                   := s -> if unformatTag#?s then unformatTag#s else s
-record                     := f -> x -> (val := f x; unformatTag#val = x; val)
 	  
 alphabet := set characters "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'"
 
-formatDocumentTag Thing    := s -> toString s
+---- shouldn't convert such things as matrices to strings here!
+formatDocumentTag Thing    := s -> "--undocumentable--"
+
+formatDocumentTag Symbol   := record toString
 formatDocumentTag Function := record toString
-formatDocumentTag Symbol   := record(
-     s -> (
-	  n := toString s;
-	  if value s === s then n
-	  else if n === "" or n === " " then concatenate("symbol \"",n,"\"")
-	  else if alphabet#?(n#0) then concatenate("symbol ",n)
-	  else n
-	  )
-     )
+formatDocumentTag String   := s -> s
 
 after := (w,s) -> mingle(w,#w:s)
 formatDocumentTag Option   := record(
@@ -170,12 +145,12 @@ formatDocumentTag Sequence := record(
 	       else if fSeq#?#s                       then fSeq#(#s)
 						      else toString) s))
 
-formatDocumentTagTO := method(SingleArgumentDispatch => true)
 fSeqTO := null
+formatDocumentTagTO := method(SingleArgumentDispatch => true)
 formatDocumentTagTO Thing := x -> TT formatDocumentTag x
 formatDocumentTagTO Option := x -> (
-     if #x === 2 and getDoc x#1 =!= null 
-     then SEQ { toString x#0, "(..., ", TO x#1, ")", headline x#1 }
+     if #x === 2 and getRecord toString x#1 =!= null 
+     then SEQ { toString x#0, "(..., ", TO x#1, " => ...)", headline x#1 }
      else TT formatDocumentTag x
      )
 formatDocumentTagTO Sequence := (
@@ -194,17 +169,26 @@ formatDocumentTagTO Sequence := (
 						        else toString) s))
 
 -----------------------------------------------------------------------------
+-- getting database records
+-----------------------------------------------------------------------------
+
+getDoc := key -> value getRecord formatDocumentTag key
+getDocBody := key -> (
+     a := getDoc key;
+     if a =!= null then select(a, s -> class s =!= Option))
+
+-----------------------------------------------------------------------------
 -- verifying the keys
 -----------------------------------------------------------------------------
 verifyTag := method(SingleArgumentDispatch => true)
 verifyTag Thing    := s -> null
- -- verifyTag Sequence := s -> (
- --      if class lookup s =!= Function then error("no method installed for '", formatDocumentTag s, "'"))
- -- verifyTag Option   := s -> (
- --      fn := s#0;
- --      opt := s#1;
- --      if not (options fn)#?opt then error("expected ", toString opt, " to be an option of ", toString fn))
-
+verifyTag Sequence := s -> (
+     if class lookup s =!= Function then error(
+	  "documentation provided for '", formatDocumentTag s, "' but no method installed"))
+verifyTag Option   := s -> (
+     fn := s#0;
+     opt := s#1;
+     if not (options fn)#?opt then error("expected ", toString opt, " to be an option of ", toString fn))
 -----------------------------------------------------------------------------
 -- html input
 -----------------------------------------------------------------------------
@@ -348,21 +332,64 @@ testFileCounter := 0
 exprCounter := 0
 file := null
 fourDigits := i -> ( i = toString i; concatenate(4-#i:"0", i) )
+
 -----------------------------------------------------------------------------
-nodeBaseFilename := ""
-exampleCounter := 0
-exampleOutputFile := null
-exampleResultsFound := false
-exampleResults := {}
+-- process examples
+-----------------------------------------------------------------------------
+makeFileName := (key,filename) -> (			 -- may return 'null'
+     prefix := first documentationPath;
+     if filename =!= null then (
+	  if writing() then cacheFileName(prefix, key, filename)
+	  else prefix | filename
+	  )
+     else (
+     	  t := cacheFileName(if writing() then first documentationPath, documentationPath, key);
+	  if #t > 1 then (
+	       stderr << "warning: documentation node '" << key << "' occurs in multiple locations:" << endl;
+	       apply(t, fn -> stderr << "    " << fn << endl );
+	       );
+	  if #t > 0 then first t))
+
+checkForExampleOutputFile := () -> (
+     exampleResultsFound = false;
+     exampleOutputFilename = null;
+     if nodeBaseFilename =!= null then (
+	  if fileExists (nodeBaseFilename | ".out")
+	  then exampleOutputFilename = nodeBaseFilename | ".out" 
+	  else (
+	       if readingExampleOutputFiles() then (
+		    -- we don't insist, but we do warn.
+		    -- we depend on the Makefile to stop 'make' if the file didn't get made
+		    stderr << "warning : can't open input file '" << nodeBaseFilename << ".out'"
+		    << endl;
+		    );
+	       );
+	  if exampleOutputFilename =!= null then (
+	       exampleResults = separate("\1", get exampleOutputFilename);
+	       exampleResultsFound = true;
+	       );
+	  );
+     )
+
+checkForExampleInputFile := () -> exampleInputFile = (
+     if writingInputFiles() then openOut(nodeBaseFilename | ".example")
+     else null
+     )
+
+extractExamples            := method(SingleArgumentDispatch => true)
+extractExamples Thing      := x -> {}
+extractExamples EXAMPLE    := x -> toList x
+extractExamples MarkUpList := x -> join apply(toSequence x, extractExamples)
+
 processExample := x -> (
      exampleCounter = exampleCounter + 1;
-     exampleOutputFile << x << endl;
-     if exampleResults#?exampleCounter
+     if exampleInputFile =!= null then exampleInputFile << x << endl;
+     if exampleResultsFound and exampleResults#?exampleCounter
      then {x, CODE exampleResults#exampleCounter}
      else (
 	  if exampleResultsFound and #exampleResults === exampleCounter then (
-	       stderr << "warning : input file " << nodeBaseFilename 
-	       << ".out terminates prematurely" << endl;
+	       stderr << "warning : input file " << exampleOutputFilename 
+	       << " terminates prematurely" << endl;
 	       );
 	  {x, CODE concatenate("i", toString exampleCounter, " = ",x)}
 	  ))
@@ -374,41 +401,36 @@ processExamplesLoop := s -> (
      else if class s === Sequence or instance(s,MarkUpList)
      then apply(s,processExamplesLoop)
      else s)
-extractExamples            := method(SingleArgumentDispatch => true)
-extractExamples Thing      := x -> {}
-extractExamples EXAMPLE    := x -> toList x
-extractExamples MarkUpList := x -> join apply(toSequence x, extractExamples)
+
 processExamples := (docBody) -> (
+     exampleResults = {};
+     exampleCounter = 0;
      examples := extractExamples docBody;
      if #examples > 0 then (
-	  exampleResultsFound = true;
-	  exampleResults = "";
-	  try exampleResults = get (nodeBaseFilename | ".out") else (
-	       exampleResultsFound = false;
-	       if phase === 4 or phase === 5 then (
-		    stderr << "warning : can't open input file '" << nodeBaseFilename << ".out'" << endl;
-		    );
-	       );
-	  exampleResults = separate("\1",exampleResults);
-	  exampleCounter = 0;
-	  exampleOutputFile = if phase === 2 then openOut(nodeBaseFilename | ".example");
+     	  checkForExampleOutputFile();
+     	  checkForExampleInputFile();
 	  docBody = apply(docBody,processExamplesLoop);
-	  close exampleOutputFile;
+	  if exampleInputFile =!= null then close exampleInputFile;
 	  );
-     docBody )
+     docBody)
+-----------------------------------------------------------------------------
+-- 'document' function
+-----------------------------------------------------------------------------
+
+getFileName := body -> (
+     x := select(1, body, i -> class i === Option and #i === 2 and first i === FileName);
+     if #x > 0 then x#0#1 else null
+     )
+
 document = method()
 document List := z -> (
      if #z === 0 then error "expected a nonempty list";
      key := z#0;
      verifyTag key;
      body := drop(z,1);
-     skey := toExternalString key;
      nodeName := formatDocumentTag key;
-     -- stderr << "documenting " << nodeName << " in " << currentFileName << " in " << currentFileDirectory << endl;
-     nodeBaseFilename = cacheFileName(concatenate("",DocumentationPrefix), nodeName);
-     -- nodeBaseFilename = concatenate(currentFileDirectory, DocumentationPrefix, toFilename nodeName);
-     if nodeName =!= key then storeDoc(toExternalString nodeName,"goto "|skey);
-     storeDoc(skey,toExternalString processExamples fixup body);
+     nodeBaseFilename = makeFileName(nodeName,getFileName body);
+     storeDoc(nodeName,toExternalString processExamples fixup body);
      )
 
 -----------------------------------------------------------------------------
@@ -434,9 +456,7 @@ topics = Command (
 	  )
      )
 
-apropos = (pattern) -> (
-     mat := "*" | toString pattern | "*";
-     sort select( keys symbolTable(), i -> match(i,mat)))
+apropos = (pattern) -> sort select( keys symbolTable(), i -> match(toString pattern,i))
 -----------------------------------------------------------------------------
 -- more general methods
 -----------------------------------------------------------------------------
@@ -486,7 +506,9 @@ nextMoreGeneral := s -> (
 getOption := (s,tag) -> (
      if class s === SEQ then (
      	  x := select(1, toList s, i -> class i === Option and #i === 2 and first i === tag);
-     	  if #x > 0 then x#0#1))
+     	  if #x > 0 then x#0#1 else null)
+     else null
+     )
 
 getHeadline := key -> (
      d := getOption(getDoc key, Headline);
@@ -504,7 +526,6 @@ evenMoreGeneral := key -> (
      if t === null and class key === Sequence then key#0 else t)
 headline = memoize (
      key -> (
-	  key = unformat key;
 	  while ( d := getHeadline key ) === null and ( key = evenMoreGeneral key ) =!= null do null;
 	  d))
 
@@ -523,7 +544,7 @@ ancestors1 := X -> if X === Thing then {Thing} else prepend(X, ancestors1 parent
 ancestors := X -> if X === Thing then {} else ancestors1(parent X)
 
 vowels := set characters "aeiouAEIOU"
-indefinite := s -> concatenate(if vowels#?(s#0) and not match(s,"one *") then "an " else "a ", s)
+indefinite := s -> concatenate(if vowels#?(s#0) and match("^one ",s) then "an " else "a ", s)
 
 synonym := X -> if X.?synonym then X.synonym else "object of class " | toString X
 
@@ -679,7 +700,7 @@ synopsis Sequence := s -> (
 
 unDocumentable := method(SingleArgumentDispatch => true)
 unDocumentable Thing := x ->false
-unDocumentable Function := f -> class f === Function and match(toString f, "--Function*--")
+unDocumentable Function := f -> class f === Function and match( "^--Function.*--$", toString f)
 unDocumentable Sequence := s -> #s > 0 and unDocumentable s#0
 
 documentableMethods := s -> select(methods s, i -> not unDocumentable i)
@@ -712,12 +733,9 @@ briefDocumentation = x -> (
 
 documentation = method(SingleArgumentDispatch => true)
 documentation String := s -> (
-     if unformatTag#?s then documentation unformatTag#s
-     else (
-	  key := betterKey s;
-	  if key =!= s then documentation key 
-	  else SEQ { title s, getDocBody s }
-	  )
+     t := unformat s;
+     if t =!= s then documentation t
+     else SEQ { title s, getDocBody s }
      )
 documentation Thing := s -> SEQ { title s, usage s, type s }
 binary := set binaryOperators; erase symbol binaryOperators
@@ -731,7 +749,7 @@ op := s -> if operatorSet#?s then (
 	  if binary#?s then SEQ {
 	       NOINDENT{}, 
 	       "This operator may be used as a binary operator in an expression \n",
-	       "like ", TT ("x "|ss|" y"), ".  The user may install ", TO {"binary method", "s"}, " \n",
+	       "like ", TT ("x "|ss|" y"), ".  The user may install ", TO {"binary methods"}, " \n",
 	       "for handling such expressions with code such as ",
 	       if ss == " "
 	       then PRE ("         X Y := (x,y) -> ...")
@@ -778,8 +796,7 @@ documentation Symbol := s -> (
 documentation Type := X -> (
      syms := values symbolTable();
      a := apply(select(pairs typicalValues, (key,Y) -> Y===X and not unDocumentable key), (key,Y) -> key);
-     b := toString \ select(syms, 
-	  y -> not mutable y and value y =!= X and instance(value y, Type) and parent value y === X);
+     b := toString \ select(syms, y -> instance(value y, Type) and parent value y === X);
      c := select(documentableMethods X, key -> not typicalValues#?key or typicalValues#key =!= X);
      e := toString \ select(syms, y -> not mutable y and class value y === X);
      SEQ {
@@ -791,12 +808,14 @@ documentation Type := X -> (
 	       smenu b, PARA{}},
 	  usage X,
 	  if #a > 0 then SEQ {
-	       "Functions and methods returning a ",
+	       "Functions and methods returning ",
 	       indefinite synonym X, " :", PARA{},
-	       smenu a, PARA{}
+	       SHIELD smenu a, PARA{}
 	       },
-	  if #c > 0 then SEQ {"Methods for using ", indefinite synonym X, " :", PARA{}, smenu c, PARA{}},
-	  if #e > 0 then SEQ {"Fixed objects of class ", toString X, " :", PARA{}, SHIELD smenu e, PARA{}},
+	  if #c > 0 then SEQ {"Methods for using ", indefinite synonym X, " :", PARA{}, 
+	       SHIELD smenu c, PARA{}},
+	  if #e > 0 then SEQ {"Fixed objects of class ", toString X, " :", PARA{}, 
+	       SHIELD smenu e, PARA{}},
 	  })
 
 documentation HashTable := x -> (
@@ -806,12 +825,13 @@ documentation HashTable := x -> (
 	  synopsis x,
 	  usage x,
      	  type x,
-	  if #c > 0 then SEQ {"Functions installed in ", toString x, " :", PARA{}, SHIELD smenu c, PARA{}},
+	  if #c > 0 then SEQ {"Functions installed in ", toString x, " :", PARA{}, 
+	       SHIELD smenu c, PARA{}},
 	  })
 
 ret := k -> (
      t := typicalValue k;
-     if t =!= Thing then SEQ {"Class of returned value: ", TO t, headline t}
+     if t =!= Thing then SEQ {"Class of returned value: ", TO t, headline t, PARA{}}
      )
 seecode := x -> (
      f := lookup x;
@@ -827,6 +847,8 @@ documentation Function := f -> SEQ {
 
 documentation Option := v -> (
      (fn, opt) -> (
+	  if not (options fn)#?opt then error ("function ", fn, " does not accept option key ", opt);
+	  default := (options fn)#opt;
 	  SEQ { 
 	       title v,
 	       synopsis v,
@@ -834,10 +856,7 @@ documentation Option := v -> (
 	       BOLD "See also:",
 	       SHIELD MENU {
 		    SEQ{ "Default value: ",
-			 if class (options fn)#opt =!= ZZ
-			 then TOH toString (options fn)#opt 
-			 else     toString (options fn)#opt 
-			 },
+			 if class default =!= ZZ then TOH toString default else toString default },
 		    SEQ{ if class fn === Sequence then "Method: " else "Function: ", TOH fn },
 		    SEQ{ "Option name: ", TOH opt }
 		    }
@@ -864,19 +883,18 @@ documentation Sequence := s -> (
 help = method(SingleArgumentDispatch => true)
 help List := v -> hr apply(v, help)
 help Thing := s -> (
-     d := documentation s;
-     if d === null 
-     then "No documentation available for '" |formatDocumentTag s | "'."
-     else "Documentation for " | toExternalString formatDocumentTag s | " :" |newline| text d
- --  else "Documentation for " | formatDocumentTag s | " :" || "  " | net d
+     "Documentation for " | toExternalString formatDocumentTag s | " :" |newline| text documentation s
      )
 
 -----------------------------------------------------------------------------
 -- helper functions useable in documentation
 -----------------------------------------------------------------------------
 
-TEST = (e) -> if phase === 2 then (
-     cacheFileName concatenate("",TestsPrefix) | ".m2" << e << endl << close;
+numtests := 0
+
+TEST = (e) -> if writingInputFiles() then (
+     TestsPrefix | toString numtests | ".m2" << e << endl << close;
+     numtests = numtests + 1;
      null
      )
 
@@ -884,7 +902,7 @@ SEEALSO = v -> (
      if class v =!= List then v = {v};
      if #v > 0 then SEQ { PARA{}, BOLD "See also:", SHIELD MENU (TO \ v) })
 
-CAVEAT = v -> SEQ { PARA{}, BOLD "Caveat:", MENU { SEQ v } }
+CAVEAT = v -> SEQ { PARA{}, BOLD "Caveat:", SHIELD MENU { SEQ v } }
 
 -----------------------------------------------------------------------------
 -- html output
@@ -1125,7 +1143,7 @@ tex PRE := x -> concatenate ( VERBATIM,
      shorten lines concatenate x
      / (line ->
 	  if #line <= maximumCodeWidth then line
-	  else concatenate(substring(line,0,maximumCodeWidth), " ..."))
+	  else concatenate(substring(0,maximumCodeWidth,line), " ..."))
      / texExtraLiteral
      / (line -> if line === "" then ///\penalty-170/// else line)
      / (line -> (line, ENDLINE)),
@@ -1148,10 +1166,6 @@ html BODY := x -> concatenate(
      apply(x, html), newline,
      "</BODY>", newline
      )
-
-html IMG  := x -> "<IMG src=\"" | x#0 | "\">"
-text IMG  := x -> ""
-tex  IMG  := x -> ""
 
 html LISTING := t -> "<LISTING>" | concatenate toSequence t | "</LISTING>";
 
@@ -1189,14 +1203,34 @@ html CODE   := x -> concatenate(
      "</CODE>"
      )
 
-html HREF := x -> (
-     "<A HREF=\"" | x#0 | "\">" | html x#-1 | "</A>"
+isAbsolute := url -> match( "^(#|mailto:|[a-z]+://)", url )
+
+htmlFilename := key -> first cacheFileName(documentationPath, key) | ".html"
+
+rel := url -> (
+     if isAbsolute url 
+     then url
+     else relativizeFilename(first documentationPath, url)
      )
-text HREF := x -> "\"" | x#-1 | "\""
+
+html IMG  := x -> "<IMG src=\"" | rel first x | "\">"
+text IMG  := x -> ""
+tex  IMG  := x -> ""
+
+html HREF := x -> (
+     "<A HREF=\"" 					    -- "
+     | rel first x 
+     | "\">" 						    -- "
+     | html last x 
+     | "</A>"
+     )
+text HREF := x -> "\"" | last x | "\""
 tex HREF := x -> (
      concatenate(
-	  ///\special{html:<A href="///, texLiteral x#0, ///">}///,
-	  tex x#-1,
+	  ///\special{html:<A href="///, 		    -- "
+	       texLiteral rel first x,
+	       ///">}///,				    -- "
+	  tex last x,
 	  ///\special{html:</A>}///
 	  )
      )
@@ -1313,19 +1347,26 @@ text SUB := x -> "_" | text x#0
 net  TO := text TO := x -> concatenate ( "\"", formatDocumentTag x#0, "\"", drop(toList x, 1) )
 
 html TO := x -> (
-     fkey := formatDocumentTag x#0;
+     key := x#0;
+     formattedKey := formatDocumentTag key;
      concatenate ( 
-     	  "<A HREF=\"", cacheFileName(documentationPath, fkey), ".html", "\">", 
-     	  htmlExtraLiteral fkey,
+     	  ///<A HREF="///,				    -- "
+	  rel htmlFilename formattedKey,
+	  ///">///, 					    -- "
+     	  htmlExtraLiteral formattedKey,
      	  "</A>",
      	  drop(toList x,1) 
      	  )
      )
 tex  TO := x -> (
-     node := formatDocumentTag x#0;
+     key := x#0;
+     node := formatDocumentTag key;
      tex SEQ {
      	  TT formatDocumentTag x#0,
-     	  " [", LITERAL { ///\ref{///, cacheFileName(documentationPath, node), ///}/// },
+     	  " [", LITERAL { ///\ref{///, 
+		    -- rewrite this later:
+		    -- cacheFileName(documentationPath, node),
+		    ///}/// },
 	  "]"
 	  }
      )
@@ -1344,7 +1385,7 @@ html UNDERLINE := htmlMarkUpType "U"
 html TEX := x -> x#0	    -- should do something else!
 html BOLD := htmlMarkUpType "B"
 
-html BASE := x -> concatenate("<BASE HREF=\"",x#0,"\">")
+html BASE := x -> concatenate("<BASE HREF=\"",rel first x,"\">")
 tex BASE := text BASE := net BASE := x -> ""
 
 html Option := x -> toString x
@@ -1469,3 +1510,51 @@ html TOC := x -> (
 	  SEQ for i from 0 to #x-1 list SEQ { newline, ANCHOR { tag i, ""} , x#i }
 	  }
      )
+
+-----------------------------------------------------------------------------
+
+dummyDoc := x -> document {
+     if value x =!= x and (
+	  class value x === Function
+	  or class value x === ScriptedFunctor
+	  or instance(value x, Type)
+	  )
+     then value x
+     else x,
+     Headline => "undocumented symbol", "No documentation provided yet."}
+
+undocErr := x -> (
+     pos := locate x;
+     pos = if pos === null then "error: " else pos#0 | ":" | toString pos#1 | ": ";
+     stderr << pos << x;
+     stderr << " undocumented " << synonym class value x;
+     stderr << endl;
+     )
+
+undocumentedSymbols = () -> select(
+     values symbolTable(), 
+     x -> if not DocDatabase#?(toString x) and not Documentation#?(toString x) then (
+	  undocErr x;
+	  dummyDoc x;
+	  true))
+
+addEndFunction(
+     () -> (
+	  if writingFinalDocDatabase() and #(undocumentedSymbols()) > 0
+	  then (
+	       stderr << "ignoring undocumented symbol errors" << endl;
+	       -- error "undocumented symbols";
+	       )
+	  )
+     )
+
+-----------------------------------------------------------------------------
+
+new TO from List := (TO,x) -> (
+     verifyTag first x;
+     x)
+new IMG from List := (IMG,x) -> (
+     url := first x;
+     if not isAbsolute url and not fileExists url
+     then error ("file ", url, " does not exist");
+     x)

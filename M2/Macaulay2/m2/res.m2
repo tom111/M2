@@ -103,6 +103,7 @@ resolutionInEngine := options -> (M) -> (
 	  W.ring = R;
 	  W.length = maxlength;
 	  W.DegreeLimit = degreelimit;
+     	  error "ggres not re-implemented yet";
 	  W.handle = newHandle(ggPush g, 
 	       ggPush options.Strategy,
 	       ggPush maxlength,

@@ -8,11 +8,12 @@ dump = () -> (
 	  try first lines get "!uname -m | sed s=/=-=g" 
 	  else version#"architecture", 
 	  "-data");
-     << "dumping to " << fn << endl << flush;
+     << "--dumping to " << fn << endl << flush;
      runEndFunctions();
      erase symbol dump;
      phase = 0;
      collectGarbage();
      dumpdata fn;
+     << "--dumped to " << fn << endl << flush;
      exit 0;
      )

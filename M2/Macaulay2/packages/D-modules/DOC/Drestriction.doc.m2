@@ -1,4 +1,6 @@
-document { symbol Drestriction,
+needs "D-modules.m2"
+
+document { Drestriction,
      TT "Drestriction (M, w)", " -- 
      computes derived restriction modules of M with respect
      to the weight vector w",
@@ -66,6 +68,7 @@ document { symbol Drestriction,
 
      PARA,
      "A simple example:",
+     EXAMPLE ///needs "D-modules.m2"///,
      EXAMPLE "R = QQ[x_1,x_2,D_1,D_2,WeylAlgebra=>{x_1=>D_1,x_2=>D_2}]",
      EXAMPLE "I = ideal(x_1, D_2-1)", 
      EXAMPLE "Drestriction(I,{1,0})",
@@ -116,7 +119,7 @@ document { symbol Drestriction,
 --	  HREF{"/HOME/Dintegration.html","Dintegration"}}
      }
 
-document { symbol Dintegration,
+document { Dintegration,
      TT "Dintegration (M, w)", " -- 
      computes derived integration modules of M with respect
      to the weight vector w",
@@ -183,9 +186,10 @@ document { symbol Dintegration,
 
      PARA,
      "A simple example:",
+     EXAMPLE ///needs "D-modules.m2"///,
      EXAMPLE "R = QQ[x_1,x_2,D_1,D_2,WeylAlgebra=>{x_1=>D_1,x_2=>D_2}]",
      EXAMPLE "I = ideal(x_1, D_2-1)", 
-     EXAMPLE "Dintegration(I,{1,0})",
+     EXAMPLE "-- Dintegration(I,{1,0})",		    -- didn't work (drg)
 
      PARA,
      "Caveats and known problems :",

@@ -7,6 +7,8 @@ all::
 # cygwin 'make' might get confused by setting SHELL
 # SHELL = @SHELL@
 
+.DELETE_ON_ERROR :
+
 PACKAGE_NAME = @PACKAGE_NAME@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 ARCH    = @ARCH@
@@ -46,6 +48,7 @@ FFLAGS = @FFLAGS@
 DEFS = @DEFS@
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
+LAPACK = @LAPACK@
 prefix = @prefix@
 encap = @encap@
 encapdir = @encapdir@
@@ -138,11 +141,6 @@ DEBUGFLAGS += -DMEM_DEBUG
 endif
 
 DUMPDATAFILE := libexec/Macaulay2-$(ARCH)-data
-
-ifneq "$(prefix)" "/usr"
-CPPFLAGS += -I$(prefix)/include
-LOADLIBES += -L$(prefix)/lib
-endif
 
 # Local Variables:
 # compile-command: "make -f Makefile-configuration"

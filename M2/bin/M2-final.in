@@ -1,7 +1,7 @@
 #! /bin/sh
 M2HOME="`dirname $0`/../Macaulay2"
 export M2HOME
-EXE="$M2HOME/libexec/Macaulay2"
+EXE="$M2HOME/bin/Macaulay2"
 DATA="$M2HOME/libexec/Macaulay2-`uname -m |sed s=/=-=g`-data"
 SETUP="$M2HOME/m2/setup.m2"
 if [ -f "$DATA" ]

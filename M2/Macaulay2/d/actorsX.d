@@ -1,6 +1,7 @@
 --		Copyright 1995 by Daniel R. Grayson
 
 use X;
+use C;
 use system;
 use err;
 use stdio;
@@ -8,7 +9,7 @@ use stdiop;
 use strings;
 use nets;
 use tokens;
-use arith;
+use gmp;
 use convertr;
 
 
@@ -37,19 +38,19 @@ XCreateWindowfun(ee:Expr):Expr := (
 		    toInt(height),
 		    toInt(borderwidth),
 		    name)))
-     else WrongArg(6+1,"a string")
-     else WrongArg(5+1,"a small integer")
-     else WrongArg(5+1,"an integer")
-     else WrongArg(4+1,"a small integer")
-     else WrongArg(4+1,"an integer")
-     else WrongArg(3+1,"a small integer")
-     else WrongArg(3+1,"an integer")
-     else WrongArg(2+1,"a small integer")
-     else WrongArg(2+1,"an integer")
-     else WrongArg(1+1,"a small integer")
-     else WrongArg(1+1,"an integer")
-     else WrongArg(0+1,"a small integer")
-     else WrongArg(0+1,"an integer")
+     else WrongArgString(6+1)
+     else WrongArgSmallInteger(5+1)
+     else WrongArgInteger(5+1)
+     else WrongArgSmallInteger(4+1)
+     else WrongArgInteger(4+1)
+     else WrongArgSmallInteger(3+1)
+     else WrongArgInteger(3+1)
+     else WrongArgSmallInteger(2+1)
+     else WrongArgInteger(2+1)
+     else WrongArgSmallInteger(1+1)
+     else WrongArgInteger(1+1)
+     else WrongArgSmallInteger(0+1)
+     else WrongArgInteger(0+1)
      else WrongNumArgs(7)
      else WrongNumArgs(7));
 setupfun("XCreateWindow",XCreateWindowfun);

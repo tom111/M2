@@ -1,4 +1,4 @@
---		Copyright 1993-1999 by Daniel R. Grayson
+--		Copyright 1993-2002 by Daniel R. Grayson
 
 
 TEST ///
@@ -11,16 +11,14 @@ TEST ///
      E = coimage D_[0]
 ///
 
-document { symbol Resolution,
-     Headline => "a key for storing resolutions",
-     "A key used in a ", TO "ChainComplex", " to store the resolution it comes from."
-     }
-
 document { Resolution,
      Headline => "the class of all resolution computations",
      PARA,
      "These resolutions are internal engine objects not meant to be examined
      by the user.",
+     PARA,
+     "The symbol ", TT "Resolution", " is also used in a ", TO "ChainComplex", " to 
+     store the resolution it comes from."
      }
 
 document { symbol "res",
@@ -281,8 +279,8 @@ document { radical,
      "The algorithms used generally require that the characteristic of the
      ground field is larger than the degree of each primary component.  In 
      practice, this means that if the characteristic is something like 32003,
-     rather than e.g. 5, the methods used will produce the radical of I.  Of
-     course, you may do the computation over QQ, but it will often run much
+     rather than, for example, 5, the methods used will produce the radical of ", TT "I", ".  Of
+     course, you may do the computation over ", TT "QQ", ", but it will often run much
      slower.  In general, this routine still needs to be tuned for speed.",
      SEEALSO {"top", "removeLowestDimension", "saturate", "quotient"}
      }

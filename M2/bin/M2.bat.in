@@ -15,5 +15,5 @@ rem  The slashes in the next line should be \
 set M2WINH=s:\cygwin\usr\local\lib\Macaulay2-@PACKAGE_VERSION@
 
 rem  Don't change this line.
-%M2WINH%\libexec\Macaulay2 -tty -ephase=1 %M2HOME%/m2/setup.m2 -ephase=0 '-e runStartFunctions()'
+%M2WINH%\bin\Macaulay2 -tty -ephase=1 %M2HOME%/m2/setup.m2 -ephase=0 '-e runStartFunctions()'
 

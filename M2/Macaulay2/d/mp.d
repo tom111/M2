@@ -1,11 +1,12 @@
 --		Copyright 1995 by Daniel R. Grayson
 
+use C;
 use system; 
 use convertr;
 use binding;
 use parser;
 use lex;
-use arith;
+use gmp;
 use nets;
 use tokens;
 use err;
@@ -19,7 +20,6 @@ use actors;
 use actors2;
 use struct;
 use objects;
-use GB;
 
 import OpenLink(args:array(string)):int;
 import CloseLink(link:int):int;

@@ -2,8 +2,8 @@
 
 #include "freemod.hpp"
 #include "comb.hpp"
-#include "bin_io.hpp"
 #include "polyring.hpp"
+#include "matrix.hpp"
 
 //////////////////////////////////////////////
 //  Construction/Destruction routines ////////
@@ -37,18 +37,16 @@ void FreeModule::initialize(const Ring *RR)
 
       TO_EXP_monom = M->make_one();
     }
-
-  bump_up((Ring *) R);
 }
 
 FreeModule::FreeModule(const Ring *RR)
-: type()
+: immutable_object(0)
 {
   initialize(RR);
 }
 
 FreeModule::FreeModule(const Ring *RR, int n)
-: type()
+: immutable_object(0)
      // Create R^n, with all gradings zero.
 {
   initialize(RR);
@@ -60,7 +58,7 @@ FreeModule::FreeModule(const Ring *RR, int n)
 }
 
 FreeModule::FreeModule(const Ring *RR, const FreeModule *F)
-: type()
+: immutable_object(0)
     // Take the degrees and monomials from F, but take the 
     // new ring/monomial information using R.
 {
@@ -86,6 +84,46 @@ FreeModule::FreeModule(const Ring *RR, const FreeModule *F)
   ty = F->ty;
 }
 
+FreeModule *FreeModule::make_schreyer(const Matrix *m)
+{
+  int i;
+  const Ring *R = m->get_ring();
+  const Monoid *M = R->Nmonoms();
+  FreeModule *F = R->make_FreeModule();
+  int rk = m->n_cols();
+  if (rk == 0) return F;
+  int *base = M->make_one();
+  int *tiebreaks = new int[rk];
+  int *ties = new int[rk];
+  for (i=0; i<rk; i++)
+    {
+      vec v = (*m)[i];
+      if (v == NULL)
+	tiebreaks[i] = i;
+      else
+	tiebreaks[i] = i + rk * m->rows()->compare_num(v->comp);
+    }
+  // Now sort tiebreaks in increasing order.
+  std::sort<int *>(tiebreaks, tiebreaks+rk);
+  for (i=0; i<rk; i++)
+    ties[tiebreaks[i] % rk] = i;
+  for (i=0; i<rk; i++)
+    {
+      vec v = (*m)[i];
+      if (v == NULL)
+	M->one(base);
+      else
+	M->copy(v->monom, base);
+
+      F->append(m->cols()->degree(i), base, ties[i]);
+    }
+
+  M->remove(base);
+  delete [] tiebreaks;
+  delete [] ties;
+  return F;
+}
+
 FreeModule::~FreeModule()
 {
   int rk = rank();
@@ -101,7 +139,6 @@ FreeModule::~FreeModule()
       M->remove(mon_1);
       M->remove(TO_EXP_monom);
     }
-  bump_down((Ring *) R);
 }
 
 FreeModule *FreeModule::new_free() const
@@ -165,20 +202,22 @@ void FreeModule::append(const int *d)
 bool FreeModule::is_equal(const FreeModule *F) const
 {
   int i;
-  if (this == F) return 1;
-  if (rank() != F->rank()) return 0;
+  if (this == F) return true;
+  if (this->get_ring() != F->get_ring()) return false;
+  if (rank() != F->rank()) return false;
 
-  if (degree_monoid()->n_vars() > 0)
+  const Monoid *D = degree_monoid();
+  if (D->n_vars() > 0)
     for (i=0; i<rank(); i++)
-      if (0 != degree_monoid()->compare(degree(i), F->degree(i)))
-	return 0;
+      if (0 != D->compare(degree(i), F->degree(i)))
+	return false;
 
   if (M != NULL)
     for (i=0; i<rank(); i++)
       if (M->compare(base_monom(i), F->base_monom(i)) != 0)
-	return 0;
+	return false;
 
-  return 1;
+  return true;
 }
 
 //////////////////////////////////////////////
@@ -206,7 +245,7 @@ FreeModule *FreeModule::sub_space(int n) const
 {
   if (n < 0 || n > rank())
     {
-      gError << "subfreemodule: index out of bounds";
+      ERROR("subfreemodule: index out of bounds");
       return NULL;
     }
   FreeModule *result = new_free();
@@ -215,15 +254,15 @@ FreeModule *FreeModule::sub_space(int n) const
   return result;
 }
 
-FreeModule *FreeModule::sub_space(const intarray &a) const
+FreeModule *FreeModule::sub_space(const M2_arrayint a) const
 {
   FreeModule *result = new_free();
-  for (int i=0; i<a.length(); i++)
-    if (a[i] >= 0 && a[i] < rank())
-      result->append(degree(a[i]), base_monom(a[i]));
+  for (unsigned int i=0; i<a->len; i++)
+    if (a->array[i] >= 0 && a->array[i] < rank())
+      result->append(degree(a->array[i]), base_monom(a->array[i]));
     else
       {
-	gError << "subfreemodule: index out of bounds";
+	ERROR("subfreemodule: index out of bounds");
 	delete result;
 	return NULL;
       }
@@ -249,6 +288,11 @@ FreeModule *FreeModule::direct_sum(const FreeModule *G) const
      // direct sum 
 {
   int i;
+  if (get_ring() != G->get_ring())
+    {
+      ERROR("expected free modules over the same ring");
+      return 0;
+    }
   FreeModule *result = new_free();
   for (i=0; i<rank(); i++)
     result->append(degree(i), base_monom(i));
@@ -269,6 +313,11 @@ FreeModule *FreeModule::tensor(const FreeModule *G) const
 //  if (R != G->R) 
 //    THROW("free module tensor product: arguments must have same base ring");
 
+  if (get_ring() != G->get_ring())
+    {
+      ERROR("expected free modules over the same ring");
+      return 0;
+    }
   FreeModule *result = new_free();
   int *deg = degree_monoid()->make_one();
   int *base = NULL;
@@ -286,55 +335,6 @@ FreeModule *FreeModule::tensor(const FreeModule *G) const
   if (M != NULL) M->remove(base);
   return result;
 }
-
-#if 0
-// OLD (4/26/2001) version.  Buggy: comb::binom exits M2
-// if p >= 35. (or n is).
-FreeModule *FreeModule::exterior(int p) const
-     // p th exterior power
-{
-  int r, c;
-
-  FreeModule *result;
-
-  if (p == 0) 
-    result = get_ring()->make_FreeModule(1);
-  result = new_free();
-  if (p > rank() || p < 0) return result;
-
-  int n = comb::binom(rank(), p);
-  intarray carray(p);
-  int *a = carray.raw();
-
-  int *deg = degree_monoid()->make_one();
-  int *base = NULL;
-  if (M != NULL) base = M->make_one();
-
-  for (c=0; c<n; c++)
-    {
-      comb::decode(c,a,p);
-
-      degree_monoid()->one(deg);
-
-      for (r=0; r<p; r++)
-	degree_monoid()->mult(deg, degree(a[r]), deg);
-
-      if (M != NULL)
-	{
-	  M->one(base);
-	  for (r=0; r<p; r++)
-	    M->mult(base, base_monom(a[r]), base);
-	}
-
-      result->append(deg, base);
-    }
-
-  degree_monoid()->remove(deg);
-  if (M != NULL) M->remove(base);
-
-  return result;
-}
-#endif
 
 FreeModule *FreeModule::exterior(int p) const
      // p th exterior power
@@ -519,23 +519,19 @@ void FreeModule::text_out(buffer &o) const
   o << ')';
 }
 
-void FreeModule::bin_out(buffer &o) const
+Matrix * FreeModule::get_induced_order() const
 {
-  int rk = rank();
-  int n;
-  if (degree_monoid() != NULL)
-    n = degree_monoid()->n_vars();
-  else 
-    n = 0;
-  //bin_int_out(o, rk);
-  int *exp = new int[n+1];  // only use 0..n-1
-  bin_int_out(o, rk * n);
-  for (int i=0; i<rk; i++)
-    {
-      degree_monoid()->to_expvector(degree(i), exp);
-      for (int j=0; j<n; j++)
-	bin_int_out(o, exp[j]);
-    }
-  delete [] exp;
+  if (ty != FREE_SCHREYER)
+    return Matrix::zero(R->make_FreeModule(0),this);
+  int i;
+  int maxtie = 0;
+  for (i=0; i<rank(); i++)
+    if (compare_num(i) > maxtie)
+      maxtie = compare_num(i);
+  const FreeModule *F = R->make_FreeModule(maxtie+1);
+  Matrix *result = new Matrix(F,this);
+  for (i=0; i<rank(); i++)
+    (*result)[i] = F->term(compare_num(i), Ncoeffs()->from_int(1), base_monom(i));
+  return result;
 }
 

@@ -13,12 +13,12 @@
 extern Z *ZZ;
 int32 Random::seed;
 int32 Random::maxint32;
-RingElement Random::maxint;
+RingElement *Random::maxint;
 
 void Random::i_random()
 {
   seed = MASK;
-  maxint = RingElement(ZZ,10);
+  maxint = new RingElement(ZZ,10);
   maxint32 = 10;
 }
 
@@ -28,19 +28,19 @@ void Random::set_seed(int32 s)
   seed = s ^ MASK;
 }
 
-void Random::set_max_int(RingElement a)
+void Random::set_max_int(RingElement *a)
 {
   maxint = a;
   // If maxint is larger than 2^29 (somewhat arbitrary bound, but
   // less than the 2^31-1 by a factor of several...
-  int cmp = mpz_cmp_si(MPZ_VAL(maxint.get_value()), IM/2);
+  int cmp = mpz_cmp_si(MPZ_VAL(maxint->get_value()), IM/2);
   if (cmp <= 0)
-    maxint32 = mpz_get_ui(MPZ_VAL(maxint.get_value()));
+    maxint32 = mpz_get_ui(MPZ_VAL(maxint->get_value()));
   else
-    gError << "max random integer is " << IM/2;
+    ERROR("max random integer is %d",IM/2);
 }
 
-RingElement Random::get_max_int()
+RingElement *Random::get_max_int()
 {
   return maxint;
 }
@@ -66,9 +66,16 @@ int32 Random::random0(int32 r)
   return random0() % r;
 }
 
-RingElement Random::random()
+RingElement *Random::random()
 {
   int result = random0(2*maxint32);
   result -= maxint32;
-  return RingElement(ZZ,result);
+  return new RingElement(ZZ,result);
+}
+
+void Random::random_integer(M2_Integer a)
+  // a should be an mpz_t which has been initialized
+{
+  // MES: WRITE THIS...
+  abort();
 }

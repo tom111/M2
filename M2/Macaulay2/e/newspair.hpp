@@ -17,11 +17,6 @@ struct gen_pair
 
   gen_pair();
   gen_pair(vec f, vec fsyz);
-  // infrastructure
-  friend void i_stashes();
-  static stash *mystash;
-  void *operator new(size_t) { return mystash->new_elem(); }
-  void operator delete(void *p) { mystash->delete_elem(p); }
 };
 struct S_pair
 {
@@ -31,11 +26,6 @@ struct S_pair
 
   S_pair();
   S_pair(vec gsyz, vec rsyz);
-  // infrastructure
-  friend void i_stashes();
-  static stash *mystash;
-  void *operator new(size_t) { return mystash->new_elem(); }
-  void operator delete(void *p) { mystash->delete_elem(p); }
 };
 
 struct s_pair_bunch
@@ -55,11 +45,6 @@ struct s_pair_bunch
     pairs(NULL), gens(NULL),
     unsorted_pairs(NULL), unsorted_gens(NULL),
     nelems(0), ngens(0) {}
-
-  friend void i_stashes();
-  static stash *mystash;
-  void *operator new(size_t) { return mystash->new_elem(); }
-  void operator delete(void *p) { mystash->delete_elem(p); }
 };
 
 class s_pair_set
@@ -116,11 +101,6 @@ public:
   int n_computed() const { return ncomputed; }
 
   void stats();			// Displays some statistics about this set.
-
-  friend void i_stashes();
-  static stash *mystash;
-  void *operator new(size_t) { return mystash->new_elem(); }
-  void operator delete(void *p) { mystash->delete_elem(p); }
 };
 
 #endif

@@ -350,6 +350,7 @@ file := null
 fourDigits := i -> ( i = toString i; concatenate(4-#i:"0", i) )
 -----------------------------------------------------------------------------
 nodeBaseFilename := ""
+nodeFilename := ""
 exampleCounter := 0
 exampleOutputFile := null
 exampleResultsFound := false
@@ -361,8 +362,7 @@ processExample := x -> (
      then {x, CODE exampleResults#exampleCounter}
      else (
 	  if exampleResultsFound and #exampleResults === exampleCounter then (
-	       stderr << "warning : input file " << nodeBaseFilename 
-	       << ".out terminates prematurely" << endl;
+	       stderr << "warning : input file " << nodeFilename << " terminates prematurely" << endl;
 	       );
 	  {x, CODE concatenate("i", toString exampleCounter, " = ",x)}
 	  ))
@@ -383,7 +383,15 @@ processExamples := (docBody) -> (
      if #examples > 0 then (
 	  exampleResultsFound = true;
 	  exampleResults = "";
-	  try exampleResults = get (nodeBaseFilename | ".out") else (
+	  try (
+	       nodeFilename = nodeBaseFilename | ".out";
+	       exampleResults = get nodeFilename;
+	       ) else 
+	  try (
+	       nodeFilename = nodeBaseFilename | ".tmp";
+	       exampleResults = get nodeFilename;
+	       ) else 
+	  (
 	       exampleResultsFound = false;
 	       if phase === 4 or phase === 5 then (
 		    stderr << "warning : can't open input file '" << nodeBaseFilename << ".out'" << endl;

@@ -457,14 +457,11 @@ document { symbol "?",
 	  "3 ? 4",
       	  "\"book\" ? \"boolean\"",
       	  "3 ? 3.",
-      	  "3 ? \"a\"",
 	  },
      "It would be nice to implement an operator like this one for everything
      in such a way that the set of all things in the language would be
      totally ordered, so that it could be used in the implementation of
-     efficient hash tables, but we haven't done this.  The methods which have
-     been installed for this operator are fairly primitive, and in the end
-     often amount to simply comparing hash codes."  
+     efficient hash tables, but we haven't done this."  
      }
 
 document { ";",

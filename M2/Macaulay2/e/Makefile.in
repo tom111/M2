@@ -1,5 +1,4 @@
 # @configure_input@
-#ARING = true
 include ../../include/config.Makefile
 VPATH = @srcdir@
 DEPENDS = yes
@@ -23,9 +22,6 @@ CPPFLAGS += -I../../include
 CPPFLAGS += -I../util
 CPPFLAGS += -I.
 
-ifdef ARING
-CPPFLAGS += -DARING
-endif
 
 # CXXFLAGS += -fhandle-exceptions
 
@@ -54,30 +50,147 @@ PRE.cc   = $(COMPILE.cc) -E
 ##################
 
 CONTAINER = \
-	array \
-	hashtab \
-	queue \
-	stack 
+
 
 INTERFACE = \
+monorder \
+Eschreyer \
+GF \
+LLL \
+RR \
+Z \
+QQ \
+assprime \
+buffer \
+comb \
+det \
+frac \
+freemod \
+freemod2 \
+gauss \
+gb \
+gb2 \
+gbZZ \
+gb_comp \
+gbbinom \
+gbinhom \
+gbnod \
+hermite \
+hilb \
+int_bag \
+intarray \
+lattice \
+matrix \
+mem \
+monideal \
+monoid \
+monomial \
+newspair \
+ntuple \
+pfaff \
+polyring \
+random \
+relem \
+res \
+res2 \
+respoly \
+respoly2 \
+ring \
+ringmap \
+sagbi \
+schur \
+spair \
+sparsemat \
+termideal \
+text_io \
+varpower \
+vector \
+weylalg \
+weylfree \
+z_mod_p \
+
+COMMANDS = \
+	engine \
+	x_monom \
+	x_monoid \
+	x_relem \
+	x_free \
+	x_mat \
+	x_monideal \
+	x_gb \
+	x_ringmap \
+	x_sparsemat
+
+INTERFACE0 = \
 	buffer \
-	bin_io \
-	handles \
-	interp \
-	object \
-	obj_prim \
-	text_io
+	engine \
+	error \
+	intarray \
+	mem \
+	text_io \
+	ntuple \
+	varpower \
+	monomial \
+	x_monom \
+	monorder \
+	monoid \
+	monideal \
+	x_monideal \
+	ring \
+	relem \
+	vector \
+	freemod \
+	matrix \
+	Z \
+	z_mod_p \
+	GF \
+	RR \
+	frac \
+	polyring \
+	schur \
+	weylalg \
+	freemod2 \
+	random \
+	weylfree \
+	int_bag \
+	hilb \
+	comb \
+	sparsemat \
+	termideal \
+	det \
+	pfaff \
+	assprime \
+	gb_comp \
+	LLL \
+	hermite \
+	gauss \
+	sagbi \
+	gb \
+	gbinhom \
+	gbbinom \
+	gbZZ \
+	respoly \
+	respoly2 \
+	res \
+	res2 \
+	gbnod \
+	gb2 \
+	Eschreyer
 
-INTERFACE_H = obj_int obj_iarr obj_str obj_ptr
+#	x_relem \
 
-ESTUFF = \
+#	x_monoid \
+
+INTERFACE_OLD_H = obj_int obj_iarr obj_str obj_ptr
+
+REMOVEDESTUFF_OLD = \
 	Eschreyer \
 	Espairs \
 	EGB1 \
 	Elookup \
 	Einterface
 
-COMMANDS = \
+COMMANDS_REDO = \
 	x_monoid \
 	x_monom \
 	x_system \
@@ -87,9 +200,10 @@ COMMANDS = \
 	x_gb \
 	freemod2 \
 	x_factor \
+	x_borel \
 	gbnod
 
-NAMES = \
+NAMES_OLD = \
 	error \
 	ntuple \
 	res \
@@ -122,9 +236,7 @@ NAMES = \
 	lattice \
 	gauss \
 	comb \
-	mem \
 	int_bag \
-	intarray \
 	monorder \
 	monomial \
 	varpower \
@@ -158,7 +270,16 @@ NOT_USED_YET = \
 	montable \
 	monheap
 
-OLDESTUFF = \
+OLDSTUFF = \
+	bin_io \
+	handles \
+	interp \
+	object \
+	obj_prim \
+	hashtab \
+	stack 
+
+OLDESTUFF_OLD = \
 	EZZp \
 	Emonoid \
 	Epoly \
@@ -171,14 +292,14 @@ OLDESTUFF = \
 	EGB \
 	Ecommands \
 
-E_H = \
+E_H_OLD = \
 	Edefs.hpp \
 	Ehashtab.hpp \
 	Ematrix.hpp \
 	Eringmap.hpp \
 	Epolywrap.hpp
 
-NAMES_H = \
+NAMES_H_OLD = \
 	comp \
 	ringelem \
 	style \
@@ -186,12 +307,14 @@ NAMES_H = \
 	index \
 	respair2
 
-C_FILES = mac2
+NAMES_H = comp \
+	ringelem \
+	style \
+	hash \
+	index \
+	respair2
 
-ifdef ARING
-#NAMES += ARING/polywrap
-Names += ARING/poly
-endif
+C_FILES = error table exptable monordering # ../d/M2types # borel
 
 
 ##############################
@@ -200,9 +323,10 @@ endif
 
 GENERATED_H = cmdnames cmdinst geovec geores
 
-CC_FILES1 := $(ESTUFF) $(NAMES) $(CONTAINER) $(INTERFACE)
-CC_FILES2 := $(COMMANDS)
-CC_FILES := $(CC_FILES1) $(CC_FILES2)
+#CC_FILES1 := $(ESTUFF) $(NAMES) $(CONTAINER) $(INTERFACE)
+#CC_FILES2 := $(COMMANDS)
+#CC_FILES := $(CC_FILES1) $(CC_FILES2)
+CC_FILES := $(INTERFACE) $(COMMANDS)
 FILES := $(CC_FILES) $(C_FILES)
 LOFILES1 := $(addsuffix .lo,$(CC_FILES1))
 LOFILES2 := $(addsuffix .lo,$(CC_FILES2) $(C_FILES))
@@ -275,12 +399,12 @@ clean::
 Makefile : Makefile.in
 	cd ../..; ./config.status Macaulay2/e/Makefile
 
-Makefile-o.depends: $(CFILES) $(CCFILES) cmdnames.hpp cmdinst.hpp
-	$(CC) -MM $(CPPFLAGS) $(patsubst %, @srcdir@/%, $(CFILES) $(CCFILES)) >"$@"
-clean::; rm -f Makefile-o.depends
-
+# dependency files, made automatically
+%.dep: %.cpp; $(CXX) -MM $(CPPFLAGS) $< | sed 's/\($*\)\.o[ :]*/\1.o $@ : /' >$@
+%.dep: %.c;   $(CC)  -MM $(CPPFLAGS) $< | sed 's/\($*\)\.o[ :]*/\1.o $@ : /' >$@
+clean::; rm -f *.dep
 ifeq "$(DEPENDS)" "yes"
-include Makefile-o.depends
+include $(CFILES:.c=.dep) $(CCFILES:.cpp=.dep)
 endif
 
 # this requires gnu sort and gnu uniq commands
@@ -291,6 +415,7 @@ dups-okay: dups-tmp
 	 else touch $@; fi
 
 check::
+	$(MAKE) -C tests check
 
 ifeq ($(OS),Linux)
 # don't run it elsewhere because we may not have gnu sort and gnu uniq there

@@ -19,24 +19,26 @@ PROJECT += interp.d
 PROJECT += texmacs.d
 # PROJECT += mp.d
 # PROJECT += actorsX.d
+PROJECT += interface.d
 PROJECT += actors5.d actors4.d actors3.d actors2.d actors.d
 PROJECT += objects.d
 PROJECT += struct.d
 PROJECT += GC.d
+PROJECT += util.d
 PROJECT += convertr.d basic.d binding.d
 PROJECT += parser.d lex.d tokens.d
-PROJECT += arith.d
-# PROJECT += gmp.d
+PROJECT += engine.d
+PROJECT += gmp.d
 PROJECT += err.d
 PROJECT += stdiop.d
 PROJECT += getline.d
 PROJECT += ctype.d
 PROJECT += stdio.d
 PROJECT += nets.d
+PROJECT += vararray.d
 PROJECT += varstrin.d
 PROJECT += strings.d 
 PROJECT += X.d
-PROJECT += GB.d
 PROJECT += system.d
 PROJECT += C.d
 ##############################
@@ -50,7 +52,7 @@ DNAMES += t.d u.d optim.d actorsX.d
 DNAMES += gr.d grx.d
 DNAMES += testall.d pp.d redblk.d
 ############################## more files
-WRAPPERS := scclib.c getpagesize.h gc_cpp.cc memdebug.c memdebug.h
+WRAPPERS := M2types.c scclib.c getpagesize.h gc_cpp.cc memdebug.c memdebug.h gmp_aux.c
 #############################################################################
 SRCFILES := $(WRAPPERS) $(DNAMES)
 SCRIPTS := reverse
@@ -197,6 +199,7 @@ compat.c compat.h : configure ../../include/config.h
 	FLAGS="$(LDFLAGS) $(LOADLIBES) $(LDLIBS)" @srcdir@/configure
 endif
 
+M2types.o : M2types.h
 M2lib.o scclib.o : compat.h
 M2lib.o scclib.o : \
 	../c/compat.h ../c/compat.c types.h memdebug.h ../../include/config.h
@@ -206,7 +209,7 @@ gc_cpp.o : ../../include/config.h
 allc : $(PROJECT:.d=.c) tmp_init.c
 
 
-MISCO := M2lib.o scclib.o tmp_init.o memdebug.o initgmp.o tmpl_inst.o version.o
+MISCO := M2lib.o M2types.o scclib.o tmp_init.o memdebug.o initgmp.o tmpl_inst.o version.o gmp_aux.o
 
 # MISCO += factoryseed.o
 
@@ -220,6 +223,7 @@ ifeq ($(OS),Darwin)
 #	mv tmpl_inst.o libfac_tmpl_inst.o
 # ftmpl_inst.cc is no longer needed?
 MISCO += libfac_tmpl_inst.o 
+LDFLAGS += -multiply_defined suppress
 endif
 
 ifeq ($(GC_FOR_NEW),yes)
@@ -286,7 +290,7 @@ tmp_init.c : $(PROJECT)
 .._c_compat.c: ../c/compat.c; cp $^ $@
 .._c_compat.h: ../c/compat.h; cp $^ $@
 
-c-port: $(ALLC) tmp_init.c gc_cpp.cc scclib.c memdebug.c memdebug.h \
+c-port: $(ALLC) tmp_init.c gc_cpp.cc gmp_aux.c M2types.c scclib.c memdebug.c memdebug.h \
 		compat.c compat.h \
 		.._c_compat.c .._c_compat.h
 	tar cfz /tmp/c-port.tgz $^
@@ -314,8 +318,8 @@ endif
 endif
 
 # statically linked libraries
-LIBRARYOPTIONS += -lfac
-LIBRARYOPTIONS += -lcf
+# LIBRARYOPTIONS += -lfac
+# LIBRARYOPTIONS += -lcf
 LIBRARYOPTIONS += -lfac
 LIBRARYOPTIONS += -lcf
 LIBRARYOPTIONS += -lgmp
@@ -354,14 +358,15 @@ endif
 	$(STRIPCMD) $@
 
 t_main.o : types.h
-t : t_main.o gmp.o stdio.o strings.o system.o varstrin.o nets.o scclib.o C.o t.o
+t : t_main.o gmp.oo stdio.oo strings.oo system.oo C.o t.o
 	$(CC) $(LDFLAGS) $^ $(LDLIBS) $(OUTPUT_OPTION)
 
 all:: TAGS
 
 TAGS: Makefile
 	@ echo making TAGS
-	@ $(UTIL)echoout -r2 '>TAGS' $(foreach i, $(SRCFILES) M2lib.c types.h,  $(i),0)
+	@ $(UTIL)echoout -r2 '>TAGS' \
+		$(foreach i, $(patsubst %, @srcdir@/%, $(SRCFILES) M2lib.c types.h),  $(i),0)
 
 clean ::
 	rm -f *.log *.sym *.out *.o *.a *.oo *.sig *.dep mapfile \

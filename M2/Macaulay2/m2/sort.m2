@@ -1,7 +1,27 @@
---		Copyright 1993-1999 by Daniel R. Grayson
+--		Copyright 1993-2002 by Daniel R. Grayson
+
+-- Jun 25, 2002: these default comparisons are confusing!
+
+-- Type ? Type := (x,y) -> hash x ? hash y
+-- Thing ? Thing := (x,y) -> (
+--      if x === y then symbol ==
+--      else (
+-- 	  s := class x ? class y;
+-- 	  if s =!= symbol == then s
+-- 	  else (
+-- 	       t := parent x ? parent y;
+-- 	       if t =!= symbol == then t
+-- 	       else hash x ? hash y
+-- 	       )))
+-- 
 
 le := (a,b) -> (
-     c := a ? b;
+     c := (try a ? b else 
+     	  if class a === class b 
+     	  then hash a ? hash b 
+     	  else try toString class a ? toString class b 
+	  else hash class a ? hash class b
+	  );
      if c === incomparable then error "incomparable elements encountered in sort";
      c =!= symbol >
      )
@@ -39,8 +59,8 @@ rsort = (v) -> (
 	       i := l+1;
 	       j := r;
 	       while i <= j do (
-		    if v#i >= c then i=i+1
-		    else if c >= v#j then j=j-1
+		    if le(c,v#i) then i=i+1
+		    else if le(v#j,c) then j=j-1
 		    else ( w := v#i; v#i = v#j; v#j = w ));
 	       if l<j then subrsort(l+1,j);
 	       if i<=r then subrsort(i,r);
@@ -68,15 +88,3 @@ lexcompare := (v,w,i) -> (
 
 BasicList ? BasicList := (v,w) -> lexcompare(v,w,0)
 Sequence ? Sequence := (v,w) -> lexcompare(v,w,0)
-Type ? Type := (x,y) -> hash x ? hash y
-Thing ? Thing := (x,y) -> (
-     if x === y then symbol ==
-     else (
-	  s := class x ? class y;
-	  if s =!= symbol == then s
-	  else (
-	       t := parent x ? parent y;
-	       if t =!= symbol == then t
-	       else hash x ? hash y
-	       )))
-

@@ -28,8 +28,8 @@ protected:
 
   WeylAlgebra(const Ring *KK, 
 	      const Monoid *MF, 
-	      int npairs, 
-	      const int *deriv, const int *comm,
+	      M2_arrayint derivs,
+	      M2_arrayint comms,
 	      int homog_var);
 protected:
   virtual ~WeylAlgebra();
@@ -64,12 +64,9 @@ protected:
 	  const Nterm *g) const;  // An entire polynomial
 public:
   static WeylAlgebra *create(const Ring *K, const Monoid *MF, 
-			     int npairs,
-			     const int *derivative,
-			     const int *commutative,
+			     M2_arrayint derivatives,
+			     M2_arrayint commutatives,
 			     int homog_var);
-
-  class_identifier class_id() const { return CLASS_WeylAlgebra; }
 
   virtual FreeModule *make_FreeModule() const;
   virtual FreeModule *make_FreeModule(int n) const;

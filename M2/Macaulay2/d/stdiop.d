@@ -9,6 +9,7 @@
 -- Also, these are *text* files, so we translate all three flavors of line termination
 -- into a single \n.
 
+use C;
 use system;
 use strings;
 use stdio;

@@ -1,4 +1,4 @@
---		Copyright 1993-1999 by Daniel R. Grayson
+--		Copyright 1993-2002 by Daniel R. Grayson
 
 noapp := (f,x) -> error(
      "no method for applying item of class ", toString class f, 
@@ -114,20 +114,22 @@ setup := (args, symbols) -> (
 	  )))
 
 setup((), { 
-	  borel, prune, gcdCoefficients, singularLocus, 
+	  entries, borel, prune, gcdCoefficients, singularLocus, 
 	  Hom, diff, diff', contract, contract', subsets, partitions, member,
 	  koszul, symmetricPower, basis, coefficientRing, trace,
 	  getChangeMatrix, poincare, cover, coverMap, super, poincareN, terms,
 	  dual, cokernel, coimage, image, generators, allGenerators, someTerms, scanKeys, scanValues,
-	  summary, substitute, rank, complete, ambient, top, transpose, baseName,
+	  summary, substitute, rank, complete, ambient, top, baseName,
 	  degree, coefficients, oldCoefficients, size, sum, product,
-	  exponents, nullhomotopy,
+	  exponents, nullhomotopy, module, raw,
 	  hilbertFunction, content, leadTerm, leadCoefficient, leadMonomial, 
-	  leadComponent, degreesRing, newDegreesRing, degrees, annihilator, assign, numgens,
-	  autoload, ggPush, minprimes, relations, cone, random,
-	  det, presentation, symbol use, degreesMonoid, newDegreesMonoid, submatrix,
+	  leadComponent, degreesRing, degrees, annihilator, assign, numgens,
+	  autoload, minprimes, relations, cone, random,
+	  det, presentation, symbol use, degreesMonoid, submatrix,
 	  truncate, fraction
 	  })
+
+setup(SingleArgumentDispatch => true, {transpose} )
 setup(TypicalValue => RR, {realPart, imaginaryPart})
 setup(TypicalValue => Boolean,
      {isBorel, isWellDefined, isInjective, isSurjective, isUnit,
@@ -192,16 +194,16 @@ flatten VisibleList := VisibleList => oldflatten
 coker = cokernel
 
 source = method()
-source Thing := (h) -> (
-     if h#?(symbol source) then h.source
-     else if (class h)#?(symbol source) then (class h)#?(symbol source)
-     else error ( toString h, " of class ", toString class h, " has no source" ))
+-- source Thing := (h) -> (
+--      if h#?(symbol source) then h.source
+--      else if (class h)#?(symbol source) then (class h)#?(symbol source)
+--      else error ( toString h, " of class ", toString class h, " has no source" ))
 
 target = method()
-target Thing := (h) -> (
-     if h.?target then h.target
-     else if (class h)#?(symbol target) then (class h)#?(symbol target)
-     else error (toString h | " of class " | toString class h | " has no target"))
+-- target Thing := (h) -> (
+--      if h.?target then h.target
+--      else if (class h)#?(symbol target) then (class h)#?(symbol target)
+--      else error (toString h | " of class " | toString class h | " has no target"))
 
 gens = generators
 

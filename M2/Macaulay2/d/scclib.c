@@ -4,18 +4,7 @@
 
 #include "../c/compat.c"
 
-char newline[] = NEWLINE;
-
 extern void outofmem();
-
-char *getmem(n)
-unsigned int n;
-{
-     char *p;
-     p = GC_MALLOC(n);
-     if (p == NULL) outofmem();
-     return p;
-     }
 
 #if 0
 char *GC_malloc_clear(n)
@@ -27,15 +16,6 @@ unsigned int n;
   return p;
 }
 #endif
-
-char *getmem_atomic(n)
-unsigned int n;
-{
-     char *p;
-     p = GC_MALLOC_ATOMIC(n);
-     if (p == NULL) outofmem();
-     return p;
-     }
 
 void trap(){}
 
@@ -126,29 +106,6 @@ int system_sleep(int t) {
   return sleep(t);
 }
 
-static struct M2_string_struct system_newline_contents = { 1, { '\n' } };
-M2_string system_newline = &system_newline_contents;
-
-char *tocharstar(s)
-M2_string s;
-{
-     char *p = getmem_atomic(s->len + 1);
-     memcpy(p,s->array,s->len);
-     p[s->len] = 0;
-     return p;
-     }
-
-char **tocharstarstar(p)
-M2_stringarray p;
-{
-     int n = p->len;
-     char **s = (char **)getmem((n + 1)*sizeof(char *));
-     unsigned int i;
-     for (i=0; i<n; i++) s[i] = tocharstar(p->array[i]);
-     s[n] = NULL;
-     return s;
-     }
-
 int system_openin(filename)
 M2_string filename;
 {
@@ -176,28 +133,6 @@ M2_string filename;
      return fd;
      }
 
-M2_string strings_substr(x,start,len)
-M2_string x;
-int start;
-int len;
-{
-     M2_string p;
-     if (start < 0) start = 0;
-     if (start + len > (int)x->len) len = x->len - start;
-     if (len < 0) len = 0;
-     p = (M2_string) getmem_atomic(sizeofarray(p,len));
-     p->len = len;
-     memcpy(p->array,x->array+start,len);
-     return p;
-     }
-
-M2_string strings_substr_1(x,start)
-M2_string x;
-int start;
-{
-     return strings_substr(x,start,x->len - start);
-     }
-
 int system_pipe(fildes)
 M2_arrayint fildes;
 {
@@ -217,7 +152,7 @@ M2_stringarray argv;
      return ERROR;
      }
 
-M2_string tostring(char const *s)
+M2_string system_tostring(char const *s)
 {
      int n = strlen(s);
      M2_string p = (M2_string)getmem_atomic(sizeofarray(p,n));
@@ -242,45 +177,13 @@ M2_string actors5_convertdoubletonet(double x) {
   return p;
 }
 
-M2_string tostringn(s,n)
-char *s;
-int n;
-{
-     M2_string p = (M2_string)getmem_atomic(sizeofarray(p,n));
-     p->len = n;
-     memcpy(p->array,s,n);
-     return p;
-     }
-
-M2_arrayint toarrayint(n,p)
-int n;
-int *p;
-{
-     M2_arrayint z = (M2_arrayint)getmem_atomic(sizeofarray(z,n));
-     z->len = n;
-     memcpy(z->array,p,n * sizeof(int));
-     return z;
-     }
-
-M2_stringarray tostrings(n,s)
-int n;
-char **s;
-{
-     int i;
-     M2_stringarray a;
-     a = (M2_stringarray) getmem (sizeofarray(a,n));
-     a->len = n;
-     for (i=0; i<n; i++) a->array[i] = tostring(s[i]);
-     return a;
-     }
-
 M2_string interp_dirname(M2_string s) {
   char *t = tocharstar(s);
   char *u = t;
   char *v = u;
   for (; *u; u++) if (*u == '/') v=u+1;	/* on MacOS?? */
   if (v != NULL) *v = '\0';
-  return tostring(t);
+  return system_tostring(t);
 }
 
 M2_string system_getcwd()
@@ -297,8 +200,8 @@ M2_string system_getcwd()
 #else
      if (0 != strcmp(buf,"/")) strcat(buf,"/");
 #endif
-     if (x != NULL) return tostring(x);
-     return tostring("");
+     if (x != NULL) return system_tostring(x);
+     return system_tostring("");
      }
 
 M2_string system_getenv(s)
@@ -307,8 +210,8 @@ M2_string s;
      char *ss = tocharstar(s);
      char *x = getenv(ss);
      GC_FREE(ss);
-     if (x == NULL) return tostring("");
-     else return tostring(x);
+     if (x == NULL) return system_tostring("");
+     else return system_tostring(x);
      }
 
 
@@ -407,7 +310,7 @@ double x;
 M2_string system_readlink(M2_string filename) {
 	char *fn = tocharstar(filename);
 	char buf[5000];
-	M2_string s = readlink(fn,buf,sizeof buf) == -1 ? filename : tostring(buf);
+	M2_string s = readlink(fn,buf,sizeof buf) == -1 ? filename : system_tostring(buf);
 	GC_FREE(fn);
 	return s;
 }
@@ -417,7 +320,7 @@ M2_string system_errfmt(M2_string filename, int lineno, int colno) {
 	char *fn = tocharstar(filename);
 	M2_string ret;
 	sprintf(s,posfmt,fn,lineno,colno);
-	ret = tostring(s);
+	ret = system_tostring(s);
 	GC_FREE(s);
 	GC_FREE(fn);
 	return ret;
@@ -517,18 +420,6 @@ int fd;
        return s;
      }
 }
-
-M2_string strings_join(x,y)
-M2_string x;
-M2_string y;
-{
-     M2_string p;
-     p = (M2_string) getmem_atomic(sizeofarray(p,x->len+y->len));
-     p->len = x->len + y->len;
-     memcpy(p->array,x->array,x->len);
-     memcpy(p->array+x->len,y->array,y->len);
-     return p;
-     }
 
 int host_address(name)
 char *name;
@@ -658,7 +549,10 @@ M2_string serv;
      return sd;
      }
 
-extern int errno, sys_nerr;
+extern int errno;
+#if defined HAVE_DECL_SYS_NERR && !HAVE_DECL_SYS_NERR
+extern int sys_nerr;
+#endif
 
 #ifdef __CYGWIN__
 #define NO_HERROR
@@ -703,9 +597,9 @@ char const *system_strerror() {
 M2_string system_syserrmsg()
 {
 #if defined(__MWERKS__)
-     return tostring("");
+     return system_tostring("");
 #else
-     return tostring(system_strerror());
+     return system_tostring(system_strerror());
 #endif
 }
 

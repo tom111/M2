@@ -1,4 +1,4 @@
---		Copyright 1997 by Daniel R. Grayson
+--		Copyright 1997-2002 by Daniel R. Grayson
 
 unlist = X -> error "'unlist' has been replaced by toSequence"
 elements = X -> error "'elements' has been replace by toList"

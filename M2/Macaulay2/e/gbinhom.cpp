@@ -4,19 +4,18 @@
 #include "gbinhom.hpp"
 #include "geovec.hpp"
 #include "text_io.hpp"
+#include "vector.hpp"
 
 extern char system_interrupted;
 extern int comp_printlevel;
 
-stash *GBinhom_comp::mystash;
-
-void GBinhom_comp::set_up0(const Matrix &m, int csyz, int nsyz)
+void GBinhom_comp::set_up0(const Matrix *m, int csyz, int nsyz)
 {
   int i;
-  R = m.get_ring()->cast_to_PolynomialRing();
+  R = m->get_ring()->cast_to_PolynomialRing();
   if (R == NULL)
     {
-      gError << "ring is not a polynomial ring";
+      ERROR("ring is not a polynomial ring");
       // MES: throw an error here.
       assert(0);
     }
@@ -28,12 +27,11 @@ void GBinhom_comp::set_up0(const Matrix &m, int csyz, int nsyz)
   gb->next = NULL;			// (both minimal, and large GB's)
   gb->next_min = NULL;
 
-  if (nsyz < 0 || nsyz > m.n_cols())
-    nsyz = m.n_cols();
+  if (nsyz < 0 || nsyz > m->n_cols())
+    nsyz = m->n_cols();
   n_comps_per_syz = nsyz;
 
-  F = m.rows();
-  bump_up(F);
+  F = m->rows();
 
   n_gb = n_subring = 0;
   n_pairs = n_computed = 0;
@@ -47,20 +45,19 @@ void GBinhom_comp::set_up0(const Matrix &m, int csyz, int nsyz)
   need_resize = 0;
 
   for (i=0; i<F->rank(); i++)
-    monideals.append(MonomialIdeal(R));
+    monideals.append(new MonomialIdeal(R));
 
 }
 
-void GBinhom_comp::set_up(const Matrix &m, int csyz, int nsyz, int strat)
+void GBinhom_comp::set_up(const Matrix *m, int csyz, int nsyz, int strat)
 {
   strategy = strat;
   set_up0(m, csyz, nsyz);
 
-  Fsyz = m.cols()->sub_space(n_comps_per_syz);  
-  bump_up(Fsyz);
-  syz = Matrix(Fsyz);
+  Fsyz = m->cols()->sub_space(n_comps_per_syz);  
+  syz = new Matrix(Fsyz);
 
-  add_gens(0, m.n_cols()-1, m);
+  add_gens(0, m->n_cols()-1, m);
 }
 
 void GBinhom_comp::inter_reduce(gb_elem *&/*gens*/)
@@ -68,7 +65,7 @@ void GBinhom_comp::inter_reduce(gb_elem *&/*gens*/)
   // MES
 }
 
-void GBinhom_comp::add_gens(int lo, int hi, const Matrix &m)
+void GBinhom_comp::add_gens(int lo, int hi, const Matrix *m)
 {
   // MES
   // First incorporate the new generators.
@@ -79,39 +76,38 @@ void GBinhom_comp::add_gens(int lo, int hi, const Matrix &m)
   // MES: should we inter-reduce these first?  Does it matter?
   for (int i=hi; i>=lo; i--)
     {
-      s_pair *p = new_gen(i, m[i]);
+      s_pair *p = new_gen(i, (*m)[i]);
       if (p != NULL)
 	spairs->insert(p);
       n_pairs++;
     }
 }
 
-void GBinhom_comp::force(const Matrix &m, const Matrix &gb, const Matrix &mchange,
-		    const Matrix &msyz)
+void GBinhom_comp::force(const Matrix *m, const Matrix *gb, const Matrix *mchange,
+		    const Matrix *msyz)
 {
-  int csyz = (msyz.n_cols() > 0);
-  set_up0(m, csyz, mchange.n_rows());
+  int csyz = (msyz->n_cols() > 0);
+  set_up0(m, csyz, mchange->n_rows());
 
-  Fsyz = mchange.rows();
-  bump_up(Fsyz);
-  syz = msyz;
+  Fsyz = mchange->rows();
+  syz = (Matrix *) msyz;
 
-  for (int i=0; i<gb.n_cols(); i++)
+  for (int i=0; i<gb->n_cols(); i++)
     {
-      vec f = F->copy(gb[i]);
-      vec fsyz = Fsyz->copy(mchange[i]);
+      vec f = F->copy((*gb)[i]);
+      vec fsyz = Fsyz->copy((*mchange)[i]);
       gb_insert(f,fsyz,1);
     }
 }
 
-GBinhom_comp::GBinhom_comp(const Matrix &m, int csyz, int nsyz, int strat)
+GBinhom_comp::GBinhom_comp(const Matrix *m, int csyz, int nsyz, int strat)
   : gb_comp(COMP_GBINHOM)
 {
   set_up(m, csyz, nsyz, strat);
 }
 
-GBinhom_comp::GBinhom_comp(const Matrix &m, const Matrix &gb, const Matrix &mchange, 
-		 const Matrix &syz)
+GBinhom_comp::GBinhom_comp(const Matrix *m, const Matrix *gb, const Matrix *mchange, 
+		 const Matrix *syz)
   : gb_comp(COMP_GBINHOM)
 {
   force(m, gb, mchange, syz);
@@ -149,10 +145,6 @@ GBinhom_comp::~GBinhom_comp()
       delete [] tmp->lead_exp;
       delete tmp;
     }
-
-  // Finally, decrement ref counts
-  bump_down(F);
-  bump_down(Fsyz);
 }
 
 void GBinhom_comp::resize(int /*nbits*/)
@@ -219,7 +211,7 @@ s_pair *GBinhom_comp::new_gen(int i, const vec f)
   if (F->is_zero(f))
     {
       if (!Fsyz->is_zero(fsyz))
-	syz.append(fsyz);
+	syz->append(fsyz);
       return NULL;
     }
 
@@ -325,10 +317,10 @@ void GBinhom_comp::find_pairs(gb_elem *p)
 
   if (R->is_quotient_ring())
     {
-      const MonomialIdeal &Rideal = R->get_quotient_monomials();
-      for (j = Rideal.first(); j.valid(); j++)
+      const MonomialIdeal *Rideal = R->get_quotient_monomials();
+      for (j = Rideal->first(); j.valid(); j++)
 	{
-	  Nterm * f = (Nterm *) Rideal[j]->basis_ptr();
+	  Nterm * f = (Nterm *) (*Rideal)[j]->basis_ptr();
 	  M->lcm(f->monom, f_m, find_pairs_lcm);
 	  vplcm.shrink(0);
 	  M->to_varpower(find_pairs_lcm, vplcm);
@@ -491,7 +483,7 @@ int GBinhom_comp::gb_reduce(vec &f, vec &fsyz)
       M->divide(f->monom, F->base_monom(f->comp), s);
       M->to_expvector(s, div_totalexp);
       if (R->is_quotient_ring() 
-	  && R->get_quotient_monomials().search_expvector(div_totalexp, b))
+	  && R->get_quotient_monomials()->search_expvector(div_totalexp, b))
 	{
 	  Nterm *g = (Nterm *) b->basis_ptr();
 	  F->imp_ring_cancel_lead_term(f, g, coeff, reduce_ndiv);
@@ -548,7 +540,7 @@ int GBinhom_comp::gb_geo_reduce(vec &f, vec &fsyz)
       M->divide(lead->monom, F->base_monom(lead->comp), s);
       M->to_expvector(s, div_totalexp);
       if (R->is_quotient_ring()
-	  && R->get_quotient_monomials().search_expvector(div_totalexp, b))
+	  && R->get_quotient_monomials()->search_expvector(div_totalexp, b))
 	{
 	  Nterm *g = (Nterm *) b->basis_ptr();
 	  M->divide(lead->monom, g->monom, reduce_ndiv);
@@ -746,7 +738,7 @@ int GBinhom_comp::s_pair_step(s_pair *p)
 	}
       if (collect_syz)
 	{
-	  syz.append(fsyz);
+	  syz->append(fsyz);
 	  return SPAIR_SYZ;
 	}
       else
@@ -764,7 +756,7 @@ int GBinhom_comp::computation_complete(int stop_gb,
      // Test whether the current computation is done.
 {
   if (stop_gb > 0 && n_gb >= stop_gb) return COMP_DONE_GB_LIMIT;
-  if (stop_syz > 0 && syz.n_cols() >= stop_syz) return COMP_DONE_SYZ_LIMIT;
+  if (stop_syz > 0 && syz->n_cols() >= stop_syz) return COMP_DONE_SYZ_LIMIT;
   if (stop_pairs > 0 && n_computed >= stop_pairs) return COMP_DONE_PAIR_LIMIT;
   if (stop_subring > 0 && n_subring >= stop_subring) return COMP_DONE_SUBRING_LIMIT;
   return COMP_COMPUTING;
@@ -776,7 +768,7 @@ int GBinhom_comp::calc(const int * /*deg*/, const intarray &stop)
 {
   if (stop.length() != 7) 
     {
-      gError << "inappropriate stop conditions for GB computation";
+      ERROR("inappropriate stop conditions for GB computation");
       return COMP_ERROR;
     }
   int stop_gb = stop[0]; //ngb
@@ -805,7 +797,7 @@ int GBinhom_comp::calc(const int * /*deg*/, const intarray &stop)
 
       if (error())
 	{
-	  gError << error_message();
+	  ERROR(error_message());
 	  is_done = COMP_ERROR;
 	  break;
 	}
@@ -853,53 +845,53 @@ int GBinhom_comp::calc(const int * /*deg*/, const intarray &stop)
 }
 
 //--- Reduction --------------------------
-Matrix GBinhom_comp::reduce(const Matrix &m, Matrix &lift)
+Matrix *GBinhom_comp::reduce(const Matrix *m, Matrix *&lift)
 {
-  Matrix red(m.rows(), m.cols());
-  lift = Matrix(Fsyz, m.cols());
-  if (m.n_rows() != F->rank()) {
-       gError << "expected matrices to have same number of rows";
-       return red;
+  if (m->n_rows() != F->rank()) {
+       ERROR("expected matrices to have same number of rows");
+       return 0;
   }
-  for (int i=0; i<m.n_cols(); i++)
+  Matrix *red = new Matrix(m->rows(), m->cols());
+  lift = new Matrix(Fsyz, m->cols());
+  for (int i=0; i<m->n_cols(); i++)
     {
-      vec f = F->copy(m[i]);
+      vec f = F->copy((*m)[i]);
       vec fsyz = NULL;
 
       gb_reduce(f, fsyz);
       Fsyz->negate_to(fsyz);
-      red[i] = f;
-      lift[i] = fsyz;
+      (*red)[i] = f;
+      (*lift)[i] = fsyz;
     }
   return red;
 }
 
-Vector GBinhom_comp::reduce(const Vector &v, Vector &lift)
+Vector *GBinhom_comp::reduce(const Vector *v, Vector *&lift)
 {
-  if (!v.free_of()->is_equal(F))
+  if (!v->free_of()->is_equal(F))
     {
-      gError << "reduce: vector is in incorrect free module";
-      return Vector(F, NULL);
+      ERROR("reduce: vector is in incorrect free module");
+      return 0;
     }
-  vec f = F->copy(v.get_value());
+  vec f = F->copy(v->get_value());
   vec fsyz = NULL;
 
   gb_reduce(f, fsyz);
   Fsyz->negate_to(fsyz);
 
-  lift = Vector(Fsyz, fsyz);
-  return Vector(F, f);
+  lift = Vector::make_raw(Fsyz, fsyz);
+  return Vector::make_raw(F, f);
 }
 
-int GBinhom_comp::contains(const Matrix &m)
+int GBinhom_comp::contains(const Matrix *m)
   // Return -1 if every column of 'm' reduces to zero.
   // Otherwise return the index of the first column that
   // does not reduce to zero.
 {
   // Reduce each column of m one by one.
-  for (int i=0; i<m.n_cols(); i++)
+  for (int i=0; i<m->n_cols(); i++)
     {
-      vec f = F->translate(m.rows(),m[i]);
+      vec f = F->translate(m->rows(),(*m)[i]);
       vec fsyz = NULL;
       gb_reduce(f, fsyz);
       Fsyz->remove(fsyz);
@@ -913,45 +905,45 @@ int GBinhom_comp::contains(const Matrix &m)
 }
 bool GBinhom_comp::is_equal(const gb_comp * /*q*/)
 {
-  gError << "== not yet implemented for inhomogeneous GB's";
+  ERROR("== not yet implemented for inhomogeneous GB's");
   return false;
 }
 
 //--- Obtaining matrices as output -------
-Matrix GBinhom_comp::min_gens_matrix()
+Matrix *GBinhom_comp::min_gens_matrix()
 {
-  Matrix result(F);
+  Matrix *result = new Matrix(F);
   for (gb_elem *q = gb->next_min; q != NULL; q = q->next_min)
     if (q->is_min)
-      result.append(F->copy(q->f));
+      result->append(F->copy(q->f));
   return result;
 }
 
-Matrix GBinhom_comp::initial_matrix(int n)
+Matrix *GBinhom_comp::initial_matrix(int n)
 {
-  Matrix result(F);
+  Matrix *result = new Matrix(F);
   for (gb_elem *q = gb->next_min; q != NULL; q = q->next_min)
-    result.append(F->lead_term(n, q->f));
+    result->append(F->lead_term(n, q->f));
   return result;
 }
 
-Matrix GBinhom_comp::gb_matrix()
+Matrix *GBinhom_comp::gb_matrix()
 {
-  Matrix result(F);
+  Matrix *result = new Matrix(F);
   for (gb_elem *q = gb->next_min; q != NULL; q = q->next_min)
-    result.append(F->copy(q->f));
+    result->append(F->copy(q->f));
   return result;
 }
 
-Matrix GBinhom_comp::change_matrix()
+Matrix *GBinhom_comp::change_matrix()
 {
-  Matrix result(Fsyz);
+  Matrix *result = new Matrix(Fsyz);
   for (gb_elem *q = gb->next_min; q != NULL; q = q->next_min)
-    result.append(Fsyz->copy(q->fsyz));
+    result->append(Fsyz->copy(q->fsyz));
   return result;
 }
 
-Matrix GBinhom_comp::syz_matrix()
+Matrix *GBinhom_comp::syz_matrix()
 {
   return syz;
 }

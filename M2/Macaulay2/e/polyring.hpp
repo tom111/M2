@@ -9,6 +9,9 @@
 
 ///// Ring Hierarchy ///////////////////////////////////
 
+class TermIdeal;
+class Matrix;
+
 class PolynomialRing : public Ring
 {
   friend class FreeModule;
@@ -22,7 +25,7 @@ protected:
   // Quotient ring information
   const PolynomialRing *base_ring; // == NULL iff this is not a quotient ring
   array<ring_elem> quotient_ideal;
-  MonomialIdeal Rideal;		// This is used if the coeff ring is not ZZ.
+  MonomialIdeal * Rideal;	// This is used if the coeff ring is not ZZ.
   TermIdeal *RidealZ;		// This is used if the coeff ring is ZZ.
 
   bool coefficients_are_ZZ;
@@ -32,15 +35,13 @@ public:
   static PolynomialRing *create(const Ring *K, const Monoid *MF);
   static PolynomialRing *create(const PolynomialRing *R, const array<ring_elem> &I);
   
-  class_identifier class_id() const { return CLASS_PolynomialRing; }
-
   virtual const PolynomialRing * cast_to_PolynomialRing()  const { return this; }
   virtual       PolynomialRing * cast_to_PolynomialRing()        { return this; }
 
   // Queries for quotient ring
   bool        is_quotient_ring() const { return (base_ring != NULL); }
   const PolynomialRing * get_base_poly_ring() const { return base_ring; }
-  MonomialIdeal  get_quotient_monomials() const { return Rideal; }
+  MonomialIdeal *  get_quotient_monomials() const { return Rideal; }
   const TermIdeal *get_quotient_monomials_ZZ() const { return RidealZ; }
   const FreeModule *get_Rsyz() const;
 
@@ -78,9 +79,11 @@ public:
   virtual bool is_homogeneous(const ring_elem f) const;
   virtual void degree(const ring_elem f, int *d) const;
   virtual int primary_degree(const ring_elem f) const;
-  virtual void degree_weights(const ring_elem f, const int *wts, int &lo, int &hi) const;
-  virtual ring_elem homogenize(const ring_elem f, int v, int deg, const int *wts) const;
-  virtual ring_elem homogenize(const ring_elem f, int v, const int *wts) const;
+  virtual void degree_weights(const ring_elem f, const M2_arrayint wts, 
+			      int &lo, int &hi) const;
+  virtual ring_elem homogenize(const ring_elem f, int v, int deg, 
+			       const M2_arrayint wts) const;
+  virtual ring_elem homogenize(const ring_elem f, int v, const M2_arrayint wts) const;
 
   virtual ring_elem copy(const ring_elem f) const;
   virtual void remove(ring_elem &f) const;
@@ -120,7 +123,6 @@ public:
   virtual ring_elem random(int homog, const int *deg) const;
 
   virtual void elem_text_out(buffer &o, const ring_elem f) const;
-  virtual void elem_bin_out(buffer &o, const ring_elem f) const;
 
   virtual ring_elem eval(const RingMap *map, const ring_elem f) const;
 

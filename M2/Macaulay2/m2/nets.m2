@@ -106,7 +106,7 @@ Net == String := (n,s) -> (
 String == Net := (s,n) -> n == s
 
 net String := horizontalJoin
-net RR := net Boolean := net File := net ZZ := net Handle := net Database := string
+net RR := net Boolean := net File := net ZZ := net Database := string
 net000 := horizontalJoin ()
 net Nothing := null -> net000
 

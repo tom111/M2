@@ -121,6 +121,15 @@ To make a distribution tarball:
 	make install
 	make distribution
 
+To use a different prefix, say /mnt/local, for finding libraries and include
+files installed in a nonstandard location:
+
+	CPPFLAGS=/mnt/local/include ../configure --prefix=/mnt/local --enable-encap --with-encapdir=/tmp 
+	make
+	make check
+	make install
+	make distribution
+
 -----------------------
 Windows 95, 98 and NT notes
 -----------------------
@@ -208,13 +217,16 @@ Each user needs to do the following after installation:
 These are done by the fink macaulay2 package, but if you compile on your own,
 you may need to do the following:
 
+	# this is in Macaulay2/d
         ar x /sw/lib/libfac.a tmpl_inst.o
         mv tmpl_inst.o libfac_tmpl_inst.o
 
 Dumpdata doesn't work, I haven't tried removing --disable-strip yet.
 Here is the configure line I have used that works:
 
-./configure --disable-strip --disable-dumpdata -prefix=/sw
+export CPPFLAGS=-I/sw/include
+export LDFLAGS=-L/sw/lib
+./configure --disable-strip --disable-dumpdata --prefix=/sw
 
 ----------------------
 HPUX notes

@@ -16,6 +16,7 @@ char *gnu_get_libc_version();
 
 #include "readline.h"
 #include "types.h"
+#include "M2types.h"
 
 #ifdef NEWDUMPDATA
 #include "../dumpdata/dumpdata.h"
@@ -439,6 +440,17 @@ char **argv;
      }
 #endif
 
+#if 0
+     {
+       /* follow symbolic link if necessazy */
+	  char buf[5000];
+	  if (readlink(argv[0],buf,sizeof buf) != -1) {
+	       argv[0] = alloca(strlen(buf) + 1);
+	       strcpy(argv[0],buf);
+	  }
+     }
+#endif
+
      out_of_memory_jump_set = FALSE;
      abort_jump_set = FALSE;
 
@@ -493,7 +505,7 @@ char **argv;
 		 putstderr("  Warning: perhaps stdio is not initialized properly by _IO_init.");
 	       }
 	       putstderr(buf);
-	       putstderr("--Copyright 1993-2001, D. R. Grayson and M. E. Stillman");
+	       putstderr("--Copyright 1993-2002, D. R. Grayson and M. E. Stillman");
 	       putstderr("--Singular-Factory " 
 		    FACTORYVERSION
 		    ", copyright 1993-2001, G.-M. Greuel, et al.");

@@ -1,4 +1,6 @@
-AC_INIT(Makefile-configuration)
+AC_INIT(Macaulay2, 0.9.3, Macaulay2@math.uiuc.edu, Macaulay2)
+
+dnl -- check Makefile-configuration is present in srcdir?
 
 define(M2_UPPER,[translit($1, [a-z], [A-Z])])
 
@@ -26,7 +28,7 @@ AC_DEFUN(M2_SHOW_CONFDEFS,[
   sed -e '/^$/d' -e 's/^/   /' confdefs.h >&6
   ])
 
-AC_DEFUN(M2_CONFIGURED_FILES,m4_patsubst(m4_include(config/files),[
+AC_DEFUN(M2_CONFIGURED_FILES,patsubst(m4_include(config/files),[
 ],[ ]))
 
 echo "any environment variables set:"
@@ -48,10 +50,6 @@ then echo "yes" >&6
 else echo "`basename $0`: $MAKE: GNU make is required" >&2
      exit 1
 fi
-
-PACKAGE_NAME=Macaulay2
-PACKAGE_VERSION="`cat $srcdir/version`"
-AC_DEFINE_UNQUOTED(PACKAGE_VERSION,"$PACKAGE_VERSION",version number)
 
 NODENAME="`uname -n`"
 AC_SUBST(NODENAME)
@@ -164,9 +162,10 @@ AC_ARG_ENABLE(gc_for_new,
     GC_FOR_NEW="$enableval",
     GC_FOR_NEW=no)
 
-AC_CHECK_FUNC(__finite,,AC_DEFINE(__finite,finite,whether __finite is missing))
-AC_CHECK_FUNC(__isnan,,AC_DEFINE(__isnan,isnan,whether __isnan is missing))
-AC_CHECK_FUNC(__isinf,,AC_DEFINE(__isinf,isinf,whether __isinf is missing))
+AC_CHECK_DECL(__finite,,AC_DEFINE(__finite,finite,whether __finite is missing),[#include <math.h>])
+AC_CHECK_DECL(__isnan,,AC_DEFINE(__isnan,isnan,whether __isnan is missing),[#include <math.h>])
+AC_CHECK_DECL(__isinf,,AC_DEFINE(__isinf,isinf,whether __isinf is missing),[#include <math.h>])
+AC_CHECK_DECLS(sys_nerr)
 
 OLIBS="$LIBS"
 LIBS="$LIBS -lgmp -lgc -lgdbm -lcf -lfac"
@@ -191,7 +190,7 @@ AC_TRY_LINK(
     ,AC_MSG_ERROR(missing library: libfac))
 LIBS="$OLIBS"
 
-# M2_SHOW_CONFDEFS()
+M2_SHOW_CONFDEFS()
 M2_IS_THERE(sys_errlist)
 M2_IS_THERE(herror)
 M2_IS_THERE(gnu_get_libc_version)

@@ -1,16 +1,16 @@
 --		Copyright 1994 by Daniel R. Grayson
+use C;
 use system;
 use stdio;
 use stdiop;
+use engine;
 use binding;
-use system;
 use strings;
 use nets;
 use tokens;
 use err;
 use stdio;
-use arith;
-use GB;
+use gmp;
 
 export hash(e:Expr):int := (
      when e
@@ -20,6 +20,14 @@ export hash(e:Expr):int := (
      is x:Integer do hash(x)
      is b:Boolean do if b.v then 444777 else 777333
      is Nothing do 333889
+     is x:List do x.hash
+     is x:Rational do hash(x)
+     is x:BigReal do hash(x)
+     is x:Sequence do (
+	  -- the numbers here are the same as in binary lookup() in objects.d!!
+	  h := 27449;
+	  foreach y in x do h = h * 27457 + hash(y);
+	  h)
      is x:string do hash(x) + 37467
      is x:Real do hash(x.v)
      is n:Net do (
@@ -33,16 +41,30 @@ export hash(e:Expr):int := (
 	       hash(x.position.filename) 
 	       + 1299791 * (int(x.position.line) + 
 		    1299811 * int(x.position.column))))
-     is x:Sequence do (
-	  -- the numbers here are the same as in binary lookup() in objects.d!!
-	  h := 27449;
-	  foreach y in x do h = h * 27457 + hash(y);
-	  h)
+     is x:RawMonomial do int(Ccode(ulong, "IM2_Monomial_hash((Monomial*)",x,")" ))
+     is x:RawMonomialOrdering do int(Ccode(ulong, "IM2_MonomialOrdering_hash((MonomialOrdering*)",x,")" ))
+     is x:RawMonoid do int(Ccode(ulong, "IM2_Monoid_hash((Monoid*)",x,")" ))
+     is x:RawRing do int(Ccode(ulong, "IM2_Ring_hash((Ring*)",x,")" ))
+     is x:RawFreeModule do (
+	  0
+	  -- int(Ccode(ulong, "IM2_FreeModule_hash((FreeModule*)",x,")" ))
+	  )
+     is x:RawVector do (
+	  0
+	  -- int(Ccode(ulong, "IM2_Vector_hash((Vector*)",x,")" ))
+	  )
+     is x:RawRingMap do (
+	  0
+	  -- int(Ccode(ulong, "IM2_RingMap_hash((RingMap*)",x,")" ))
+	  )
+     is x:RawMatrix do (
+	  0
+	  -- int(Ccode(ulong, "IM2_Matrix_hash((Matrix*)",x,")" ))
+	  )
+     is x:RawRingElement do 12345
+     is x:RawMonomialIdeal do 12346
      is x:CompiledFunction do x.hash
      is x:CompiledFunctionClosure do x.hash
-     is x:List do x.hash
-     is x:Rational do hash(x.numerator)+1299841*hash(x.denominator)
-     is h:Handle do gbhash(h.handle)
      );
 export hash(x:List):int := (
      h := x.class.hash + 23407;
@@ -175,8 +197,8 @@ export list(class:HashTable,e:Expr):Expr := (
      when e
      is a:Sequence do list(class,a)
      else list(class,Sequence(e)));
-export emptylist := list(Sequence());
-export list():Expr := emptylist;
+export emptyList := list(Sequence());
+export list():Expr := emptyList;
 export list(e:Expr):Expr := list(Sequence(e));
 export list(e:Expr,f:Expr):Expr := list(Sequence(e,f));
 export list(e:Expr,f:Expr,g:Expr):Expr := list(Sequence(e,f,g));
@@ -196,4 +218,3 @@ export Array():Expr := emptyArray;
 export Array(e:Expr,f:Expr):Expr := Array(Sequence(e,f));
 export Array(e:Expr,f:Expr,g:Expr):Expr := Array(Sequence(e,f,g));
 export Array(e:Expr,f:Expr,g:Expr,h:Expr):Expr := Array(Sequence(e,f,g,h));
-

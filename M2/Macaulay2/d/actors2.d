@@ -1,10 +1,11 @@
 --		Copyright 1994 by Daniel R. Grayson
+use C;
 use system; 
 use convertr;
 use binding;
 use parser;
 use lex;
-use arith;
+use gmp;
 use nets;
 use tokens;
 use err;
@@ -938,22 +939,22 @@ openListener(filename:Expr):Expr := (
 setupfun("openListener",openListener);
 isOpenFile(e:Expr):Expr := (
      when e
-     is f:file do toBoolean(f.listener || f.input || f.output)
+     is f:file do toExpr(f.listener || f.input || f.output)
      else False);
 setupfun("isOpenFile",isOpenFile);
 isInputFile(e:Expr):Expr := (
      when e
-     is f:file do toBoolean(f.input)
+     is f:file do toExpr(f.input)
      else False);
 setupfun("isInputFile",isInputFile);
 isOutputFile(e:Expr):Expr := (
      when e
-     is f:file do toBoolean(f.output)
+     is f:file do toExpr(f.output)
      else False);
 setupfun("isOutputFile",isOutputFile);
 isListener(e:Expr):Expr := (
      when e
-     is f:file do toBoolean(f.listener)
+     is f:file do toExpr(f.listener)
      else False);
 setupfun("isListener",isListener);
 close(g:Expr):Expr := (
@@ -1069,15 +1070,15 @@ sameFunctionBody(e:Expr):Expr := (
      when v.0 
      is f:FunctionClosure do (
 	  when v.1
-	  is g:FunctionClosure do toBoolean(f.model == g.model)
+	  is g:FunctionClosure do toExpr(f.model == g.model)
 	  else False
 	  )
      is f:CompiledFunctionClosure do (
 	  when v.1
-	  is g:CompiledFunctionClosure do toBoolean(f.fn == g.fn)
+	  is g:CompiledFunctionClosure do toExpr(f.fn == g.fn)
 	  else False
 	  )
-     is f:CompiledFunction do toBoolean(v.0 == v.1)
+     is f:CompiledFunction do toExpr(v.0 == v.1)
      else False
      else WrongNumArgs(2)
      else WrongNumArgs(2));

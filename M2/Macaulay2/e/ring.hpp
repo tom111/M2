@@ -8,11 +8,21 @@
 
 ///// Ring Hierarchy ///////////////////////////////////
 
+class Z;
+class QQ;
+class RR;
+class Z_mod;
+class GF;
+class FractionField;
+class PolynomialRing;
+class SchurRing;
 class WeylAlgebra;
 
-class Ring : public type
+class FreeModule;
+class RingMap;
+
+class Ring : public immutable_object
 {
-  friend class FreeModule;
   friend class res_poly;
   friend class res2_poly;
 protected:
@@ -39,6 +49,8 @@ protected:
   stash *vecstash;		// Stash used to allocate vectors over this ring.
   stash *resstash;		// For resolutions
 
+  friend class FreeModule;
+
   Ring(int charac, int nvars, int totalvars, const Ring *K, 
 	const Monoid *M, const Monoid *D);
   Ring(const Ring &R);
@@ -60,6 +72,8 @@ public:
 
   virtual const Z * cast_to_Z() const         { return 0; }
   virtual       Z * cast_to_Z()               { return 0; }
+  virtual const QQ * cast_to_QQ() const         { return 0; }
+  virtual       QQ * cast_to_QQ()               { return 0; }
   virtual const RR * cast_to_RR() const         { return 0; }
   virtual       RR * cast_to_RR()               { return 0; }
   virtual const Z_mod * cast_to_Z_mod() const         { return 0; }
@@ -110,13 +124,6 @@ public:
   virtual bool is_zero(const ring_elem f) const = 0;
   virtual bool is_equal(const ring_elem f, const ring_elem g) const = 0;
 
-  virtual bool is_homogeneous(const ring_elem f) const = 0;
-  virtual void degree(const ring_elem f, int *d) const = 0;
-  virtual int primary_degree(const ring_elem f) const = 0;
-  virtual void degree_weights(const ring_elem f, const int *wts, int &lo, int &hi) const = 0;
-  virtual ring_elem homogenize(const ring_elem f, int v, int deg, const int *wts) const = 0;
-  virtual ring_elem homogenize(const ring_elem f, int v, const int *wts) const = 0;
-
   virtual ring_elem copy(const ring_elem f) const = 0;
   virtual void remove(ring_elem &f) const = 0;
   void remove_vector(vec &v) const;
@@ -132,11 +139,9 @@ public:
   virtual ring_elem power(const ring_elem f, mpz_t n) const = 0;
   virtual ring_elem power(const ring_elem f, int n) const = 0;
   virtual ring_elem invert(const ring_elem f) const = 0;
+
   virtual ring_elem divide(const ring_elem f, const ring_elem g) const = 0;
   virtual ring_elem divide(const ring_elem f, const ring_elem g, ring_elem &rem) const = 0;
-  virtual ring_elem gcd(const ring_elem f, const ring_elem g) const = 0;
-  virtual ring_elem gcd_extended(const ring_elem f, const ring_elem g, 
-				  ring_elem &u, ring_elem &v) const = 0;
 
   virtual ring_elem remainder(const ring_elem f, const ring_elem g) const = 0;
   virtual ring_elem quotient(const ring_elem f, const ring_elem g) const = 0;
@@ -151,6 +156,10 @@ public:
   // (4) If the ring is ZZ, then the remainder is "balanced": -[g/2] < r <= [g/2]
   // remainderAndQuotient combines remainder and quotient into one routine.
 
+  virtual ring_elem gcd(const ring_elem f, const ring_elem g) const = 0;
+  virtual ring_elem gcd_extended(const ring_elem f, const ring_elem g, 
+				  ring_elem &u, ring_elem &v) const = 0;
+
   virtual void syzygy(const ring_elem a, const ring_elem b,
 		      ring_elem &x, ring_elem &y) const = 0;
   // Constructs elements x and y in the ring s.t. ax + by = 0.  This syzygy is
@@ -162,41 +171,32 @@ public:
   virtual ring_elem random(int homog, const int *deg) const;
 
   virtual void elem_text_out(buffer &o, const ring_elem f) const = 0;
-  virtual void elem_bin_out(buffer &o, const ring_elem f) const = 0;
 
   virtual ring_elem eval(const RingMap *map, const ring_elem f) const = 0;
 
   // Polynomial routines
-  virtual int n_terms(const ring_elem f) const = 0;
-  virtual ring_elem term(const ring_elem a, const int *m) const = 0;
-  virtual ring_elem lead_coeff(const ring_elem f) const = 0;
-  virtual ring_elem get_coeff(const ring_elem f, const int *m) const = 0;
-  virtual ring_elem get_terms(const ring_elem f, int lo, int hi) const = 0;
+  // The default implementation is that ...
+  virtual int n_terms(const ring_elem f) const;
+  virtual ring_elem term(const ring_elem a, const int *m) const;
+  virtual ring_elem lead_coeff(const ring_elem f) const;
+  virtual ring_elem get_coeff(const ring_elem f, const int *m) const;
+  virtual ring_elem get_terms(const ring_elem f, int lo, int hi) const;
 
-  // Routines special to polynomial rings
-  // these include: #monomials, leadMonomial, findMonomial, term(a,m)
-  // in_subring, div_degree, divide_by_var
-  // possibly others?
-  // Rideal, exterior_vars.
-  // nbits
-  // heap merge of elements...?
+  virtual ring_elem homogenize(const ring_elem f, int v, int deg, 
+			       const M2_arrayint wts) const;
+  virtual ring_elem homogenize(const ring_elem f, int v, const M2_arrayint wts) const;
 
-  // Routines special to PID's
-  // these include: gcd, gcd_extended.
+  // Routines expecting a grading.  The default implementation
+  // is that the only degree is 0.
+  virtual bool is_homogeneous(const ring_elem f) const;
+  virtual void degree(const ring_elem f, int *d) const;
+  virtual int primary_degree(const ring_elem f) const;
+  virtual void degree_weights(const ring_elem f, const M2_arrayint wts, int &lo, int &hi) const;
 
-  // Routines special to fields (anything else?)
-  
-  // Infrastructure here
-
-  int          length_of() const      { return n_vars(); }
-  const Ring * cast_to_Ring() const { return this; }
-  Ring *       cast_to_Ring()       { return this; }
-
-  class_identifier class_id() const { return CLASS_Ring; }
-  type_identifier  type_id () const { return TY_RING; }
-  const char * type_name   () const { return "Ring"; }
 };
 
 #include "Z.hpp"
 extern Z *ZZ;
+extern QQ *globalQQ;
+extern RR *RRR;
 #endif

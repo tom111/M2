@@ -6,12 +6,11 @@
 #include "gauss.hpp"
 #include "hermite.hpp"
 
-extern gb_comp *make_EGB_comp(const Matrix &m, bool dosyz, int nsyz, int strategy);
+//extern gb_comp *make_EGB_comp(const Matrix *m, bool dosyz, int nsyz, int strategy);
 
-
-gb_comp *gb_comp::make(Matrix &m, bool dosyz, int nsyz, int strategy)
+gb_comp *gb_comp::make(const Matrix *m, bool dosyz, int nsyz, int strategy)
 {
-  const Ring *R = m.get_ring();
+  const Ring *R = m->get_ring();
 
   // Dispatch according to the kind of computation we are
   // asked to do.
@@ -26,14 +25,13 @@ gb_comp *gb_comp::make(Matrix &m, bool dosyz, int nsyz, int strategy)
     {
       if ((strategy & 3) == 3)
 	{
-	  // This next inserts the computation onto the stack.
-	  return make_EGB_comp(m, dosyz, nsyz, strategy);
+	  return 0;
+	  //return make_EGB_comp(m, dosyz, nsyz, strategy);
 	}
-      if (R->is_graded() && m.is_homogeneous())
+      if (R->is_graded() && m->is_homogeneous())
 	{
 	  if ((strategy & 3) == 1)
 	    {
-	      //gStack.insert(new NGB_comp(m, dosyz, nsyz));
 	      return new GB_comp(m, dosyz, nsyz, strategy);
 	    }
 	  else if ((strategy & 3) == 2)
@@ -50,59 +48,66 @@ gb_comp *gb_comp::make(Matrix &m, bool dosyz, int nsyz, int strategy)
 
   if (R->is_poly_ring() && R->Ncoeffs()->is_pid())
     {
-      gError << "GB for polynomial rings over PID's not yet implemented";
+      ERROR("GB for polynomial rings over PID's not yet implemented");
       return 0;
     }
 
-  gError << "cannot compute Groebner bases or syzygies over this ring";
+  ERROR("cannot compute Groebner bases or syzygies over this ring");
   return 0;
 }
 
-gb_comp *gb_comp::make(Matrix &m, bool dosyz, int nsyz, RingElement &hf, int strategy)
+gb_comp *gb_comp::make(const Matrix *m, 
+		       bool dosyz, 
+		       int nsyz, 
+		       const RingElement *hf, 
+		       int strategy)
 {
-  const Ring *R = m.get_ring();
+  const Ring *R = m->get_ring();
 
   if (dosyz)
     return make(m,dosyz,nsyz,strategy);
 
   if (R->is_field())
     {
-      gError << "GB for ring = field together with Hilbert function is not yet implemented";
+      ERROR("GB for ring = field together with Hilbert function is not yet implemented");
       return 0;
     }
   
   if (R->is_Z()) // MES later: || R->is_pid())
     {
-      gError << "GB for Z, using Hilbert function, is not yet implemented";
+      ERROR("GB for Z, using Hilbert function, is not yet implemented");
       return 0;
     }
 
   if (R->is_poly_ring() && R->Ncoeffs()->is_field())
     {
-      if (R->is_graded() && m.is_homogeneous())
+      if (R->is_graded() && m->is_homogeneous())
 	{
 	  return new GB_comp(m, dosyz, nsyz, hf, strategy);
 	}
       else
 	{
-	  gError << "cannot use Hilbert function for an inhomogeneous GB";
+	  ERROR("cannot use Hilbert function for an inhomogeneous GB");
 	  return 0;
 	}
     }
   
   if (R->is_poly_ring() && R->Ncoeffs()->is_pid())
     {
-      gError << "GB for polynomial rings over PID's not yet implemented";
+      ERROR("GB for polynomial rings over PID's not yet implemented");
       return 0;
     }
   
-  gError << "cannot compute Groebner bases or syzygies over this ring";
+  ERROR("cannot compute Groebner bases or syzygies over this ring");
   return 0;
 }
 
-gb_comp *gb_comp::force(Matrix &gens, Matrix &gb, Matrix &change, Matrix &syz)
+gb_comp *gb_comp::force(const Matrix *gens, 
+			const Matrix *gb, 
+			const Matrix *change, 
+			const Matrix *syz)
 {
-  const Ring *R = gens.get_ring();
+  const Ring *R = gens->get_ring();
   if (R->is_poly_ring())
     {
       if (R->Ncoeffs()->is_field())
@@ -111,6 +116,6 @@ gb_comp *gb_comp::force(Matrix &gens, Matrix &gb, Matrix &change, Matrix &syz)
 	return new GBZZ_comp(gens, gb, change, syz);
     }
 
-  gError << "Cannot create the desired forced Groebner basis";
+  ERROR("Cannot create the desired forced Groebner basis");
   return 0;
 }

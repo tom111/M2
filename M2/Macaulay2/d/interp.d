@@ -1,7 +1,7 @@
 --		Copyright 1994-2000 by Daniel R. Grayson
 
-use system;
 use C;
+use system;
 use actors;
 use convertr;
 use binding;
@@ -11,7 +11,7 @@ use actors4;
 use actors5;
 use parser;
 use lex;
-use arith;
+use gmp;
 use nets;
 use tokens;
 use err;

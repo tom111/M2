@@ -1,13 +1,13 @@
 --		Copyright 1995 by Daniel R. Grayson
 
-
+use C;
 use system; 
 use convertr;
 use binding;
 use nets;
 use parser;
 use lex;
-use arith;
+use gmp;
 use tokens;
 use err;
 use stdiop;
@@ -15,313 +15,14 @@ use ctype;
 use stdio;
 use varstrin;
 use strings;
-use C;
 use actors;
 use actors2;
 use basic;
 use struct;
 use objects;
-use GB;
 use actors4;
+use engine;
 
-installMethod(s:SymbolClosure,X:HashTable,Y:HashTable,f:fun):Expr := (
-     installMethod(Expr(s),X,Y,Expr(CompiledFunction(f,nextHash())))
-     );
-
-cvtlen := 0;
-cvtstr := "";
-cvtpos := 0;
-getlength():int := (
-     c := int(uchar(cvtstr.cvtpos));
-     cvtpos = cvtpos + 1;
-     if (c & 0x80) == 0
-     then c
-     else (
-     	  ln := c & 0x7f;
-     	  if cvtpos >= cvtlen then return(ln); -- actually an error
-	  c = int(uchar(cvtstr.cvtpos));
-	  cvtpos = cvtpos + 1;
-	  if (c & 0x80) == 0
-	  then (ln << 7) + c
-	  else (
-	       ln = (ln << 7) + (c & 0x7f);
-     	       if cvtpos >= cvtlen then return(ln); -- actually an error
-	       c = int(uchar(cvtstr.cvtpos));
-	       cvtpos = cvtpos + 1;
-	       if (c & 0x80) == 0
-	       then (ln << 7) + c
-	       else (
-		    ln = (ln << 7) + (c & 0x7f);
-     	       	    if cvtpos >= cvtlen then return(ln); -- actually an error
-		    c = int(uchar(cvtstr.cvtpos));
-		    cvtpos = cvtpos + 1;
-		    (ln << 7) + (0x7f & c)))));
-getlength6():int := (
-     c := int(uchar(cvtstr.cvtpos));
-     cvtpos = cvtpos + 1;
-     if (c & 0x80) == 0
-     then (c & 0x3f)
-     else (
-     	  ln := c & 0x3f;
-     	  if cvtpos >= cvtlen then return(ln); -- actually an error
-	  c = int(uchar(cvtstr.cvtpos));
-	  cvtpos = cvtpos + 1;
-	  if (c & 0x80) == 0
-	  then (ln << 7) + c
-	  else (
-	       ln = (ln << 7) + (c & 0x7f);
-     	       if cvtpos >= cvtlen then return(ln); -- actually an error
-	       c = int(uchar(cvtstr.cvtpos));
-	       cvtpos = cvtpos + 1;
-	       if (c & 0x80) == 0
-	       then (ln << 7) + c
-	       else (
-		    ln = (ln << 7) + (c & 0x7f);
-     	       	    if cvtpos >= cvtlen then return(ln); -- actually an error
-		    c = int(uchar(cvtstr.cvtpos));
-		    cvtpos = cvtpos + 1;
-		    (ln << 7) + (0x7f & c)))));
-getmantissa():int := (
-     c := int(uchar(cvtstr.cvtpos));
-     cvtpos = cvtpos + 1;
-     if (c & 0x80) == 0
-     then (c & 0x3f)
-     else (
-     	  ln := c & 0x3f;
-     	  if cvtpos >= cvtlen then return(ln); -- actually an error
-	  c = int(uchar(cvtstr.cvtpos));
-	  cvtpos = cvtpos + 1;
-	  if (c & 0x80) == 0
-	  then (ln << 7) + c
-	  else (
-	       ln = (ln << 7) + (c & 0x7f);
-     	       if cvtpos >= cvtlen then return(ln); -- actually an error
-	       c = int(uchar(cvtstr.cvtpos));
-	       cvtpos = cvtpos + 1;
-	       if (c & 0x80) == 0
-	       then (ln << 7) + c
-	       else (
-		    ln = (ln << 7) + (c & 0x7f);
-     	       	    if cvtpos >= cvtlen then return(ln); -- actually an error
-		    c = int(uchar(cvtstr.cvtpos));
-		    cvtpos = cvtpos + 1;
-		    (ln << 7) + (0x7f & c)))));
-getinteger():Expr := (
-     if cvtpos + 1 > cvtlen 
-     then return(buildErrorPacket("encountered end of string prematurely"));
-     sgn := 0 != (0x40 & int(uchar(cvtstr.cvtpos)));
-     oldpos := cvtpos;
-     i := getlength6();
-     x := toInteger(i);
-     if (
-	  ( cvtpos == oldpos + 4 && 0 == (int(cvtstr.(cvtpos-1)) & 0x80) )
-	  ||
-	  cvtpos < oldpos + 4
-	  )
-     then if sgn then -Expr(x) else Expr(x)
-     else (
-	  ln := getlength();
-	  if cvtpos + ln > cvtlen 
-	  then return(buildErrorPacket("encountered end of string prematurely"));
-	  while ln > 0 do (
-	       c := 0xff & int(cvtstr.cvtpos);
-	       x = (x << 8) + c;
-	       cvtpos = cvtpos + 1;
-	       ln = ln - 1;
-	       );
-	  if sgn then -Expr(x) else Expr(x)));
-ConvertInteger := makeProtectedSymbolClosure("ConvertInteger");
-import sizeofDouble():int;
-import convertnettodouble(str:string,pos:int):double;
-getreal():Expr := (
-     n := sizeofDouble();
-     if cvtpos + n > cvtlen 
-     then return(buildErrorPacket("encountered end of string prematurely"));
-     r := Expr(Real(convertnettodouble(cvtstr,cvtpos)));
-     cvtpos = cvtpos + n;
-     r);
-ConvertReal := makeProtectedSymbolClosure("ConvertReal");
-convert(format:Expr):Expr := (
-     when format
-     is a:Sequence do (
-	  l := length(a);
-	  if l==0 then return(buildErrorPacket("encountered a sequence of length 0"));
-	  f := a.0;
-	  if l==1 then (
-	       if cvtpos >= cvtlen
-	       then buildErrorPacket("encountered end of string prematurely")
-	       else (
-		    haderror := false;
-		    ln := getlength();
-		    r := nullE;
-		    t := new Sequence len ln do (
-			 r = convert(f);
-			 when r is Error do (
-			      haderror = true;
-			      while true do provide nullE;
-			      )
-			 else provide r;
-			 );
-		    if haderror then r else Expr(t)))
-	  else when f 
-	  is j:Integer do (
-	       if !isInt(j)
-	       then buildErrorPacket("expected repetition count to be a small integer")
-	       else (
-		    ln := toInt(j);
-		    if ln >= 0
-		    then (
-			 -- ln >= 0 means ln is the exact rep ct
-			 r := nullE;
-			 haderror := false;
-			 ln = ln * (l-1);
-			 if cvtpos + ln > cvtlen
-			 then return(buildErrorPacket("encountered end of string prematurely"));
-			 t := new Sequence len ln do (
-			      k := 1;
-			      while k < l do (
-				   r = convert(a.k);
-				   k = k+1;
-				   when r is Error do (
-					haderror = true;
-					while true do provide nullE;
-					)
-				   else provide r;
-				   ));
-			 if haderror then r else Expr(t))
-		    else buildErrorPacket("expected repetition count nonnegative")))
-	  is c:FunctionClosure do (
-	       haderror := false;
-	       if l == 2
-	       then (
-		    r := convert(a.1);
-		    when r 
-		    is Error do r
-		    is v:Sequence do apply(c,v)
-		    else apply(c,r)
-		    )
-	       else (
-	       	    r := nullE;
-	       	    k := 1;
-		    t := new Sequence len l-1 do (
-			 r = convert(a.k);
-			 when r is Error do (
-			      haderror = true;
-			      while true do provide nullE;
-			      )
-			 else provide r;
-			 k = k+1;
-			 );
-		    if haderror then r else apply(c,t)
-		    )
-	       )
-	  is c:CompiledFunctionClosure do (
-	       haderror := false;
-	       if l == 2
-	       then (
-		    r := convert(a.1);
-		    when r is Error do r else c.fn(r,c.env)
-		    )
-	       else (
-	       	    r := nullE;
-		    k := 1;
-		    t := new Sequence len l-1 do (
-			 r = convert(a.k);
-			 when r is Error do (
-			      haderror = true;
-			      while true do provide nullE;
-			      )
-			 else provide r;
-			 k = k+1;
-			 );
-		    if haderror then r else c.fn(Expr(t),c.env)
-		    )
-	       )
-	  is c:CompiledFunction do (
-	       haderror := false;
-	       if l == 2
-	       then (
-		    r := convert(a.1);
-		    when r is Error do r else c.fn(r)
-		    )
-	       else (
-	       	    r := nullE;
-		    k := 1;
-		    t := new Sequence len l-1 do (
-			 r = convert(a.k);
-			 when r is Error do (
-			      haderror = true;
-			      while true do provide nullE;
-			      )
-			 else provide r;
-			 k = k+1;
-			 );
-		    if haderror then r else c.fn(Expr(t))
-		    )
-	       )
-	  else buildErrorPacket("encountered invalid format")
-	  )
-     is w:SymbolClosure do (
-	  if w.symbol == ConvertInteger.symbol then getinteger()
-	  else if w.symbol == ConvertReal.symbol then getreal()
-	  else buildErrorPacket("encountered a unrecognized format symbol")
-	  )
-     is c:FunctionClosure do apply(c,emptySequence)
-     is f:CompiledFunction do f.fn(Expr(emptySequence))
-     is f:CompiledFunctionClosure do f.fn(Expr(emptySequence),f.env)
-     else buildErrorPacket("expected a valid format item"));
-convertfun(e:Expr):Expr := (
-     when e
-     is a:Sequence do
-     if length(a) == 2 then (
-	  fmt := a.0;
-	  when a.1 
-	  is str:string do (
-	       savecvtpos := cvtpos;
-	       savecvtstr := cvtstr;
-	       savecvtlen := cvtlen;
-	       cvtstr = str;
-	       cvtlen = length(str);
-	       cvtpos = 0;
-	       r := convert(fmt);
-	       when r
-	       is Error do nothing
-	       else (
-		    if cvtlen != cvtpos
-	       	    then r = buildErrorPacket("did not exhaust its input")
-		    );
-	       cvtpos = savecvtpos;
-	       cvtstr = savecvtstr;
-	       cvtlen = savecvtlen;
-	       r)
-	  else WrongArg(1+1,"a string"))
-     else WrongNumArgs(2)
-     else WrongArg(0+1,"an integer"));
-setupfun("convert",convertfun);
-formatseq(v:Sequence):Expr := (
-     foreach x in v do (
-	  when x 
-	  is Integer do nothing
-	  else return(WrongArg(1,"a list or sequence of integers")));
-     b := new Sequence len length(v)+1 do (
-	  provide converttonet(toInteger(length(v)));
-	  foreach x in v do (
-	       when x
-	       is j:Integer do provide converttonet(j)
-	       else nothing	  -- won t occur
-	       );
-	  );
-     Expr(stringcatseq(b)));
-import convertdoubletonet(x:double):string;
-formatfun(e:Expr):Expr := (
-     when e
-     is r:Real do Expr(convertdoubletonet(r.v))
-     is i:Integer do Expr(converttonet(i))
-     is h:Handle do Expr(converttonet(toInteger(h.handle)))
-     is v:Sequence do formatseq(v)
-     is l:List do formatseq(l.v)
-     else WrongArg(0+1,"an integer, a list of integers, or a handle"));
-setupfun("gg",formatfun);
 
 -- getParsing(o:file):void := (
 --      o
@@ -480,66 +181,6 @@ applythem(obj:HashTable,fn:FunctionClosure):void := (
      apply(fn,Expr(obj));
      );
 
-RegisterFinalizer( obj:Handle, fn:function(Handle,int):void):void ::= 
-     Ccode( void, "GC_REGISTER_FINALIZER(", h, ",(GC_finalization_proc)", fn, ",(void *)0,(void *)0,(void *)0)" );
-
--- RegisterFinalizer( obj:Handle, fn:function(Handle,int):void):void ::= 
---      Ccode( void,
---      	  "GC_REGISTER_FINALIZER(__subfront__(",
---      	  h,
--- 	  "),(GC_finalization_proc)", 
--- 	  fn,
--- 	  ",(void *)(", 
--- 	  0,
--- 	  "),0,0)" 
--- 	  );
-
- -- see memdebug.h
- -- old : FixUp( obj:Handle ):void ::= Ccode( void, "((void *) ", obj, ") += sizeof(front)" );
---    FixUp( obj:Handle ):void ::= Ccode( void, "(", obj, " = __addfront__(", obj, "))" );
-
---RegisterFinalizerFun(e:Expr):Expr := (
---     when e
---     is a:sequence do
---     if length(a) == 2
---     then (
---	  when a.0
---	  is obj:HashTable do (
---	       when a.1 
---	       is fn:FunctionClosure do (
---		    RegisterFinalizer(obj,applythem,fn);
---	       	    nullE
---		    )
---	       else WrongArg(2,"a user function")
---	       )
---	  else WrongArg(1,"a hash table")
---	  )
---     else WrongNumArgs(2)
---     else WrongNumArgs(2));
---setupfun("register",RegisterFinalizerFun);
-
-freeHandle(obj:Handle,i:int):void := (
-     -- FixUp(obj);
-     -- stdout << "finalizing " << obj.handle << endl;
-     gbforget(obj.handle);
-     obj.handle = -1;			  -- mainly for debugging
-     );
-toHandle(e:Expr):Expr := (
-     when e
-     is i:Integer do (
-	  if isInt(i) 
-	  then (
-	       h := Handle(toInt(i));
-     	       -- stdout << "registering " << i << endl;
-	       RegisterFinalizer(h,freeHandle);
-	       Expr(h)
-	       )
-	  else WrongArg(1,"a small integer")
-	  )
-     else WrongArg(1,"an integer")
-     );
-setupfun("toHandle",toHandle);
-
 match(subject:string,i:int,pattern:string,j:int):bool := (
      while true do (
 	  if j == length(pattern) 
@@ -592,19 +233,15 @@ setupfun("collectGarbage",CollectGarbage);
 --setupfun("gcDump",gcdump);
 
 integermod(e:Expr):Expr := (
-     when e
-     is a:Sequence do (
-	  if length(a) == 2 then (
-	       when a.0
-     	       is x:Integer do (
-	  	    when a.1
-	  	    is y:Integer do (
-	       		 if y === 0
-	       		 then buildErrorPacket("division by zero")
-	       		 else Expr(x % y))
-	  	    else WrongArg(2,"an integer"))
-     	       else WrongArg(1,"an integer"))
-	  else WrongNumArgs(2))
+     when e is a:Sequence do 
+     if length(a) == 2 then 
+     when a.0 is x:Integer do 
+     when a.1 is y:Integer do 
+     if y === 0 then buildErrorPacket("division by zero")
+     else Expr(x % y)
+     else WrongArg(2,"an integer")
+     else WrongArg(1,"an integer")
+     else WrongNumArgs(2)
      else WrongNumArgs(2));
 installMethod(PercentS,integerClass,integerClass,integermod);
 
@@ -1415,7 +1052,7 @@ setupconst("otherOperators",Expr(new array(Expr) len length(opsOther) do (
      foreach s in opsOther do provide Expr(s))));
 
 fileExists(e:Expr):Expr := (
-     when e is name:string do toBoolean(fileExists(name))
+     when e is name:string do toExpr(fileExists(name))
      else buildErrorPacket("expected a string as file name")
      );
 setupfun("fileExists",fileExists);
@@ -1431,3 +1068,19 @@ setupfun("fileExists",fileExists);
 --     else WrongArg(0+1,"an integer")
 --     );
 --setupfun("setFactorySeed",setFactorySeed);
+
+wrap(e:Expr):Expr := (
+     when e is s:Sequence do
+     if length(s) != 2 then WrongNumArgs(2) else
+     when s.0 is wid:Integer do
+     if !isInt(wid) then WrongArg(1,"a small integer") else (
+	  width := toInt(wid);
+	  if width <= 0 then WrongArg(1,"a positive integer") else 
+	  when s.1
+	  is t:Net do Expr(wrap(width,'-',t))
+	  is str:string do if length(str) <= width then Expr(str) else Expr(wrap(width,'-',toNet(str)))
+	  else WrongArg(2,"a net"))
+     else WrongArg(1,"an integer")
+     else WrongNumArgs(2)
+     );
+setupfun("wrap",wrap);

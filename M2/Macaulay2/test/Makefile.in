@@ -6,9 +6,12 @@ ifneq "$(DUMPDATA)" "no"
 RESULTS := $(RESULTS) dumpdata.okay
 endif
 
+LATERESULTS := missingDoc.okay
+
 all :: $(RESULTS)
 
-$(RESULTS) : ../libexec/Macaulay2 ../cache/Macaulay2-doc ../cache/Macaulay2-made
+$(RESULTS) : ../libexec/Macaulay2
+$(LATERESULTS) : ../libexec/Macaulay2 ../cache/Macaulay2-doc ../cache/Macaulay2-made
 
 ifneq "$(DUMPDATA)" "no"
 dumpdata.okay : dumpdata.1 dumpdata.2 dumpdata.3

@@ -3,8 +3,6 @@
 #include "weylfree.hpp"
 #include "geovec.hpp"
 
-stash *WeylFreeModule::mystash;
-
 WeylFreeModule::WeylFreeModule(const Ring *R) 
   : FreeModule(R)
 {

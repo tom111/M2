@@ -1,4 +1,4 @@
---		Copyright 1993-1999 by Daniel R. Grayson
+--		Copyright 1993-2002 by Daniel R. Grayson
 
 -- flag symbol sequence
 
@@ -235,7 +235,6 @@ addStartFunction = g -> (
      startFunctions = append(startFunctions,g);
      g)
 runStartFunctions = () -> scan(startFunctions, f -> f())
-OLDENGINE = getenv("OLDENGINE") == "TRUE"
 lastSystemSymbol = null
 
 load "loads.m2"
@@ -243,26 +242,6 @@ load "loads.m2"
 path = savepath
 notify = true
 lastSystemSymbol = local privateSymbol
-if OLDENGINE then (
-     erase symbol ZZZ;
-     erase symbol NewMonomialOrder;
-     erase symbol Component;
-     erase symbol GroupLex;
-     erase symbol GroupRevLex;
-     erase symbol MonomialOrdering;
-     erase symbol NCLex;
-     erase symbol newDegreesMonoid;
-     erase symbol newDegreesRing;
-     erase symbol newEngine;
-     erase symbol monomialOrdering;
-     remove(ZZ,newDegreesRing);
-     remove(Sequence,newDegreesRing);
-     remove(ZZ,newDegreesMonoid);
-     remove(Sequence,newDegreesMonoid);
-     erase symbol clone;
-     remove(Sequence,clone);
-     )
-erase symbol OLDENGINE
 erase symbol outputSymbols
 erase symbol lastSystemSymbol
 

@@ -274,13 +274,13 @@ ring_elem SchurRing::power(const ring_elem f, mpz_t n) const
 {
   if (mpz_sgn(n) < 0)
     {
-      gError << "element not invertible";
+      ERROR("element not invertible");
       return from_int(1);
     }
   unsigned int n1;
   if (!Z::get_ui(n1, n))
     {
-      gError << "exponent too large";
+      ERROR("exponent too large");
       return from_int(1);
     }
   return power(f,n1);
@@ -291,7 +291,7 @@ ring_elem SchurRing::power(const ring_elem f, int n) const
   ring_elem result = from_int(1);
   if (n < 0)
     {
-      gError << "element not invertible";
+      ERROR("element not invertible");
       return result;
     }
   for (int i=0; i<n; i++)

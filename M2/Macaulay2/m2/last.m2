@@ -2,6 +2,8 @@
 
 -- this file should be mentioned *last* in dumpseq
 
+erase symbol newMatrix
+
 if phase > 1 then load "docloads.m2"
 
 addStartFunction(

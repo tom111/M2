@@ -1,18 +1,17 @@
 --		Copyright 1994 by Daniel R. Grayson
 
+use C;
 use system;
 use strings;
-use system;
 use stdio;
-use arith;
+use gmp;
 use nets;
+use engine;
 use tokens;
 use basic;
 use convertr;
 use struct;
 use binding;
-use GB;
-
 
 enlarge(object:HashTable):void := (
      oldTable := object.table;
@@ -43,7 +42,7 @@ shrink(object:HashTable):void := (
 hashfun(e:Expr):Expr := Expr(toInteger(int(hash(e))));
 setupfun("hash",hashfun);
 export toExpr(h:int):Expr := Expr(toInteger(int(h)));
-mutablefun(e:Expr):Expr := Expr(toBoolean(
+mutablefun(e:Expr):Expr := Expr(toExpr(
      	  when e is o:HashTable do o.mutable
      	  is x:List do x.mutable
      	  is s:SymbolClosure do !s.symbol.protected
@@ -166,7 +165,7 @@ export equal(lhs:Expr,rhs:Expr):Expr := (
      is Error do lhs
      is x:Real do (
 	  when rhs 
-	  is y:Real do Expr(toBoolean(x.v==y.v))
+	  is y:Real do Expr(toExpr(x.v==y.v))
      	  is err:Error do Expr(err)
 	  else False
 	  )
@@ -228,21 +227,77 @@ export equal(lhs:Expr,rhs:Expr):Expr := (
 	       )
 	  -- other cases needed soon
 	  else False)
+     is x:BigReal do (
+	  when rhs
+	  is y:BigReal do (
+	       if x === y then True else False
+	       )
+	  else False)
      is x:SymbolClosure do (
 	  when rhs 
 	  is y:SymbolClosure do (
-       if x.symbol == y.symbol && x.frame == y.frame
+       	       if x.symbol == y.symbol && x.frame == y.frame
 	       then True else False
 	       )
 	  else False
 	  )
      is FunctionClosure do False
-     is Database do False
-     is x:Handle do (
+     is x:RawMonomialOrdering do False
+     is x:RawMonoid do False
+     is x:RawMonomial do (
 	  when rhs
-	  is y:Handle do if gbequal(x.handle,y.handle) then True else False
+	  is y:RawMonomial do (
+	       if Ccode(bool, "IM2_Monomial_is_equal((Monomial *)",x,",(Monomial *)",y,")")
+	       then True else False
+	       )
 	  else False
 	  )
+     is x:RawRing do False
+     is x:RawMonomialIdeal do (
+	  when rhs
+	  is y:RawMonomialIdeal do (
+	       if Ccode(bool, "IM2_MonomialIdeal_is_equal((MonomialIdeal *)",x,",(MonomialIdeal *)",y,")")
+	       then True else False
+	       )
+	  else False
+	  )
+     is x:RawRingElement do (
+	  when rhs
+	  is y:RawRingElement do (
+	       if Ccode(bool, "IM2_RingElement_is_equal((RingElement *)",x,",(RingElement *)",y,")")
+	       then True else False
+	       )
+	  else False
+	  )
+     is x:RawFreeModule do (
+	  when rhs
+	  is y:RawFreeModule do (
+	       if Ccode(bool, "IM2_FreeModule_is_equal((FreeModule *)",x,",(FreeModule *)",y,")")
+	       then True else False
+	       )
+	  else False
+	  )
+     is x:RawVector do (
+	  when rhs
+	  is y:RawVector do (
+	       if Ccode(bool, "IM2_Vector_is_equal((Vector *)",x,",(Vector *)",y,")")
+	       then True else False
+	       )
+	  else False
+	  )
+     is x:RawMatrix do (
+	  when rhs
+	  is y:RawMatrix do (
+	       toExpr(Ccode(bool, "IM2_Matrix_is_equal((Matrix *)",x,",(Matrix *)",y,")"))
+	       )
+	  else False
+	  )
+     is x:RawRingMap do (
+	  when rhs
+	  is y:RawRingMap do NotYet("IM2_RingMap_is_equal")
+	  else False
+	  )
+     is Database do False
      );
 export remove(x:HashTable,key:Expr):Expr := (
      if !x.mutable then (
@@ -606,10 +661,20 @@ export Class(e:Expr):HashTable := (
      is CompiledFunction do functionClass
      is CompiledFunctionClosure do functionClass
      is SymbolClosure do symbolClass
-     is Handle do handleClass
+     is BigReal do bigRealClass
      is Nothing do nothingClass
      is Database do dbClass
      is Boolean do booleanClass
+     is RawMonomial do rawMonomialClass
+     is RawMonomialOrdering do rawMonomialOrderingClass
+     is RawMonoid do rawMonoidClass
+     is RawMonomialIdeal do rawMonomialIdealClass
+     is RawRing do rawRingClass
+     is RawRingElement do rawRingElementClass
+     is RawRingMap do rawRingMapClass
+     is RawFreeModule do rawFreeModuleClass
+     is RawVector do rawVectorClass
+     is RawMatrix do rawMatrixClass
      );
 classfun(e:Expr):Expr := Expr(Class(e));
 setupfun("class",classfun);
@@ -633,12 +698,23 @@ setupconst("MutableList",Expr(mutableListClass));
 setupconst("ZZ",Expr(integerClass));
 setupconst("QQ",Expr(rationalClass));
 setupconst("RR",Expr(doubleClass));
+setupconst("BigReal",Expr(bigRealClass));
+setupconst("RawObject",Expr(rawObjectClass));
+setupconst("RawMonomial",Expr(rawMonomialClass));
+setupconst("RawMonomialOrdering",Expr(rawMonomialOrderingClass));
+setupconst("RawMonoid",Expr(rawMonoidClass));
+setupconst("RawRing",Expr(rawRingClass));
+setupconst("RawFreeModule",Expr(rawFreeModuleClass));
+setupconst("RawVector",Expr(rawVectorClass));
+setupconst("RawMatrix",Expr(rawMatrixClass));
+setupconst("RawRingElement",Expr(rawRingElementClass));
+setupconst("RawRingMap",Expr(rawRingMapClass));
+setupconst("RawMonomialIdeal",Expr(rawMonomialIdealClass));
 setupconst("File",Expr(fileClass));
 setupconst("String",Expr(stringClass));
 setupconst("Function",Expr(functionClass));
 setupconst("Symbol",Expr(symbolClass));
 setupconst("Error",Expr(errorClass));
-setupconst("Handle",Expr(handleClass));
 setupconst("Time",Expr(timeClass));
 setupconst("Option",Expr(optionClass));
 setupconst("Net",Expr(netClass));
@@ -780,6 +856,11 @@ export installMethod(meth:Expr,lhs:HashTable,rhs:HashTable,value:Expr):Expr := (
 	  if lhs.hash > rhs.hash then lhs else rhs,
 	  Expr(Sequence(meth,Expr(lhs),Expr(rhs))),
 	  value));
+
+export installMethod(s:SymbolClosure,X:HashTable,Y:HashTable,f:fun):Expr := (
+     installMethod(Expr(s),X,Y,Expr(CompiledFunction(f,nextHash())))
+     );
+
 export installValue(meth:Expr,lhs:HashTable,rhs:HashTable,value:Expr):Expr := (
      if ! rhs.mutable && !lhs.mutable
      then return(buildErrorPacket("value installation attempted, but neither hash tables is mutable"));

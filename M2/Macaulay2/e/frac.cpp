@@ -2,7 +2,6 @@
 
 #include "frac.hpp"
 #include "text_io.hpp"
-#include "bin_io.hpp"
 #include "monoid.hpp"
 #include "ringmap.hpp"
 
@@ -11,25 +10,23 @@
 
 FractionField::FractionField(const Ring *RR) 
 : Ring(RR->charac(),RR->total_n_vars(), RR->total_n_vars(),
-	this /* Visual C WARNING */, trivial_monoid, RR->degree_monoid()),
+	this /* Visual C WARNING */, Monoid::get_trivial_monoid(), RR->degree_monoid()),
   R(RR)
 {
   declare_field();
   MINUS_ONE = R->from_int(-1);
-  bump_up((Ring *) R);
   frac_stash = new stash("fractions", sizeof(frac_elem));
 }
 
 FractionField::~FractionField()
 {
-  bump_down((Ring *) R);
   delete frac_stash;
 }
 
 FractionField *FractionField::create(const Ring *R)
 {
   FractionField *obj = new FractionField(R);
-  return (FractionField *) intern(obj);
+  return obj;
 }
 
 void FractionField::text_out(buffer &o) const
@@ -69,7 +66,7 @@ void FractionField::simplify(frac_elem *f) const
     {
       //R->zero_divisor = y;
       R->remove(x);
-      gError << "zero divisor found";
+      ERROR("zero divisor found");
       return;
       // NOW QUIT whatever computation is going on!! MES
     }
@@ -90,8 +87,8 @@ void FractionField::simplify(frac_elem *f) const
       ring_elem g = R->gcd(f->numer, f->denom);
       if (!R->is_unit(g))
 	{
-	  ring_elem tmp1 = R->divide(f->numer, g);
-	  ring_elem tmp2 = R->divide(f->denom, g);
+	  ring_elem tmp1 = R->divide(f->numer, g); // exact division
+	  ring_elem tmp2 = R->divide(f->denom, g); // exact division
 	  R->remove(f->numer);
 	  R->remove(f->denom);
 	  f->numer = tmp1;
@@ -101,7 +98,7 @@ void FractionField::simplify(frac_elem *f) const
     }
   if (R->is_unit(f->denom))
     {
-      ring_elem tmp = R->divide(f->numer, f->denom);
+      ring_elem tmp = R->divide(f->numer, f->denom); // exact division
       R->remove(f->numer);
       R->remove(f->denom);
       f->numer = tmp;
@@ -167,13 +164,6 @@ void FractionField::elem_text_out(buffer &o, const ring_elem a) const
   p_parens = old_parens;
   p_one = old_one;
   p_plus = old_plus;
-}
-
-void FractionField::elem_bin_out(buffer &o, const ring_elem a) const
-{
-  frac_elem *f = FRAC_VAL(a);
-  R->elem_bin_out(o, f->numer);
-  R->elem_bin_out(o, f->denom);
 }
 
 ring_elem FractionField::from_int(int n) const
@@ -406,7 +396,7 @@ ring_elem FractionField::power(const ring_elem a, int n) const
       bottom = R->power(f->numer, -n);
       if (R->is_zero(bottom))
 	{
-	  gError << "attempt to divide by zero";
+	  ERROR("attempt to divide by zero");
 	  R->remove(bottom);
 	  bottom = R->from_int(1);
 	}
@@ -430,7 +420,7 @@ ring_elem FractionField::power(const ring_elem a, mpz_t n) const
       mpz_neg(n, n);
       if (R->is_zero(bottom))
 	{
-	  gError << "attempt to divide by zero";
+	  ERROR("attempt to divide by zero");
 	  R->remove(bottom);
 	  bottom = R->from_int(1);
 	}
@@ -532,7 +522,7 @@ ring_elem FractionField::eval(const RingMap *map, const ring_elem a) const
   ring_elem bottom = R->eval(map, f->denom);
   if (S->is_zero(bottom))
     {
-      gError << "division by zero!";
+      ERROR("division by zero!");
       S->remove(bottom);
       bottom = S->from_int(1);
     }
@@ -562,7 +552,7 @@ void FractionField::degree(const ring_elem a, int *d) const
   degree_monoid()->remove(e);
 }
 
-void FractionField::degree_weights(const ring_elem, const int *, int &lo, int &hi) const
+void FractionField::degree_weights(const ring_elem, const M2_arrayint, int &lo, int &hi) const
 {
   assert(0);
   // MES: what should this do?
@@ -575,7 +565,8 @@ int FractionField::primary_degree(const ring_elem a) const
   return R->primary_degree(f->numer) - R->primary_degree(f->denom);
 }
 
-ring_elem FractionField::homogenize(const ring_elem a, int v, int deg, const int *wts) const
+ring_elem FractionField::homogenize(const ring_elem a, int v, int deg, 
+				    const M2_arrayint wts) const
 {
   ring_elem top, bottom;
   frac_elem *result;
@@ -597,7 +588,7 @@ ring_elem FractionField::homogenize(const ring_elem a, int v, int deg, const int
   return FRAC_RINGELEM(result);
 }
 
-ring_elem FractionField::homogenize(const ring_elem a, int v, const int *wts) const
+ring_elem FractionField::homogenize(const ring_elem a, int v, const M2_arrayint wts) const
 {
   const frac_elem *f = FRAC_VAL(a);
   ring_elem top = R->homogenize(f->numer, v, wts);

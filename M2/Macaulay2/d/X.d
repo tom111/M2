@@ -1,5 +1,6 @@
 --		Copyright 1994 by Daniel R. Grayson
 
+use C;
 use system;
 
 export XID := uint;

@@ -1,0 +1,6 @@
+*.obj
+*.dd
+allfiles
+cmdinst.hpp
+cmdnames.hpp
+cmdnames.m2

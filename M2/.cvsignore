@@ -1,0 +1,7 @@
+config.cache
+include
+lib
+share
+Makeconf.h
+Makeconf.m2
+Macaulay2-*.tar.gz

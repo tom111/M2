@@ -1,6 +1,6 @@
 -- 	Copyright 1994 by Daniel R. Grayson
 
-load "version.m2"
+if not load "version.m2" then error "couldn't find file 'version.m2'"
 
 pathSeparator = if version#"OS" === "MACOS" then ":" else "/"
 
@@ -42,6 +42,7 @@ oldendl := endl
 erase quote endl
 endl = new Manipulator from oldendl
 
+<< Thing := x -> stdout << x
 File << Net := File << Symbol := File << String := printString
 File << Thing := (x,y) -> printString(x,string y) -- provisional
 Nothing << Thing := (x,y) -> null

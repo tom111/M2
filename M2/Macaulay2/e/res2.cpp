@@ -366,7 +366,7 @@ int res2_comp::calc(const int *DegreeLimit,
 
 void res2_comp::initialize(Matrix mat, 
 			   int LengthLimit,
-			   int UseDegreeLimit,
+			   bool UseDegreeLimit,
 			   int SlantedDegreeLimit,
 			   int SortStrategy)
 {
@@ -506,7 +506,7 @@ void res2_comp::display_order(int sortval) const
 
 res2_comp::res2_comp(Matrix m, 
 		     int LengthLimit, 
-		     int UseDegreeLimit,
+		     bool UseDegreeLimit,
 		     int SlantedDegreeLimit,
 		     int SortStrategy)
 {
@@ -556,7 +556,7 @@ res2_comp::~res2_comp()
 //////////////////////////////////////////////
 
 res2_pair *res2_comp::new_res2_pair(res2_pair *first, 
-				 res2_pair *second,
+				 res2_pair * /* second */,
 				 const int *basemon)
 {
   res2_pair *p = new res2_pair;

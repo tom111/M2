@@ -132,12 +132,12 @@ name Equation := v -> (
 	  concatenate between(" == ", 
 	       apply(v, e -> if precedence e <= p then ("(", name e, ")") else name e))))
 
-ZeroExpression := new Type of Expression
+ZeroExpression = new Type of Expression
 ZeroExpression.name = quote ZeroExpression
 ZERO := new ZeroExpression
 name ZeroExpression := net ZeroExpression := x -> "0"
 
-OneExpression := new Type of Expression
+OneExpression = new Type of Expression
 OneExpression.name = quote OneExpression
 ONE := new OneExpression
 name OneExpression := net OneExpression := x -> "1"
@@ -269,27 +269,27 @@ Expression == Equation      := prepend
 Expression == Expression    := (x,y) -> new Equation from {x,y}
 Expression == Thing         := (x,y) -> x == expression y
 Thing == Expression         := (x,y) -> expression x == y
-ZeroExpression + Expression := (x,y) -> y
-Expression + ZeroExpression := (x,y) -> x
-Sum + Sum                   := join
-Sum + Expression            := append
-Expression + Sum            := prepend
-Expression + Expression := (x,y) -> new Sum from {x,y}
-Expression + Thing      := (x,y) -> x + expression y
-     Thing + Expression := (x,y) -> expression x + y
-       - ZeroExpression := identity
-	   - Minus      := x -> x#0
-           - Expression := x -> new Minus from {x}
-Expression - Expression := (x,y) -> x + -y
-Expression - Thing      := (x,y) -> x - expression y
-     Thing - Expression := (x,y) -> expression x - y
-Expression * OneExpression := (x,y) -> x
-OneExpression * Expression := (x,y) -> y
+ZeroExpression + Expression := { Expression, (x,y) -> y }
+Expression + ZeroExpression := { Expression, (x,y) -> x }
+Sum + Sum                   := { Sum, join }
+Sum + Expression            := { Sum, append }
+Expression + Sum            := { Sum, prepend }
+Expression + Expression     := { Sum, (x,y) -> new Sum from {x,y} }
+Expression + Thing          := { Expression, (x,y) -> x + expression y }
+     Thing + Expression     := { Expression, (x,y) -> expression x + y }
+       - ZeroExpression     := identity
+	   - Minus          := x -> x#0
+           - Expression     := x -> new Minus from {x}
+Expression - Expression     := (x,y) -> x + -y
+Expression - Thing          := (x,y) -> x - expression y
+     Thing - Expression     := (x,y) -> expression x - y
+Expression * OneExpression  := (x,y) -> x
+OneExpression * Expression  := (x,y) -> y
 Expression * ZeroExpression := (x,y) -> y
 ZeroExpression * Expression := (x,y) -> x
-Product * Product       := join
-Product * Expression    := append
-Expression * Product    := prepend
+Product * Product           := join
+Product * Expression        := append
+Expression * Product        := prepend
 Expression * Expression := (x,y) -> new Product from {x,y}
 Expression * Minus := (x,y) -> -(x * y#0)
 Minus * Expression := (x,y) -> -(x#0 * y)
@@ -428,7 +428,7 @@ net FunctionApplication := m -> (
      	       	      precedence Sequence := x -> (
 			   if #x === 0 then 70
 			   else if #x === 1 then 40
-			   else 5
+			   else 70
 			   )
 -----------------------------------------------------------------------------
      	       	      precedence Equation := x -> 10
@@ -968,3 +968,29 @@ backtrace = () -> apply(elements deepSplice report,
 	  )
      )
 erase quote report
+
+
+---------------------------------
+
+SelfNamer = new Type of MutableHashTable
+
+document { quote SelfNamer,
+     TT "SelfNamer", " -- the class of mutable hash tables which acquire
+     the name of the first global variable they get assigned to.",
+     PARA,
+     EXAMPLE "X = new Type of MutableHashTable",
+     EXAMPLE "x = new X",
+     EXAMPLE "Y = new Type of SelfNamer",
+     EXAMPLE "y = new Y"
+     }
+
+GlobalAssignHook SelfNamer := (X,x) -> (
+     if not x#?(quote name) then x.name = X
+     )
+
+GlobalReleaseHook SelfNamer := (X,x) -> (
+     if x#?(quote name) and X === x.name
+     then remove(x,quote name)
+     )
+
+expression SelfNamer := (x) -> hold x.name

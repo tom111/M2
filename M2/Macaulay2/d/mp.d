@@ -1,23 +1,23 @@
 --		Copyright 1995 by Daniel R. Grayson
 
 use system; 
-use converter;
+use convertr;
 use binding;
 use parser;
 use lex;
-use arithmetic;
+use arith;
 use nets;
 use tokens;
 use err;
 use stdiop;
 use ctype;
 use stdio;
-use varstrings;
+use varstrin;
 use strings;
 use C;
 use actors;
 use actors2;
-use structure;
+use struct;
 use objects;
 use GB;
 
@@ -62,7 +62,7 @@ writePacket(h:int,x:Expr):Expr := (
      is s:SymbolClosure do Expr(toInteger(PutIdentifier(h,s.symbol.word.name)))
      is s:string do Expr(toInteger(PutString(h,s)))
      is z:List do (
-	  method := lookup2(integerClass,z.class,WritePacketS);
+	  method := lookupBinaryMethod(integerClass,z.class,WritePacketS);
 	  if method != nullE
 	  then apply(method,Expr(toInteger(h)),x)
 	  else (
@@ -77,7 +77,7 @@ writePacket(h:int,x:Expr):Expr := (
 	  then Expr(toInteger(PutSint32(h,toInt(j))))
 	  else WrongArg(2,"a small integer"))
      else (
-	  method := lookup2(integerClass,Class(x),WritePacketS);
+	  method := lookupBinaryMethod(integerClass,Class(x),WritePacketS);
      	  if method != nullE 
      	  then apply(method,Expr(toInteger(h)),x)
      	  else errorExpr("no method found for WritePacket")

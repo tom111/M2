@@ -1,0 +1,24 @@
+Use Microsoft Visual C++ 5.0 with the workspace M2.dsw and set the active
+configuration to be "Macaulay2 -Win32 Release".  It will produce the
+executable:
+
+	Macaulay2/d/Release/Macaulay2.exe
+
+Test it by running it in the directory
+
+	Macaulay2/m2
+
+with the command line argument
+
+	setup.m2
+
+I think it's a bug in Microsoft's development environment that the
+information above is saved in the file M2.opt instead of in
+Macaulay2/Macaulay2.dsp.
+
+Notes:
+
+	1) I had to turn off optimization on the file
+		e/monideal.cpp in order to prevent it crashing when
+		computing the ideal of 4x4 Pfaffians of a generic 6x6
+		matrix.

@@ -1,23 +1,23 @@
 --		Copyright 1994 by Daniel R. Grayson
 
 use system; 
-use converter;
+use convertr;
 use binding;
 use parser;
 use lex;
-use arithmetic;
+use arith;
 use nets;
 use tokens;
 use err;
 use stdiop;
 use ctype;
 use stdio;
-use varstrings;
+use varstrin;
 use strings;
 use C;
 use actors;
 use basic;
-use structure;
+use struct;
 use objects;
 use GB;
 
@@ -45,7 +45,7 @@ EqualEqualfun(lhs:Code,rhs:Code):Expr := (
 		    )
 	       then False
 	       else (
-		    method := lookup2(cx,cy,EqualEqualS);
+		    method := lookupBinaryMethod(cx,cy,EqualEqualS);
 		    if method == nullE 
 		    then MissingMethodPair(EqualEqualS,x,y)
 		    else apply(method,x,y)))));
@@ -975,9 +975,9 @@ map(n:int,f:Expr):Expr := (
 map(e:Expr,f:Expr):Expr := (
      when e
      is a:Sequence do Expr(map(a,f))
-     is obj:Object do (
+     is obj:HashTable do (
 	  if obj.mutable then return(WrongArg("an immutable hash table"));
-	  u := newobject(obj.class,obj.parent);
+	  u := newHashTable(obj.class,obj.parent);
 	  if ancestor(obj.class,Tally) then (
 	       foreach bucket in obj.table do (
 		    p := bucket;
@@ -987,7 +987,7 @@ map(e:Expr,f:Expr):Expr := (
 			 else (
 			      newhash := hash(newkey);
 			      v := lookup1(u, newkey, newhash);
-			      assignobject(u, newkey, newhash,
+			      storeInHashTable(u, newkey, newhash,
 			      	   if v == nullE then p.value else v + p.value
 				   );
 			      );
@@ -1000,7 +1000,7 @@ map(e:Expr,f:Expr):Expr := (
 		    while p != bucketEnd do (
 			 newvalue := apply(f,p.value);
 			 when newvalue is Error do return(newvalue)
-			 else (assignobject(u,p.key,p.hash,newvalue););
+			 else (storeInHashTable(u,p.key,p.hash,newvalue););
 			 p = p.next;
 			 ));
 	       sethash(u,obj.mutable);
@@ -1582,7 +1582,7 @@ gcd(x:Expr,y:Expr):Expr := (
 gcdfun(e:Expr):Expr := accumulate(plus0,plus1,gcd,e);
 setupfun("gcd",gcdfun);
 
-setup(assignW);
+setup(EqualW);
 setup(ColonEqualW);
 
 toSequence(e:Expr):Expr := (

@@ -2,6 +2,8 @@
 
 TMP=tmp$$.c
 
+LDFLAGS='-static'
+
 cat <<EOF >compat.h
 /* this file produced automatically by configure, do not edit */
 #include <stdlib.h>
@@ -47,41 +49,79 @@ EOF
 gcc $TMP -lm >/dev/null 2>&1 || echo '#define __isinf isinf' >>compat.h
 
 
+cat >>compat.c <<'EOF'
+#ifndef ENOSYS
+#define ENOSYS 0
+#endif
+EOF
+
+cat <<'EOF' >$TMP
+main(){ }
+EOF
+if gcc $TMP $LDFLAGS -lsocket >/dev/null 2>&1
+then LDFLAGS="$LDFLAGS -lsocket"
+fi
+
+cat <<'EOF' >$TMP
+main(){ getprotobyname(); }
+EOF
+gcc $TMP $LDFLAGS >/dev/null 2>&1 || (
+	echo 'void *getprotobyname() { errno = ENOSYS; return 0; }'
+	) >>compat.c
+
+cat <<'EOF' >$TMP
+main(){ accept(); }
+EOF
+gcc $TMP $LDFLAGS >/dev/null 2>&1 || (
+	echo 'int accept() { errno = ENOSYS; return -1; }'
+	) >>compat.c
+
+cat <<'EOF' >$TMP
+main(){ bind(); }
+EOF
+gcc $TMP $LDFLAGS >/dev/null 2>&1 || (
+	echo 'int bind() { errno = ENOSYS; return -1; }'
+	) >>compat.c
+
+cat <<'EOF' >$TMP
+main(){ listen(); }
+EOF
+gcc $TMP $LDFLAGS >/dev/null 2>&1 || (
+	echo 'int listen() { errno = ENOSYS; return -1; }'
+	) >>compat.c
+
 cat <<'EOF' >$TMP
 main(){ socket(); }
 EOF
-gcc $TMP -static >/dev/null 2>&1 || (
-	echo '#ifndef ENOSYS'
-	echo '#define ENOSYS 0'
-	echo '#endif'
+gcc $TMP $LDFLAGS >/dev/null 2>&1 || (
 	echo 'int socket() { errno = ENOSYS; return -1; }'
 	) >>compat.c
 
 cat <<'EOF' >$TMP
 main(){ gethostbyname(); }
 EOF
-gcc $TMP -static >/dev/null 2>&1 ||
+gcc $TMP $LDFLAGS >/dev/null 2>&1 ||
 	echo 'void *gethostbyname() { errno = ENOSYS; return (void *)0; }' \
 	>>compat.c
 
 cat <<'EOF' >$TMP
 main(){ inet_addr(); }
 EOF
-gcc $TMP -static >/dev/null 2>&1 || 
+gcc $TMP $LDFLAGS >/dev/null 2>&1 || 
 	echo 'int inet_addr() { errno = ENOSYS; return -1; }' \
 	>>compat.c
 
 cat <<'EOF' >$TMP
 main(){ getservbyname(); }
 EOF
-gcc $TMP -static >/dev/null 2>&1 || 
+gcc $TMP $LDFLAGS >/dev/null 2>&1 || 
 	echo 'void *getservbyname() { errno = ENOSYS; return (void *)0; }' \
 	>>compat.c
 
 cat <<'EOF' >$TMP
 main(){ authdes_create(); }
 EOF
-gcc $TMP -static >/dev/null 2>&1 || (
+gcc $TMP $LDFLAGS >/dev/null 2>&1 || (
 	echo '#ifndef ENOSYS'
 	echo '#define ENOSYS 0'
 	echo '#endif'
@@ -91,21 +131,21 @@ gcc $TMP -static >/dev/null 2>&1 || (
 cat <<'EOF' >$TMP
 main(){ xdrmem_create(); }
 EOF
-gcc $TMP -static >/dev/null 2>&1 || 
+gcc $TMP $LDFLAGS >/dev/null 2>&1 || 
 	echo 'void *xdrmem_create() { errno = ENOSYS; return (void *)0; }' \
 	>>compat.c
 
 cat <<'EOF' >$TMP
 main(){ connect(); }
 EOF
-gcc $TMP -static >/dev/null 2>&1 || 
+gcc $TMP $LDFLAGS >/dev/null 2>&1 || 
 	echo 'int connect() { errno = ENOSYS; return -1; }' \
 	>>compat.c
 
 cat <<'EOF' >$TMP
 main(){ setsockopt(); }
 EOF
-gcc $TMP -static >/dev/null 2>&1 || 
+gcc $TMP $LDFLAGS >/dev/null 2>&1 || 
 	echo 'int setsockopt() { errno = ENOSYS; return -1; }' \
 	>>compat.c
 
@@ -113,7 +153,7 @@ cat <<'EOF' >$TMP
 #include <netinet/in.h>
 main(){ htons(0); }
 EOF
-gcc $TMP -static >/dev/null 2>&1 || 
+gcc $TMP $LDFLAGS >/dev/null 2>&1 || 
 	echo 'short htons(short x) { return x; }' \
 	>>compat.c
 

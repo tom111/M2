@@ -1,25 +1,22 @@
 --		Copyright 1995 by Daniel R. Grayson and Michael Stillman
 
-Module + Module := (M,N) -> (
-     if ring M =!= ring N
-     then error "expected modules over the same ring";
-     R := ring M;
-     if ambient M != ambient N
-     or M.?relations and N.?relations and M.relations != N.relations
-     or M.?relations and not N.?relations
-     or not M.?relations and N.?relations
-     then error "expected submodules of the same module";
-     subquotient(
-	  if not M.?generators or not N.?generators then null else M.generators | N.generators,
-	  if M.?relations then M.relations else null
-	  )
-     )
-
-document { "Module + Module",
+Module + Module := {Module, (M,N) -> (
+	  if ring M =!= ring N
+	  then error "expected modules over the same ring";
+	  R := ring M;
+	  if ambient M != ambient N
+	  or M.?relations and N.?relations and M.relations != N.relations
+	  or M.?relations and not N.?relations
+	  or not M.?relations and N.?relations
+	  then error "expected submodules of the same module";
+	  subquotient(
+	       if not M.?generators or not N.?generators then null else M.generators | N.generators,
+	       if M.?relations then M.relations else null
+	       )
+	  ),
      TT "M + N", " -- the sum of two submodules.",
      PARA,
-     "The two modules should be submodules of the same module.",
-     SEEALSO ("Module", "+")
+     "The two modules should be submodules of the same module."
      }
 
 Module ** Module := (M,N) -> (
@@ -330,9 +327,12 @@ diff(ProjectiveHilbertPolynomial,ZZ) := (P,i) -> (
 	  (n,c) -> n >= 0
 	  ))
 diff ProjectiveHilbertPolynomial := (P) -> diff(P,1)
-ProjectiveHilbertPolynomial + ProjectiveHilbertPolynomial := (h,k) -> (
-     select( merge(h,k,plus), c -> c =!= 0 )
-     )
+ProjectiveHilbertPolynomial + ProjectiveHilbertPolynomial := {
+     ProjectiveHilbertPolynomial,
+     (h,k) -> (
+     	  select( merge(h,k,plus), c -> c =!= 0 )
+     	  )
+     }
 - ProjectiveHilbertPolynomial := h -> apply(h,minus)
 ProjectiveHilbertPolynomial - ProjectiveHilbertPolynomial := (h,k) -> h + -k
 ProjectiveHilbertPolynomial == ProjectiveHilbertPolynomial := (h,k) -> h === k
@@ -657,16 +657,18 @@ assert isIsomorphism p^-1
 assert ( p * p^-1 == id_M )
 assert ( p^-1 * p == id_N )
 "
-
 -----------------------------------------------------------------------------
-
-dual Module := F -> (
-     if not isFreeModule F then kernel transpose presentation F
-     else (
-     	  sendgg (ggPush F, ggtranspose); 
-     	  new Module from ring F))
 document { quote dual,
-     TT "dual M", " -- computes the dual of a module or chain complex."
+     TT "dual M", " -- the dual."
+     }
+
+dual Module := { Module,
+     F -> (
+	  if not isFreeModule F then kernel transpose presentation F
+	  else (
+	       sendgg (ggPush F, ggtranspose); 
+	       new Module from ring F)),
+     TT "dual M", " -- the dual of a module."
      }
 -----------------------------------------------------------------------------
 Hom(Module, Module) := (M,N) -> (
@@ -828,6 +830,10 @@ Module ^ Array := (M,rows) -> (
 	  else error "expected a direct sum module"
 	  )
      else (
+	  if M.?indexComponents then (
+	       ic := M.indexComponents;
+	       rows = apply(rows, i -> if ic#?i then ic#i else i);
+	       );
 	  if isFreeModule M then (
 	       -- if the components of M have 3,4,5 generators, then
 	       -- we want to construct ( (0,1,2), (3,4,5,6), (7,8,9,10,11) ) for
@@ -836,8 +842,8 @@ Module ^ Array := (M,rows) -> (
 	       v := apply(M.components, N -> k .. (k = k + numgens N) - 1);
 	       M ^ (apply(elements rows, i -> v#i))
 	       )
-	  else concatRows apply(rows, i -> 
-	       concatCols apply(#M.components, j -> 
+	  else matrix apply(elements rows, i -> 
+	       apply(#M.components, j -> 
 		    map( M.components#i, M.components#j, if i===j then 1 else 0)))))
 Module _ Array := (M,cols) -> (
      cols = splice cols;
@@ -847,6 +853,10 @@ Module _ Array := (M,cols) -> (
 	  else error "expected a direct sum module"
 	  )
      else (
+	  if M.?indexComponents then (
+	       ic := M.indexComponents;
+	       cols = apply(cols, i -> if ic#?i then ic#i else i);
+	       );
 	  if isFreeModule M then (
 	       -- if the components of M have 3,4,5 generators, then
 	       -- we want to construct ( (0,1,2), (3,4,5,6), (7,8,9,10,11) ) for
@@ -855,8 +865,8 @@ Module _ Array := (M,cols) -> (
 	       v := apply(M.components, N -> k .. (k = k + numgens N) - 1);
 	       M _ (apply(elements cols, i -> v#i))
 	       )
-	  else concatRows apply(#M.components, i -> 
-	       concatCols apply(cols, j -> 
+	  else matrix apply(#M.components, i -> 
+	       apply(elements cols, j -> 
 		    map( M.components#i, M.components#j, if i===j then 1 else 0)))))
 -----------------------------------------------------------------------------
 Module ^ List := (M,rows) -> submatrix(id_M,rows,)
@@ -1052,5 +1062,3 @@ isSubset(Ideal,Ideal) := (I,J) -> isSubset(module I, module J)
 isSubset(Module,Ideal) := (M,J) -> isSubset(M, module J)
 isSubset(Ideal,Module) := (I,N) -> isSubset(module I, N)
 
-erase global concatRows
-erase global concatCols

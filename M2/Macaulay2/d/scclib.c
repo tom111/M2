@@ -14,6 +14,8 @@ char newline[] = NEWLINE;
 extern char *libfac_version;
 #endif
 
+#include "../../Makeconf.h"	/* VERSION is defined here */
+
 #ifdef __MWERKS__
 #include ".._c_compat.h"
 #else
@@ -626,9 +628,9 @@ char **argv;
 				   to the heap and has been overwritten by
 				   loaddata(), thereby pointing to a previous
 				   incarnation of the heap. */
-	  /* make a copy of the environment on the heap for 'environ' */
-	  /* in some systems, putenv() calls free() on the old item */
-	  /* we are careful to use malloc here, and not GC_malloc */
+	  /* Make a copy of the environment on the heap for 'environ'. */
+	  /* In some systems, putenv() calls free() on the old item,
+	     so we are careful to use malloc here, and not GC_malloc. */
 	  environ0 = (char **)malloc((envc + 1)*sizeof(char *));
 	  /* amazing but true:
 	     On linux, malloc calls getenv to get values for tunable
@@ -1086,6 +1088,8 @@ static void *first_rw_page_after_etext() {
      }
 #endif
 
+int probe();
+
 int system_dumpdata(datafilename)
 M2_string datafilename;
 {
@@ -1182,7 +1186,7 @@ int probe() {
 	       }
 	  if (oldsig != sig || oldreadable != readable || oldwritable != writable) {
 	       char buf[80];
-	       sprintf(buf,"%16lx . %s%s%s\n",
+	       sprintf(buf,"%16lx . %s%s%s",
 	       	    (long)p,
 	       	    readable ? "r" : "-", 
 	       	    writable ? "w" : "-",
@@ -1191,6 +1195,13 @@ int probe() {
 	       putstderr(buf);
 	       }
 	  }
+     {
+	  char buf[80];
+	  sprintf(buf,"%16lx .",
+	       (long)p
+	       );
+	  putstderr(buf);
+	       }
 #endif
      signal(SIGSEGV,oldhandler);
 #ifdef SIGBUS

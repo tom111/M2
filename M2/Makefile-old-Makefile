@@ -1,0 +1,204 @@
+#############################################################################
+# targets to use:
+#	all:	make a binary distribution
+#	doc:	make the documentation
+#############################################################################
+# warning: if you move the directory tree, then factory needs to be reconfigured
+#############################################################################
+
+include Makeconf
+
+FILES := Makefile Makeconf README patches
+
+SUBDIRS := gc gmp factory libfac Macaulay2
+
+.PHONY : all always dirs clean port FACTORYmade FACTORYconfigured \
+	announce MACAULAY2 MACAULAY2.doc doc
+
+all:: announce
+
+announce ::
+	@echo "######################################################"
+	@echo 'making Macaulay 2 version $(VERSION) for $(SYSTEM)'
+	@echo "######################################################"
+all:: Makeconf.h
+Makeconf.h : Makeconf Makeconf-h
+	Makeconf-h > $@
+
+all:: GC GMP FACTORY LIBFAC
+ifdef MP
+all:: MP
+endif
+all:: MACAULAY2
+
+lib/.exists:; mkdir -p lib; touch $@
+include/.exists:
+	- mkdir include
+	touch $@
+clean::; rm -rf lib include share
+
+always:
+
+clean::; for i in $(SUBDIRS); do $(MAKE) -C $$i $@; done
+
+bigport: Macaulay2-$(VERSION)-src-bigport.tar
+Macaulay2-$(VERSION)-src-bigport.tar: src-dev \
+		Macaulay2/tgz/Macaulay2-${VERSION}-src-dev.tgz
+	tar cf $@ $(FILES) \
+		tgz/gc$(GCVERSION).tar.gz \
+		tgz/gmp-$(GMPVERSION).tar.gz \
+		tgz/factory-$(FACTORYVERSION).tar.gz \
+		tgz/libfac-$(LIBFACVERSION).tgz \
+		tgz/MP-$(MPVERSION).tar.gz \
+		-C Macaulay2 tgz/Macaulay2-$(VERSION)-src-dev.tgz
+
+medport: Macaulay2-$(VERSION)-src-medport.tar
+Macaulay2-$(VERSION)-src-medport.tar: src-dev \
+		Macaulay2/tgz/Macaulay2-${VERSION}-src-dev.tgz
+	tar cf $@ $(FILES) \
+		-C Macaulay2 tgz/Macaulay2-$(VERSION)-src-dev.tgz
+
+src-dev :
+	make -C Macaulay2 devdist
+
+port: Macaulay2-$(VERSION)-src-port.tar
+Macaulay2-$(VERSION)-src-port.tar: \
+		Macaulay2/tgz/Macaulay2-${VERSION}-src-limited.tgz
+	tar cf $@ $(FILES) \
+		tgz/gc$(GCVERSION).tar.gz \
+		tgz/gmp-$(GMPVERSION).tar.gz \
+		tgz/factory-$(FACTORYVERSION).tar.gz \
+		tgz/libfac-$(LIBFACVERSION).tgz \
+		tgz/MP-$(MPVERSION).tar.gz \
+		-C Macaulay2 tgz/Macaulay2-$(VERSION)-src-limited.tgz
+portfloppy:
+	tar cfM /dev/floppy $(FILES) \
+		tgz/gc$(GCVERSION).tar.gz \
+		tgz/gmp-$(GMPVERSION).tar.gz \
+		tgz/factory-$(FACTORYVERSION).tar.gz \
+		tgz/libfac-$(LIBFACVERSION).tgz \
+		tgz/MP-$(MPVERSION).tar.gz \
+		-C Macaulay2 tgz/Macaulay2-$(VERSION)-src-dev.tgz
+
+clean::; rm -f config.cache
+
+################################ GC
+GC: gc lib/libgc.a include/gc.h include/gc_cpp.h
+# GC_CFLAGS = -DNO_SIGNALS -g -O -DALL_INTERIOR_POINTERS -DGC_DEBUG
+GC_CFLAGS = -DNO_SIGNALS -g -O -DNO_DEBUGGING -DSILENT -DALL_INTERIOR_POINTERS
+
+lib/libgc.a: 	  gc/gc.a lib/.exists;	 	cp $< $@; ranlib $@
+include/gc.h:	  gc/gc.h include/.exists;	cp $< $@
+include/gc_cpp.h: gc/gc_cpp.h include/.exists;	cp $< $@
+gc/gc.a: 	  always
+	$(MAKE) -C gc CC=gcc AS=$(AS) CFLAGS='$(GC_CFLAGS)' gc.a
+
+#	$(MAKE) -C gc CXX=gcc CFLAGS='$(GC_CFLAGS) -nostdinc++' c++
+#	echo '#undef DYNAMIC_LOADING' >> gc/config.h
+#	echo 'int one_more_symbol;' >> gc/checksums.c
+
+###################### GMP
+GMP : 	gmp include/gmp.h \
+	lib/libmpn.a lib/libmpz.a lib/libmpq.a lib/libmpf.a lib/libgmp.a
+include/gmp.h: gmp/gmp.h include/.exists; cp $< $@
+lib/libmpn.a: gmp/mpn/libmpn.a lib/.exists; cp $< $@; ranlib $@
+lib/libmpz.a: gmp/mpz/libmpz.a lib/.exists; cp $< $@; ranlib $@
+lib/libmpq.a: gmp/mpq/libmpq.a lib/.exists; cp $< $@; ranlib $@
+lib/libmpf.a: gmp/mpf/libmpf.a lib/.exists; cp $< $@; ranlib $@
+lib/libgmp.a: gmp/libgmp.a lib/.exists; cp $< $@; ranlib $@
+
+gmp/mpn/libmpn.a : make-gmp
+gmp/mpz/libmpz.a : make-gmp
+gmp/mpq/libmpq.a : make-gmp
+gmp/mpf/libmpf.a : make-gmp
+gmp/libgmp.a : make-gmp
+
+make-gmp : gmp/config.status
+	$(MAKE) -C gmp
+gmp/config.status: gmp/configure
+	cd gmp; ./configure --cache-file=../config.cache
+
+###################### FACTORY
+
+# when importing a new version of factory, make sure the directory is clean,
+# (look to see if factory/config.status is there)
+
+FACTORY: FACTORYconfigured FACTORYmade lib/FACTORYinstalled
+
+FACTORYexports := \
+		factory/libcf.a \
+		factory/factory.h \
+		factory/factoryconf.h \
+		factory/templates/array.cc     \
+		factory/templates/array.h      \
+		factory/templates/factor.cc    \
+		factory/templates/factor.h     \
+		factory/templates/functions.h  \
+		factory/templates/list.cc      \
+		factory/templates/list.h       \
+		factory/templates/matrix.cc    \
+		factory/templates/matrix.h     \
+		factory/tmpl_inst.cc
+
+FACTORYconfigured: factory/config.status
+factory/config.status factory/GNUmakefile : factory/GNUmakefile.in
+	cd factory;\
+	GMP_INCLUDE_PATH=../include;\
+	export GMP_INCLUDE_PATH;\
+	./configure --cache-file=../config.cache --prefix=.. --with-memman --with-optimize
+
+FACTORYmade:; $(MAKE) -C factory
+
+lib/FACTORYinstalled: lib/.exists include/.exists $(FACTORYexports)
+	$(MAKE) -C factory install
+	ranlib lib/libcfmem.a
+	touch $@
+
+###################### LIBFAC
+LIBFAC:		libfac \
+		libfac/config.status libfac/libfac.a include/factor.h lib/libfac.a
+libfac/config.status :
+	cd libfac; ./configure --cache-file=../config.cache --includedir=../include
+libfac/libfac.a : always
+	$(MAKE) CXX=g++ OPTCXX=g++ -C libfac libfac
+include/factor.h: libfac/factor.h include/.exists; cp $< $@
+lib/libfac.a: libfac/libfac.a lib/.exists; cp $< $@; ranlib $@
+
+###################### MP
+MP:	mp mp/config.status mp/libMP.a \
+	lib/libMP.a include/MP.h include/MP_Config.h
+mp/config.status:
+	cd mp; ./configure --cache-file=../config.cache --prefix=$(TOPDIR) # --with-debug
+mp/libMP.a:
+	$(MAKE) -C mp libMP.a
+lib/libMP.a: mp/MP/libMP.a lib/.exists; cp $< $@; ranlib $@
+include/MP.h: mp/MP/MP.h include/.exists; cp $< $@
+include/MP_Config.h: mp/MP/MP_Config.h include/.exists; cp $< $@
+
+###################### Macaulay 2 binary distribution
+MACAULAY2: Macaulay2
+	$(MAKE) -C Macaulay2 all tests
+
+DISTFILES := 	Macaulay2/README \
+		Macaulay2/CHANGES \
+		Macaulay2/licenses \
+		Macaulay2/setup \
+		Macaulay2/cache/Macaulay2.doc \
+		Macaulay2/tutorial/final/*.out \
+		Macaulay2/bin Macaulay2/m2 Macaulay2/emacs
+Macaulay2-$(DESC).tar.gz : Makefile $(DISTFILES); tar cfz $@ $(DISTFILES)
+
+all :: MACAULAY2 Macaulay2-$(DESC).tar.gz
+
+###################### Macaulay 2 documentation
+
+DOCFILES := 	Macaulay2/html \
+		Macaulay2/book/M2book.dvi \
+		Macaulay2/book/M2hbook.dvi \
+		Macaulay2/Vasconcelos-appendix/appendix.dvi
+Macaulay2-$(VERSION)-doc.tar.gz : $(DOCFILES); tar cf $@ $(DOCFILES)
+
+MACAULAY2.doc: MACAULAY2
+	$(MAKE) -C Macaulay2 doc
+
+doc :: MACAULAY2.doc Macaulay2-$(VERSION)-doc.tar.gz

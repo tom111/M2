@@ -1,0 +1,11 @@
+*.dp
+*.dep
+*.oo
+*.sg
+*.sig
+allfiles
+compat.c
+compat.h
+tmp_init.c
+addresses
+probe

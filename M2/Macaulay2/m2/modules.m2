@@ -27,7 +27,8 @@ document { quote vector,
      }
 
 -----------------------------------------------------------------------------
-Module = new Type of Type
+BasicModule = new Type of Type
+Module = new Type of BasicModule
 document { quote Module,
      TT "Module", " -- the class of all modules which are handled
      by the ", TO "engine", ".",
@@ -50,6 +51,7 @@ document { quote Module,
      PARA,
      "Tests:",
      MENU {
+	  TO "isDirectSum",
 	  TO "isFreeModule",
 	  TO "isIdeal",
 	  TO "isModule",
@@ -327,11 +329,11 @@ expression Vector := v -> (
 		    callgg(ggtonet, v))}))
 name Vector := x -> name expression x
 net Vector := x -> net expression x
-Vector + Vector := (x,y) -> (
+Vector + Vector := {Vector, (x,y) -> (
      M := class x;
      if M != class y then error "no method for '+'";
      sendgg(ggPush x, ggPush y, ggadd);
-     new M)
+     new M)}
 Vector - Vector := (x,y) -> (
      M := class x;
      if M != class y then error "no method for '-'";
@@ -481,12 +483,10 @@ Ring ^ List := (
 	  if R.?Engine and R.Engine then (
 	       ndegs := degreeLength R;
 	       fdegs := flatten degs;
-	       if all(degs,i -> class i === ZZ) then (
+	       if #degs === 0 then ()
+	       else if all(degs,i -> class i === ZZ) then (
 		    if ndegs =!= 1
-	       	    then error ( 
-			 "expected each multidegree to be of length ",
-			 string ndegs)
-		    else ())
+	       	    then error ("expected each multidegree to be of length ", string ndegs))
 	       else if all(degs,v -> class v === List) then (
 		    scan(degs,v -> (
 			      if #v =!= ndegs

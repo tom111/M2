@@ -166,7 +166,7 @@ void SchurRing::SM()
   if (SMcurrent == SMfinalwt)
     {
       // partition is to be output
-      Nterm *f = new_term();
+      Nterm *f = allocate_term();
       f->coeff = K->from_int(1);
       from_partition(SMtab.p, f->monom);
       f->next = SMresult;

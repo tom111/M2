@@ -282,16 +282,16 @@ void hilb_comp::reset()
 hilb_comp::hilb_comp(const PolynomialRing *RR, const Matrix &m)
 : S(m.get_ring()->cast_to_PolynomialRing()),
   R(RR),
-  M(S->Nmonoms()),
+  M(S->get_monoid()),
   D(S->degree_monoid()),
   input_mat(m),
   this_comp(0),
   current(NULL),
   part_table(S->n_vars())
 {
-  assert(D == R->Nmonoms());
-  one = R->Ncoeffs()->from_int(1);
-  minus_one = R->Ncoeffs()->from_int(-1);
+  assert(D == R->get_monoid());
+  one = R->get_coefficient_ring()->from_int(1);
+  minus_one = R->get_coefficient_ring()->from_int(-1);
   LOCAL_deg1 = D->make_one();
 
   bump_up(S);
@@ -312,14 +312,14 @@ hilb_comp::hilb_comp(const PolynomialRing *RR, const Matrix &m)
 hilb_comp::hilb_comp(const PolynomialRing *RR, const MonomialIdeal &I)
 : S(I.get_ring()->cast_to_PolynomialRing()),
   R(RR),
-  M(S->Nmonoms()),
+  M(S->get_monoid()),
   D(S->degree_monoid()),
   current(NULL),
   part_table(I.topvar()+1)
 {
-  assert(D == R->Nmonoms());
-  one = R->Ncoeffs()->from_int(1);
-  minus_one = R->Ncoeffs()->from_int(-1);
+  assert(D == R->get_monoid());
+  one = R->get_coefficient_ring()->from_int(1);
+  minus_one = R->get_coefficient_ring()->from_int(-1);
   LOCAL_deg1 = D->make_one();
 
   bump_up(R);
@@ -341,8 +341,8 @@ hilb_comp::~hilb_comp()
     }
 
   R->remove(result_poincare);
-  R->Ncoeffs()->remove(one);
-  R->Ncoeffs()->remove(minus_one);
+  R->get_coefficient_ring()->remove(one);
+  R->get_coefficient_ring()->remove(minus_one);
   D->remove(LOCAL_deg1);
 
   bump_down(R);
@@ -607,10 +607,10 @@ int hilb_comp::coeff_of(const RingElement &h, int deg)
   int result = 0;
   for (Nterm *f = h.get_value(); f!=NULL; f=f->next)
     {
-      P->Nmonoms()->to_expvector(f->monom, exp);
+      P->get_monoid()->to_expvector(f->monom, exp);
       if (exp[0] == deg)
 	{
-	  int n = P->Ncoeffs()->coerce_to_int(f->coeff);
+	  int n = P->get_coefficient_ring()->coerce_to_int(f->coeff);
 	  result += n;
 	}
 	

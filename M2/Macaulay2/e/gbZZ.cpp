@@ -22,10 +22,9 @@ void GBZZ_comp::set_up0(const Matrix &m, int csyz, int nsyz)
       // MES: throw an error here.
       assert(0);
     }
-  R = A->get_base_poly_ring();	// The polynomial ring of which A is a quotient.
-  if (R == NULL) R = A;
-  K = R->Ncoeffs();
-  M = R->Nmonoms();
+  R = A->get_cover();
+  K = R->get_coefficient_ring();
+  M = R->get_monoid();
   one = K->from_int(1);
 
   Rsyz = A->get_Rsyz();
@@ -972,7 +971,7 @@ void GBZZ_comp::gb_reduce(vec &f, vec &fsyz)
 	{
 	  Nterm *g = (Nterm *) b->basis_ptr();
 	  F->imp_ring_cancel_lead_term(f, g, coeff, REDUCE_DIV);
-	  R->Ncoeffs()->remove(coeff);
+	  R->get_coefficient_ring()->remove(coeff);
 	  count++;
 	}
       else if (monideals[f->comp]->mi_search.search_expvector(REDUCE_EXP, b))
@@ -980,7 +979,7 @@ void GBZZ_comp::gb_reduce(vec &f, vec &fsyz)
 	  GB_elem *q = (GB_elem *) b->basis_ptr();
 	  F->imp_cancel_lead_term(f, q->f, coeff, REDUCE_DIV);
 	  Fsyz->subtract_multiple_to(fsyz, coeff, REDUCE_DIV, q->fsyz);
-	  R->Ncoeffs()->remove(coeff);
+	  R->get_coefficient_ring()->remove(coeff);
 	  count++;
 	}
       else
@@ -1023,22 +1022,22 @@ void GBZZ_comp::gb_geo_reduce(vec &f, vec &fsyz)
 	{
 	  Nterm *g = (Nterm *) b->basis_ptr();
 	  M->divide(lead->monom, g->monom, REDUCE_DIV);
-	  ring_elem c = R->Ncoeffs()->negate(lead->coeff);
+	  ring_elem c = R->get_coefficient_ring()->negate(lead->coeff);
 	  vecterm *h = F->imp_ring_mult_by_term(g->next, c, REDUCE_DIV, lead->comp);
 	  F->remove(lead);
-	  R->Ncoeffs()->remove(c);
+	  R->get_coefficient_ring()->remove(c);
 	  fb.add(h);
 	  count++;
 	}
       else if (monideals[lead->comp]->mi_search.search_expvector(REDUCE_EXP, b))
 	{
 	  GB_elem *q = (GB_elem *) b->basis_ptr();
-	  ring_elem c = R->Ncoeffs()->negate(lead->coeff);
+	  ring_elem c = R->get_coefficient_ring()->negate(lead->coeff);
 	  M->divide(lead->monom, q->f->monom, REDUCE_DIV);
 	  vecterm *h = F->imp_mult_by_term(c, REDUCE_DIV, q->f->next);
 	  vecterm *hsyz = Fsyz->imp_mult_by_term(c, REDUCE_DIV, q->fsyz);
 	  F->remove(lead);
-	  R->Ncoeffs()->remove(c);
+	  R->get_coefficient_ring()->remove(c);
 	  fb.add(h);		// Eats h
 	  fsyzb.add(hsyz);	// Eats hsyz
 	  count++;

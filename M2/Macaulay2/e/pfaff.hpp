@@ -13,7 +13,7 @@ class PfaffianComputation : public computation
   Matrix M;
   Matrix pfaffs;			// One row matrix collecting non-zero 
 				// pfaffians.
-  //hashtable<ring_elem> table;	// Only up through size p-1 by p-1.
+  //HashTable<ring_elem> table;	// Only up through size p-1 by p-1.
   int p;
 
   int I;			// I (resp. J) is row_set (col_set) encoded

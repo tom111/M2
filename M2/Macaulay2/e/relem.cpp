@@ -13,8 +13,8 @@ RingElement::RingElement(const Ring *R, RingElement a, Monomial m) :
 {
   intarray ma;
   int *mon = ma.alloc(R->n_vars());
-  R->Nmonoms()->from_varpower(m.ints(), mon);
-  set_value( R->term(R->Ncoeffs()->copy(a.get_value()), mon) );
+  R->get_monoid()->from_varpower(m.ints(), mon);
+  set_value( R->term(R->get_coefficient_ring()->copy(a.get_value()), mon) );
 }
 
 int RingElement_rec::length_of() const
@@ -245,7 +245,7 @@ RingElement RingElement::get_terms(int lo, int hi) const
 RingElement RingElement::lead_coeff() const
 {
   const Ring *R = get_ring();
-  const Ring *K = R->Ncoeffs();
+  const Ring *K = R->get_coefficient_ring();
   RingElement result(K);
   if (!is_zero())
     result.set_value( R->lead_coeff(get_value()) );
@@ -256,7 +256,7 @@ RingElement RingElement::lead_coeff() const
 RingElement RingElement::get_coeff(const Monomial &m) const
 {
   const Ring *R = get_ring();
-  const Ring *K = R->Ncoeffs();
+  const Ring *K = R->get_coefficient_ring();
   RingElement result(K);
   result.set_value( R->get_coeff(get_value(), m.ints()) );
   return result;
@@ -273,7 +273,7 @@ Monomial RingElement::lead_monom() const
   intarray resultvp;
 
   Nterm *t = get_value();
-  R->Nmonoms()->to_varpower(t->monom, resultvp);
+  R->get_monoid()->to_varpower(t->monom, resultvp);
   return Monomial(resultvp.raw());
 }
 

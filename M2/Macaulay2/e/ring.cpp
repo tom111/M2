@@ -52,14 +52,16 @@ Ring::~Ring()
   if (K != NULL) bump_down((Ring *) K);
 }
 
-FreeModule *Ring::make_FreeModule() const
+FreeModule *Ring::make_FreeModule(int rank) const
 { 
-  return new FreeModule(this); 
-}
-
-FreeModule *Ring::make_FreeModule(int n) const
-{ 
-  return new FreeModule(this,n);
+  if (rank < 0)
+    {
+      gError << "freemodule rank must be non-negative";
+      return 0;
+    }
+  FreeModule *result = new FreeModule(this,rank);
+  result->set_cover(result);
+  return result;
 }
 
 void Ring::mult_to(ring_elem &f, const ring_elem g) const

@@ -505,7 +505,7 @@ char **argv;
 #if !defined(__MWERKS__)
      ONSTACK(envc);
 #endif
-     GC_free_space_divisor = 14;
+     //     GC_free_space_divisor = 14;
      if (0 != sigsetjmp(loaddata_jump,TRUE)) {
 	  char **environ0;
      	  GC_free_space_divisor = 4;

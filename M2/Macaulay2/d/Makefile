@@ -386,7 +386,7 @@ endif
 
 ../bin/Macaulay2 : $(ALLOBJ) $(LIBRARYFILES)
 	rm -f $@
-	time $(PURIFYCMD) $(CC) $(LDFLAGS) $(ALLOBJ) $(LOADLIBES) $(LDLIBS) $(LINK_OUTPUT_OPTION)
+	time $(PURIFYCMD) $(CC) $(LDFLAGS) $(ALLOBJ) $(LOADLIBES) $(LDLIBS) $(LINK_OUTPUT_OPTION) #-pg
 ifndef CYGWIN32
 	$(STRIPCMD) $@
 endif

@@ -3,6 +3,7 @@
 #ifndef _FreeModule_hh_
 #define _FreeModule_hh_
 
+#include <vector>
 #include "ring.hpp"
 #include "monideal.hpp"
 
@@ -19,6 +20,9 @@ class EInterface;
 
 class FreeModule : public type
 {
+  friend class Ring;
+  friend class PolynomialRing;
+  friend class WeylAlgebra;
   friend class NGB_comp;
   friend class GB_comp;
   friend class GBZZ_comp;
@@ -32,7 +36,7 @@ class FreeModule : public type
 protected:
 
   // free module part
-  array<index_type *> components;
+  vector<index_type *> *components;
 
   // stash used for vecterm's: R->vecstash
   
@@ -50,9 +54,11 @@ protected:
   intarray nf_exp_a;
   int *nf_1, *nf_exp, *mon_1;
   int *TO_EXP_monom;  // a monomial: only used in to_exponents, from_exponents.
+
+  const FreeModule *_cover;
 protected:
   // Do we need all these routines?
-  vec new_term() const;
+  vec allocate_term() const;
   vec new_term(int e, ring_elem a, const int *m) const;
 
 //////////////////////////////////////////////
@@ -62,34 +68,45 @@ protected:
 protected:
   void initialize(const Ring *RR);
   void symm1(int lastn, int pow) const;   // privately called by 'symm'.
+
+  void set_cover(const FreeModule *cov) { _cover = cov; bump_up(_cover); }
+  // set_cover should only be called by make_FreeModule routines in the
+  // various ring classes, and it should be called directly after
+  // constructing the free module.
+
+  FreeModule(const Ring *RR, int rank);
+
+  FreeModule(const PolynomialRing *RR, const FreeModule *F);
+  // F should be a FreeModule over the cover of RR, and RR should be
+  // a polynomial ring which is a quotient.
+
 public:
-  FreeModule(const Ring *R);
-  FreeModule(const Ring *R, int n);
-  FreeModule(const Ring *RR, const FreeModule *F);
   virtual ~FreeModule();
 
-  virtual FreeModule *new_free() const;
+  FreeModule *new_free() const;
+
+  static FreeModule *make_Schreyer_FreeModule(const Matrix &m);
 
   void append(const int *d); // append a new row to a FREE or FREE_POLY
   void append(const int *d, const int *basemonom); // append to a FREE_SCHREYER
   void append(const int *d, const int *basemonom, int comparenum); // append to a FREE_SCHREYER
-
-  const Ring *  get_ring()      const { return R; }
-  const Ring *  Ncoeffs()       const { return K; }
-  const Monoid * Nmonoms()       const { return M; }
-  const Monoid * degree_monoid() const { return R->degree_monoid(); }
-
-  const index_type  *  component(int i) const { return components[i]; }
-  const int *          degree(int i)    const { return components[i]->deg; }
-  const int *          base_monom(int i)const { return components[i]->base_monom; }
-        int            compare_num(int i)const { return components[i]->compare_num; }
-  int                  rank()           const { return components.length(); }
-
-  int                  primary_degree(int i) const;
-
   // WARNING: change_degree modifies the degree, and should only be used during
   // the construction of a free module (or matrix).
   void change_degree(int i, const int *deg);
+
+  const Ring *  get_ring()      const { return R; }
+  const Ring *  get_coefficient_ring()       const { return K; }
+  const Monoid * get_monoid()       const { return M; }
+  const Monoid * degree_monoid() const { return R->degree_monoid(); }
+  const FreeModule *get_cover() const { return _cover; }
+
+  const index_type  *  component(int i) const { return (*components)[i]; }
+  const int *          degree(int i)    const { return (*components)[i]->deg; }
+  const int *          base_monom(int i)const { return (*components)[i]->base_monom; }
+        int            compare_num(int i)const { return (*components)[i]->compare_num; }
+  int                  rank()           const { return components->size(); }
+
+  int                  primary_degree(int i) const;
 
   bool is_equal(const FreeModule *F) const;
   bool is_zero() const;

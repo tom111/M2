@@ -23,10 +23,10 @@ struct handle
 class handles 
 {
   unsigned int next_handle;
-  hashtable<handle *> objs;
+  HashTable<handle *> objs;
 
 public:
-  handles() : next_handle(0), objs(hashtable<handle *>((handle *)0)) {}
+  handles() : next_handle(0), objs(HashTable<handle *>((handle *)0)) {}
   ~handles() {}
   
   void showshape() { objs.showshape(); }

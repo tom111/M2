@@ -543,8 +543,8 @@ void Matrix::minimal_lead_terms_ZZ(intarray &result) const
       if (!mis[v->comp]->search(v->coeff, v->monom, gsyz, rsyz))
 	{
 	  mis[v->comp]->insert_minimal(
-				       new tagged_term(P->Ncoeffs()->copy(v->coeff),
-						       P->Nmonoms()->make_new(v->monom),
+				       new tagged_term(P->get_coefficient_ring()->copy(v->coeff),
+						       P->get_monoid()->make_new(v->monom),
 						       NULL,
 						       NULL));
 	  result.append(indices[i]);
@@ -570,8 +570,8 @@ Matrix Matrix::minimal_lead_terms_ZZ() const
       vec v = elem(i);
       if (v == NULL) continue;
       allterms[v->comp].insert(
-			       new tagged_term(P->Ncoeffs()->copy(v->coeff),
-					       P->Nmonoms()->make_new(v->monom),
+			       new tagged_term(P->get_coefficient_ring()->copy(v->coeff),
+					       P->get_monoid()->make_new(v->monom),
 					       Gsyz->e_sub_i(i),
 					       NULL));
     }
@@ -601,7 +601,7 @@ Matrix Matrix::minimal_lead_terms_ZZ() const
 
 void Matrix::minimal_lead_terms(intarray &result) const
 {
-  if (get_ring()->Ncoeffs()->is_Z())
+  if (get_ring()->get_coefficient_ring()->is_Z())
     {
       minimal_lead_terms_ZZ(result);
       return;
@@ -668,7 +668,7 @@ Matrix Matrix::sat(int n, int maxd) const
 	  int d = rows()->degree_of_var(n, elem(i));
 	  if (maxd >= 0 && d > maxd)
 	    d = maxd;
-	  degree_monoid()->power(get_ring()->Nmonoms()->degree_of_var(n), d, newdeg);
+	  degree_monoid()->power(get_ring()->get_monoid()->degree_of_var(n), d, newdeg);
 	  degree_monoid()->divide(cols()->degree(i), newdeg, newdeg);
 	  result.cols()->change_degree(i, newdeg);
 	  result[i] = rows()->divide_by_var(n, d, elem(i));
@@ -732,7 +732,7 @@ Matrix Matrix::koszul(const Matrix &r, const Matrix &c)
   // First check rings: r,c,'this' should be row vectors.
   const FreeModule *F = r.cols();
   const Ring *R = F->get_ring();
-  const Monoid *M = R->Nmonoms();
+  const Monoid *M = R->get_monoid();
   
   // Create result matrix
   Matrix result(F, c.cols());
@@ -911,7 +911,7 @@ int Matrix::moneq(const int *exp, int *m, const int *vars, int *exp2) const
     // exp2 is a scratch value.  It is a paramter so we only have to allocate 
     // it once...
 {
-  get_ring()->Nmonoms()->to_expvector(m, exp2);
+  get_ring()->get_monoid()->to_expvector(m, exp2);
   int nvars = get_ring()->n_vars();
   for (int i=0; i<nvars; i++)
     {
@@ -921,7 +921,7 @@ int Matrix::moneq(const int *exp, int *m, const int *vars, int *exp2) const
       else 
 	exp2[i] = 0;
     }
-  get_ring()->Nmonoms()->from_expvector(exp2, m);
+  get_ring()->get_monoid()->from_expvector(exp2, m);
   return 1;
 }
 vec Matrix::strip_vector(vec &f, const int *vars, 
@@ -933,7 +933,7 @@ vec Matrix::strip_vector(vec &f, const int *vars,
       vmonom = NULL;
       return NULL;
     }
-  if (get_ring()->Nmonoms() == NULL)
+  if (get_ring()->get_monoid() == NULL)
     {
       vmonom = F->e_sub_i(0);
       vec result = f;
@@ -944,7 +944,7 @@ vec Matrix::strip_vector(vec &f, const int *vars,
   int nvars = get_ring()->n_vars();
   int *exp = new int[nvars];
   int *scratch_exp = new int[nvars];
-  const Monoid *M = get_ring()->Nmonoms();
+  const Monoid *M = get_ring()->get_monoid();
 
   M->to_expvector(f->monom, exp);
   for (int i=0; i<nvars; i++)
@@ -1140,7 +1140,7 @@ MonomialIdeal Matrix::make_monideal(int n) const
 MonomialIdeal Matrix::make_skew_monideal(int n) const
 {
   MonomialIdeal result = make_monideal(n);
-  const Monoid *M = get_ring()->Nmonoms();
+  const Monoid *M = get_ring()->get_monoid();
   if (M != NULL && M->is_skew())
     {
       intarray vp;
@@ -1220,9 +1220,9 @@ static const Monoid * kb_D;
 
 void Matrix::k_basis_insert() const
 {
-  get_ring()->Nmonoms()->from_expvector(kb_exp, kb_mon);
-  get_ring()->Nmonoms()->divide(kb_mon, kb_vec->monom, kb_mon);
-  ring_elem tmp = get_ring()->term(get_ring()->Ncoeffs()->from_int(1), kb_mon);
+  get_ring()->get_monoid()->from_expvector(kb_exp, kb_mon);
+  get_ring()->get_monoid()->divide(kb_mon, kb_vec->monom, kb_mon);
+  ring_elem tmp = get_ring()->term(get_ring()->get_coefficient_ring()->from_int(1), kb_mon);
   kb_result.append(rows()->mult(tmp, kb_vec));
   get_ring()->remove(tmp);
 }
@@ -1232,15 +1232,15 @@ void Matrix::k_basis0(int firstvar) const
 {
   for (int i=firstvar; i<kb_n_vars; i++)
     {
-      if (get_ring()->Nmonoms()->is_skew() &&
-	    get_ring()->Nmonoms()->is_skew_var(i) &&
+      if (get_ring()->get_monoid()->is_skew() &&
+	    get_ring()->get_monoid()->is_skew_var(i) &&
 	    kb_exp[i] >= 1)
 	{
 	  continue;
 	}
 
       kb_exp[i]++;
-      kb_D->mult(kb_exp_degree, get_ring()->Nmonoms()->degree_of_var(i),
+      kb_D->mult(kb_exp_degree, get_ring()->get_monoid()->degree_of_var(i),
 		     kb_exp_degree);
 
       int cmp = kb_D->primary_value(kb_exp_degree) - kb_D->primary_value(kb_deg);
@@ -1266,7 +1266,7 @@ void Matrix::k_basis0(int firstvar) const
 	}
 
       kb_exp[i]--;
-      kb_D->divide(kb_exp_degree, get_ring()->Nmonoms()->degree_of_var(i),
+      kb_D->divide(kb_exp_degree, get_ring()->get_monoid()->degree_of_var(i),
 		   kb_exp_degree);
     }
 }
@@ -1284,7 +1284,7 @@ Matrix Matrix::k_basis(Matrix bot, const int *d, int do_trunc) const
   kb_n_vars = get_ring()->n_vars();
   kb_D = get_ring()->degree_monoid();
 
-  kb_mon = get_ring()->Nmonoms()->make_one();
+  kb_mon = get_ring()->get_monoid()->make_one();
   kb_deg = kb_D->make_one();
   intarray kb_exp_a;
   kb_exp = kb_exp_a.alloc(kb_n_vars);
@@ -1314,7 +1314,7 @@ Matrix Matrix::k_basis(Matrix bot, const int *d, int do_trunc) const
 	      
 	      kb_exp_a.shrink(0);
 	      varpower::to_ntuple(kb_n_vars, b->monom().raw(), kb_exp_a);
-	      get_ring()->Nmonoms()->degree_of_varpower(b->monom().raw(), 
+	      get_ring()->get_monoid()->degree_of_varpower(b->monom().raw(), 
 						       kb_exp_degree);
 
 	      int cmp = kb_D->primary_value(kb_exp_degree) 
@@ -1339,7 +1339,7 @@ Matrix Matrix::k_basis(Matrix bot, const int *d, int do_trunc) const
   kb_D->remove(kb_deg);
   kb_D->remove(kb_exp_degree);
   kb_D->remove(e);
-  get_ring()->Nmonoms()->remove(kb_mon);
+  get_ring()->get_monoid()->remove(kb_mon);
   kb_result = Matrix(get_ring()); // This is so no large global data will be laying around.
 
   return result;
@@ -1350,16 +1350,16 @@ void Matrix::k_basis1(int firstvar) const
     // Recursively add to the result matrix all monomials in the
     // variables 0..topvar having degree 'deg' which are not in 'mi'.
 {
-  get_ring()->Nmonoms()->from_expvector(kb_exp, kb_mon);
-  get_ring()->Nmonoms()->divide(kb_mon, kb_vec->monom, kb_mon);
-  ring_elem tmp = get_ring()->term(get_ring()->Ncoeffs()->from_int(1), kb_mon);
+  get_ring()->get_monoid()->from_expvector(kb_exp, kb_mon);
+  get_ring()->get_monoid()->divide(kb_mon, kb_vec->monom, kb_mon);
+  ring_elem tmp = get_ring()->term(get_ring()->get_coefficient_ring()->from_int(1), kb_mon);
   kb_result.append(rows()->mult(tmp, kb_vec));
   get_ring()->remove(tmp);
 
   for (int i=firstvar; i<kb_n_vars; i++)
     {
-      if (get_ring()->Nmonoms()->is_skew() &&
-	    get_ring()->Nmonoms()->is_skew_var(i) &&
+      if (get_ring()->get_monoid()->is_skew() &&
+	    get_ring()->get_monoid()->is_skew_var(i) &&
 	    kb_exp[i] >= 1)
 	{
 	  continue;
@@ -1383,7 +1383,7 @@ Matrix Matrix::k_basis(Matrix bot) const
   kb_result = Matrix(rows());
   kb_n_vars = get_ring()->n_vars();
 
-  kb_mon = get_ring()->Nmonoms()->make_one();
+  kb_mon = get_ring()->get_monoid()->make_one();
   intarray kb_exp_a;
   kb_exp = kb_exp_a.alloc(kb_n_vars);
 
@@ -1410,7 +1410,7 @@ Matrix Matrix::k_basis(Matrix bot) const
 	}
     }
 
-  get_ring()->Nmonoms()->remove(kb_mon);  
+  get_ring()->get_monoid()->remove(kb_mon);  
   Matrix result = kb_result;
   kb_result = Matrix(get_ring()); // This is so no large global data will be laying around.
   return result;

@@ -50,46 +50,6 @@ FreeModule *makeSchreyerFreeModule(Ring *R, int rank,
     F->append(degrees[i],ordering[i],tiebreaks[i]);
   return F;
 }
-#include <algorithm>
-FreeModule *makeSchreyerFreeModule(const Matrix &m)
-{
-  int i;
-  const Ring *R = m.get_ring();
-  const Monoid *M = R->Nmonoms();
-  FreeModule *F = R->make_FreeModule();
-  int rk = m.n_cols();
-  if (rk == 0) return F;
-  int *base = M->make_one();
-  int *tiebreaks = new int[rk];
-  int *ties = new int[rk];
-  for (i=0; i<rk; i++)
-    {
-      vec v = m[i];
-      if (v == NULL)
-	tiebreaks[i] = i;
-      else
-	tiebreaks[i] = i + rk * m.rows()->compare_num(v->comp);
-    }
-  // Now sort tiebreaks in increasing order.
-  sort<int *>(tiebreaks, tiebreaks+rk);
-  for (i=0; i<rk; i++)
-    ties[tiebreaks[i] % rk] = i;
-  for (i=0; i<rk; i++)
-    {
-      vec v = m[i];
-      if (v == NULL)
-	M->one(base);
-      else
-	M->copy(v->monom, base);
-
-      F->append(m.cols()->degree(i), base, ties[i]);
-    }
-
-  M->remove(base);
-  delete [] tiebreaks;
-  delete [] ties;
-  return F;
-}
 
 void cmd_FreeModule2(object &oR, object &oa, object &om, object &onums)
 {
@@ -99,7 +59,7 @@ void cmd_FreeModule2(object &oR, object &oa, object &om, object &onums)
       gError << "polynomial ring required for Schreyer order";
       return;
     }
-  const Monoid *M = R->Nmonoms();
+  const Monoid *M = R->get_monoid();
   if (M == NULL)
     {
       assert(0);
@@ -146,7 +106,7 @@ void cmd_FreeModule2(object &oR, object &oa, object &om, object &onums)
 void cmd_FreeModule3(object &om)
 {
   Matrix m = om->cast_to_Matrix();
-  gStack.insert(makeSchreyerFreeModule(m));
+  gStack.insert(FreeModule::make_Schreyer_FreeModule(m));
 }
 void cmd_Nfree_sum(object &oV, object &oW)
 {

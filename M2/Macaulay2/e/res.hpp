@@ -265,8 +265,8 @@ public:
   object index_of(int i) { return make_minimal(i); }
 
   const Ring   * get_ring() const { return P; }
-  const Monoid  * Nmonoms() const { return M; }
-  const Ring   * Ncoeffs() const { return K; }
+  const Monoid  * get_monoid() const { return M; }
+  const Ring   * get_coefficient_ring() const { return K; }
   const Monoid  * degree_monoid() const { return P->degree_monoid(); }
 };
 #endif

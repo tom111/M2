@@ -11,8 +11,8 @@ RingMap::RingMap(const Matrix &m)
 : R(m.get_ring())
 {
   bump_up(R);
-  M = R->Nmonoms();
-  K = R->Ncoeffs();
+  M = R->get_monoid();
+  K = R->get_coefficient_ring();
 
   nvars = m.n_cols();
   is_monomial = true;
@@ -115,9 +115,9 @@ ring_elem RingMap::eval_term(const Ring *sourceK,
   ring_elem result = sourceK->eval(this, a);
   if (R->is_zero(result)) return result;
 
-  ring_elem result_coeff = R->Ncoeffs()->from_int(1);
-  int *result_monom = R->Nmonoms()->make_one();
-  int *temp_monom = R->Nmonoms()->make_one();
+  ring_elem result_coeff = R->get_coefficient_ring()->from_int(1);
+  int *result_monom = R->get_monoid()->make_one();
+  int *temp_monom = R->get_monoid()->make_one();
 
   if (!R->is_commutative_ring())
     {
@@ -143,14 +143,14 @@ ring_elem RingMap::eval_term(const Ring *sourceK,
 	  {
 	    if (!_elem[v].coeff_is_one)
 	      {
-		ring_elem tmp = R->Ncoeffs()->power(_elem[v].coeff, e);
-		R->Ncoeffs()->mult_to(result_coeff, tmp);
-		R->Ncoeffs()->remove(tmp);
+		ring_elem tmp = R->get_coefficient_ring()->power(_elem[v].coeff, e);
+		R->get_coefficient_ring()->mult_to(result_coeff, tmp);
+		R->get_coefficient_ring()->remove(tmp);
 	      }
 	    if (!_elem[v].monom_is_one)
 	      {
-		R->Nmonoms()->power(_elem[v].monom, e, temp_monom);
-		R->Nmonoms()->mult(result_monom, temp_monom, result_monom);
+		R->get_monoid()->power(_elem[v].monom, e, temp_monom);
+		R->get_monoid()->mult(result_monom, temp_monom, result_monom);
 	      }
 	  }
 	else
@@ -162,9 +162,9 @@ ring_elem RingMap::eval_term(const Ring *sourceK,
 	  }
       }
     ring_elem temp = R->term(result_coeff, result_monom);
-    R->Ncoeffs()->remove(result_coeff);
-    R->Nmonoms()->remove(result_monom);
-    R->Nmonoms()->remove(temp_monom);
+    R->get_coefficient_ring()->remove(result_coeff);
+    R->get_monoid()->remove(result_monom);
+    R->get_monoid()->remove(temp_monom);
     R->mult_to(result,temp);
     R->remove(temp);
   }

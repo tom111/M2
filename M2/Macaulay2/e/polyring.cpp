@@ -73,6 +73,7 @@ PolynomialRing *PolynomialRing::create(const Ring *K, const Monoid *MF)
 {
   PolynomialRing *obj = new PolynomialRing(K,MF);
   obj->Rsyz = obj->make_FreeModule();
+  obj->_cover = obj;
   return (PolynomialRing *) intern(obj);
 }
 
@@ -85,7 +86,7 @@ PolynomialRing *PolynomialRing::create(
   else
     obj->make_Rideal(I);
 
-  obj->isgraded = obj->base_ring->isgraded;
+  obj->isgraded = R->isgraded;
   if (obj->isgraded)
     for (int i=0; i<obj->quotient_ideal.length(); i++)
       if (!obj->base_ring->is_homogeneous(obj->quotient_ideal[i]))
@@ -93,14 +94,13 @@ PolynomialRing *PolynomialRing::create(
 	  obj->isgraded = false;
 	  break;
 	}
-
+  obj->_cover = R->get_cover();
   return (PolynomialRing *) intern(obj);
 }
 
 Matrix PolynomialRing::get_ideal() const
 {
-  const PolynomialRing *R = this;
-  while (R->base_ring != NULL) R = R->base_ring;
+  const PolynomialRing *R = get_cover();
   Matrix result(R->make_FreeModule(1));
   for (int i=0; i<quotient_ideal.length(); i++)
     result.append(result.rows()->term(0, quotient_ideal[i]));
@@ -127,6 +127,43 @@ bool PolynomialRing::equals(const object_element *o) const
   return true;
 }
 #endif
+
+///////////////////////////
+// Creating free modules //
+///////////////////////////
+
+FreeModule *PolynomialRing::make_FreeModule(int rank) const
+  // Create a FreeModule of rank 'rank' with all generators of degree zero.
+{
+  if (rank < 0)
+    {
+      gError << "freemodule rank must be non-negative";
+      return 0;
+    }
+  FreeModule *result;
+
+  if (is_quotient_poly_ring())
+    {
+      FreeModule *F = get_cover()->make_FreeModule(rank);
+      result = make_quotient_FreeModule(F);
+    }
+  else
+    {
+      result = new FreeModule(this,rank);
+      result->set_cover(result);
+    }
+
+  return result;
+}
+
+FreeModule *PolynomialRing::make_quotient_FreeModule(const FreeModule *F) const
+  // Returns a free module over 'this', given that 'F' is a free module over a
+  // base ring of 'this'.
+{
+  FreeModule *result = new FreeModule(this,F);
+  result->set_cover(F);
+  return result;
+}
 
 void PolynomialRing::write_object(object_writer &o) const
 {
@@ -184,7 +221,7 @@ void PolynomialRing::text_out(buffer &o) const
     }
 }
 
-Nterm *PolynomialRing::new_term() const
+Nterm *PolynomialRing::allocate_term() const
 {
   Nterm *result = (Nterm *)((PolynomialRing *) this)->pstash->new_elem();
   result->next = NULL;
@@ -195,12 +232,15 @@ Nterm *PolynomialRing::new_term() const
   // part of the union, so on a machine with 4 byte ints and 8 byte pointers, the
   // pointer part is not NULL!
   result->coeff.poly_val = NULL;  // so I added this line
+#if 1
+  result->monom = M->allocate_monomial();
+#endif
   return result;
 }
 
 Nterm *PolynomialRing::copy_term(const Nterm *t) const
 {
-  Nterm *result = new_term();
+  Nterm *result = allocate_term();
   result->coeff = K->copy(t->coeff);
   M->copy(t->monom, result->monom);
   return result;
@@ -260,7 +300,7 @@ ring_elem PolynomialRing::from_int(int n) const
 {
   ring_elem a = K->from_int(n);
   if (K->is_zero(a)) return (Nterm *)NULL;
-  Nterm *result = new_term();
+  Nterm *result = allocate_term();
   result->coeff = a;
   M->one(result->monom);
   if (base_ring != NULL) normal_form(result);
@@ -274,7 +314,7 @@ ring_elem PolynomialRing::from_int(mpz_t n) const
       K->remove(a);
       return (Nterm *)NULL;
     }
-  Nterm *result = new_term();
+  Nterm *result = allocate_term();
   result->coeff = a;
   M->one(result->monom);
   if (base_ring != NULL) normal_form(result);
@@ -286,7 +326,7 @@ ring_elem PolynomialRing::var(int v, int n) const
   if (M->is_skew() && n > 1 && v >= 0 && M->is_skew_var(v))
     return ((Nterm *)NULL);
 
-  Nterm *result = new_term();
+  Nterm *result = allocate_term();
   result->coeff = K->from_int(1);
 
   intarray ma;
@@ -475,7 +515,7 @@ ring_elem PolynomialRing::homogenize(const ring_elem f,
       exp[v] += (d - e) / wts[v];
       if (M->is_skew() && M->is_skew_var(v) && exp[v] > 1)
 	continue;
-      result->next = new_term();
+      result->next = allocate_term();
       result = result->next;
       result->coeff = K->copy(a->coeff);
       M->from_expvector(exp, result->monom);
@@ -517,6 +557,9 @@ void PolynomialRing::remove(ring_elem &f) const
       Nterm *tmp = a;
       a = a->next;
       K->remove(tmp->coeff);
+#if 1
+      M->remove(tmp->monom);
+#endif
       pstash->delete_elem(tmp);
     }
 }
@@ -574,6 +617,9 @@ void PolynomialRing::add_to(ring_elem &ff, ring_elem &gg) const
 	if (K->is_zero(tmf->coeff))
 	  {
 	    K->remove(tmf->coeff);
+#if 1
+	    M->remove(tmf->monom);
+#endif
 	    pstash->delete_elem(tmf);
 	  }
 	else
@@ -582,6 +628,9 @@ void PolynomialRing::add_to(ring_elem &ff, ring_elem &gg) const
 	    result = result->next;
 	  }
 	K->remove(tmg->coeff);
+#if 1
+	M->remove(tmg->monom);
+#endif
 	pstash->delete_elem(tmg);
 	if (g == NULL) 
 	  {
@@ -611,7 +660,7 @@ ring_elem PolynomialRing::negate(const ring_elem f) const
   Nterm *result = &head;
   for (Nterm *a = f; a != NULL; a = a->next)
     {
-      result->next = new_term();
+      result->next = allocate_term();
       result = result->next;
       result->coeff = K->negate(a->coeff);
       M->copy(a->monom, result->monom);
@@ -643,7 +692,7 @@ ring_elem PolynomialRing::imp_skew_mult_by_term(const ring_elem f,
   Nterm head;
   Nterm *result = &head;
   ring_elem minus_c = K->negate(c);
-  Nterm *nextterm = new_term();
+  Nterm *nextterm = allocate_term();
   for (Nterm *a = f; a != NULL; a = a->next)
     {
       int sign = M->skew_mult(m, a->monom, nextterm->monom);
@@ -656,7 +705,7 @@ ring_elem PolynomialRing::imp_skew_mult_by_term(const ring_elem f,
 
       result->next = nextterm;
       result = result->next;
-      nextterm = new_term();
+      nextterm = allocate_term();
     }
   ring_elem idiotic = nextterm;
   remove(idiotic);
@@ -673,7 +722,7 @@ ring_elem PolynomialRing::imp_mult_by_term(const ring_elem f,
   Nterm *result = &head;
   for (Nterm *a = f; a != NULL; a = a->next)
     {
-      result->next = new_term();
+      result->next = allocate_term();
       result = result->next;
       result->coeff = K->mult(a->coeff, c);
       M->mult(m, a->monom, result->monom);
@@ -922,7 +971,7 @@ ring_elem PolynomialRing::power(const ring_elem f0, int n) const
   g = from_int(1);
 
   // Start the result with the n th power of the lead term
-  Nterm *t = new_term();
+  Nterm *t = allocate_term();
   t->coeff = K->power(lead->coeff, n);
   M->power(lead->monom, n, t->monom);
   t->next = NULL;
@@ -981,14 +1030,14 @@ ring_elem PolynomialRing::invert(const ring_elem f) const
   if (ft->next == NULL)
     if (M->is_one(ft->monom))
       {
-	Nterm *t = new_term();
+	Nterm *t = allocate_term();
 	t->coeff = K->invert(ft->coeff);
 	M->one(t->monom);
 	return t;
       }
     else if (M->is_group())
       {
-	Nterm *t = new_term();
+	Nterm *t = allocate_term();
 	t->coeff = K->invert(ft->coeff);
 	M->power(ft->monom, -1, t->monom);
 	return t;
@@ -1082,7 +1131,7 @@ ring_elem PolynomialRing::divide(const ring_elem f, const ring_elem g, ring_elem
   while (t != NULL)
     if (M->divides(b->monom, t->monom))
       {
-	divt->next = new_term();
+	divt->next = allocate_term();
 	divt = divt->next;
 	a = t;
 	cancel_lead_term(a, g, divt->coeff, divt->monom);
@@ -1275,7 +1324,7 @@ void PolynomialRing::read_element(object_reader &i, ring_elem &result) const
   Nterm *f = &head;
   for (int j=0; j<n; j++)
     {
-      Nterm *t = new_term();
+      Nterm *t = allocate_term();
       f->next = t;
       f = t;
      // M->read_element(i, t->monom);
@@ -1443,7 +1492,7 @@ void PolynomialRing::normal_form(Nterm *&f) const
 ring_elem PolynomialRing::term(const ring_elem a, const int *m) const
 {
   if (K->is_zero(a)) return (Nterm *)NULL;
-  Nterm *t = new_term();
+  Nterm *t = allocate_term();
   t->coeff = K->copy(a);
   M->copy(m, t->monom);
   t->next = NULL;
@@ -1513,7 +1562,7 @@ ring_elem PolynomialRing::diff_by_term(const int *exp, const ring_elem f,
 		  }
 	    }
 	  ntuple::divide(nvars,exp2,exp,exp2);
-	  result->next = new_term();
+	  result->next = allocate_term();
 	  result = result->next;
 	  result->coeff = c;
 	  M->from_expvector(exp2, result->monom);
@@ -1536,7 +1585,7 @@ Nterm *PolynomialRing::resize(const PolynomialRing *R, Nterm *f) const
   int *exp = expa.alloc(nvars);
   for (Nterm *t = f; t != NULL; t = t->next)
     {
-      result->next = new_term();
+      result->next = allocate_term();
       result = result->next;
       result->coeff = K->copy(t->coeff);
       R->M->to_expvector(t->monom, exp);

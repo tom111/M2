@@ -50,7 +50,7 @@ void handles::text_out(buffer &o) const
   o << "handle refcount type" << newline;
   int nnulls = 0;
   int nnullobjs = 0;
-  for (cursor_hashtable<handle *> i(gHandles.objs); i.valid(); ++i)
+  for (cursor_HashTable<handle *> i(gHandles.objs); i.valid(); ++i)
     {
       const handle *hand = i.elem();
       if (hand == NULL)

@@ -9,6 +9,13 @@
 
 Monoid *trivial_monoid;		// set in x_monoid.cc
 
+const Monoid * __M;
+
+void Monoid::intern_monomial(const int *monom) const
+{
+  // __M = this;
+  // if (!H.find(const_cast<int *>(monom))) const_cast<Monoid *>(this)->H.insert(monom);
+};
 monoid_info::monoid_info()
 : nvars(0),
   degree_monoid(NULL),
@@ -147,6 +154,13 @@ Monoid::Monoid(monoid_info *moninf,  int nb)
   EXP2 = new int[nvars];
   EXP3 = new int[nvars];
   MONlocal = new int[nvars + nwords]; // MES: should be total number of words of result...
+
+  n_mult = 0;
+  n_compares = 0;
+  n_equal = 0;
+  n_zeros_determine = 0;
+  loc_of_compare = new int[nwords];
+  for (int i=0; i<nwords; i++) loc_of_compare[i] = 0;
 }
 
 void Monoid::write_object(object_writer &o) const
@@ -193,9 +207,46 @@ void Monoid::text_out(buffer &o) const
   o << "; MonomialOrder => ";
   moninfo->mo->text_out(o);
 
+  o << newline;
+  o << "nmult     = " << n_mult << newline;
+  o << "ncompares = " << n_compares << newline;
+  o << "nequal    = " << n_equal << newline;
+  o << " n_zero_determine = " << n_zeros_determine << newline;
+  o << " locs = ";
+  for (i=0; i<nwords; i++)
+    o << loc_of_compare[i] << " ";
+  o << newline;
+  //  const_cast<Monoid *>(this)->H.stats(o);
   o << "]";
 }
-
+int Monoid::compare(const int *m, const int *n) const
+{
+  const_cast<Monoid *>(this)->n_compares++;
+  for (int i=0; i<nwords; i++, m++, n++)
+    {
+      if (*m != *n)
+	{
+	  if (*m == 0 || *n == 0)
+	    const_cast<Monoid *>(this)->n_zeros_determine++;
+	  const_cast<Monoid *>(this)->loc_of_compare[i]++;
+	}
+      if (*m > *n) return 1;
+      if (*m < *n) return -1;
+    }
+  const_cast<Monoid *>(this)->n_equal++;
+  return 0;
+}
+#if 0
+int Monoid::compare(const int *m, const int *n) const
+{
+  for (int i=0; i<nwords; i++, m++, n++)
+    {
+      if (*m > *n) return 1;
+      if (*m < *n) return -1;
+    }
+  return 0;
+}
+#endif
 void Monoid::pack(const int *exp, int *result) const
 {
   for (int w=0; w<nweights; w++)
@@ -274,6 +325,14 @@ void Monoid::to_expvector(const int *m, int *result_exp) const
     }
 }
 
+size_t Monoid::hash(const int *m) const
+{
+  size_t result = 0;
+  for (const int *p = m + nwords; p > m; )
+    result += *--p + result * 3532411;
+  return result;
+}
+
 void Monoid::mult(const int *m, const int *n, int *result) const
 {
 #if 0
@@ -291,6 +350,7 @@ void Monoid::mult(const int *m, const int *n, int *result) const
 	}
     }
 #endif
+  const_cast<Monoid *>(this)->n_mult++;
   for (int w=0; w<nweights; w++)
     *result++ = *m++ + *n++;
   // Now for the packed part
@@ -301,6 +361,7 @@ void Monoid::mult(const int *m, const int *n, int *result) const
       if (((*result++) & top_bits) != 0)
 	ERROR("monomial overflow");
     }
+  intern_monomial(result);
 }
 int Monoid::in_subring(int n, const int *m) const
 {
@@ -359,6 +420,7 @@ int *Monoid::make_new(const int *d) const
   if (nvars == 0) return NULL;
   int *result = (int *) monom_stash->new_elem();
   copy(d, result);
+  intern_monomial(result);
   return result;
 }
 int *Monoid::make_one() const
@@ -366,6 +428,7 @@ int *Monoid::make_one() const
   if (nvars == 0) return NULL;
   int *result = (int *) monom_stash->new_elem();
   one(result);
+  intern_monomial(result);
   return result;
 }
 void Monoid::remove(int *d) const

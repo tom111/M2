@@ -35,7 +35,11 @@ struct Nterm
 {
   Nterm *    next;
   ring_elem coeff;
+#if 1
+  int * monom;  // a monomial
+#else
   int       monom[1];
+#endif
 };
 
 typedef struct vecterm *vec;
@@ -44,7 +48,11 @@ struct vecterm
   vec       next;
   int       comp;
   ring_elem coeff;
+#if 1
+  int *     monom;
+#else
   int       monom[1];	// This size is variable, and possibly size 0.
+#endif
 };
 
 #endif

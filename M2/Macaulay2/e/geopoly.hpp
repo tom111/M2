@@ -41,7 +41,7 @@ static int heap_size[GEOHEAP_SIZE] = {4, 16, 64, 256, 1024, 4096,
 
 inline polyheap::polyheap(const Ring *FF)
 : F(FF),
-  K(FF->get_ring()->Ncoeffs()),
+  K(FF->get_ring()->get_coefficient_ring()),
   top_of_heap(-1)
 {
   // set K

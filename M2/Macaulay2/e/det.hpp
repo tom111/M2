@@ -15,7 +15,7 @@ class DetComputation : public computation
 		  // determinants, or the resulting
 		  // exterior power; depending on 'do_exterior'
 
-  //hashtable<ring_elem> table;	// Only up through size p-1 by p-1.
+  //HashTable<ring_elem> table;	// Only up through size p-1 by p-1.
   bool done;
   int p;
 

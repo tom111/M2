@@ -22,7 +22,7 @@ void gb2_comp::setup(FreeModule *FFsyz,
       // MES: throw an error here.
       assert(0);
     }
-  M = R->Nmonoms();
+  M = R->get_monoid();
 
   F = ggens->output_free_module();
   bump_up(F);
@@ -219,15 +219,13 @@ void gb2_comp::find_pairs(gb_elem *p)
   Index<MonomialIdeal> j;
   intarray vplcm;
   int *find_pairs_m = M->make_one();
-  int *f_m = M->make_one();
   int *find_pairs_exp = new int[M->n_vars()];
   int *find_pairs_lcm = new int[M->n_vars()];
 
-  M->divide(p->f->monom, F->base_monom(p->f->comp), f_m);
   if (M->is_skew())
     {
       int *skewvars = new int[M->n_vars()];
-      M->to_expvector(f_m, find_pairs_exp);
+      M->to_expvector(p->f->monom, find_pairs_exp);
       int nskew = M->exp_skew_vars(find_pairs_exp, skewvars);
       
       // Add in syzygies arising from exterior variables
@@ -255,7 +253,7 @@ void gb2_comp::find_pairs(gb_elem *p)
       for (j = Rideal.first(); j.valid(); j++)
 	{
 	  Nterm * f = (Nterm *) Rideal[j]->basis_ptr();
-	  M->lcm(f->monom, f_m, find_pairs_lcm);
+	  M->lcm(f->monom, p->f->monom, find_pairs_lcm);
 	  vplcm.shrink(0);
 	  M->to_varpower(find_pairs_lcm, vplcm);
 	  s_pair *q = new_ring_pair(p, find_pairs_lcm);
@@ -268,7 +266,7 @@ void gb2_comp::find_pairs(gb_elem *p)
   for (Index<MonomialIdeal> i = mi1.first(); i.valid(); i++)
     {
       M->from_varpower(mi1[i]->monom().raw(), find_pairs_m);
-      M->lcm(find_pairs_m, f_m, find_pairs_lcm);
+      M->lcm(find_pairs_m, p->f->monom, find_pairs_lcm);
       vplcm.shrink(0);
       M->to_varpower(find_pairs_lcm, vplcm);
       s_pair *q = new_s_pair(p, (gb_elem *)mi1[i]->basis_ptr(), find_pairs_lcm);
@@ -277,7 +275,7 @@ void gb2_comp::find_pairs(gb_elem *p)
 
   // Add 'p' to the correct monideal
   intarray vp;
-  M->to_varpower(f_m, vp);
+  M->to_varpower(p->f->monom, vp);
   mi1.insert(new Bag(p, vp));
 
   // Now minimalize these elements, and insert them into
@@ -322,7 +320,6 @@ void gb2_comp::find_pairs(gb_elem *p)
 
   // Remove the local variables
   M->remove(find_pairs_m);
-  M->remove(f_m);
   delete [] find_pairs_exp;
   delete [] find_pairs_lcm;
 }
@@ -335,7 +332,8 @@ void gb2_comp::compute_s_pair(s_pair *p)
 
       //M->divide(p->first->f->monom, F->base_monom(p->first->f->comp), s);
       //M->divide(p->lcm, s, s);
-      M->divide(p->lcm, p->first->f->monom, s);
+      M->divide(p->lcm, F->base_monom(p->first->f->comp), s);
+      M->divide(s, p->first->f->monom, s);
       
       p->f = F->mult_by_monomial(s, p->first->f);
       p->fsyz = Fsyz->mult_by_monomial(s, p->first->fsyz);
@@ -345,7 +343,7 @@ void gb2_comp::compute_s_pair(s_pair *p)
 	  ring_elem coeff;
 	  F->imp_cancel_lead_term(p->f, p->second->f, coeff, s);
 	  Fsyz->subtract_multiple_to(p->fsyz, coeff, s, p->second->fsyz);
-	  R->Ncoeffs()->remove(coeff);
+	  R->get_coefficient_ring()->remove(coeff);
 	}
       M->remove(s);
     }
@@ -366,18 +364,16 @@ void gb2_comp::gb_reduce(vec &f, vec &fsyz)
   int *div_totalexp = a_totalexp.alloc(M->n_vars());
   int *reduce_ndiv = a_reduce_ndiv.alloc(M->n_vars());
   int count = 0;
-  int *s = M->make_one();
   while (f != NULL)
     {
       Bag *b;
-      M->divide(f->monom, F->base_monom(f->comp), s);
-      M->to_expvector(s, div_totalexp);
+      M->to_expvector(f->monom, div_totalexp);
       if (R->is_quotient_ring() 
 	  && R->get_quotient_monomials().search_expvector(div_totalexp, b))
 	{
 	  Nterm *g = (Nterm *) b->basis_ptr();
 	  F->imp_ring_cancel_lead_term(f, g, coeff, reduce_ndiv);
-	  R->Ncoeffs()->remove(coeff);
+	  R->get_coefficient_ring()->remove(coeff);
 	  count++;
 	}
       else if (monideals[f->comp]->mi_search.search_expvector(div_totalexp, b))
@@ -385,7 +381,7 @@ void gb2_comp::gb_reduce(vec &f, vec &fsyz)
 	  gb_elem *q = (gb_elem *) b->basis_ptr();
 	  F->imp_cancel_lead_term(f, q->f, coeff, reduce_ndiv);
 	  Fsyz->subtract_multiple_to(fsyz, coeff, reduce_ndiv, q->fsyz);
-	  R->Ncoeffs()->remove(coeff);
+	  R->get_coefficient_ring()->remove(coeff);
 	  count++;
 	}
       else
@@ -404,7 +400,6 @@ void gb2_comp::gb_reduce(vec &f, vec &fsyz)
     }
   result->next = NULL;
   f = head.next;
-  M->remove(s);
 }
 
 void gb2_comp::gb_geo_reduce(vec &f, vec &fsyz)
@@ -422,33 +417,31 @@ void gb2_comp::gb_geo_reduce(vec &f, vec &fsyz)
   fb.add(f);
   fsyzb.add(fsyz);
   vecterm *lead;
-  int *s = M->make_one();
   while ((lead = fb.remove_lead_term()) != NULL)
     {
       Bag *b;
-      M->divide(lead->monom, F->base_monom(lead->comp), s);
-      M->to_expvector(s, div_totalexp);
+      M->to_expvector(lead->monom, div_totalexp);
       if (R->is_quotient_ring() 
 	  && R->get_quotient_monomials().search_expvector(div_totalexp, b))
 	{
 	  Nterm *g = (Nterm *) b->basis_ptr();
 	  M->divide(lead->monom, g->monom, reduce_ndiv);
-	  ring_elem c = R->Ncoeffs()->negate(lead->coeff);
+	  ring_elem c = R->get_coefficient_ring()->negate(lead->coeff);
 	  vecterm *h = F->imp_ring_mult_by_term(g->next, c, reduce_ndiv, lead->comp);
 	  F->remove(lead);
-	  R->Ncoeffs()->remove(c);
+	  R->get_coefficient_ring()->remove(c);
 	  fb.add(h);
 	  count++;
 	}
       else if (monideals[lead->comp]->mi_search.search_expvector(div_totalexp, b))
 	{
 	  gb_elem *q = (gb_elem *) b->basis_ptr();
-	  ring_elem c = R->Ncoeffs()->negate(lead->coeff);
+	  ring_elem c = R->get_coefficient_ring()->negate(lead->coeff);
 	  M->divide(lead->monom, q->f->monom, reduce_ndiv);
 	  vecterm *h = F->imp_mult_by_term(c, reduce_ndiv, q->f->next);
 	  vecterm *hsyz = Fsyz->imp_mult_by_term(c, reduce_ndiv, q->fsyz);
 	  F->remove(lead);
-	  R->Ncoeffs()->remove(c);
+	  R->get_coefficient_ring()->remove(c);
 	  fb.add(h);		// Eats h
 	  fsyzb.add(hsyz);	// Eats hsyz
 	  count++;
@@ -470,7 +463,6 @@ void gb2_comp::gb_geo_reduce(vec &f, vec &fsyz)
   f = head.next;
 
   fsyz = fsyzb.value();
-  M->remove(s);
 }
 
 void gb2_comp::reduce(vec &f, vec &fsyz)
@@ -495,14 +487,16 @@ void gb2_comp::schreyer_append(vec f)
     {
       int *d = R->degree_monoid()->make_one();
       F->degree(f, d);
-      Fsyz->append(d, f->monom, Fsyz->rank());
+      int *m = M->make_one();
+      M->mult(f->monom, F->base_monom(f->comp), m);
+      Fsyz->append(d, m, Fsyz->rank());
       R->degree_monoid()->remove(d);
+      M->remove(m);
     }
 }
   
 void gb2_comp::gb_insert(vec f, vec fsyz, int ismin)
 {
-  int *f_m = M->make_one();
   vec bull = NULL;
   gb_elem *p = new gb_elem(f, fsyz, ismin);
 
@@ -513,15 +507,13 @@ void gb2_comp::gb_insert(vec f, vec fsyz, int ismin)
 
   if (ismin) n_mingens++;
 
-  M->divide(p->f->monom, F->base_monom(p->f->comp), f_m);
-  if (M->in_subring(1,f_m))
+  if (M->in_subring(1,p->f->monom))
     n_subring++;
   // insert into p->f->comp->mi_search
   intarray vp;
-  M->to_varpower(f_m, vp);
+  M->to_varpower(p->f->monom, vp);
   monideals[p->f->comp]->mi_search.insert(new Bag(p, vp));
   gb.append(p);
-  M->remove(f_m);
   // Now we must be a bit careful about this next, but we only want one
   // copy of a GB element, since the whole thing can be quite large.
   // Just make sure that when the GB is deleted at the end, that the 'f'

@@ -175,7 +175,7 @@ void cmd_PolynomialRing_term(object &oR, object &oa, object &om)
   const Ring *R = oR->cast_to_Ring();
   RingElement a = oa->cast_to_RingElement();
   Monomial m = om->cast_to_Monomial();
-  if (R->Ncoeffs() != a.get_ring())
+  if (R->get_coefficient_ring() != a.get_ring())
     { gError << "term: incorrect arguments"; return; }
   if (R->n_vars() == 0)
     { gError << "term: need a polynomial ring"; return; }
@@ -467,7 +467,7 @@ void cmd_schur_dim(object &of)
       gError << "schur dimension: need an element of a schur ring";
       return;
     }
-  RingElement result(F->Ncoeffs(), F->dimension(f.get_value()));
+  RingElement result(F->get_coefficient_ring(), F->dimension(f.get_value()));
   gStack.insert(result);
 }
 

@@ -63,6 +63,7 @@ WeylAlgebra::~WeylAlgebra()
 WeylAlgebra *WeylAlgebra::create(const Ring *K, const Monoid *MF, const intarray &a)
 {
   WeylAlgebra *obj = new WeylAlgebra(K,MF,a);
+  obj->_cover = obj;
   return (WeylAlgebra *) intern(obj);
 }
 
@@ -83,7 +84,7 @@ WeylAlgebra *WeylAlgebra::create(const Ring *K, const Monoid *MF,
 	return 0;
     }
   WeylAlgebra *R = new WeylAlgebra(K,MF,npairs,deriv,comm,homog_var);
-
+  R->_cover = R;
   // Now set whether this ring is graded.  This will be the case iff
   // deg(x_i) + deg(D_i) = 2 deg(h), for every i.
   if (homog_var < 0) 
@@ -115,6 +116,43 @@ WeylAlgebra *WeylAlgebra::create(const Ring *K, const Monoid *MF,
   return R;
 }
 
+///////////////////////////
+// Creating free modules //
+///////////////////////////
+
+FreeModule *WeylAlgebra::make_FreeModule(int rank) const
+  // Create a FreeModule of rank 'rank' with all generators of degree zero.
+{
+  if (rank < 0)
+    {
+      gError << "freemodule rank must be non-negative";
+      return 0;
+    }
+  FreeModule *result;
+
+  if (is_quotient_poly_ring())
+    {
+      FreeModule *F = get_cover()->make_FreeModule(rank);
+      result = make_quotient_FreeModule(F);
+    }
+  else
+    {
+      result = new WeylFreeModule(this,rank);
+      result->set_cover(result);
+    }
+
+  return result;
+}
+
+FreeModule *WeylAlgebra::make_quotient_FreeModule(const FreeModule *F) const
+  // Returns a free module over 'this', given that 'F' is a free module over a
+  // base ring of 'this'.
+{
+  FreeModule *result = new WeylFreeModule(this,F);
+  result->set_cover(F);
+  return result;
+}
+
 void WeylAlgebra::write_object(object_writer &o) const
 {
   // MESXX
@@ -134,15 +172,6 @@ void WeylAlgebra::text_out(buffer &o) const
   o << ")";
 }
 
-FreeModule *WeylAlgebra::make_FreeModule() const
-{ 
-  return new WeylFreeModule(this); 
-}
-
-FreeModule *WeylAlgebra::make_FreeModule(int n) const
-{ 
-  return new WeylFreeModule(this,n);
-}
 
 /////////////////
 int WeylAlgebra::binomtop = 15;
@@ -376,7 +405,7 @@ Nterm * WeylAlgebra::weyl_diff(
 	      continue;
 	    }
 	  // Now compute the new monomial:
-	  Nterm *tm = new_term();
+	  Nterm *tm = allocate_term();
 	  tm->coeff = b;
 	  for (int i=0; i<nvars; i++)
 	    result_exp[i] += expf[i] - deriv_exp[i];

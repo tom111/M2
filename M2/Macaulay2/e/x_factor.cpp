@@ -21,6 +21,8 @@ ostream &operator<<(ostream &o,const intarray &w) {
      return o;
 }
 
+
+#define divides diViDeS
 #define Matrix MaTrIx
 /* #include <factory.h> */
 #include <factor.h>		// from Messollen
@@ -108,7 +110,7 @@ static CanonicalForm convert(const mpz_ptr p) {
 static CanonicalForm convert(const RingElement &g) {
      const Ring *R = g.get_ring();
      const int n = R->n_vars();
-     const Ring *F = R->Ncoeffs();
+     const Ring *F = R->get_coefficient_ring();
      const Z_mod *Zn = F->cast_to_Z_mod();
      const Z *Z0 = F->cast_to_Z();
      const FractionField *Q = (
@@ -124,7 +126,7 @@ static CanonicalForm convert(const RingElement &g) {
 	  gError << "expected coefficient ring of the form ZZ/n, ZZ, or QQ";
 	  return 0;
      }
-     const Monoid *M = R->Nmonoms();
+     const Monoid *M = R->get_monoid();
      intarray vp;
      setCharacteristic(R->charac());
      if (Q != NULL) On( SW_RATIONAL );
@@ -211,7 +213,7 @@ static void ideal_reorder(object &mm) {
      const Matrix &m = mm -> cast_to_Matrix();
      const Ring *R = m.get_ring();
      const int N = R->n_vars();
-     const Ring *F = R->Ncoeffs();
+     const Ring *F = R->get_coefficient_ring();
      const Z_mod *Zn = F->cast_to_Z_mod();
      const Z *Z0 = F->cast_to_Z();
      const FractionField *Q = (
@@ -254,7 +256,7 @@ static void ideal_reorder(object &mm) {
 static void ideal_charset(object &mm) {
      const Matrix &m = mm -> cast_to_Matrix();
      const Ring *R = m.get_ring();
-     const Ring *F = R->Ncoeffs();
+     const Ring *F = R->get_coefficient_ring();
      const Z_mod *Zn = F->cast_to_Z_mod();
      const Z *Z0 = F->cast_to_Z();
      const FractionField *Q = (

@@ -5,20 +5,14 @@
 
 stash *WeylFreeModule::mystash;
 
-WeylFreeModule::WeylFreeModule(const Ring *R) 
-  : FreeModule(R)
+WeylFreeModule::WeylFreeModule(const WeylAlgebra *R, int rank) 
+  : FreeModule(R,rank), W(R)
 {
-  W = R->cast_to_WeylAlgebra();
-  assert(W != NULL);		// Since only Weyl algebras can instantiate, this
-				// should never happen.
 }
 
-WeylFreeModule::WeylFreeModule(const Ring *R, int n) 
-  : FreeModule(R,n)
+WeylFreeModule::WeylFreeModule(const WeylAlgebra *R, const FreeModule *F)
+  : FreeModule(R,F), W(R)
 {
-  W = R->cast_to_WeylAlgebra();
-  assert(W != NULL);		// Since only Weyl algebras can instantiate, this
-				// should never happen.
 }
 
 WeylFreeModule::~WeylFreeModule()
@@ -44,7 +38,7 @@ vec WeylFreeModule::weyl_diff(
 
   int i;
   int nvars = W->nvars;
-  const Ring *K = W->Ncoeffs();
+  const Ring *K = W->get_coefficient_ring();
   int *exp = new int[W->nderivatives];
   int *deriv_exp = new int[nvars];
   int *result_exp = new int[nvars];
@@ -90,7 +84,7 @@ vec WeylFreeModule::weyl_diff(
 	      continue;
 	    }
 	  // Now compute the new monomial:
-	  vec tm = new_term();
+	  vec tm = allocate_term();
 	  tm->coeff = b;
 	  tm->comp = t->comp;
 	  for (int i=0; i<nvars; i++)

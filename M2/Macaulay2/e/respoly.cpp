@@ -6,7 +6,7 @@
 #include "freemod.hpp"
 
 res_poly::res_poly(PolynomialRing *RR)
-: R(RR), M(R->Nmonoms()), K(R->Ncoeffs())
+: R(RR), M(R->get_monoid()), K(R->get_coefficient_ring())
 {
   bump_up(K);
   bump_up(R);
@@ -269,7 +269,6 @@ vec res_poly::to_vector(const resterm *f, const FreeModule *F,
       int x = tm->comp->minimal_me; // MES: Currently used for non-minimal as well...
       M->divide(tm->monom, tm->comp->base_monom, mon);
       vecterm *tmp = F->new_term(x, K->copy(tm->coeff), mon);
-      M->mult(tmp->monom, F->base_monom(x), tmp->monom);
       tmp->next = result;
       result = tmp;
     }

@@ -7,8 +7,8 @@
 
 GBKernelComputation::GBKernelComputation(const Matrix &m)
   : R(m.get_ring()->cast_to_PolynomialRing()),
-    K(m.get_ring()->Ncoeffs()),
-    M(m.get_ring()->Nmonoms()),
+    K(m.get_ring()->get_coefficient_ring()),
+    M(m.get_ring()->get_monoid()),
     F(m.rows()),
     G(m.cols()),
     n_ones(0),
@@ -131,8 +131,7 @@ void GBKernelComputation::new_pairs(int i)
   intarray vp;			// This is 'p'.
   intarray thisvp;
 
-  M->divide(gb[i]->monom, F->base_monom(gb[i]->comp), PAIRS_mon);
-  M->to_varpower(PAIRS_mon, vp);
+  M->to_varpower(gb[i]->monom, vp);
 
   // First add in syzygies arising from exterior variables
   // At the moment, there are none of this sort.
@@ -180,7 +179,6 @@ void GBKernelComputation::new_pairs(int i)
     }
 
   // Third, add in syzygies arising from previous elements of this same level
-  // The baggage of each of these is their corresponding res2_pair
 
   MonomialIdeal &mi_orig = mi[gb[i]->comp];
   for (j = mi_orig.first(); j.valid(); j++)
@@ -206,7 +204,7 @@ void GBKernelComputation::new_pairs(int i)
   for (j = mi.first(); j.valid(); j++)
     {
       M->from_varpower(mi[j]->monom().raw(), m);
-      M->mult(m, gb[i]->monom, m);
+      //M->mult(m, gb[i]->monom, m);
       
       vec q = make_syz_term(K->from_int(1),m,i);
       syzygies.append(q);
@@ -272,14 +270,11 @@ int GBKernelComputation::find_divisor(const MonomialIdeal &mi,
 vec GBKernelComputation::s_pair(vec gsyz) const
 {
   vec result = NULL;
-  int *si = M->make_one();
   for (vec f = gsyz; f != 0; f = f->next)
     {
-      M->divide(f->monom, G->base_monom(f->comp), si);
-      vec h = F->mult_by_term(f->coeff, si, gb[f->comp]);
+      vec h = F->mult_by_term(f->coeff, f->monom, gb[f->comp]);
       F->add_to(result, h);
     }
-  M->remove(si);
   return result;
 }
 
@@ -299,8 +294,7 @@ void GBKernelComputation::reduce(vec &f, vec &fsyz)
 
   while ((lead = fb.get_lead_term()) != NULL)
     {
-      M->divide(lead->monom, F->base_monom(lead->comp), REDUCE_mon);
-      M->to_expvector(REDUCE_mon, REDUCE_exp);
+      M->to_expvector(lead->monom, REDUCE_exp);
       if (find_ring_divisor(REDUCE_exp, rg))
 	{
 	  // Subtract off f, leave fsyz alone
@@ -318,7 +312,7 @@ void GBKernelComputation::reduce(vec &f, vec &fsyz)
 	  ring_elem c = K->negate(lead->coeff);
 	  M->divide(lead->monom, gb[q]->monom, REDUCE_mon);
 	  vec h = F->imp_mult_by_term(c, REDUCE_mon, gb[q]);
-	  lastterm->next = make_syz_term(c, lead->monom, q); // grabs c.
+	  lastterm->next = make_syz_term(c, REDUCE_mon, q); // grabs c.
 	  lastterm = lastterm->next;
 	  fb.add(h);
 	  total_reduce_count++;

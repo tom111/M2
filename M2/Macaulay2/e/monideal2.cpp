@@ -38,7 +38,7 @@ bool MonomialIIdeal::is_equal(const MonomialIIdeal *I) const
 
 void MonomialIIdeal::text_out(buffer &o) const
 {
-  const Monoid *M = R->Nmonoms();
+  const Monoid *M = R->get_monoid();
   int *m = M->make_one();
   for (MonomialTable<int>::iterator j = mi->last(); j.valid(); --j)
     {
@@ -55,7 +55,7 @@ void MonomialIIdeal::text_out(buffer &o) const
 void MonomialIIdeal::bin_out(buffer &o) const
 {
   bin_int_out(o, size());
-  const Monoid *M = R->Nmonoms();
+  const Monoid *M = R->get_monoid();
   int *m = M->make_one();
   for (MonomialTable<int>::iterator j = mi->last(); j.valid(); --j)
     {

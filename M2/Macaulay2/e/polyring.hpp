@@ -20,7 +20,10 @@ protected:
   stash *pstash;
 
   // Quotient ring information
-  const PolynomialRing *base_ring; // == NULL iff this is not a quotient ring
+  const PolynomialRing *_cover;    // == ultimate base_ring.  This is NEVER 0.
+  const PolynomialRing *base_ring; // == NULL iff this is not a quotient ring.
+				// This gives the chain of base rings all the
+				// way back to _cover.
   array<ring_elem> quotient_ideal;
   MonomialIdeal Rideal;		// This is used if the coeff ring is not ZZ.
   TermIdeal *RidealZ;		// This is used if the coeff ring is ZZ.
@@ -38,7 +41,15 @@ protected:
 public:
   static PolynomialRing *create(const Ring *K, const Monoid *MF);
   static PolynomialRing *create(const PolynomialRing *R, const array<ring_elem> &I);
-  
+
+  virtual FreeModule *make_FreeModule(int rank=0) const;
+  // Create a FreeModule of rank 'rank' with all generators of degree zero.
+
+  virtual FreeModule *make_quotient_FreeModule(const FreeModule *F) const;
+  // Returns a free module over 'this', given that 'F' is a free module over a
+  // base ring of 'this'.
+
+
   class_identifier class_id() const { return CLASS_PolynomialRing; }
 
   // serialize
@@ -52,7 +63,7 @@ public:
 
   // Queries for quotient ring
   bool        is_quotient_ring() const { return (base_ring != NULL); }
-  const PolynomialRing * get_base_poly_ring() const { return base_ring; }
+  const PolynomialRing * get_cover() const { return _cover; }
   MonomialIdeal  get_quotient_monomials() const { return Rideal; }
   const TermIdeal *get_quotient_monomials_ZZ() const { return RidealZ; }
   const FreeModule *get_Rsyz() const { return Rsyz; }
@@ -160,7 +171,7 @@ public:
 
   // Routines special to fields (anything else?)
 protected:
-  Nterm *new_term() const;
+  Nterm *allocate_term() const;
   Nterm *copy_term(const Nterm *t) const;
   void imp_cancel_lead_term(ring_elem &f, 
 			ring_elem g, 

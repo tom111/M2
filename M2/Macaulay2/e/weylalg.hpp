@@ -86,8 +86,12 @@ public:
   virtual void write_object(object_writer &o) const;
   static WeylAlgebra *read_object(object_reader &i);
 
-  virtual FreeModule *make_FreeModule() const;
-  virtual FreeModule *make_FreeModule(int n) const;
+  virtual FreeModule *make_FreeModule(int rank) const;
+  // Create a FreeModule of rank 'rank' with all generators of degree zero.
+
+  virtual FreeModule *make_quotient_FreeModule(const FreeModule *F) const;
+  // Returns a free module over 'this', given that 'F' is a free module over a
+  // base ring of 'this'.
 
   virtual bool is_commutative_ring() const { return false; }
   virtual bool is_field() const     { return isfield; }

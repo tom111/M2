@@ -509,17 +509,17 @@ void MonomialIdeal_rec::text_out(buffer &o) const
 
 void MonomialIdeal::text_out(buffer &o) const
 {
-  int *m = get_ring()->Nmonoms()->make_one();
+  int *m = get_ring()->get_monoid()->make_one();
   for (Index<MonomialIdeal> j = last(); j.valid(); j--)
     {
       const int *n = operator[](j)->monom().raw();
-      get_ring()->Nmonoms()->from_varpower(n, m);
-      get_ring()->Nmonoms()->elem_text_out(o, m);
+      get_ring()->get_monoid()->from_varpower(n, m);
+      get_ring()->get_monoid()->elem_text_out(o, m);
       if (comp_printlevel > 0)
 	o << '(' << operator[](j)->basis_elem() << ")";
       o << ' ';
     }
-  get_ring()->Nmonoms()->remove(m);
+  get_ring()->get_monoid()->remove(m);
 }
 
 void MonomialIdeal_rec::bin_out(buffer &o) const
@@ -531,16 +531,16 @@ void MonomialIdeal_rec::bin_out(buffer &o) const
 
 void MonomialIdeal::bin_out(buffer &o) const
 {
-  int *m = get_ring()->Nmonoms()->make_one();
+  int *m = get_ring()->get_monoid()->make_one();
   bin_int_out(o, obj->count);
   for (Index<MonomialIdeal> i = last(); i.valid(); i--)
     {
       const int *n = operator[](i)->monom().raw();
-      get_ring()->Nmonoms()->from_varpower(n, m);
-      get_ring()->Nmonoms()->elem_bin_out(o, m);
+      get_ring()->get_monoid()->from_varpower(n, m);
+      get_ring()->get_monoid()->elem_bin_out(o, m);
       bin_int_out(o, operator[](i)->basis_elem());
     }
-  get_ring()->Nmonoms()->remove(m);
+  get_ring()->get_monoid()->remove(m);
 }
 
 MonomialIdeal MonomialIdeal::intersect(const MonomialIdeal &J) const

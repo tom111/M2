@@ -38,13 +38,13 @@ public:
   int total_n_vars() const { return totalvars; }
 
   const Ring * get_ring() const { return this; }
-  const Ring *  Ncoeffs()       const { return K; }
-  const Monoid * Nmonoms()       const { return M; }
+  const Ring *  get_coefficient_ring()       const { return K; }
+  const Monoid * get_monoid()       const { return M; }
   const Monoid * degree_monoid() const { return D; }
   const PolynomialRing *HilbertRing() const { return HRing; }
 
-  virtual FreeModule *make_FreeModule() const;
-  virtual FreeModule *make_FreeModule(int n) const;
+  virtual FreeModule *make_FreeModule(int rank=0) const;
+  // Create a FreeModule of rank 'rank' with all generators of degree zero.
 
   virtual const Z * cast_to_Z() const         { return 0; }
   virtual       Z * cast_to_Z()               { return 0; }

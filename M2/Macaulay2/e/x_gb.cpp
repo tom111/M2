@@ -53,7 +53,7 @@ void cmd_gb_make(object &om,
     gStack.insert(new GaussElimComputation(m, dosyz, nsyz));
   else if (R->is_Z()) // MES later: || R->is_pid())
     gStack.insert(new HermiteComputation(m, dosyz, nsyz));
-  else if (R->is_poly_ring() && R->Ncoeffs()->is_field())
+  else if (R->is_poly_ring() && R->get_coefficient_ring()->is_field())
     {
       if ((strategy & 3) == 3)
 	{
@@ -76,11 +76,11 @@ void cmd_gb_make(object &om,
       else
 	gStack.insert(new GBinhom_comp(m, dosyz, nsyz, strategy));
     }
-  else if (R->is_poly_ring() && R->Ncoeffs()->is_Z())
+  else if (R->is_poly_ring() && R->get_coefficient_ring()->is_Z())
     {
       gStack.insert(new GBZZ_comp(m, dosyz, nsyz, strategy));
     }
-  else if (R->is_poly_ring() && R->Ncoeffs()->is_pid())
+  else if (R->is_poly_ring() && R->get_coefficient_ring()->is_pid())
     {
       gError << "GB for polynomial rings over PID's not yet implemented";
     }
@@ -113,7 +113,7 @@ void cmd_gb_make1(object &om,
     gError << "GB for ring = field together with Hilbert function is not yet implemented";
   else if (R->is_Z()) // MES later: || R->is_pid())
     gError << "GB for Z, using Hilbert function, is not yet implemented";
-  else if (R->is_poly_ring() && R->Ncoeffs()->is_field())
+  else if (R->is_poly_ring() && R->get_coefficient_ring()->is_field())
     {
       if (R->is_graded() && m.is_homogeneous())
 	{
@@ -122,7 +122,7 @@ void cmd_gb_make1(object &om,
       else
 	gError << "cannot use Hilbert function for an inhomogeneous GB";
     }
-  else if (R->is_poly_ring() && R->Ncoeffs()->is_pid())
+  else if (R->is_poly_ring() && R->get_coefficient_ring()->is_pid())
     {
       gError << "GB for polynomial rings over PID's not yet implemented";
     }
@@ -171,9 +171,9 @@ object_element *make_forceGB(Matrix gens, Matrix gb, Matrix change, Matrix syz)
   const Ring *R = gens.get_ring();
   if (R->is_poly_ring())
     {
-      if (R->Ncoeffs()->is_field())
+      if (R->get_coefficient_ring()->is_field())
 	return new GB_comp(gens, gb, change, syz);
-      else if (R->Ncoeffs()->is_Z())
+      else if (R->get_coefficient_ring()->is_Z())
 	return new GBZZ_comp(gens, gb, change, syz);
     }
   gError << "Cannot create the desired forced Groebner basis";
@@ -315,7 +315,7 @@ void cmd_hilb_make(object &oR, object &oM)
       return;
     }
   Matrix M = oM->cast_to_Matrix();
-  if (M.get_ring()->degree_monoid() != P->Nmonoms())
+  if (M.get_ring()->degree_monoid() != P->get_monoid())
     {
       gError << "Hilbert function: result monoid must be degree monoid";
       return;
@@ -333,7 +333,7 @@ void cmd_hilb1_make(object &oR, object &omi)
       return;
     }
   MonomialIdeal mi = omi->cast_to_MonomialIdeal();
-  if (mi.get_ring()->degree_monoid() != P->Nmonoms())
+  if (mi.get_ring()->degree_monoid() != P->get_monoid())
     {
       gError << "Hilbert function: result monoid must be degree monoid";
       return;

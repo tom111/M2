@@ -13,8 +13,8 @@ TermIdeal::TermIdeal(const PolynomialRing *AA, const FreeModule *GGsyz)
   A = AA;
   R = GGsyz->get_ring()->cast_to_PolynomialRing();
   assert(R != NULL);
-  M = R->Nmonoms();
-  K = R->Ncoeffs();
+  M = R->get_monoid();
+  K = R->get_coefficient_ring();
   Gsyz = GGsyz;
   nvars = R->n_vars();
   one = K->from_int(1);
@@ -256,11 +256,9 @@ TermIdeal *TermIdeal::make_termideal(const Matrix &m, int n)
 {
   int i;
   const PolynomialRing *R = m.get_ring()->cast_to_PolynomialRing();
-  const PolynomialRing *A = R->get_base_poly_ring();
-  while (A->is_quotient_ring())
-    A = A->get_base_poly_ring();
-  const Ring *K = R->Ncoeffs();
-  const Monoid *M = R->Nmonoms();
+  const PolynomialRing *A = R->get_cover();
+  const Ring *K = R->get_coefficient_ring();
+  const Monoid *M = R->get_monoid();
   const FreeModule *Gsyz = R->make_FreeModule(m.n_cols()); 
   TermIdeal *result = new TermIdeal(A,Gsyz);
   queue <tagged_term *> new_elems;
@@ -312,8 +310,8 @@ TermIdeal *TermIdeal::make_ring_termideal(const PolynomialRing *R,
     {
       Nterm *f = all[i];
       tagged_term *t = new 
-	tagged_term(R->Ncoeffs()->copy(f->coeff),
-		    R->Nmonoms()->make_new(f->monom),
+	tagged_term(R->get_coefficient_ring()->copy(f->coeff),
+		    R->get_monoid()->make_new(f->monom),
 		    G->e_sub_i(i),
 		    NULL);
       guys.insert(t);
@@ -697,29 +695,3 @@ Matrix TermIdeal::search(const Matrix &m) const
     }
   return result;
 }
-#if 0
-      int any_is_one = 0;
-      for (i=0; i<divs.length(); i++)
-	if (divs[i]->coeff_is_one)
-	  {
-	    any_is_one = 1;
-	    break;
-	  }
-
-  // If the base ring is a quotient ring, include these lead monomials.
-  if (m.get_ring()->is_quotient_poly_ring())
-    {
-      i = 0;
-      MonomialIdeal Rideal = m.get_ring()->get_quotient_monomials();
-      for (Index<MonomialIdeal> j = Rideal.first(); j.valid(); j++, i++)
-	{
-	  Nterm *f = (Nterm *) Rideal[j]->basis_ptr();
-	  tagged_term *m = new_tagged_term(f->coeff,
-					   f->monom,
-					   NULL, 
-					   result->Rsyz->e_sub_i(i));
-	  new_elems.insert(m);
-	}
-    }
-
-#endif

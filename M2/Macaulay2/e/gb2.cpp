@@ -98,7 +98,7 @@ void gbres_comp::setup(const Matrix &m,
     {
       if (origsyz > m.n_cols())
 	origsyz = m.n_cols();
-      int *one = R->Nmonoms()->make_one();
+      int *one = R->get_monoid()->make_one();
       const int *mon;
       for (i=0; i<origsyz; i++)
 	{
@@ -108,7 +108,7 @@ void gbres_comp::setup(const Matrix &m,
 	    mon = m[i]->monom;
 	  Fsyz->append(m.cols()->degree(i), mon, i);
 	}
-      R->Nmonoms()->remove(one);
+      R->get_monoid()->remove(one);
     }
 
   lo_degree = m.cols()->lowest_primary_degree();

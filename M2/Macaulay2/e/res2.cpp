@@ -409,8 +409,8 @@ void res2_comp::initialize(Matrix mat,
   P = mat.get_ring()->cast_to_PolynomialRing();
   assert(P != NULL);
   R = new res2_poly((PolynomialRing *)P);
-  M = P->Nmonoms();
-  K = P->Ncoeffs();
+  M = P->get_monoid();
+  K = P->get_coefficient_ring();
   bump_up(P);
   bump_up(K);
   generator_matrix = mat;

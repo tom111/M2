@@ -12,8 +12,9 @@ class WeylFreeModule : public FreeModule
 protected:
   const WeylAlgebra *W;
 
-  WeylFreeModule(const Ring *R);
-  WeylFreeModule(const Ring *R, int n);
+  WeylFreeModule(const WeylAlgebra *WW, int rank);
+
+  WeylFreeModule(const WeylAlgebra *WW, const FreeModule *F);
 
   vec weyl_diff(
 		const ring_elem c,

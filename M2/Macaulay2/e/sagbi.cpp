@@ -128,7 +128,7 @@ polynomial_ring *sagbi_comp::extend_ring(const polynomial_ring *R, intarray &deg
   // monomial order = elimination order (or product order?) eliminating variables of R.
   // degrees of new variables: coming from 'degs'
   // This routine should handle the case where R is a quotient poly ring, or R is just K.
-  const ring *K = R->Ncoeffs();
+  const ring *K = R->get_coefficient_ring();
   degree_monoid *D = R->degree_monoid();
   monorder mo = 
   mon_info mi = 

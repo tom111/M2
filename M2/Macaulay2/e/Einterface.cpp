@@ -7,20 +7,7 @@ EInterface::EInterface(const Ring *RR)
 {
   const PolynomialRing *R1 = RR->cast_to_PolynomialRing();
   //if (R == 0) throw(expected_poly_ring);
-  const PolynomialRing *R2 = R1->get_base_poly_ring();
-  if (R2 == 0) 
-    {
-      R = R1;
-      Rquotient = 0;
-    }
-  else
-    {
-      R = R2;
-      Rquotient = R1;
-    }
-  K = R->Ncoeffs();
-  M = R->Nmonoms();
-
+  const PolynomialRing *R = R1->get_cover();
   if (R1->is_quotient_ring())
     {
       Rquotient = R1;
@@ -29,6 +16,8 @@ EInterface::EInterface(const Ring *RR)
     {
       Rquotient = 0;
     }
+  K = R->get_coefficient_ring();
+  M = R->get_monoid();
 
   RWeyl = R->cast_to_WeylAlgebra();
 

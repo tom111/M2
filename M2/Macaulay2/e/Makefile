@@ -36,7 +36,7 @@ endif
 
 ######################
 # -pg is now handled in ../../Makeconf!
-CXXFLAGS += $(DEBUGFLAGS)
+CXXFLAGS += $(DEBUGFLAGS) #-pg
 ######################
 
 ifeq "$(CC)" "cl"
@@ -45,7 +45,7 @@ ifndef NOOPTIM
 CXXFLAGS += -O2
 endif
 else
-#CXXFLAGS += -O3 #MES
+CXXFLAGS += -O3 #MES
 CXXFLAGS += -g $(WARNINGS)
 endif
 

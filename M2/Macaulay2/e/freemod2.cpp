@@ -5,7 +5,7 @@
 #include "bin_io.hpp"
 #include "polyring.hpp"
 #include "serial.hpp"
-
+#include "matrix.hpp"
 //////////////////////////////////////////////
 //  Construction/Destruction routines ////////
 //////////////////////////////////////////////
@@ -26,14 +26,13 @@ void FreeModule::initialize(const Ring *RR)
   else
     {
       ty = FREE_POLY;
-      K = R->Ncoeffs();
-      M = R->Nmonoms();
+      K = R->get_coefficient_ring();
+      M = R->get_monoid();
 
       nf_1 = M->make_one();
       mon_1 = M->make_one();
-
-      nf_exp = nf_exp_a.alloc(M->n_vars());
-      is_quotient_ring = (P->base_ring != NULL);
+      nf_exp = new int[M->n_vars()];
+      is_quotient_ring = P->is_quotient_ring();
       coefficients_are_ZZ = P->coefficients_are_ZZ;
 
       TO_EXP_monom = M->make_one();
@@ -43,65 +42,89 @@ void FreeModule::initialize(const Ring *RR)
   bump_up((Ring *) K);
 }
 
-FreeModule::FreeModule(const Ring *RR)
-: type()
-{
-  initialize(RR);
-}
-
-FreeModule::FreeModule(const Ring *RR, int n)
+FreeModule::FreeModule(const Ring *RR, int rank)
 : type()
      // Create R^n, with all gradings zero.
 {
   initialize(RR);
-
+  components = new vector<index_type *>;
   int *deg = degree_monoid()->make_one();
-  for (int i=0; i<n; i++)
+  for (int i=0; i<rank; i++)
     append(deg);
   degree_monoid()->remove(deg);
 }
 
-FreeModule::FreeModule(const Ring *RR, const FreeModule *F)
+FreeModule::FreeModule(const PolynomialRing *RR, const FreeModule *F)
 : type()
     // Take the degrees and monomials from F, but take the 
     // new ring/monomial information using R.
 {
   initialize(RR);
-  // MES: make sure that (1) nvars are equal, (2) degree_monoid's are equal.
-
-  int rk = F->rank();
-
-  intarray expa;
-  int *exp = expa.alloc(R->n_vars());
-  int *base = NULL;
-  if (F->M != NULL) base = F->M->make_one();
-  for (int i=0; i<rk; i++)
-    {
-      if (M != NULL)
-	{
-	  F->M->to_expvector(F->base_monom(i), exp);
-	  M->from_expvector(exp, base);
-	}
-      append(F->degree(i), base);
-    }
-  if (F->M != NULL) F->M->remove(base);
-  ty = F->ty;
+  components = F->components;
+  // We could set _cover here, but instead we let the caller do this...
 }
+
+#include <algorithm>
+FreeModule *FreeModule::make_Schreyer_FreeModule(const Matrix &m)
+{
+  int i;
+  const Ring *R = m.get_ring();
+  const Monoid *M = R->get_monoid();
+  FreeModule *F = R->make_FreeModule();
+  int rk = m.n_cols();
+  if (rk == 0) return F;
+  int *base = M->make_one();
+  int *tiebreaks = new int[rk];
+  int *ties = new int[rk];
+  for (i=0; i<rk; i++)
+    {
+      vec v = m[i];
+      if (v == NULL)
+	tiebreaks[i] = i;
+      else
+	tiebreaks[i] = i + rk * m.rows()->compare_num(v->comp);
+    }
+  // Now sort tiebreaks in increasing order.
+  ::sort<int *>(tiebreaks, tiebreaks+rk);
+  for (i=0; i<rk; i++)
+    ties[tiebreaks[i] % rk] = i;
+  for (i=0; i<rk; i++)
+    {
+      vec v = m[i];
+      if (v == NULL)
+	M->one(base);
+      else
+	{
+	  M->copy(m.rows()->base_monom(v->comp), base);
+	  M->mult(base, v->monom, base);
+	}
+
+      F->append(m.cols()->degree(i), base, ties[i]);
+    }
+
+  M->remove(base);
+  delete [] tiebreaks;
+  delete [] ties;
+  return F;
+}
+
 
 FreeModule::~FreeModule()
 {
   int rk = rank();
-  for (int i=0; i<rk; i++)
-    {
-      if (M != NULL) M->remove(components[i]->base_monom);
-      degree_monoid()->remove(components[i]->deg);
-      delete components[i];
-    }
+  if (!is_quotient_ring)
+    for (int i=0; i<rk; i++)
+      {
+	if (M != NULL) M->remove(base_monom(i));
+	degree_monoid()->remove(degree(i));
+	delete component(i);
+      }
   if (M != NULL)
     {
       M->remove(nf_1);
       M->remove(mon_1);
       M->remove(TO_EXP_monom);
+      delete [] nf_exp;
     }
   bump_down((Ring *) R);
   bump_down((Ring *) K);
@@ -151,7 +174,7 @@ void FreeModule::append(const int *d, const int *base, int compare_num)
   else
     p->base_monom = M->make_new(base);
 
-  components.append(p);
+  components->push_back(p);
 
   if (ty == FREE_POLY && !M->is_one(p->base_monom))
     ty = FREE_SCHREYER;
@@ -173,7 +196,7 @@ void FreeModule::append(const int *d)
   else
     p->base_monom = M->make_one();
 
-  components.append(p);
+  components->push_back(p);
 }
 
 bool FreeModule::is_equal(const FreeModule *F) const
@@ -208,7 +231,7 @@ FreeModule *FreeModule::shift(const int *d) const
   for (int i=0; i<rank(); i++)
     {
       degree_monoid()->mult(degree(i), d, deg);
-      result->append(deg, base_monom(i));
+      result->append(deg, base_monom(i)); // BUG!!
     }
 
   degree_monoid()->remove(deg);

@@ -6,6 +6,48 @@
 #include "monorder.hpp"
 #include "object.hpp"
 
+#include <hash_set>
+
+////////////////////////////////////////////////////////////////////////////
+extern const Monoid *__M;
+// These are defined below
+struct CompareMonomial
+{
+  bool operator()(const int *m, const int *n) const;
+};
+struct EqualMonomial
+{
+  bool operator()(const int *m, const int *n) const;
+};
+struct HashMonomial
+{
+  size_t operator()(const int *m) const;
+};
+
+#if 0
+class monomial_set
+{
+  set<int *, CompareMonomial> _set;
+  int nelems;
+public:
+  monomial_set() : nelems(0) {}
+  bool find(int *monom) const { return _set.find(monom) != _set.end(); } // Set __M before using!
+  void insert(int *monom) { _set.insert(monom); nelems++; } // Set __M before using!
+  void stats(buffer &o) { o << "number of unique monomials in table = " << nelems << newline; }
+};
+#endif
+
+class monomial_set
+{
+  hash_set<int *, HashMonomial, EqualMonomial> _set;
+  int nelems;
+public:
+  monomial_set() : nelems(0) {}
+  bool find(int *monom) const { return _set.find(monom) != _set.end(); } // Set __M before using!
+  void insert(int *monom) { _set.insert(monom); nelems++; } // Set __M before using!
+  void stats(buffer &o) { o << "number of unique monomials in table = " << nelems << newline; }
+};
+////////////////////////////////////////////////////////////////////////////
 class monoid_info
 {
   friend class Monoid;
@@ -65,6 +107,13 @@ private:
   int *skew_mvars;
   int *skew_nvars;		// To save ALOT of allocations...
 
+  int n_compares;
+  int n_equal;
+  int n_mult;
+  int n_zeros_determine;
+  int *loc_of_compare;
+  monomial_set H;
+
   stash *monom_stash;
   int *EXP1, *EXP2, *EXP3;	// allocated ntuples.
 				// A local routine may use these ONLY if
@@ -88,9 +137,11 @@ public:
   int in_subring(int n, const int *m) const;
   int compare(int nslots, const int *m, const int *n) const;
 
+  int *allocate_monomial() const { return (int *) monom_stash->new_elem(); }
   int *make_new(const int *d) const;
   int *make_one() const;
   void remove(int *d) const;
+  void intern_monomial(const int *m) const;
 
   int is_non_negative(const int *m) const;
   int is_one(const int *m) const;
@@ -101,6 +152,7 @@ public:
   int max_degree()    const { return mon_bound; }
   int monomial_size() const { return nwords; }
 
+  size_t hash(const int *m) const;
   void mult(const int *m, const int *n, int *result) const;
   void power(const int *m, int n, int *result) const;
   int compare(const int *m, const int *n) const;
@@ -173,7 +225,7 @@ inline void Monoid::power(const int *m, int n, int *result) const
 inline void Monoid::divide(const int *m, const int *n, int *result) const
     { for (int i=0; i<nwords; i++) *result++ = *m++ - *n++; }
 
-
+#if 0
 inline int Monoid::compare(const int *m, const int *n) const
 {
   for (int i=0; i<nwords; i++, m++, n++)
@@ -182,6 +234,35 @@ inline int Monoid::compare(const int *m, const int *n) const
       if (*m < *n) return -1;
     }
   return 0;
+}
+#endif
+#if 0
+inline int Monoid::compare(const int *m, const int *n) const
+{
+  const int *mtop = m + nwords;
+  while (m < mtop)
+    {
+      int cmp = *m++ - *n++;
+      if (cmp > 0) return 1;
+      if (cmp < 0) return -1;
+    }
+  return 0;
+}
+#endif
+
+inline bool CompareMonomial::operator()(const int *m, const int *n) const
+{
+  return __M->compare(m,n) > 0;
+}
+
+inline bool EqualMonomial::operator()(const int *m, const int *n) const
+{
+  return __M->compare(m,n) == 0;
+}
+
+inline size_t HashMonomial::operator()(const int *m) const
+{
+  return __M->hash(m);
 }
 
 #endif

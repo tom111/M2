@@ -5,11 +5,11 @@
 
 typedef unsigned long compint;
 
-template<class T> class hashtable;
-template<class T> class cursor_hashtable;
+template<class T> class HashTable;
+template<class T> class cursor_HashTable;
 
 template<class T>
-class hashtable
+class HashTable
 {
   unsigned int used;
   unsigned int maxused;
@@ -40,18 +40,18 @@ class hashtable
        bin = newbin;
        size = newsize;
        }
-  friend class cursor_hashtable<T>;
+  friend class cursor_HashTable<T>;
 public:
   int highwater() { return maxused; }
   int current() { return used; }
-  hashtable(T trivial_elem0) {
+  HashTable(T trivial_elem0) {
        trivial_elem = trivial_elem0;
        maxused = used = 0;
        size = 1;
        bin = new ENTRY [size];
        for (unsigned int i = 0; i<size; i++) bin[i].occupied = false;
        }
-  ~hashtable() { delete [] bin; }
+  ~HashTable() { delete [] bin; }
   void insert(T &elem, compint key) {
        used ++;
        if (used > maxused) maxused = used;
@@ -122,20 +122,20 @@ public:
   };
 
 template<class T>
-class cursor_hashtable
+class cursor_HashTable
 {
-  hashtable<T> *h;
+  HashTable<T> *h;
   unsigned int i;
 public:
   bool valid() { return i < h->size; }
-  cursor_hashtable(hashtable<T> &a) {
+  cursor_HashTable(HashTable<T> &a) {
        h = &a;
        i = 0;
        while (i < h->size && !h->bin[i].occupied) i++;
        }
-  // cursor_hashtable(const cursor_hashtable &c) ;
-  ~cursor_hashtable() {}
-  cursor_hashtable &operator++() {
+  // cursor_HashTable(const cursor_HashTable &c) ;
+  ~cursor_HashTable() {}
+  cursor_HashTable &operator++() {
        if (!valid()) {
 	    ERROR("invalid hashtable cursor used - internal error");
 	    }

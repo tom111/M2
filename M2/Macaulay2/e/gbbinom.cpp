@@ -28,7 +28,7 @@ binomial_ring::binomial_ring(const Ring *RR,
   nslots = nvars + 1;
   degrees = new int[nvars];
   for (i=0; i<nvars; i++) 
-    degrees[i] = - R->Nmonoms()->primary_degree_of_var(i);
+    degrees[i] = - R->get_monoid()->primary_degree_of_var(i);
 
   if (have_weights)
     {
@@ -357,10 +357,10 @@ bool binomial_ring::vector_to_binomial(vec f, binomial &result) const
   if (f == NULL || f->next == NULL || f->next->next != NULL) 
     return false;
 
-  R->Nmonoms()->to_expvector(f->monom, result.lead);
+  R->get_monoid()->to_expvector(f->monom, result.lead);
   set_weights(result.lead);
 
-  R->Nmonoms()->to_expvector(f->next->monom, result.tail);
+  R->get_monoid()->to_expvector(f->next->monom, result.tail);
   set_weights(result.tail);
 
   normalize(result);
@@ -433,10 +433,10 @@ void binomial_ring::monomial_out(buffer &o, const monomial m) const
   if (m == NULL) return;
   intarray vp;
   varpower::from_ntuple(nvars, m, vp);
-  int *n = R->Nmonoms()->make_one();
-  R->Nmonoms()->from_varpower(vp.raw(), n);
-  R->Nmonoms()->elem_text_out(o,n);
-  R->Nmonoms()->remove(n);
+  int *n = R->get_monoid()->make_one();
+  R->get_monoid()->from_varpower(vp.raw(), n);
+  R->get_monoid()->elem_text_out(o,n);
+  R->get_monoid()->remove(n);
 }
 
 void binomial_ring::elem_text_out(buffer &o, const binomial &f) const

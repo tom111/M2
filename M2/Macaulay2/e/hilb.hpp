@@ -49,8 +49,8 @@ class hilb_comp : public type
 {
   const PolynomialRing *S;		// This is the base ring of the monomial ideal
   const PolynomialRing *R;		// This is the output degree ring.
-  const Monoid *M;		// S->Nmonoms()
-  const Monoid *D;		// R->Nmonoms() == S->degree_monoid()
+  const Monoid *M;		// S->get_monoid()
+  const Monoid *D;		// R->get_monoid() == S->degree_monoid()
 
   // Collected values from the matrix
   Matrix input_mat;             // The input matrix

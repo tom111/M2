@@ -223,8 +223,8 @@ bool GF::promote(const Ring *Rf, const ring_elem f, ring_elem &result) const
   int exp[1];
   for (Nterm *t = f; t != NULL; t = t->next)
     {
-      ring_elem coef = from_int(K->Ncoeffs()->coerce_to_int(t->coeff));
-      K->Nmonoms()->to_expvector(t->monom, exp);
+      ring_elem coef = from_int(K->get_coefficient_ring()->coerce_to_int(t->coeff));
+      K->get_monoid()->to_expvector(t->monom, exp);
       // exp[0] is the variable we want.  Notice that since the ring is a quotient,
       // this degree is < n (where Q = P^n).
       ring_elem g = power(x_exponent, exp[0]);

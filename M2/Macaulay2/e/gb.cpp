@@ -22,7 +22,7 @@ void GB_comp::set_up0(const Matrix &m, int csyz, int nsyz)
       // MES: throw an error here.
       assert(0);
     }
-  M = R->Nmonoms();
+  M = R->get_monoid();
 
   spairs = new s_pair_heap(M);
   gens = new s_pair_heap(M);
@@ -422,7 +422,7 @@ void GB_comp::compute_s_pair(s_pair *p)
   if (p->f == NULL)
     {
       int *s = M->make_one();
-      ring_elem one = R->Ncoeffs()->from_int(1);
+      ring_elem one = R->get_coefficient_ring()->from_int(1);
       M->divide(p->lcm, p->first->f->monom, s);
       //p->f = F->mult_by_monomial(s, p->first->f);
       //p->fsyz = Fsyz->mult_by_monomial(s, p->first->fsyz);
@@ -434,16 +434,16 @@ void GB_comp::compute_s_pair(s_pair *p)
 	  ring_elem coeff;
 	  F->imp_cancel_lead_term(p->f, p->second->f, coeff, s);
 	  Fsyz->subtract_multiple_to(p->fsyz, coeff, s, p->second->fsyz);
-	  R->Ncoeffs()->remove(coeff);
+	  R->get_coefficient_ring()->remove(coeff);
 
-	  //ring_elem a = R->Ncoeffs()->from_int(1);
+	  //ring_elem a = R->get_coefficient_ring()->from_int(1);
 	  //M->divide(p->lcm, p->second->f->monom, s);
 	  //F->imp_subtract_multiple_to(p->f, a, s, p->second->f);
 	  //Fsyz->subtract_multiple_to(p->fsyz, a, s, p->second->fsyz);
-	  //R->Ncoeffs()->remove(a);
+	  //R->get_coefficient_ring()->remove(a);
 	}
       M->remove(s);
-      R->Ncoeffs()->remove(one);
+      R->get_coefficient_ring()->remove(one);
     }
 }
 
@@ -471,7 +471,7 @@ void GB_comp::gb_reduce(vec &f, vec &fsyz)
 	{
 	  Nterm *g = (Nterm *) b->basis_ptr();
 	  F->imp_ring_cancel_lead_term(f, g, coeff, reduce_ndiv);
-	  R->Ncoeffs()->remove(coeff);
+	  R->get_coefficient_ring()->remove(coeff);
 	  //M->divide(f->monom, g->monom, reduce_ndiv);
 	  //F->imp_subtract_ring_multiple_to(f, f->coeff, reduce_ndiv, g);
 	  count++;
@@ -481,7 +481,7 @@ void GB_comp::gb_reduce(vec &f, vec &fsyz)
 	  gb_elem *q = (gb_elem *) b->basis_ptr();
 	  F->imp_cancel_lead_term(f, q->f, coeff, reduce_ndiv);
 	  Fsyz->subtract_multiple_to(fsyz, coeff, reduce_ndiv, q->fsyz);
-	  R->Ncoeffs()->remove(coeff);
+	  R->get_coefficient_ring()->remove(coeff);
 
 	  //ring_elem c = f->coeff;
 	  //M->divide(f->monom, q->f->monom, reduce_ndiv);
@@ -533,20 +533,20 @@ void GB_comp::gb_geo_reduce(vec &f, vec &fsyz)
 	{
 	  Nterm *g = (Nterm *) b->basis_ptr();
 	  M->divide(lead->monom, g->monom, reduce_ndiv);
-	  ring_elem c = R->Ncoeffs()->negate(lead->coeff);
+	  ring_elem c = R->get_coefficient_ring()->negate(lead->coeff);
 	  vecterm *h = F->imp_ring_mult_by_term(g, c, reduce_ndiv, lead->comp);
-	  R->Ncoeffs()->remove(c);
+	  R->get_coefficient_ring()->remove(c);
 	  fb.add(h);
 	  count++;
 	}
       else if (monideals[lead->comp]->mi_search.search_expvector(div_totalexp, b))
 	{
 	  gb_elem *q = (gb_elem *) b->basis_ptr();
-	  ring_elem c = R->Ncoeffs()->negate(lead->coeff);
+	  ring_elem c = R->get_coefficient_ring()->negate(lead->coeff);
 	  M->divide(lead->monom, q->f->monom, reduce_ndiv);
 	  vecterm *h = F->imp_mult_by_term(c, reduce_ndiv, q->f);
 	  vecterm *hsyz = Fsyz->imp_mult_by_term(c, reduce_ndiv, q->fsyz);
-	  R->Ncoeffs()->remove(c);
+	  R->get_coefficient_ring()->remove(c);
 	  fb.add(h);		// Eats h
 	  fsyzb.add(hsyz);	// Eats hsyz
 	  count++;
@@ -762,14 +762,14 @@ int GB_comp::coeff_of(const RingElement &h, int deg) const
   int result = 0;
   for (Nterm *f = h.get_value(); f!=NULL; f=f->next)
     {
-      P->Nmonoms()->to_expvector(f->monom, exp);
+      P->get_monoid()->to_expvector(f->monom, exp);
       if (exp[0] < deg) 
 	{
 	  ERROR("Incorrect Hilbert function given");
 	}
       else if (exp[0] == deg)
 	{
-	  int n = P->Ncoeffs()->coerce_to_int(f->coeff);
+	  int n = P->get_coefficient_ring()->coerce_to_int(f->coeff);
 	  result += n;
 	}
 	

@@ -1254,7 +1254,7 @@ MonomialIdeal EMatrix::make_monideal(int n) const
 MonomialIdeal EMatrix::make_skew_monideal(int n) const
 {
   MonomialIdeal result = make_monideal(n);
-  const Monoid *M = get_ring()->Nmonoms();
+  const Monoid *M = get_ring()->get_monoid();
   if (M != NULL && M->is_skew())
     {
       intarray vp;
@@ -1334,9 +1334,9 @@ static const Monoid * kb_D;
 
 void EMatrix::k_basis_insert() const
 {
-  get_ring()->Nmonoms()->from_expvector(kb_exp, kb_mon);
-  get_ring()->Nmonoms()->divide(kb_mon, kb_vec->monom, kb_mon);
-  ring_elem tmp = get_ring()->term(get_ring()->Ncoeffs()->from_int(1), kb_mon);
+  get_ring()->get_monoid()->from_expvector(kb_exp, kb_mon);
+  get_ring()->get_monoid()->divide(kb_mon, kb_vec->monom, kb_mon);
+  ring_elem tmp = get_ring()->term(get_ring()->get_coefficient_ring()->from_int(1), kb_mon);
   kb_result.append(rows()->mult(tmp, kb_vec));
   get_ring()->remove(tmp);
 }
@@ -1346,15 +1346,15 @@ void EMatrix::k_basis0(int firstvar) const
 {
   for (int i=firstvar; i<kb_n_vars; i++)
     {
-      if (get_ring()->Nmonoms()->is_skew() &&
-	    get_ring()->Nmonoms()->is_skew_var(i) &&
+      if (get_ring()->get_monoid()->is_skew() &&
+	    get_ring()->get_monoid()->is_skew_var(i) &&
 	    kb_exp[i] >= 1)
 	{
 	  continue;
 	}
 
       kb_exp[i]++;
-      kb_D->mult(kb_exp_degree, get_ring()->Nmonoms()->degree_of_var(i),
+      kb_D->mult(kb_exp_degree, get_ring()->get_monoid()->degree_of_var(i),
 		     kb_exp_degree);
 
       int cmp = kb_D->primary_value(kb_exp_degree) - kb_D->primary_value(kb_deg);
@@ -1380,7 +1380,7 @@ void EMatrix::k_basis0(int firstvar) const
 	}
 
       kb_exp[i]--;
-      kb_D->divide(kb_exp_degree, get_ring()->Nmonoms()->degree_of_var(i),
+      kb_D->divide(kb_exp_degree, get_ring()->get_monoid()->degree_of_var(i),
 		   kb_exp_degree);
     }
 }
@@ -1398,7 +1398,7 @@ EMatrix * EMatrix::k_basis(EMatrix * bot, const int *d, int do_trunc) const
   kb_n_vars = get_ring()->n_vars();
   kb_D = get_ring()->degree_monoid();
 
-  kb_mon = get_ring()->Nmonoms()->make_one();
+  kb_mon = get_ring()->get_monoid()->make_one();
   kb_deg = kb_D->make_one();
   intarray kb_exp_a;
   kb_exp = kb_exp_a.alloc(kb_n_vars);
@@ -1428,7 +1428,7 @@ EMatrix * EMatrix::k_basis(EMatrix * bot, const int *d, int do_trunc) const
 	      
 	      kb_exp_a.shrink(0);
 	      varpower::to_ntuple(kb_n_vars, b->monom().raw(), kb_exp_a);
-	      get_ring()->Nmonoms()->degree_of_varpower(b->monom().raw(), 
+	      get_ring()->get_monoid()->degree_of_varpower(b->monom().raw(), 
 						       kb_exp_degree);
 
 	      int cmp = kb_D->primary_value(kb_exp_degree) 
@@ -1453,7 +1453,7 @@ EMatrix * EMatrix::k_basis(EMatrix * bot, const int *d, int do_trunc) const
   kb_D->remove(kb_deg);
   kb_D->remove(kb_exp_degree);
   kb_D->remove(e);
-  get_ring()->Nmonoms()->remove(kb_mon);
+  get_ring()->get_monoid()->remove(kb_mon);
   kb_result = Matrix(get_ring()); // This is so no large global data will be laying around.
 
   return result;
@@ -1464,16 +1464,16 @@ void EMatrix::k_basis1(int firstvar) const
     // Recursively add to the result matrix all monomials in the
     // variables 0..topvar having degree 'deg' which are not in 'mi'.
 {
-  get_ring()->Nmonoms()->from_expvector(kb_exp, kb_mon);
-  get_ring()->Nmonoms()->divide(kb_mon, kb_vec->monom, kb_mon);
-  ring_elem tmp = get_ring()->term(get_ring()->Ncoeffs()->from_int(1), kb_mon);
+  get_ring()->get_monoid()->from_expvector(kb_exp, kb_mon);
+  get_ring()->get_monoid()->divide(kb_mon, kb_vec->monom, kb_mon);
+  ring_elem tmp = get_ring()->term(get_ring()->get_coefficient_ring()->from_int(1), kb_mon);
   kb_result.append(rows()->mult(tmp, kb_vec));
   get_ring()->remove(tmp);
 
   for (int i=firstvar; i<kb_n_vars; i++)
     {
-      if (get_ring()->Nmonoms()->is_skew() &&
-	    get_ring()->Nmonoms()->is_skew_var(i) &&
+      if (get_ring()->get_monoid()->is_skew() &&
+	    get_ring()->get_monoid()->is_skew_var(i) &&
 	    kb_exp[i] >= 1)
 	{
 	  continue;
@@ -1497,7 +1497,7 @@ EMatrix * EMatrix::k_basis(EMatrix * bot) const
   kb_result = Matrix(rows());
   kb_n_vars = get_ring()->n_vars();
 
-  kb_mon = get_ring()->Nmonoms()->make_one();
+  kb_mon = get_ring()->get_monoid()->make_one();
   intarray kb_exp_a;
   kb_exp = kb_exp_a.alloc(kb_n_vars);
 
@@ -1524,7 +1524,7 @@ EMatrix * EMatrix::k_basis(EMatrix * bot) const
 	}
     }
 
-  get_ring()->Nmonoms()->remove(kb_mon);  
+  get_ring()->get_monoid()->remove(kb_mon);  
   Matrix result = kb_result;
   kb_result = Matrix(get_ring()); // This is so no large global data will be laying around.
   return result;
@@ -1577,8 +1577,8 @@ void EMatrix::minimal_lead_terms_ZZ(intarray &result) const
       if (!mis[v->comp]->search(v->coeff, v->monom, gsyz, rsyz))
 	{
 	  mis[v->comp]->insert_minimal(
-				       new tagged_term(P->Ncoeffs()->copy(v->coeff),
-						       P->Nmonoms()->make_new(v->monom),
+				       new tagged_term(P->get_coefficient_ring()->copy(v->coeff),
+						       P->get_monoid()->make_new(v->monom),
 						       NULL,
 						       NULL));
 	  result.append(indices[i]);
@@ -1604,8 +1604,8 @@ Matrix EMatrix::minimal_lead_terms_ZZ() const
       vec v = elem(i);
       if (v == NULL) continue;
       allterms[v->comp].insert(
-			       new tagged_term(P->Ncoeffs()->copy(v->coeff),
-					       P->Nmonoms()->make_new(v->monom),
+			       new tagged_term(P->get_coefficient_ring()->copy(v->coeff),
+					       P->get_monoid()->make_new(v->monom),
 					       Gsyz->e_sub_i(i),
 					       NULL));
     }
@@ -1635,7 +1635,7 @@ Matrix EMatrix::minimal_lead_terms_ZZ() const
 
 void EMatrix::minimal_lead_terms(intarray &result) const
 {
-  if (get_ring()->Ncoeffs()->is_Z())
+  if (get_ring()->get_coefficient_ring()->is_Z())
     {
       minimal_lead_terms_ZZ(result);
       return;

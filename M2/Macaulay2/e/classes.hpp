@@ -154,7 +154,7 @@ enum type_identifier {
 const type_identifier TY_INT = TY_RING_ELEM;
 
 template <class T> class array;
-template <class T> class hashtable;
+template <class T> class HashTable;
 template <class T> class queue;
 template <class T> class stack;
 

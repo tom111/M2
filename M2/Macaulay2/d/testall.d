@@ -1,4 +1,5 @@
 --		Copyright 1994 by Daniel R. Grayson
+use C;
 use system;
 use strings;
 use varstrin;
@@ -504,7 +505,7 @@ stdout << endl;
 v := "this shouldn't print out";
 foreach c in v do c = 'b';
 stdout << v << endl;
-(use system; stdout << "args = "; stdout << argv << endl);
+(use C; use system; stdout << "args = "; stdout << argv << endl);
 stdout << (new string len 20 at i do provide(i+'a')) << endl;
 stdout << (new array(string) len 20 at i do 
     provide(join("*",tostring2(i))))
@@ -546,6 +547,7 @@ op<<(stdout:file,x:cons2):file := (
 		);
 	stdout << ']');
 nil2 := cons2(number2(0),self);
+use C;
 use system; 
 
 stdout <<  number2 (11111) >>  number2 (22222) >>  number2 (33333) >>

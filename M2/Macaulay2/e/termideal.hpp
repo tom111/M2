@@ -37,11 +37,6 @@ struct tagged_term
   const int *monom() const { return _monom; }
   vec gsyz() const { return _gsyz; }
   vec rsyz() const { return _rsyz; }
-
-  friend void i_stashes();
-  static stash *mystash;
-  void *operator new(size_t) { return mystash->new_elem(); }
-  void operator delete(void *p) { mystash->delete_elem(p); }
 };
 
 // mon_term
@@ -60,15 +55,10 @@ struct mon_term
   ring_elem coeff() const { return t->_coeff; }
   const int *monom() const { return t->_monom; }
   const int *lead_exp() const { return _lead_exp; }
-
-  friend void i_stashes();
-  static stash *mystash;
-  void *operator new(size_t) { return mystash->new_elem(); }
-  void operator delete(void *p) { mystash->delete_elem(p); }
 };
 
 
-class TermIdeal : public type
+class TermIdeal : public mutable_object
 {
   friend class cursor_TermIdeal;
 private:
@@ -136,9 +126,9 @@ public:
   // NOT a quotient ring; and two sets of ring elements that together should form a GB.
   // Returns a term ideal of all of these, which refers to the newly created 'result'.
 
-  void append_to_matrix(Matrix m, int i) const;
-  Matrix change_matrix() const;
-  Matrix ring_change_matrix() const;
+  void append_to_matrix(Matrix *m, int i) const;
+  Matrix *change_matrix() const;
+  Matrix *ring_change_matrix() const;
 
   // Insertion of new monomials.  It is up to the callee to delete the returned value...
   tagged_term *insert_minimal(tagged_term *t);
@@ -159,7 +149,7 @@ public:
     // return value is one of TI_TERM, TI_MONOMIAL, TI_NONE.
     // termgcd is ONLY set if the return value is not TI_NONE.
 
-  Matrix search(const Matrix &m) const;
+  Matrix *search(const Matrix *m) const;
 
   // Creating and deleting "mon_terms"s
   mon_term *new_mon_term(tagged_term *t) const;
@@ -173,20 +163,6 @@ public:
   const Ring * get_ring() const { return R; }
 
   void text_out(buffer &o) const;
-  void bin_out(buffer &o) const;
-
-  int                 length_of()           const { return count; }
-  TermIdeal *         cast_to_TermIdeal()         { return this; }
-  const TermIdeal *   cast_to_TermIdeal()   const { return this; }
-
-  class_identifier class_id() const { return CLASS_TermIdeal; }
-  type_identifier  type_id () const { return TY_TERMIDEAL; }
-  const char * type_name   () const { return "TermIdeal"; }
-
-  friend void i_stashes();
-  static stash *mystash;
-  void *operator new(size_t) { return mystash->new_elem(); }
-  void operator delete(void *p) { mystash->delete_elem(p); }
 };
 
 class cursor_TermIdeal

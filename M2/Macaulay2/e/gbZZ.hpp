@@ -2,7 +2,6 @@
 #ifndef _gbZZ_hh_
 #define _gbZZ_hh_
 
-#include "object.hpp"
 #include "relem.hpp"
 #include "matrix.hpp"
 #include "polyring.hpp"
@@ -28,12 +27,6 @@ struct GB_elem
   GB_elem(vec f, vec fsyz, int sugar_degree) 
     : f(f), fsyz(fsyz), lead_exp(NULL), 
       sugar_degree(sugar_degree) {}
-
-  // infrastructure
-  friend void i_stashes();
-  static stash *mystash;
-  void *operator new(size_t) { return mystash->new_elem(); }
-  void operator delete(void *p) { mystash->delete_elem(p); }
 };
 
 
@@ -75,10 +68,10 @@ private:
 				// Used for s-pair construction.
 
   // Minimal generators being collected
-  Matrix mingens;
+  Matrix *mingens;
 
   // Syzygies collected
-  Matrix syz;
+  Matrix *syz;
 
   // statistics information, much is kept with the s_set
   int n_gb;
@@ -98,10 +91,10 @@ private:
 
   ring_elem one;		// K->one.
 private:
-  void set_up0(const Matrix &m, int csyz, int nsyz);
-  void set_up(const Matrix &m, int csyz, int nsyz, int strategy);
-  void force(const Matrix &m, const Matrix &gb, const Matrix &mchange, 
-	  const Matrix &syz);
+  void set_up0(const Matrix *m, int csyz, int nsyz);
+  void set_up(const Matrix *m, int csyz, int nsyz, int strategy);
+  void force(const Matrix *m, const Matrix *gb, const Matrix *mchange, 
+	  const Matrix *syz);
 
   // S-pair control
   bool new_generator(int i, const vec m, 
@@ -145,11 +138,11 @@ private:
 
 public:
   // Forcing a GB
-  GBZZ_comp(const Matrix &m, const Matrix &gb, const Matrix &mchange, 
-	  const Matrix &syz);
+  GBZZ_comp(const Matrix *m, const Matrix *gb, const Matrix *mchange, 
+	  const Matrix *syz);
 
   // An honest GB computation
-  GBZZ_comp(const Matrix &m, int collect_syz, int n_syz, int strategy);
+  GBZZ_comp(const Matrix *m, int collect_syz, int n_syz, int strategy);
 
   ~GBZZ_comp();
   // Performing the computation
@@ -159,31 +152,18 @@ public:
   void add_gens(int lo, int hi, const Matrix &m);
 
   // reduction
-  Matrix reduce(const Matrix &m, Matrix &lift);
-  Vector reduce(const Vector &v, Vector &lift);
+  Matrix *reduce(const Matrix *m, Matrix *&lift);
+  Vector *reduce(const Vector *v, Vector *&lift);
 
-  virtual int contains(const Matrix &m);
+  virtual int contains(const Matrix *m);
   virtual bool is_equal(const gb_comp *q);
   
   // obtaining: mingens matrix, GB matrix, change of basis matrix, stats.
-  Matrix min_gens_matrix();
-  Matrix initial_matrix(int n);
-  Matrix gb_matrix();
-  Matrix change_matrix();
-  Matrix syz_matrix();
+  Matrix *min_gens_matrix();
+  Matrix *initial_matrix(int n);
+  Matrix *gb_matrix();
+  Matrix *change_matrix();
+  Matrix *syz_matrix();
   void stats() const;
-
-  // infrastructure
-  friend void i_stashes();
-  static stash *mystash;
-  void *operator new(size_t) { return mystash->new_elem(); }
-  void operator delete(void *p) { mystash->delete_elem(p); }
-
-  void bin_out(buffer &) const {}
-  void text_out(buffer &o) const { o << "groebner computation"; }
-
-  class_identifier class_id() const { return CLASS_GB_comp; }
-
-  int length_of() const { return n_gb; }
 };  
 #endif

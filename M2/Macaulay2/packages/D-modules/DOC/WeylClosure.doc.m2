@@ -1,4 +1,6 @@
-document { symbol WeylClosure,
+needs "D-modules.m2"
+
+document { WeylClosure,
      TT "WeylClosure I", " -- computes the Weyl closure of a finite rank
      ideal I",
      BR, NOINDENT,
@@ -25,6 +27,7 @@ document { symbol WeylClosure,
      
      PARA,
      "A simple example:",
+     EXAMPLE ///needs "D-modules.m2"///,
      EXAMPLE "W = QQ[x,Dx, WeylAlgebra => {x=>Dx}]",
      EXAMPLE "I = ideal(x*Dx-2)",
      EXAMPLE "WeylClosure I",

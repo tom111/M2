@@ -10,12 +10,12 @@
 WeylAlgebra::WeylAlgebra(
         const Ring *KK, 
         const Monoid *MF, 
-	int npairs, 
-        const int *deriv, const int *comm,
+	M2_arrayint derivs,
+	M2_arrayint comms,
 	int homog_var)
   : PolynomialRing(KK,MF)
 {
-  this->nderivatives = npairs;
+  this->nderivatives = derivs->len;
   this->homogeneous_weyl_algebra = (homog_var >= 0);
   this->homog_var = homog_var;
 
@@ -23,8 +23,8 @@ WeylAlgebra::WeylAlgebra(
   this->commutative = new int[nderivatives];
   for (int i=0; i<nderivatives; i++)
     {
-      derivative[i] = deriv[i];
-      commutative[i] = comm[i];
+      this->derivative[i] = derivs->array[i];
+      this->commutative[i] = comms->array[i];
     }
   initialize1();
 }
@@ -36,22 +36,36 @@ WeylAlgebra::~WeylAlgebra()
 }
 
 WeylAlgebra *WeylAlgebra::create(const Ring *K, const Monoid *MF, 
-				 int npairs,
-				 const int *deriv,
-				 const int *comm,
+				 M2_arrayint derivatives,
+				 M2_arrayint commutative,
 				 int homog_var)
 {
   int nvars = MF->n_vars();
   if (homog_var >= nvars)
-    return 0;
-  for (int i=0; i<npairs; i++)
     {
-      if (deriv[i] < 0 || deriv[i] >= nvars)
-	return 0;
-      if (comm[i] < 0 || comm[i] >= nvars)
-	return 0;
+      ERROR("Weyl algebra homogenizing variable out of range");
+      return 0;
     }
-  WeylAlgebra *R = new WeylAlgebra(K,MF,npairs,deriv,comm,homog_var);
+  if (homog_var < 0) homog_var = -1;
+  if (derivatives->len != commutative->len)
+    {
+      ERROR("Weyl algebra: expected arrays of the same length");
+      return 0;
+    }
+  for (unsigned int i=0; i<derivatives->len; i++)
+    {
+      if (derivatives->array[i] < 0 || derivatives->array[i] >= nvars)
+	{
+	  ERROR("Weyl algebra: variable out of range");
+	  return 0;
+	}
+      if (commutative->array[i] < 0 || commutative->array[i] >= nvars)
+	{
+	  ERROR("Weyl algebra: variable out of range");
+	  return 0;
+	}
+    }
+  WeylAlgebra *R = new WeylAlgebra(K,MF,derivatives,commutative,homog_var);
 
   // Now set whether this ring is graded.  This will be the case iff
   // deg(x_i) + deg(D_i) = 2 deg(h), for every i.
@@ -65,16 +79,15 @@ WeylAlgebra *WeylAlgebra::create(const Ring *K, const Monoid *MF,
     int *degxD = D->make_one();
     D->mult(degh,degh,deg2h);
     
-    for (int j=0; j < npairs; j++)
+    for (unsigned int j=0; j < derivatives->len; j++)
       {
-	const int *degx = MF->degree_of_var(comm[j]);
-	const int *degD = MF->degree_of_var(deriv[j]);
+	const int *degx = MF->degree_of_var(commutative->array[j]);
+	const int *degD = MF->degree_of_var(derivatives->array[j]);
 	D->mult(degx,degD,degxD);
 	if (D->compare(deg2h,degxD) != EQ)
 	  {
-	    R->isgraded = false;
-	    emit_line("not graded");
-	    break;
+	    ERROR("Weyl algebra: failed to create homogeneous Weyl algebra");
+	    return 0;
 	  }
       }
 
@@ -176,7 +189,7 @@ ring_elem WeylAlgebra::binomial(int top, int bottom) const
       K->remove(result);
       K->remove(b);
       ring_elem c = K->from_int(a+1);
-      result = K->divide(result1,c);
+      result = K->divide(result1,c); // exact
       K->remove(c);
     }
   return result;
@@ -389,7 +402,7 @@ ring_elem WeylAlgebra::multinomial(const int *exptop, const int *exp) const
 	    ring_elem c = K->from_int(j);
 	    ring_elem d = K->from_int(exptop[i]-j+1);
 	    K->mult_to(result, c);
-	    ring_elem e = K->divide(result, d);
+	    ring_elem e = K->divide(result, d); // exact
 	    K->remove(c);
 	    K->remove(d);
 	    K->remove(result);
@@ -491,7 +504,7 @@ ring_elem WeylAlgebra::power(const ring_elem f, mpz_t n) const
     return power(f,n1);
   else 
     {
-      gError << "exponent too large";
+      ERROR("exponent too large");
       return (Nterm *)NULL;
     }
 }

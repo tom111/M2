@@ -3,23 +3,21 @@
 #include "Z.hpp"
 #include "GF.hpp"
 #include "text_io.hpp"
-#include "bin_io.hpp"
 #include "monoid.hpp"
 #include "ringmap.hpp"
 #include "polyring.hpp"
 #include "random.hpp"
 
-GF::GF(const RingElement prim)
-: Ring(prim.get_ring()->charac(),
-	1,1,this /* Visual C WARNING */,trivial_monoid, 
-	prim.get_ring()->degree_monoid()),
-  K(prim.get_ring()->cast_to_PolynomialRing()),
+GF::GF(const RingElement *prim)
+: Ring(prim->get_ring()->charac(),
+	1,1,this /* Visual C WARNING */,Monoid::get_trivial_monoid(), 
+	prim->get_ring()->degree_monoid()),
+  K(prim->get_ring()->cast_to_PolynomialRing()),
   primitive_element(prim)
 {
   declare_field();
 
   int i,j;
-  bump_up((Ring *) K);
 
   ring_elem f = K->get_quotient_elem(0);
 
@@ -37,7 +35,7 @@ GF::GF(const RingElement prim)
   // Get ready to create the 'one_table'
   array<ring_elem> polys;
   polys.append(K->from_int(0));
-  ring_elem primelem = prim.get_value();
+  ring_elem primelem = prim->get_value();
   polys.append(K->copy(primelem));
 
   ring_elem one = K->from_int(1);
@@ -57,7 +55,7 @@ GF::GF(const RingElement prim)
 
   if (polys.length() != Q)
     {
-      gError << "GF: primitive element expected";
+      ERROR("GF: primitive element expected");
       for (i=0; i<polys.length(); i++)
 	{
 	  K->remove(polys[i]);
@@ -98,13 +96,12 @@ GF::~GF()
 {
   delete [] from_int_table;
   delete [] one_table;
-  bump_down((Ring *) K);
 }
 
-GF *GF::create(const RingElement prim)
+GF *GF::create(const RingElement *prim)
 {
   GF *obj = new GF(prim);
-  return (GF *) intern(obj);
+  return obj;
 }
 
 void GF::text_out(buffer &o) const
@@ -143,14 +140,9 @@ void GF::elem_text_out(buffer &o, const ring_elem a) const
       o << "0";
       return;
     }
-  ring_elem h = K->power(primitive_element.get_value(), a.int_val);
+  ring_elem h = K->power(primitive_element->get_value(), a.int_val);
   K->elem_text_out(o, h);
   K->remove(h);
-}
-
-void GF::elem_bin_out(buffer &o, const ring_elem a) const
-{
-  bin_int_out(o, a.int_val);
 }
 
 ring_elem GF::eval(const RingMap *map, const ring_elem f) const
@@ -225,7 +217,7 @@ bool GF::lift(const Ring *Rg, const ring_elem f, ring_elem &result) const
   else if (e == ONE)
     result = K->from_int(1);
   else
-    result = K->power(primitive_element.get_value(), e);
+    result = K->power(primitive_element->get_value(), e);
   
   return true;
 }
@@ -432,7 +424,7 @@ void GF::degree(const ring_elem, int *d) const
 {
   degree_monoid()->one(d);
 }
-void GF::degree_weights(const ring_elem, const int *, int &lo, int &hi) const
+void GF::degree_weights(const ring_elem, const M2_arrayint, int &lo, int &hi) const
 {
   lo = hi = 0;
 }
@@ -441,14 +433,14 @@ int GF::primary_degree(const ring_elem) const
   return 0;
 }
 
-ring_elem GF::homogenize(const ring_elem f, int, int deg, const int *) const
+ring_elem GF::homogenize(const ring_elem f, int, int deg, const M2_arrayint) const
 {
   if (deg != 0) 
-    gError << "homogenize: no homogenization exists";
+    ERROR("homogenize: no homogenization exists");
   return f;
 }
 
-ring_elem GF::homogenize(const ring_elem f, int, const int *) const
+ring_elem GF::homogenize(const ring_elem f, int, const M2_arrayint) const
 {
   return f;
 }

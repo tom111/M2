@@ -24,12 +24,6 @@ struct gb_elem
   gb_elem(vec f, vec fsyz, int is_min) 
     : next(NULL), next_min(NULL), pair_list(NULL),
       f(f), fsyz(fsyz), lead_exp(NULL), is_min(is_min), me(0) {}
-
-  // infrastructure
-  friend void i_stashes();
-  static stash *mystash;
-  void *operator new(size_t) { return mystash->new_elem(); }
-  void operator delete(void *p) { mystash->delete_elem(p); }
 };
 
 struct s_pair
@@ -44,11 +38,6 @@ struct s_pair
   gb_elem *second;
   vec f;			// A vector in NGB_comp::gens.rows()
   vec fsyz;			// A vector in NGB_comp::syz.rows()
-
-  friend void i_stashes();
-  static stash *mystash;
-  void *operator new(size_t) { return mystash->new_elem(); }
-  void operator delete(void *p) { mystash->delete_elem(p); }
 };
 
 const int NHEAP = 10;

@@ -1,9 +1,10 @@
 --		Copyright 1994 by Daniel R. Grayson
+use C;
 use system;
 use binding;
 use parser;
 use lex;
-use arith;
+use gmp;
 use nets;
 use tokens;
 use err;
@@ -240,7 +241,7 @@ export convert(e:ParseTree):Code := (
 	       treePosition(e)))
      is p:EmptyParentheses do (
 	  if p.left.word == leftparen then Code(exprCode(emptySequenceE,treePosition(e)))
-	  else if p.left.word == leftbrace then Code(exprCode(emptylist,treePosition(e)))
+	  else if p.left.word == leftbrace then Code(exprCode(emptyList,treePosition(e)))
 	  else if p.left.word == leftbracket then Code(exprCode(emptyArray, treePosition(e)))
 	  else dummyCode			  -- should not happen
 	  )
@@ -578,6 +579,8 @@ export printErrorMessage(e:Code,message:string,report:Expr):Expr := (
      	  printErrorMessage(p,message);
      	  Expr(Error(p,message,report,nullE)))
      else buildErrorPacket(message));
+use engine;
+
 export eval(c:Code):Expr;
 hadError := false;
 errm := nullE;

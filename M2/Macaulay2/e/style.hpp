@@ -3,7 +3,6 @@
 #define _style_hh_
 
 #include <cmath>    // to get fabs(), gcc 3.0
-#include <vector.h> // just to get swap(), which is included from algobase.h by vector.h, gcc 3.0
 #include <stdio.h>
 #include <stddef.h>
 #include <stdlib.h>
@@ -13,14 +12,17 @@
 
 #include <gmp.h>
 
+// 'swap' is defined here, perhaps in namespace std
+#include <algorithm>
+using namespace std;
+
 extern "C" char newline[];
 
 #if defined(__MWERKS__)
 #define Random RandomFoo
 #endif
 
-#include "classes.hpp"
-#include "error.hpp"
+#include "error.h"
 #include "buffer.hpp"
 #include "mem.hpp"
 

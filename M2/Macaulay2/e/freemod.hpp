@@ -6,6 +6,9 @@
 #include "ring.hpp"
 #include "monideal.hpp"
 
+class TermIdeal;
+class Matrix;
+
 struct index_type
 {
   int       compare_num;
@@ -17,7 +20,7 @@ struct index_type
 
 class EInterface;
 
-class FreeModule : public type
+class FreeModule : public immutable_object
 {
   friend class NGB_comp;
   friend class GB_comp;
@@ -66,6 +69,10 @@ public:
   FreeModule(const Ring *R);
   FreeModule(const Ring *R, int n);
   FreeModule(const Ring *RR, const FreeModule *F);
+
+  static FreeModule *make_schreyer(const Matrix *m);
+  Matrix * get_induced_order() const;
+
   virtual ~FreeModule();
 
   virtual FreeModule *new_free() const;
@@ -73,7 +80,6 @@ public:
   void append(const int *d); // append a new row to a FREE or FREE_POLY
   void append(const int *d, const int *basemonom); // append to a FREE_SCHREYER
   void append(const int *d, const int *basemonom, int comparenum); // append to a FREE_SCHREYER
-
   const Ring *  get_ring()      const { return R; }
   const Ring *  Ncoeffs()       const { return K; }
   const Monoid * Nmonoms()       const { return M; }
@@ -95,11 +101,11 @@ public:
   bool is_zero() const;
 
   FreeModule * sub_space   (int n)                const;
-  FreeModule * sub_space   (const intarray &a)    const;
+  FreeModule * sub_space   (const M2_arrayint a)  const;
   FreeModule * transpose   ()                     const;
-  FreeModule * direct_sum  (const FreeModule *G) const;
+  FreeModule * direct_sum  (const FreeModule *G)  const;
   FreeModule * shift       (const int *d)         const;
-  FreeModule * tensor      (const FreeModule *G) const;
+  FreeModule * tensor      (const FreeModule *G)  const;
   FreeModule * schur       (const int *m)         const;
   FreeModule * exterior    (int p)                const;
   FreeModule * symm        (int p)                const;
@@ -246,7 +252,7 @@ public:
   virtual void normal_form_ZZ(vec &v) const;
 
   void normal_form(vec &v, 
-		   const array<MonomialIdeal> &mis, 
+		   const array<MonomialIdeal *> &mis, 
 		   const array<vec> &vecs) const;
 
   void normal_form_ZZ(vec &f,
@@ -262,7 +268,7 @@ public:
   void transpose_matrix (const Matrix &m, Matrix &result) const;
 
   vec sub_vector(const FreeModule *F, vec v, 
-		     const intarray &r) const;
+		     const M2_arrayint r) const;
 
   vec component_shift(int n, const FreeModule *F, 
 			  vec v) const;
@@ -271,7 +277,7 @@ public:
 		       const FreeModule *F,
 		       vec v) const;
 
-  vec mult_by_matrix(const Matrix &m,
+  vec mult_by_matrix(const Matrix *m,
 			 const FreeModule *F, 
 			 vec v) const;
 
@@ -296,11 +302,11 @@ protected:
   void sort_range(int lo, int hi) const;
 
 public:
-  void sort(const array<vec> &vecs, 
-	    const intarray &degrees, // only needed if degorder!=0
-	    int degorder, // -1=descending, 0=don't use, 1=ascending
-	    int monorder, // -1=descending, 1=ascending.
-	    intarray &result) const;
+  M2_arrayint sort(const array<vec> &vecs, 
+		   const M2_arrayint degrees, // only needed if degorder!=0
+		   int degorder, // -1=descending, 0=don't use, 1=ascending
+		   int monorder // -1=descending, 1=ascending.
+		   ) const;
 
   void monomial_divisor(vec f, int *exp) const;
   vec monomial_squarefree(vec f) const;
@@ -330,11 +336,11 @@ protected:
   void    term_degree    (const vecterm *t, int *degt)    const;
 public:
   void    degree         (const vec f, int *d)         const;
-  void    degree_weights (const vec f, const int *wts, int &lo, int &hi) const;
+  void    degree_weights (const vec f, const M2_arrayint wts, int &lo, int &hi) const;
   int     primary_degree (const vec f)                 const;
   bool    is_homogeneous (const vec f)                 const;
-  vec homogenize     (const vec f, int v, int deg, const int *wts) const;
-  vec homogenize     (const vec f, int v, const int *wts)          const;
+  vec homogenize     (const vec f, int v, int deg, const M2_arrayint wts) const;
+  vec homogenize     (const vec f, int v, const M2_arrayint wts)          const;
 
 //////////////////////////////////////////////
 //  Translation and sorting routines /////////
@@ -350,23 +356,8 @@ public:
 //////////////////////////////////////////////
 
   void text_out(buffer &o) const;
-  void bin_out(buffer &o) const;
 
   void elem_text_out(buffer &o, const vec a) const;
-  void elem_bin_out(buffer &o, const vec a) const;
-
-  int                 length_of()           const { return rank(); }
-  FreeModule *       cast_to_FreeModule()       { return this; }
-  const FreeModule * cast_to_FreeModule() const { return this; }
-
-  class_identifier class_id() const { return CLASS_FreeModule; }
-  type_identifier  type_id () const { return TY_FREEMODULE; }
-  const char * type_name   () const { return "FreeModule"; }
-
-  friend void i_stashes();
-  static stash *mystash;
-  void *operator new(size_t) { return mystash->new_elem(); }
-  void operator delete(void *p) { mystash->delete_elem(p); }
 };
 
 #endif

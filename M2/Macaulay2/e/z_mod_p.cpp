@@ -2,7 +2,6 @@
 
 #include "z_mod_p.hpp"
 #include "text_io.hpp"
-#include "bin_io.hpp"
 #include "monoid.hpp"
 #include "ringmap.hpp"
 #include "Z.hpp"
@@ -11,7 +10,7 @@
 extern Z *ZZ;
 
 Z_mod::Z_mod(int p, const Monoid *D) 
-: Ring(p,0,0,this /* Visual C WARNING */, trivial_monoid, D)
+: Ring(p,0,0,this /* Visual C WARNING */, Monoid::get_trivial_monoid(), D)
 {
   declare_field();
   int i,j,q,n;
@@ -49,7 +48,7 @@ Z_mod::Z_mod(int p, const Monoid *D)
 Z_mod *Z_mod::create(int p, const Monoid *D)
 {
   Z_mod *obj = new Z_mod(p,D);
-  return (Z_mod *) intern(obj);
+  return obj;
 }
 
 #if 0
@@ -110,12 +109,6 @@ void Z_mod::elem_text_out(buffer &o, ring_elem a) const
   else if (p_plus) 
     o << '+';
   if (p_one || n != 1) o << n;
-}
-
-void Z_mod::elem_bin_out(buffer &o, ring_elem a) const
-{
-  int n = to_int(a);
-  bin_int_out(o, n);
 }
 
 ring_elem Z_mod::from_int(int n) const
@@ -296,7 +289,7 @@ ring_elem Z_mod::divide(const ring_elem f, const ring_elem g, ring_elem &rem) co
 }
 ring_elem Z_mod::gcd(const ring_elem f, const ring_elem g) const
 {
-  if (f == ZERO || g == ZERO) return ZERO;
+  if (f == ZERO && g == ZERO) return ZERO;
   return from_int(1);
 }
 
@@ -369,7 +362,7 @@ void Z_mod::degree(const ring_elem, int *d) const
   degree_monoid()->one(d);
 }
 
-void Z_mod::degree_weights(const ring_elem, const int *, int &lo, int &hi) const
+void Z_mod::degree_weights(const ring_elem, const M2_arrayint, int &lo, int &hi) const
 {
   lo = hi = 0;
 }
@@ -378,14 +371,14 @@ int Z_mod::primary_degree(const ring_elem) const
   return 0;
 }
 
-ring_elem Z_mod::homogenize(const ring_elem f, int, int deg, const int *) const
+ring_elem Z_mod::homogenize(const ring_elem f, int, int deg, const M2_arrayint) const
 {
   if (deg != 0) 
-    gError << "homogenize: no homogenization exists";
+    ERROR("homogenize: no homogenization exists");
   return f;
 }
 
-ring_elem Z_mod::homogenize(const ring_elem f, int, const int *) const
+ring_elem Z_mod::homogenize(const ring_elem f, int, const M2_arrayint) const
 {
   return f;
 }

@@ -1,7 +1,7 @@
 --		Copyright 1994-2000 by Daniel R. Grayson
 
-use system;
 use C;
+use system;
 use actors;
 use convertr;
 use binding;
@@ -11,7 +11,7 @@ use actors4;
 use actors5;
 use parser;
 use lex;
-use arith;
+use gmp;
 use nets;
 use tokens;
 use err;
@@ -306,9 +306,7 @@ export process():void := (
 		    )
 	       else if arg.0 == '-' && arg.1 == 'e' then (
 		    when readeval(
-			 stringTokenFile(
-			      "command line argument " + tostring (1+i) + " ",
-			      substr(arg,2)+newline))
+			 stringTokenFile("commandLine#" + tostring (1+i),substr(arg,2)+newline))
 		    is Error do exit(2)
 		    else nothing;
 		    )	       

@@ -1,4 +1,6 @@
-document { symbol inw,
+needs "D-modules.m2"
+
+document { inw,
      TT "inw (L, w)", " -- 
      computes the initial form of an element L
      with respect to a weight vector w.",
@@ -27,6 +29,7 @@ document { symbol inw,
 
      PARA,
      "A simple example:",
+     EXAMPLE ///needs "D-modules.m2"///,
      EXAMPLE "W = QQ[x,y,Dx,Dy, WeylAlgebra => {x=>Dx,y=>Dy}]",
      EXAMPLE "I = ideal (x*Dx+2*y*Dy-3, Dx^2-Dy)", 
      EXAMPLE "inw(I, {1,3,3,-1})",
@@ -53,12 +56,11 @@ document { symbol inw,
 --     MENU{HREF{"/HOME/gbw.html","gbw"}}
      },
 
-document { symbol gbw,
+document { gbw,
      TT "gbw (I, w)", " -- 
      computes a Grobner basis of an ideal with respect
      to a weight vector w.",
-     BR, NOINDENT, TT
-     TT "gbw (m, w)", " -- 
+     BR, NOINDENT, TT "gbw (m, w)", " -- 
      computes a Grobner basis of a matrix with respect
      to a weight vector w.",
 
@@ -76,6 +78,7 @@ document { symbol gbw,
 
      PARA,
      "A simple example:",
+     EXAMPLE ///needs "D-modules.m2"///,
      EXAMPLE "W = QQ[x,y,Dx,Dy, WeylAlgebra => {x=>Dx,y=>Dy}]",
      EXAMPLE "I = ideal (x*Dx+2*y*Dy-3, Dx^2-Dy)", 
      EXAMPLE "gbw(I, {1,3,3,-1})",

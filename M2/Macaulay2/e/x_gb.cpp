@@ -1,7 +1,18 @@
 // Copyright 1996 Michael E. Stillman
 
-#include "interp.hpp"
+#include "engine.h"
+#include "hilb.hpp"
 
+const RingElementOrNull * IM2_Matrix_Hilbert(const Matrix *M)
+  /* This routine computes the numerator of the Hilbert series
+     for coker leadterms(M), using the degrees of the rows of M. 
+     NULL is returned if the ring is not appropriate for
+     computing Hilbert series, or the computation was interrupted. */
+{
+  return hilb_comp::hilbertNumerator(M);
+}
+
+#if 0
 #include "gb_comp.hpp"
 
 #include "gbbinom.hpp"
@@ -24,6 +35,8 @@ extern int comp_printlevel;
 extern Z *ZZ;
 
 #if 0
+
+
 void i_EGB()
 {
 }
@@ -567,3 +580,4 @@ void i_NGB_cmds(void)
   // Fraction free Gaussian elimination
   install(ggFFgausselim, cmd_FFgausselim, TY_SparseMutableMatrix);
 }
+#endif

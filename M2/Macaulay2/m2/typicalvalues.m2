@@ -11,15 +11,21 @@ installMethod(symbol #?, HashTable, Thing, Boolean => dummy)
 installMethod(symbol #?, Set, Thing, Boolean => dummy)
 installMethod(symbol #?, Database, String, Boolean => dummy)
 installMethod(symbol #?, BasicList, ZZ, Boolean => dummy)
+installMethod(symbol #?, Sequence, ZZ, Boolean => dummy)
 installMethod(symbol #?, String, ZZ, Boolean => dummy)
-installMethod(symbol #, File, ZZ => dummy)
 installMethod(symbol #, HashTable, Thing, Thing => dummy)
 installMethod(symbol #, Database, String, String => dummy)
 installMethod(symbol #, String, ZZ, Thing => dummy)
 installMethod(symbol #, BasicList, ZZ, Thing => dummy)
+installMethod(symbol #, Sequence, ZZ, Thing => dummy)
+
+installMethod(symbol #, File, ZZ => dummy)
+installMethod(symbol #, Set, ZZ => dummy)
 installMethod(symbol #, HashTable, ZZ => dummy)
 installMethod(symbol #, BasicList, ZZ => dummy)
+installMethod(symbol #, Sequence, ZZ => dummy)
 installMethod(symbol #, String, ZZ => dummy)
+
 installMethod(symbol <, Thing, Thing, Boolean => dummy)
 installMethod(symbol <=, Thing, Thing, Boolean => dummy)
 installMethod(symbol =!=, Thing, Thing, Boolean => dummy)
@@ -106,7 +112,6 @@ typicalValues#stack = Net
 stack BasicList := Net => stack
 substring(String,ZZ) := String => substring
 substring(String,ZZ,ZZ) := String => substring
-toHandle ZZ := Handle => toHandle
 toList HashTable := toList Set := toList BasicList := List => toList
 toSequence BasicList := toList List := Sequence => toSequence
 xor(ZZ,ZZ) := ZZ => xor
@@ -129,9 +134,6 @@ read File := String => read
 read (File,ZZ) := String => read
 read Sequence := String => read
 read String := String => read
-newHandle Thing := Handle => newHandle
-toHandle ZZ := Handle => newHandle
-handle HashTable := Handle => handle
 Function Thing := Thing => dummy
 scan(BasicList,Function) := Nothing => scan
 scan(ZZ,Function) := Nothing => scan

@@ -27,8 +27,6 @@ protected:
 public:
   static RR * create(const Monoid *D, double epsilon);
 
-  class_identifier class_id() const { return CLASS_RR; }
-
   RR * cast_to_RR() { return this; }
   const RR * cast_to_RR() const { return this; }
 
@@ -91,7 +89,6 @@ public:
   virtual ring_elem random() const;
 
   virtual void elem_text_out(buffer &o, const ring_elem f) const;
-  virtual void elem_bin_out(buffer &o, const ring_elem f) const;
 
   virtual ring_elem eval(const RingMap *map, const ring_elem f) const;
 
@@ -99,9 +96,10 @@ public:
   virtual bool is_homogeneous(const ring_elem f) const;
   virtual void degree(const ring_elem f, int *d) const;
   virtual int primary_degree(const ring_elem f) const;
-  virtual void degree_weights(const ring_elem f, const int *wts, int &lo, int &hi) const;
-  virtual ring_elem homogenize(const ring_elem f, int v, int deg, const int *wts) const;
-  virtual ring_elem homogenize(const ring_elem f, int v, const int *wts) const;
+  virtual void degree_weights(const ring_elem f, const M2_arrayint wts, 
+			      int &lo, int &hi) const;
+  virtual ring_elem homogenize(const ring_elem f, int v, int deg, const M2_arrayint wts) const;
+  virtual ring_elem homogenize(const ring_elem f, int v, const M2_arrayint wts) const;
 
   virtual int n_terms(const ring_elem f) const;
   virtual ring_elem term(const ring_elem a, const int *m) const;

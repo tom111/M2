@@ -802,8 +802,3 @@ document { symbol ##,
 	  "f ## (1,2,3)"
 	  }
      }
-
--- these files are made at compile time
---load "gbdoc.m2"
---load "gbfunctions.m2"
-

@@ -8,16 +8,15 @@ emacs html: all; $(MAKE) -C ../$@
 
 ##############################
 .SUFFIXES: .m2
-.PHONY: clean all install phase1 check html clean distclean check \
-		default initialize phase2 phase3 phase4
+.PHONY: clean all install check html clean distclean check default initialize
 
 # CFLAGS =
 # LDFLAGS = -s
 # LOADLIBES =
 DUMPSEQUENCE = $(patsubst %, @srcdir@/%, $(shell cat @srcdir@/dumpseq))
-DOCSEQUENCE  = $(patsubst %, @srcdir@/%, $(shell cat @srcdir@/docseq )) gbdoc.m2 gbfunctions.m2
+DOCSEQUENCE  = $(patsubst %, @srcdir@/%, $(shell cat @srcdir@/docseq ))
 
-MADEM2FILES := gbdoc.m2 gbfunctions.m2 loads.m2 docloads.m2 tutorials.m2 cmdnames.m2
+MADEM2FILES := loads.m2 docloads.m2 tutorials.m2 cmdnames.m2
 
 ifdef MP
 mpcodes.m2: ../../include/MP.h mpcodes.sed
@@ -57,14 +56,11 @@ tutorials.m2 : $(TUTORIALS)
 cache cache/doc cache/tests ../tutorial/final/cache/doc :; mkdir $@
 clean ::; rm -rf cache
 initialize :: cache cache/tests cache/doc ../tutorial/final/cache/doc
+################################# temporary directories for examples
+initialize :: cache/doc/cache/doc cache/doc/tmp
+cache/doc/cache/doc cache/doc/tmp :; mkdir -p $@
 #################################
 
-gbdoc.m2 : gbdoc.awk ../e/misc/cmdnames.input
-	awk -f $^ >tmp
-	mv tmp $@
-gbfunctions.m2 : gbfuns.awk ../e/misc/cmdnames.input 
-	awk -f $^ >tmp
-	mv tmp $@
 default:: TAGS.doc
 TAGS.doc : docseq
 	@echo making $@
@@ -101,9 +97,9 @@ ifneq "$(DUMPDATA)" "no"
 ARGS := -q -silent '-eloaddata("../$(DUMPDATAFILE)")' -- '-erunStartFunctions()' 
 phase1 :: ../$(DUMPDATAFILE)
 ../$(DUMPDATAFILE) : $(DUMPEDM2FILES) ../libexec/Macaulay2
-	 # phase 1: read *.m2 and dump data
+	 #------ phase 1: reading *.m2 (not the documentation), making $@
 	rm -f ../$(DUMPDATAFILE)
-	time env M2HOME=.. ../libexec/Macaulay2 -q -silent -tty '-ephase=1' \
+	time env M2HOME=.. ../libexec/Macaulay2 -q -silent -tty \
 		@srcdir@/setup.m2 @srcdir@/dumpdata.m2 '-edump()'
 else
 ARGS := -silent setup.m2
@@ -115,15 +111,22 @@ phase1 :: ../cache/Macaulay2-made
 
 phase2 :: initialize
 phase2 :: phase1
-phase2 :: ../cache/Macaulay2-pre
+phase2 :: ../cache/Macaulay2-pre cache/doc/.made cache/tests/.made
+	touch $@
 
-../cache/Macaulay2-pre : $(DUMPEDM2FILES) ../libexec/Macaulay2 $(DOCSEQUENCE) $(TUTORIALS)
-	 # phase 2: make the example files, the test files, and $@
+../cache/Macaulay2-pre cache/doc/.made cache/tests/.made : \
+		$(DUMPEDM2FILES) ../libexec/Macaulay2 $(DOCSEQUENCE) $(TUTORIALS) docseq docloads.m2
+	 #------ phase 2: making cache/doc/*.example, cache/tests/*.m2, and $@
 	rm -rf ../cache/Macaulay2-tmp
 	rm -rf cache/tests
 	mkdir  cache/tests
-	env M2HOME=.. ../libexec/Macaulay2 -q -silent '-ephase=2' @srcdir@/setup.m2 '-eexit(0)'
+	../../bin/M2 -q -silent \
+		'-e phase = 2' \
+		'-e errorDepth 0' \
+		'-e DocDatabase = openDatabaseOut "../cache/Macaulay2-tmp"' \
+		docloads.m2 '-eexit(0)'
 	mv ../cache/Macaulay2-tmp ../cache/Macaulay2-pre
+	touch cache/doc/.made cache/tests/.made
 
 ## .gdbinit
 justM2 all:: .gdbinit .gdb-files .gdb-run-it
@@ -138,7 +141,7 @@ clean::; rm -f .gdbinit
 clean :: ; rm -f .gdb-files
 .gdb-run-it:
 	echo 'echo \n' >$@
-	echo 'run -ephase=1 @srcdir@/setup.m2 "-e path = join({\"@srcdir@/../packages/\"},path)" -ephase=0 "-e runStartFunctions()"' >>$@
+	echo 'run -ephase=1 @srcdir@/setup.m2 "-e path = join({\"@srcdir@/../packages/\",\"@srcdir@/../test/\"},path)" -ephase=0 "-e runStartFunctions()"' >>$@
 clean :: ; rm -f .gdb-run-it
 ##
 backup : CVS/Entries
@@ -155,18 +158,47 @@ INPUTS := cache/doc/sample cache/doc/expression
 cache/doc/sample: sample; cp $< $@
 cache/doc/expression: expression; cp $< $@
 
+ifeq "$(DEBUG)" "yes"
+EGFLAGS = -k
+EGMORE = || true
+endif
+
 phase3 : initialize phase2 cache/doc/sample cache/doc/expression
-	 # phase 3: perhaps running the example input files
-	$(MAKE) -C cache/doc -f $(srcdir)/Makefile.egs srcdir=$(srcdir)
+	 #------ phase 3: running new example input files: cache/doc/*.example
+	$(MAKE) $(EGFLAGS) -C cache/doc -f $(srcdir)/Makefile.egs srcdir=$(srcdir) $(EGMORE)
+	touch $@
 
 all :: phase4
 phase4 : phase3 ../cache/Macaulay2-doc
 ../cache/Macaulay2-doc : ../cache/Macaulay2-pre \
 		$(MADEM2FILES) $(INPUTS) $(DOCSEQUENCE) $(TUTORIALS)
+	 #------ phase 4: making $@
 	rm -f ../cache/Macaulay2-tmp
-	 # phase 4: make $@
-	env M2HOME=.. ../libexec/Macaulay2 -q -silent '-ephase=4' @srcdir@/setup.m2 '-eexit(0)'
-	mv ../cache/Macaulay2-tmp ../cache/Macaulay2-doc
+	../../bin/M2 -q -silent \
+		'-e phase = 4' \
+		'-e errorDepth 0' \
+		'-e DocDatabase = openDatabaseOut "../cache/Macaulay2-tmp"' \
+		docloads.m2 '-eexit(0)'
+	mv ../cache/Macaulay2-tmp $@
+	touch $@
+
+all :: phase5
+TARGETDIR = cache/doc
+phase5 : $(TARGETDIR)/index.html
+$(TARGETDIR)/index.html : ../cache/Macaulay2-made ../cache/Macaulay2-doc ../libexec/Macaulay2
+	 #------ phase 5: making html documentation
+	../../bin/M2 -q -silent \
+		'-e phase = 5' \
+		'-e errorDepth 0' \
+		'-e makeHTML("Macaulay 2", DocDatabase)' '-e exit 0'
+
+all :: phase6
+HOMEDIR := $(shell cd .. && pwd)
+phase6 :
+	@ echo "make: Entering directory \`$(shell cd $(TARGETDIR) && pwd)'"
+	 #------ phase 6: checking the links in the html documentation
+	@ cd $(TARGETDIR) && $(HOMEDIR)/html-check-links/html-check-links *.html
+	@ echo "make: Leaving directory \`$(shell cd $(TARGETDIR) && pwd)'"
 
 ifdef NEWENGINE
 check:: test1
@@ -204,7 +236,7 @@ clean::
 	rm -rf ../$(DUMPDATAFILE) ../cache/Macaulay2-doc \
 		cache *.obj *.exe runexample \
 		temp.data distfiles \
-		gbdoc.m2 gbfunctions.m2 loads.m2 docloads.m2 tutorials.m2 cmdnames.m2 \
+		loads.m2 docloads.m2 tutorials.m2 cmdnames.m2 \
 		mpcodes.m2 tutorials.m2 version.m2 core
 distclean : clean
 	rm -f Makefile

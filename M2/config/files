@@ -8,6 +8,7 @@ Macaulay2/c/Makefile
 Macaulay2/d/Makefile
 Macaulay2/dumpdata/Makefile
 Macaulay2/e/Makefile
+Macaulay2/e/tests/Makefile
 Macaulay2/emacs/Makefile
 Macaulay2/emacs/M2-init.el
 Macaulay2/html/Makefile
@@ -17,6 +18,7 @@ Macaulay2/test/Makefile
 Macaulay2/tutorial/Makefile
 Macaulay2/setup
 Macaulay2/util/Makefile
+Macaulay2/html-check-links/Makefile
 bin/Makefile
 bin/M2-help
 bin/M2.bat

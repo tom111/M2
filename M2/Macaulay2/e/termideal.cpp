@@ -5,10 +5,6 @@
 #include "matrix.hpp"
 #include "text_io.hpp"
 
-stash *TermIdeal::mystash;
-stash *mon_term::mystash;
-stash *tagged_term::mystash;
-
 TermIdeal::TermIdeal(const PolynomialRing *AA, const FreeModule *GGsyz)
 {
   A = AA;
@@ -19,12 +15,9 @@ TermIdeal::TermIdeal(const PolynomialRing *AA, const FreeModule *GGsyz)
   Gsyz = GGsyz;
   nvars = R->n_vars();
   one = K->from_int(1);
-  bump_up(R);			// Don't bother bumping the others
-  bump_up(Gsyz);
 
   // MESXX: the following should all be taken from the ring R.
   Rsyz = A->get_Rsyz();
-  if (Rsyz) bump_up(Rsyz);
   if (A->is_quotient_ring())
     ring_terms = A->get_quotient_monomials_ZZ()->ring_terms;
   else
@@ -49,9 +42,6 @@ TermIdeal::~TermIdeal()
   delete_mon_term(terms);
   ring_terms = NULL;
   K->remove(one);
-  bump_down(Gsyz);
-  if (Rsyz) bump_down(Rsyz);
-  bump_down(R);
 }
 
 void TermIdeal::from_list(queue<tagged_term *> &elems)
@@ -134,7 +124,7 @@ void TermIdeal::select_non_divisors(tagged_term **a, int nelems, tagged_term *g,
   for (i=0; i<nelems; i++)
     {
       ring_elem r;
-      ring_elem f = K->divide(a[i]->coeff(), g->coeff(), r);
+      ring_elem f = K->divide(a[i]->coeff(), g->coeff(), r); // MES MES
       if (!K->is_zero(r))
 	result_divs.append(a[i]);
       K->remove(f);
@@ -150,11 +140,6 @@ void TermIdeal::text_out(buffer &o) const
       M->elem_text_out(o, p->monom());
       o << " ";
     }
-}
-
-void TermIdeal::bin_out(buffer &/*o*/) const
-{
-  emit_line("bin_out not implemented for term ideals");
 }
 
 mon_term *TermIdeal::new_mon_term_head() const
@@ -331,7 +316,6 @@ TermIdeal *TermIdeal::make_ring_termideal(const PolynomialRing *R,
     }
   const FreeModule *RRsyz = R->make_FreeModule(result.length());
   ti->Rsyz = RRsyz;
-  bump_up(ti->Rsyz);
   i = 0;
   for (p = ti->terms->next; p != ti->terms; p = p->next)
     {
@@ -348,45 +332,45 @@ TermIdeal *TermIdeal::make_ring_termideal(const PolynomialRing *R,
   return ti;
 }
 
-void TermIdeal::append_to_matrix(Matrix m, int i) const
+void TermIdeal::append_to_matrix(Matrix *m, int i) const
 {
   // Should check: i is in range, m has same ring as this.
-  if (i < 0 || i >= m.n_rows())
+  if (i < 0 || i >= m->n_rows())
     {
-      gError << "index out of range";
+      ERROR("index out of range");
       return;
     }
-  if (m.get_ring() != R)
+  if (m->get_ring() != R)
     {
-      gError << "incorrect base ring";
+      ERROR("incorrect base ring");
       return;
     }
   for (mon_term *p = terms->next; p != terms; p = p->next)
     {
       ring_elem r = R->term(p->coeff(), p->monom());
-      vec v = m.rows()->term(i, r);
-      if (v != NULL) m.append(v);
+      vec v = m->rows()->term(i, r);
+      if (v != NULL) m->append(v);
     }
 }
-Matrix TermIdeal::change_matrix() const
+Matrix *TermIdeal::change_matrix() const
 {
-  Matrix result(Gsyz);
+  Matrix *result = new Matrix(Gsyz);
   for (mon_term *p = terms->next; p != terms; p = p->next)
     {
       vec vsyz = Gsyz->copy(p->t->_gsyz);
-      result.append(vsyz);
+      result->append(vsyz);
     }
   return result;
 }
 
-Matrix TermIdeal::ring_change_matrix() const
+Matrix *TermIdeal::ring_change_matrix() const
 {
-  if (Rsyz == NULL) return Matrix();
-  Matrix result(Rsyz);
+  if (Rsyz == NULL) return 0;
+  Matrix *result = new Matrix(Rsyz);
   for (mon_term *p = terms->next; p != terms; p = p->next)
     {
       vec vsyz = Rsyz->copy(p->t->_rsyz);
-      result.append(vsyz);
+      result->append(vsyz);
     }
   return result;
 }
@@ -686,7 +670,7 @@ int TermIdeal::search(const ring_elem coeff, const int *m,
   if (nfound == 0) return TI_NONE;
 
   ring_elem rem;
-  ring_elem d = K->divide(coeff, result_gcd, rem);
+  ring_elem d = K->divide(coeff, result_gcd, rem); // MES MES
   if (!K->is_zero(d))
     {
       result_gsyz = Gsyz->mult_by_coeff(d,gsyz);
@@ -720,18 +704,18 @@ int TermIdeal::search(const ring_elem coeff, const int *m, vec &result_gsyz, vec
   return result;
 }
 
-Matrix TermIdeal::search(const Matrix &m) const
+Matrix *TermIdeal::search(const Matrix *m) const
 {
-  Matrix result(Gsyz);
-  for (int i=0; i<m.n_cols(); i++)
+  Matrix *result = new Matrix(Gsyz);
+  for (int i=0; i<m->n_cols(); i++)
     {
-      vec v = m[i];
+      vec v = (*m)[i];
       vec gsyz, rsyz;
       if (v != NULL)
 	search(v->coeff,v->monom,gsyz,rsyz);
       else
 	gsyz = NULL;
-      result.append(gsyz);
+      result->append(gsyz);
     }
   return result;
 }

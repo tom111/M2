@@ -8,23 +8,40 @@
 
 #include "freemod.hpp"
 
+#if 0
+void Ring::Ring()
+  : immutable_object(0),
+    P(0),
+    nvars(0),
+    totalvars(0),
+    K(0),
+    M(0),
+    D(0),
+    HRing(0),
+    vecstash(0),
+    resstash(0),
+    isquotientring(0),
+    is_ZZ_quotient(0),
+    ZZ_quotient_value(0),
+    isfield(0),
+    zero_divisor(0),
+  // Set all values to 0.  Caller MUST call an initialize routine afterwords.
+{
+}
+#endif
+
 Ring::Ring(int P, 
 	     int n, 
 	     int totaln,
 	     const Ring *KK,
 	     const Monoid *MM,
 	     const Monoid *DD)
-: type(), P(P), nvars(n), totalvars(totaln), K(KK), M(MM), D(DD),
+: immutable_object(0), P(P), nvars(n), totalvars(totaln), K(KK), M(MM), D(DD),
 HRing(NULL)
 {
-  if (K != NULL) bump_up((Ring *) K);
-  bump_up(M);
-  bump_up(D);
-
   if (D->n_vars() > 0)
     {
       HRing = PolynomialRing::create(ZZ, D);
-      bump_up(HRing);
     }
   else
     HRing = NULL;
@@ -47,7 +64,7 @@ HRing(NULL)
 }
 
 Ring::Ring(const Ring &R)
-: type(),
+: immutable_object(0),
   P(R.P),
   nvars(R.nvars),
   totalvars(R.totalvars),
@@ -63,7 +80,6 @@ Ring::Ring(const Ring &R)
   vecstash(R.vecstash),
   resstash(R.resstash)
 {
-  if (K != NULL) bump_up((Ring *) K);
 }
 
 Ring::~Ring()
@@ -74,11 +90,7 @@ Ring::~Ring()
     {
       delete vecstash;
       delete resstash;
-      bump_down(M);
-      bump_down(D);
-      if (HRing != NULL) bump_down(HRing);
     }
-  if (K != NULL) bump_down((Ring *) K);
 }
 
 FreeModule *Ring::make_FreeModule() const
@@ -125,7 +137,7 @@ void Ring::mult_to(ring_elem &f, const ring_elem g) const
 
 int Ring::coerce_to_int(ring_elem) const
 {
-  gError << "cannot coerce given ring element to an integer";
+  ERROR("cannot coerce given ring element to an integer");
   return 0;
 }
 
@@ -141,12 +153,12 @@ ring_elem Ring::from_double(double a) const
 
 ring_elem Ring::random() const
 {
-  gError << "random scalar elements for this ring are not implemented";
+  ERROR("random scalar elements for this ring are not implemented");
   return 0;
 }
 ring_elem Ring::random(int /*homog*/, const int * /*deg*/) const
 {
-  gError << "random non-scalar elements for this ring are not implemented";
+  ERROR("random non-scalar elements for this ring are not implemented");
   return 0;
 }
 
@@ -155,4 +167,55 @@ ring_elem Ring::preferred_associate(ring_elem f) const
   // Here we assume that 'this' is a field:
   if (is_zero(f)) return from_int(1);
   return invert(f);
+}
+
+int Ring::n_terms(const ring_elem) const
+{
+  return 1;
+}
+ring_elem Ring::term(const ring_elem a, const int *) const
+{
+  return copy(a);
+}
+ring_elem Ring::lead_coeff(const ring_elem f) const
+{
+  return f;
+}
+ring_elem Ring::get_coeff(const ring_elem f, const int *) const
+{
+  return f;
+}
+ring_elem Ring::get_terms(const ring_elem f, int, int) const
+{
+  return f;
+}
+
+ring_elem Ring::homogenize(const ring_elem f, int, int deg, const M2_arrayint) const
+{
+  if (deg != 0) 
+    ERROR("homogenize: no homogenization exists");
+  return f;
+}
+
+ring_elem Ring::homogenize(const ring_elem f, int, const M2_arrayint) const
+{
+  return f;
+}
+
+bool Ring::is_homogeneous(const ring_elem) const
+{
+  return true;
+}
+
+void Ring::degree(const ring_elem, int *d) const
+{
+  degree_monoid()->one(d);
+}
+void Ring::degree_weights(const ring_elem, const M2_arrayint, int &lo, int &hi) const
+{
+  lo = hi = 0;
+}
+int Ring::primary_degree(const ring_elem) const
+{
+  return 0;
 }

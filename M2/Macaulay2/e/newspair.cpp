@@ -3,12 +3,6 @@
 #include "newspair.hpp"
 #include "text_io.hpp"
 
-
-stash *S_pair::mystash;
-stash *gen_pair::mystash;
-stash *s_pair_bunch::mystash;
-stash *s_pair_set::mystash;
-
 extern int comp_printlevel;
 
 gen_pair::gen_pair()
@@ -400,7 +394,7 @@ void s_pair_set::flush_degree()
 {
   if (heap != this_deg)
     {
-      gError << "attempting to flush wrong pairs!";
+      ERROR("attempting to flush wrong pairs!");
       assert(0);
     }
   heap = heap->next;

@@ -150,6 +150,7 @@ extern char *getmem();\n\
 extern void flush();\n\
 extern void fatalrefctcheck();\n\
 extern void fatalarrayindex();\n\
+extern void fatalarraylen();\n\
 extern void destroy();\n\
 extern void outofmem();\n\
 extern void spincursor();\n\

@@ -1,4 +1,6 @@
---document { symbol WeylAlgebra,
+needs "D-modules.m2"
+
+--document { WeylAlgebra,
 --     TT "WeylAlgebra", " --
 --     name for an optional argument for a monoid that
 --     specifies that a PolynomialRing created from it will
@@ -25,7 +27,7 @@
 
 
 
-document { symbol createDpairs,
+document { createDpairs,
      TT "createDpairs W", " -- 
      attaches to a Weyl algebra W a pair of keys to help distinguish the
      coordinate variables from the derivation variables.",
@@ -40,6 +42,7 @@ document { symbol createDpairs,
 
      PARA,
      "A simple example:",
+     EXAMPLE ///needs "D-modules.m2"///,
      EXAMPLE "W = QQ[x,y,Dx,Dy, WeylAlgebra => {x=>Dx,y=>Dy}]",
      EXAMPLE "createDpairs W", 
      EXAMPLE "W.dpairVars",
@@ -57,7 +60,7 @@ document { symbol createDpairs,
 --     MENU{HREF{"/HOME/WeylAlgebra.html","WeylAlgebra"}}
      },
 
-document { symbol Fourier,
+document { Fourier,
      TT "Fourier L", " -- computes the Fourier transform of a ring element L",
      BR, NOINDENT,
      TT "Fourier I", " -- computes the Fourier transform of an ideal I",
@@ -70,6 +73,7 @@ document { symbol Fourier,
 
      PARA,
      "A simple example:",
+     EXAMPLE ///needs "D-modules.m2"///,
      EXAMPLE "W = QQ[x,y,Dx,Dy, WeylAlgebra => {x=>Dx,y=>Dy}]",
      EXAMPLE "L = x^2*Dy + y*Dy^2 + 3*Dx^5*Dy",       
      EXAMPLE "Fourier L",
@@ -88,7 +92,7 @@ document { symbol Fourier,
 --     MENU{HREF{"/HOME/WeylAlgebra.html","WeylAlgebra"}}     
      },
 
-document { symbol Dtransposition,
+document { Dtransposition,
      --BIG "Drestriction",
      TT "Dtransposition L", " -- computes the standard transposition of a ring element L",
      BR, NOINDENT,
@@ -106,6 +110,7 @@ document { symbol Dtransposition,
 
      PARA,
      "A simple example:",
+     EXAMPLE ///needs "D-modules.m2"///,
      EXAMPLE "W = QQ[x,y,Dx,Dy, WeylAlgebra => {x=>Dx,y=>Dy}]",
      EXAMPLE "L = x^2*Dy + y*Dy^2 + 3*Dx^5*Dy",       
      EXAMPLE "Dtransposition L",
@@ -130,7 +135,7 @@ document { symbol Dtransposition,
 --     MENU{HREF{"/HOME/WeylAlgebra.html","WeylAlgebra"}}
      },
 
-document { symbol singLocus,
+document { singLocus,
      TT "singLocus M", " -- 
      computes the singular locus of a D-module M",
      BR, NOINDENT,
@@ -158,6 +163,7 @@ document { symbol singLocus,
 
      PARA,
      "A simple example:",
+     EXAMPLE ///needs "D-modules.m2"///,
      EXAMPLE "W = QQ[x,y,Dx,Dy, WeylAlgebra => {x=>Dx,y=>Dy}]",
      EXAMPLE "I = ideal (x*Dx+2*y*Dy-3, Dx^2-Dy)", 
      EXAMPLE "singLocus I",
@@ -173,7 +179,7 @@ document { symbol singLocus,
 --	  HREF{"/HOME/Drank.html","Drank"}}
      },
 
-document { symbol charIdeal,
+document { charIdeal,
      TT "charIdeal M", " -- 
      computes the characteristic ideal of a D-module M",
      BR, NOINDENT,
@@ -204,6 +210,7 @@ document { symbol charIdeal,
 
      PARA,
      "A simple example:",
+     EXAMPLE ///needs "D-modules.m2"///,
      EXAMPLE "W = QQ[x,y,Dx,Dy, WeylAlgebra => {x=>Dx,y=>Dy}]",
      EXAMPLE "I = ideal (x*Dx+2*y*Dy-3, Dx^2-Dy)", 
      EXAMPLE "charIdeal I",
@@ -222,7 +229,7 @@ document { symbol charIdeal,
 --	  HREF{"/HOME/Drank.html","Drank"}}
      },
 
-document { symbol Drank,
+document { Drank,
      --BIG "Drestriction",
      TT "Drank M", "-- calculates the rank of a D-module M",
      BR, NOINDENT,
@@ -257,6 +264,7 @@ document { symbol Drank,
 
      PARA,
      "A simple example:",
+     EXAMPLE ///needs "D-modules.m2"///,
      EXAMPLE "W = QQ[x,y,Dx,Dy, WeylAlgebra => {x=>Dx,y=>Dy}]",
      EXAMPLE "I = ideal (x*Dx+2*y*Dy-3, Dx^2-Dy)", 
      EXAMPLE "Drank I",
@@ -275,7 +283,7 @@ document { symbol Drank,
 --	  HREF{"/HOME/singLocus.html","singLocus"}}	  
      },
 
-document { symbol Ddim,
+document { Ddim,
      TT "Ddim M", "-- calculate the dimension of a D-module M ",
      BR, NOINDENT, 
      TT "Ddim I", "-- calculate the dimension of the quotient D/I",
@@ -288,6 +296,7 @@ document { symbol Ddim,
 
      PARA,
      "A simple example:",
+     EXAMPLE ///needs "D-modules.m2"///,
      EXAMPLE "W = QQ[x,y,Dx,Dy, WeylAlgebra => {x=>Dx,y=>Dy}]",
      EXAMPLE "I = ideal (x*Dx+2*y*Dy-3, Dx^2-Dy)", 
      EXAMPLE "Ddim I",
@@ -305,7 +314,7 @@ document { symbol Ddim,
      --MENU{HREF{"/HOME/inw.html","inw"}}
      },
 
-document { symbol makeWeylAlgebra,
+document { makeWeylAlgebra,
      TT "makeWeylAlgebra R", " -- 
      makes the Weyl algebra corresponding to a commutative polynomial
      ring R.",
@@ -317,6 +326,7 @@ document { symbol makeWeylAlgebra,
      
      PARA,
      "A simple example:",
+     EXAMPLE ///needs "D-modules.m2"///,
      EXAMPLE "R = QQ[x,y,z]",
      EXAMPLE "W = makeWeylAlgebra R",
 

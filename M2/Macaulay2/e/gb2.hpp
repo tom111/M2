@@ -2,13 +2,12 @@
 #ifndef _gb2_hh_
 #define _gb2_hh_
 
-#include "object.hpp"
 #include "relem.hpp"
 #include "matrix.hpp"
 #include "polyring.hpp"
 #include "comp.hpp"
 #include "gb_comp.hpp"
-
+#include "hilb.hpp"
 #include "spair.hpp"
 
 #define STATE_DONE 0
@@ -43,16 +42,16 @@ public:
 
   // Hilbert functions of these nodes...
   // Both of these return 0 if computed, non-zero if interrupted.
-  virtual int hilbertNumerator(RingElement &result) = 0;
+  virtual int hilbertNumerator(RingElement *&result) = 0;
   virtual int hilbertNumeratorCoefficient(int deg, int &result) = 0;
 
   virtual int n_gb_elems() const = 0;
-  virtual FreeModule *output_free_module() = 0;
-  virtual Matrix min_gens_matrix() = 0;
-  virtual Matrix get_matrix() = 0;
-  virtual Matrix initial_matrix(int n) = 0;
-  virtual Matrix gb_matrix() = 0;
-  virtual Matrix change_matrix() = 0;
+  virtual const FreeModule *output_free_module() = 0;
+  virtual Matrix *min_gens_matrix() = 0;
+  virtual Matrix *get_matrix() = 0;
+  virtual Matrix *initial_matrix(int n) = 0;
+  virtual Matrix *gb_matrix() = 0;
+  virtual Matrix *change_matrix() = 0;
   virtual void stats() const = 0;
 };
 
@@ -62,7 +61,7 @@ public:
 
 class gb_emitter : public gb_node
 {
-  Matrix gens;
+  const Matrix *gens;
   gb_node *g;
   int this_degree;
   int n_left;
@@ -74,7 +73,7 @@ class gb_emitter : public gb_node
   void flush();
   int start_degree(int deg);
 public:
-  gb_emitter(const Matrix &m);
+  gb_emitter(const Matrix *m);
   ~gb_emitter();
   virtual void set_output(gb_node *gg) { g = gg; }
 
@@ -88,16 +87,16 @@ public:
   // Reduction of a vector f (in correct free module), and its rep 'fsyz'.
   virtual void reduce(vec &, vec &) {}
 
-  virtual int hilbertNumerator(RingElement &) { return 1; }
+  virtual int hilbertNumerator(RingElement *&) { return 1; }
   virtual int hilbertNumeratorCoefficient(int, int &) { return 1; }
 
   virtual int n_gb_elems() const { return 0; }
-  virtual FreeModule *output_free_module() { return gens.rows(); }
-  virtual Matrix min_gens_matrix() { return Matrix(gens.rows()); }
-  virtual Matrix get_matrix() { return gens; }
-  virtual Matrix initial_matrix(int) { return Matrix(gens.rows()); }
-  virtual Matrix gb_matrix() { return Matrix(gens.rows()); }
-  virtual Matrix change_matrix() { return Matrix(gens.rows()); }
+  virtual const FreeModule *output_free_module() { return gens->rows(); }
+  virtual Matrix *min_gens_matrix() { return new Matrix(gens->rows()); }
+  virtual Matrix *get_matrix() { return (Matrix *)gens; }
+  virtual Matrix *initial_matrix(int) { return new Matrix(gens->rows()); }
+  virtual Matrix *gb_matrix() { return new Matrix(gens->rows()); }
+  virtual Matrix *change_matrix() { return new Matrix(gens->rows()); }
   virtual void stats() const;
 };
 
@@ -121,7 +120,7 @@ private:
   intarray total_pairs;
 
   array<gb_elem *> gb;
-  Matrix gbmatrix;
+  Matrix *gbmatrix;
   array<monideal_pair *> monideals; // baggage for each is 'gb_elem *'
 
   // Syzygies collected
@@ -156,10 +155,10 @@ private:
 				// In case of interrupts, we require that this
 				// computation be restarted (reasoning: it is usually not
 				// so bad, and it complicates the logic quite a bit).
-  RingElement hf;		// The Hilbert function, as so far computed
+  RingElement *hf;		// The Hilbert function, as so far computed
   int n_hf;			// The HF has been computed for this many GB elements.
 				// (Used to determine whether to recompute HF).
-  RingElement hf_orig;
+  const RingElement *hf_orig;
   int n_gb_syz;
   int n_in_degree;		// The number of new elements that we expect to find
 				// in this degree. <0 means we don't know how many.
@@ -188,9 +187,6 @@ private:
 
   void flush_pairs();
   
-  // Hilbert function use
-  int coeff_of(const RingElement &h, int deg) const;
-
   int computation_complete(int stop_gb, 
 			   int stop_syz, 
 			   int stop_codim,
@@ -226,17 +222,17 @@ public:
 
   virtual void reduce(vec &f, vec &fsyz);
 
-  virtual int hilbertNumerator(RingElement &result);
+  virtual int hilbertNumerator(RingElement *&result);
   virtual int hilbertNumeratorCoefficient(int deg, int &result);
 
   // obtaining: mingens matrix, GB matrix, change of basis matrix, stats.
   int n_gb_elems() const { return n_gb; }
-  FreeModule *output_free_module() { return Fsyz; }
-  Matrix min_gens_matrix();
-  Matrix get_matrix();
-  Matrix initial_matrix(int n);
-  Matrix gb_matrix();
-  Matrix change_matrix();
+  const FreeModule *output_free_module() { return Fsyz; }
+  Matrix *min_gens_matrix();
+  Matrix *get_matrix();
+  Matrix *initial_matrix(int n);
+  Matrix *gb_matrix();
+  Matrix *change_matrix();
 
   
   void debug_out(s_pair *q) const;
@@ -244,7 +240,7 @@ public:
   void stats() const;
 };  
 
-class gbres_comp : public type
+class gbres_comp : public mutable_object
 {
 private:
   int n_nodes;
@@ -253,12 +249,12 @@ private:
   int lo_degree;
   int strategy_flags;
 private:
-  void setup(const Matrix &m, int length, int origsyz, int strategy);
+  void setup(const Matrix *m, int length, int origsyz, int strategy);
   
 public:
-  gbres_comp(const Matrix &m, int length, int orig_syz, int strategy);
-  gbres_comp(const Matrix &m, int length, int orig_syz,
-	  RingElement hf, int strategy);
+  gbres_comp(const Matrix *m, int length, int orig_syz, int strategy);
+  gbres_comp(const Matrix *m, int length, int orig_syz,
+	  const RingElement *hf, int strategy);
 
   ~gbres_comp();
   // Performing the computation
@@ -266,35 +262,20 @@ public:
   bool is_done();
 
   // reduction
-  Matrix reduce(const Matrix &m, Matrix &lift);
-  Vector reduce(const Vector &v, Vector &lift);
+  Matrix *reduce(const Matrix *m, Matrix *&lift);
+  Vector *reduce(const Vector *v, Vector *&lift);
 
   // obtaining: mingens matrix, GB matrix, change of basis matrix, stats.
   void betti_minimal(intarray &result);
 
   FreeModule *free_module(int level);
-  Matrix min_gens_matrix(int level);
-  Matrix get_matrix(int level);
-  Matrix initial_matrix(int n, int level);
-  Matrix gb_matrix(int level);
-  Matrix change_matrix(int level);
+  Matrix *min_gens_matrix(int level);
+  Matrix *get_matrix(int level);
+  Matrix *initial_matrix(int n, int level);
+  Matrix *gb_matrix(int level);
+  Matrix *change_matrix(int level);
   void stats() const;
 
-  // infrastructure
-  friend void i_stashes();
-  static stash *mystash;
-  void *operator new(size_t) { return mystash->new_elem(); }
-  void operator delete(void *p) { mystash->delete_elem(p); }
-
   gbres_comp *cast_to_gbres_comp() { return this; }
-
-  class_identifier class_id() const { return CLASS_gbres_comp; }
-  type_identifier  type_id () const { return TY_GBRES_COMP; }
-  const char * type_name   () const { return "gbres_comp"; }
-
-  void bin_out(buffer &) const {}
-  void text_out(buffer &o) const { o << "gbres"; }
-
-  int length_of() const { return nodes[1]->n_gb_elems(); }
 };  
 #endif

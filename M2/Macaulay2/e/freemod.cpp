@@ -6,7 +6,6 @@
 #include "freemod.hpp"
 #include "comb.hpp"
 #include "text_io.hpp"
-#include "bin_io.hpp"
 #include "matrix.hpp"
 #include "polyring.hpp"
 #include "ringmap.hpp"
@@ -14,8 +13,6 @@
 #include "termideal.hpp"
 
 #include "geovec.hpp"
-
-stash *FreeModule::mystash;
 
 void debugout(const FreeModule *F, const vec v)
 {
@@ -665,7 +662,7 @@ void FreeModule::imp_cancel_lead_term(vec &f,
 				      int *monom) const
 {
   if (f == NULL || g == NULL) return;
-  coeff = K->divide(f->coeff, g->coeff);
+  coeff = K->divide(f->coeff, g->coeff); // exact division in a field
   if (M->is_skew())
     {
       M->divide(f->monom, base_monom(f->comp), f->monom);
@@ -689,7 +686,7 @@ void FreeModule::imp_ring_cancel_lead_term(vec &f,
 {
   Nterm *g = gg;
   if (f == NULL || g == NULL) return;
-  coeff = K->divide(f->coeff, g->coeff);
+  coeff = K->divide(f->coeff, g->coeff); // exact division in a field
   if (M->is_skew())
     {
       M->divide(f->monom, base_monom(f->comp), f->monom);
@@ -841,7 +838,7 @@ void FreeModule::normal_form(vec &v) const
       to_exponents(t->monom, t->comp, nf_exp);
 
       int_bag *b;
-      if (P->Rideal.search_expvector(nf_exp, b))
+      if (P->Rideal->search_expvector(nf_exp, b))
 	{
 	  Nterm *s = (Nterm *) (b->basis_ptr());
 	  ring_elem coeff;
@@ -912,7 +909,7 @@ void FreeModule::normal_form_ZZ(vec &f,
 }
 
 void FreeModule::normal_form(vec &v, 
-			     const array<MonomialIdeal> &mis, 
+			     const array<MonomialIdeal *> &mis, 
 			     const array<vec> &vecs) const
 {
   const PolynomialRing *P = R->cast_to_PolynomialRing();
@@ -924,14 +921,14 @@ void FreeModule::normal_form(vec &v,
   while (t != NULL)
     {
       to_exponents(t->monom, t->comp, nf_exp);
-      if (is_quotient_ring && P->Rideal.search_expvector(nf_exp, b))
+      if (is_quotient_ring && P->Rideal->search_expvector(nf_exp, b))
 	{
 	  Nterm *s = (Nterm *) (b->basis_ptr());
 	  ring_elem coeff;
 	  imp_ring_cancel_lead_term(t, s, coeff, nf_1);
 	  K->remove(coeff);
 	}
-      else if (mis[t->comp].search_expvector(nf_exp, b))
+      else if (mis[t->comp]->search_expvector(nf_exp, b))
 	{
 	  // Possibly be more careful in the choice of element...
 	  int x = b->basis_elem();
@@ -1022,7 +1019,7 @@ void FreeModule::auto_reduce_coeffs(const FreeModule *Fsyz, vec &f, vec &fsyz,
   // Valid only for coefficients = ZZ.
   ring_elem rem;
   ring_elem c1 = coeff_of(f, g->monom, g->comp);
-  ring_elem c = K->divide(c1, g->coeff, rem);
+  ring_elem c = K->divide(c1, g->coeff, rem); // use RemainderAndQuotient??
   if (!K->is_zero(c))
     {
       if (M != NULL) M->one(nf_1);
@@ -1103,16 +1100,16 @@ vec FreeModule::tensor_shift(int n, int m,
 }
 
 vec FreeModule::sub_vector(const FreeModule *F, vec v, 
-				const intarray &r) const
+				const M2_arrayint r) const
 {
   intarray trans(F->rank());
   int i;
   for (i=0; i<F->rank(); i++)
     trans.append(-1);
 
-  for (i=0; i<r.length(); i++)
-    if (r[i] >= 0 && r[i] < F->rank())
-      trans[r[i]] = i;
+  for (unsigned i=0; i<r->len; i++)
+    if (r->array[i] >= 0 && r->array[i] < F->rank())
+      trans[r->array[i]] = i;
 
   vecterm head;
   vecterm *result = &head;
@@ -1185,7 +1182,7 @@ void FreeModule::transpose_matrix(const Matrix &m, Matrix &result) const
     sort(result.elem(c));
 }
 
-vec FreeModule::mult_by_matrix(const Matrix &m,
+vec FreeModule::mult_by_matrix(const Matrix *m,
 				 const FreeModule *F, 
 				 vec v) const
 {
@@ -1199,7 +1196,7 @@ vec FreeModule::mult_by_matrix(const Matrix &m,
     case FREE:
       for ( ; v != NULL; v = v->next)
 	{
-	  f = mult(v->coeff, m.elem(v->comp));
+	  f = mult(v->coeff, m->elem(v->comp));
 	  add_to(result, f);
 	}
       break;
@@ -1207,7 +1204,7 @@ vec FreeModule::mult_by_matrix(const Matrix &m,
     case FREE_POLY:
       for ( ; v != NULL; v = v->next)
 	{
-	  f = mult_by_term(v->coeff, v->monom, m.elem(v->comp));
+	  f = mult_by_term(v->coeff, v->monom, m->elem(v->comp));
 	  add_to(result, f);
 	}
       break;
@@ -1216,7 +1213,7 @@ vec FreeModule::mult_by_matrix(const Matrix &m,
       for ( ; v != NULL; v = v->next)
 	{
 	  F->M->divide(v->monom, F->base_monom(v->comp), mon_1);
-	  f = mult_by_term(v->coeff, mon_1, m.elem(v->comp));
+	  f = mult_by_term(v->coeff, mon_1, m->elem(v->comp));
 	  add_to(result, f);
 	}
     }
@@ -1283,31 +1280,28 @@ void FreeModule::auto_reduce_ZZ(array<vec> & vecs) const
   // (b) For each element: reduce w.r.t. the previous elements
   //     and then insert into the appropriate monomial ideal.
   int x;
-  intarray indices;
-  intarray degs; // Not used.
+  M2_arrayint indices;
   array<TermIdeal *> mis;
-  sort(vecs, degs, 0, 1, indices);
+  indices = sort(vecs, NULL, 0, 1);
   const PolynomialRing *P = R->cast_to_PolynomialRing();
   FreeModule *Gsyz = R->make_FreeModule(vecs.length());
-  bump_up(Gsyz);
   for (x=0; x<rank(); x++)
     mis.append(new TermIdeal(P,Gsyz));
   for (int i=0; i<vecs.length(); i++)
     {
       // Reduce each one in turn, and replace.
-      vec v = vecs[indices[i]];
+      vec v = vecs[indices->array[i]];
       normal_form_ZZ(v, mis, Gsyz, vecs);
       if (v != NULL)
 	mis[v->comp]->insert_minimal(
 			  new tagged_term(K->copy(v->coeff),
 			  M->make_new(v->monom),
-			  Gsyz->e_sub_i(indices[i]),
+			  Gsyz->e_sub_i(indices->array[i]),
 			  NULL));
-      vecs[indices[i]] = v;
+      vecs[indices->array[i]] = v;
     }
   for (x=0; x<rank(); x++)
     delete mis[x];
-  bump_down(Gsyz);
 }
 
 void FreeModule::auto_reduce(array<vec> & vecs) const
@@ -1320,24 +1314,24 @@ void FreeModule::auto_reduce(array<vec> & vecs) const
       auto_reduce_ZZ(vecs);
       return;
     }
-  intarray indices, vp;
-  intarray degs; // Not used.
-  array<MonomialIdeal> mis;
-  sort(vecs, degs, 0, 1, indices);
+  M2_arrayint indices;
+  intarray vp;
+  array<MonomialIdeal *> mis;
+  indices = sort(vecs, NULL, 0, 1);
   for (int x=0; x<rank(); x++)
-    mis.append(MonomialIdeal(get_ring()));
+    mis.append(new MonomialIdeal(get_ring()));
   for (int i=0; i<vecs.length(); i++)
     {
       // Reduce each one in turn, and replace.
-      vec v = vecs[indices[i]];
+      vec v = vecs[indices->array[i]];
       normal_form(v, mis, vecs);
       vp.shrink(0);
       lead_varpower(v, vp);
-      Bag *b = new Bag(indices[i], vp);
-      int isnew = mis[v->comp].insert(b);
-      vecs[indices[i]] = v;
+      Bag *b = new Bag(indices->array[i], vp);
+      int isnew = mis[v->comp]->insert(b);
+      vecs[indices->array[i]] = v;
       if (!isnew)
-	gError << "bad boy!";
+	ERROR("bad boy!");
     }
 }
 
@@ -1418,35 +1412,36 @@ void FreeModule::sort_range(int lo, int hi) const
     }
 }
 
-void FreeModule::sort(const array<vec> &vecs, 
-		      const intarray &degrees, 
-		      int degorder, // -1=descending, 0=don't use, 1=ascending
-		      int monorder, // -1=descending, 1=ascending.
-		      intarray &result) const
+M2_arrayint_OrNull FreeModule::sort(const array<vec> &vecs, 
+				   const M2_arrayint degrees, 
+				   int degorder, // -1=descending, 0=don't use, 1=ascending
+				   int monorder // -1=descending, 1=ascending.
+				   ) const
 {
-  result.shrink(0);
-  if (vecs.length() == 0) return;
+  M2_arrayint result = makearrayint(vecs.length());
+  if (vecs.length() == 0) return result;
 
   monorder_ascending = monorder;
   deg_ascending = degorder;
 
-  sort_vals = result.alloc(vecs.length());
+  sort_vals = result->array;
   for (int i=0; i<vecs.length(); i++)
     sort_vals[i] = i;
 
   sort_vecs = &vecs;
   sort_degs = NULL;
   if (deg_ascending) {
-    if (degrees.length() != vecs.length()) {
-	gError << "sort: specified degree order, without giving degrees";
-	return;
+    if (degrees->len != vecs.length()) {
+	ERROR("sort: specified degree order, without giving degrees");
+	return 0;
       }
-    sort_degs = degrees.raw();
+    sort_degs = degrees->array;
   }
 
   sort_range(0,vecs.length()-1);
   sort_vals = NULL;
   sort_degs = NULL;
+  return result;
 }
 
 void FreeModule::monomial_divisor(vec f, int *exp) const
@@ -1714,7 +1709,7 @@ int FreeModule::degree_of_var(int n, const vec v) const
   if (M == NULL) return 0;
   if (v == NULL)
     {
-      gError << "attempting to find degree of zero vector";
+      ERROR("attempting to find degree of zero vector");
       return 0;
     }
   M->divide(v->monom, base_monom(v->comp), nf_1);
@@ -1851,7 +1846,7 @@ int FreeModule::primary_degree(const vec f) const
   return primary_degree(f->comp) + deg;
 }
 
-void FreeModule::degree_weights(const vec f, const int *wts, int &lo, int &hi) const
+void FreeModule::degree_weights(const vec f, const M2_arrayint wts, int &lo, int &hi) const
 {
   vecterm *t = f;
   assert(t != NULL);
@@ -1866,32 +1861,31 @@ void FreeModule::degree_weights(const vec f, const int *wts, int &lo, int &hi) c
 }
 
 vec FreeModule::homogenize(const vec f, 
-				int v, int d, const int *wts) const
+			   int v, int d, const M2_arrayint wts) const
 {
   vecterm head;
   vecterm *result = &head;
-  assert(wts[v] != 0);
-  // If an error occurs, then return 0, and set gError.
+  assert(wts->array[v] != 0);
+  // If an error occurs, then return 0, and set ERROR
 
-  intarray expa;
-  int *exp = expa.alloc(R->n_vars());
+  int *exp = new int[R->n_vars()];
 
   for (vecterm *a = f ; a != NULL; a = a->next)
     {
       M->to_expvector(a->monom, exp);
       int e = 0;
-      for (int i=0; i<R->n_vars(); i++) e += wts[i] * exp[i];
+      for (int i=0; i<R->n_vars(); i++) e += wts->array[i] * exp[i];
       e += primary_degree(a->comp);
-      if (((d-e) % wts[v]) != 0)
+      if (((d-e) % wts->array[v]) != 0)
 	{
 	  // We cannot homogenize, so clean up and exit.
 	  result->next = NULL;
 	  remove(head.next);
-	  gError << "homogenization impossible";
+	  ERROR("homogenization impossible");
 	  result = NULL;
 	  return result;
 	}
-      exp[v] += (d - e) / wts[v];
+      exp[v] += (d - e) / wts->array[v];
 
       result->next = new_term();
       result = result->next;
@@ -1906,14 +1900,14 @@ vec FreeModule::homogenize(const vec f,
   return head.next;
 }
 
-vec FreeModule::homogenize(const vec f, int v, const int *wts) const
+vec FreeModule::homogenize(const vec f, int v, const M2_arrayint wts) const
 {
   vecterm *result = NULL;
   if (f == NULL) return result;
   int lo, hi;
   degree_weights(f, wts, lo, hi);
-  assert(wts[v] != 0);
-  int d = (wts[v] > 0 ? hi : lo);
+  assert(wts->array[v] != 0);
+  int d = (wts->array[v] > 0 ? hi : lo);
   return homogenize(f, v, d, wts);
 }
 
@@ -2062,43 +2056,6 @@ void FreeModule::elem_text_out(buffer &o, const vec v) const
   p_plus = old_plus;
 }
 
-void FreeModule::elem_bin_out(buffer &o, const vec v) const
-{
-  const vecterm *t;
-
-  int n = n_terms(v);
-  bin_int_out(o,n);
-
-  switch (ty) {
-  case FREE:
-    for (t=v; t != NULL; t = t->next)
-      {
-	bin_int_out(o, t->comp);
-	K->elem_bin_out(o, t->coeff);
-      }
-    break;
-  case FREE_POLY:
-    for (t=v; t != NULL; t = t->next)
-      {
-	bin_int_out(o, t->comp);
-	M->elem_bin_out(o, t->monom);
-	K->elem_bin_out(o, t->coeff);
-      }
-    break;
-  case FREE_SCHREYER:
-    int *m = M->make_one();
-    for (t=v; t != NULL; t = t->next)
-      {
-	bin_int_out(o, t->comp);
-	M->divide(t->monom, base_monom(t->comp), m);
-	M->elem_bin_out(o, m);
-	K->elem_bin_out(o, t->coeff);
-      }
-    M->remove(m);
-    break;
-  }
-}
-
 vec FreeModule::eval(const RingMap *map, const FreeModule *F,
 			  const vec v) const
 {
@@ -2127,34 +2084,3 @@ vec FreeModule::eval(const RingMap *map, const FreeModule *F,
     }
   return H.value();
 }
-#if 0
-vec FreeModule::eval(const RingMap *map, const FreeModule *F,
-			  const vec v) const
-{
-  ring_elem r;
-  vec g;
-  vec result = NULL;
-  intarray vp;
-
-  for (vecterm *t = v; t != NULL; t = t->next)
-    {
-      if (M != NULL)
-	{
-	  vp.shrink(0);
-	  M->divide(t->monom, base_monom(t->comp), t->monom);
-	  M->to_varpower(t->monom, vp);
-	  M->mult(t->monom, base_monom(t->comp), t->monom);
-	  r = map->eval_term(K, t->coeff, vp.raw());
-	}
-      else
-	{
-	  r = K->eval(map, t->coeff);
-	}
-      g = F->term(t->comp, r);
-      F->get_ring()->remove(r);
-      F->add_to(result, g);
-    }
-  return result;
-}
-
-#endif

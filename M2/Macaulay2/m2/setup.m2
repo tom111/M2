@@ -1,4 +1,4 @@
---		Copyright 1993-1999 by Daniel R. Grayson
+--		Copyright 1993-2002 by Daniel R. Grayson
 
 -- flag symbol sequence
 
@@ -60,17 +60,10 @@ if class path =!= List then path = { "" }
 savepath := path
 path = join({ currentFileDirectory, ""}, path)
 
-OS := "operating system"
-
-pathSeparator = (
-	if version#"operating system" === "MACOS" then "" 
-	else "/"
-	)
+pathSeparator = "/"
 
 isAbsolutePath := (
-     if version#"operating system" === "MACOS"
-     then filename -> any(characters substring(filename,1,#filename), c -> c === ":")
-     else if version#"operating system" === "Windows-95-98-NT"
+     if version#"operating system" === "Windows-95-98-NT"
      then filename -> substring(filename,1,1) === ":"
      else filename -> pathSeparator === substring(filename,0,#pathSeparator)
      )
@@ -102,7 +95,7 @@ commonProcessing := x -> (
      outputLabel = concatenate("o",string lineNumber());
      x = applyMethod(AfterEval,x);
      if x =!= null then (
-     	  s := value concatenate("symbol ",outputLabel);
+     	  s := getGlobalSymbol outputLabel;
      	  outputSymbols#s = true;
      	  s <- x;
 	  );
@@ -132,22 +125,11 @@ ZZ | String := String => (i,s) -> concatenate(string i,s)
 loaded := new MutableHashTable
 unmarkAllLoadedFiles = () -> loaded = new MutableHashTable  -- symbol will be erased in debugging.m2
 
-canonicalFilename := f -> (
-     f = separate(pathSeparator,f);
-     while (
-     	  i := position(f,s -> s === "..");
-     	  i =!= null and i > 0
-	  )
-     do f = drop(f,{i-1,i});
-     concatenate mingle(f, apply(#f-1,i -> pathSeparator)))
-
 markLoaded := (filename,origfilename) -> ( 
      loaded#origfilename = true; 
      if notify then (
-	  filename = canonicalFilename filename;
-	  if filename === origfilename
-	  then stderr << "--loaded " << filename << endl
-	  else stderr << "--loaded " << origfilename << " from " << filename << endl
+	  filename = minimizeFilename filename;
+	  -- stderr << "--loaded " << filename << endl
 	  );
      )
 
@@ -174,28 +156,6 @@ tryload := (filename,load) -> (
 		    if result then markLoaded(fullfilename,filename);
 		    result))))
 
- -- if version#"operating system" === "MACOS"
- -- then tryload = (filename,load) -> (
- --      if isAbsolutePath filename then (
- -- 	  if load filename then (
- -- 	       markLoaded filename;
- -- 	       true)
- -- 	  else false)
- --      else (
- --           if class path =!= List
- -- 	  then error "expected 'path' to be a list of strings";
- --           {} =!= select(1,path, 
- -- 	       dir -> (
- -- 		    if class dir =!= String 
- -- 		    then error "member of 'path' not a string";
- -- 		    fn := (
- -- 			 if dir === "." or dir === ":" then filename 
- -- 			 else dir  | filename
- -- 			 );
- -- 		    result := load fn;
- -- 		    if result then markLoaded fn;
- -- 		    result))))
-
 oldLoad := load
 erase symbol load
 load = (filename) -> (
@@ -219,11 +179,10 @@ scan((
 	  symbol ooo,
 	  symbol oo,
 	  symbol path,
-	  -- symbol writeExamples,
-	  -- symbol readExamples,
 	  symbol phase,
 	  symbol currentDirectory,
 	  symbol documentationPath,
+	  symbol DocDatabase,
 	  symbol currentFileName,
 	  symbol compactMatrixForm,
 	  symbol TeXmacsMode
@@ -235,40 +194,19 @@ addStartFunction = g -> (
      startFunctions = append(startFunctions,g);
      g)
 runStartFunctions = () -> scan(startFunctions, f -> f())
-OLDENGINE = getenv("OLDENGINE") == "TRUE"
 lastSystemSymbol = null
+
+addStartFunction( () -> (
+	  scanPairs(symbolTable(), (name,sym) -> if not writableGlobals#?sym then protect sym)
+	  ))
 
 load "loads.m2"
 
 path = savepath
 notify = true
 lastSystemSymbol = local privateSymbol
-if OLDENGINE then (
-     erase symbol ZZZ;
-     erase symbol NewMonomialOrder;
-     erase symbol Component;
-     erase symbol GroupLex;
-     erase symbol GroupRevLex;
-     erase symbol MonomialOrdering;
-     erase symbol NCLex;
-     erase symbol newDegreesMonoid;
-     erase symbol newDegreesRing;
-     erase symbol newEngine;
-     erase symbol monomialOrdering;
-     remove(ZZ,newDegreesRing);
-     remove(Sequence,newDegreesRing);
-     remove(ZZ,newDegreesMonoid);
-     remove(Sequence,newDegreesMonoid);
-     erase symbol clone;
-     remove(Sequence,clone);
-     )
-erase symbol OLDENGINE
 erase symbol outputSymbols
 erase symbol lastSystemSymbol
-
-if phase === 1 then scanPairs(symbolTable(),
-     (name,sym) -> if not writableGlobals#?sym then protect sym
-     )
 
 Function.GlobalReleaseHook = (X,x) -> (
      stderr << "warning: " << toString X << " redefined" << endl;

@@ -1,4 +1,6 @@
-document { symbol diffOps,
+needs "D-modules.m2"
+
+document { diffOps,
      TT "diffOps (I, k)", " -- 
      compute differential operators of order less than or equal to k 
      of the quotient ring R/I",
@@ -25,6 +27,7 @@ document { symbol diffOps,
 
      PARA,
      "A simple example:",
+     EXAMPLE ///needs "D-modules.m2"///,
      EXAMPLE "R = QQ[x,y,z]",
      EXAMPLE "I = ideal(x^2-y*z)", 
      EXAMPLE "diffOps(I, 3)",
@@ -34,7 +37,7 @@ document { symbol diffOps,
 
      },
 
-document { symbol putWeylAlgebra,
+document { putWeylAlgebra,
      TT "putWeylAlgebra m", " -- 
      given the output m of diffOps, represents
      the differential operators as elements of a Weyl algebra.",
@@ -47,6 +50,7 @@ document { symbol putWeylAlgebra,
 
      PARA,
      "A simple example:",
+     EXAMPLE ///needs "D-modules.m2"///,
      EXAMPLE "R = QQ[x,y,z]",
      EXAMPLE "I = ideal(x^2-y*z)", 
      EXAMPLE "m = diffOps(I, 3)",

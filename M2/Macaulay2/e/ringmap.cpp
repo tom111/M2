@@ -2,19 +2,15 @@
 
 #include "ringmap.hpp"
 #include "matrix.hpp"
-#include "bin_io.hpp"
+#include "vector.hpp"
 
-stash *RingMap::mystash;
-
-
-RingMap::RingMap(const Matrix &m)
-: R(m.get_ring())
+RingMap::RingMap(const Matrix *m)
+: immutable_object(0), R(m->get_ring())
 {
-  bump_up(R);
   M = R->Nmonoms();
   K = R->Ncoeffs();
 
-  nvars = m.n_cols();
+  nvars = m->n_cols();
   is_monomial = true;
 
   ring_elem one = K->from_int(1);
@@ -32,8 +28,8 @@ RingMap::RingMap(const Matrix &m)
       _elem[i].coeff = (Nterm *) NULL;
       _elem[i].monom = NULL;
 
-      vec v = m[i];
-      _elem[i].bigelem = m.elem(0,i);  // This does a copy.
+      vec v = (*m)[i];
+      _elem[i].bigelem = m->elem(0,i);  // This does a copy.
 
       // We determine the parts of elem[i] using v.
 
@@ -75,14 +71,13 @@ RingMap::~RingMap()
   delete [] _elem;
   K = NULL;
   M = NULL;
-  bump_down(R);
 }
 
-void RingMap::bin_out(buffer &o) const
+const RingMap *RingMap::make(const Matrix *m)
 {
-  bin_int_out(o, nvars);
-  for (int i=0; i<nvars; i++)
-    R->elem_text_out(o, _elem[i].bigelem);
+  RingMap *result = new RingMap(m);
+  // MES: set hash value
+  return result;
 }
 
 void RingMap::text_out(buffer &o) const
@@ -174,23 +169,26 @@ ring_elem RingMap::eval_term(const Ring *sourceK,
   return result;
 }
 
-RingElement RingMap::eval(const RingElement &r) const
+RingElementOrNull *RingMap::eval(const RingElement *r) const
 {
-  RingElement result(get_ring(), r.get_ring()->eval(this, r.get_value()));
+  RingElement *result = RingElement::make_raw(get_ring(), r->get_ring()->eval(this, r->get_value()));
+  if (error()) return 0;
   return result;
 }
 
-Vector RingMap::eval(const FreeModule *F, const Vector &v) const
+VectorOrNull *RingMap::eval(const FreeModule *F, const Vector *v) const
 {
-  Vector result(F, v.free_of()->eval(this, F, v.get_value()));
+  Vector *result = Vector::make_raw(F, v->free_of()->eval(this, F, v->get_value()));
+  if (error()) return 0;
   return result;
 }
 
-Matrix RingMap::eval(const FreeModule *F, const Matrix &m) const
+MatrixOrNull *RingMap::eval(const FreeModule *F, const Matrix *m) const
 {
-  Matrix result(F);
-  for (int i=0; i<m.n_cols(); i++)
-    result.append(m.rows()->eval(this, F, m[i]));
+  Matrix *result = new Matrix(F);
+  for (int i=0; i<m->n_cols(); i++)
+    result->append(m->rows()->eval(this, F, (*m)[i]));
+  if (error()) return 0;
   return result;
 }
 

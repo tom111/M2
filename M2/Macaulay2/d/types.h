@@ -1,6 +1,7 @@
+#include "M2types.h"
+#include "../e/engine.h"
 #include "config.h"
 #include "compat.h"		/* same include files seen by *.c files produced from *.d files */
-
 #include "targettypes.h"
 
 #include <stdio.h>
@@ -24,17 +25,11 @@
 #define NEWLINE "\n"
 #endif
 
-extern char newline[];
-
 #ifdef FACTORY
 extern char *libfac_version;
 #endif
 
 #include "../c/compat.h"
-
-#undef malloc
-#undef free
-#include <gmp.h>
 
 #ifdef HAS_UNISTD_H
 #include <unistd.h>
@@ -141,32 +136,6 @@ int brk();		/* not really ansi standard, sigh */
 #undef ERROR
 #define ERROR (-1)      /* in Windows NT there is a file that sets ERROR to 0 */
 
-
-typedef struct M2_string_struct {
-     unsigned int len;
-     char array[1];
-     } *M2_string;
-
-extern M2_string tostring(char const *);
-
-extern M2_string system_newline;
-extern char *tocharstar(M2_string);
-
-typedef char M2_bool;
-
-typedef struct {
-     unsigned int len;
-     int array[1];
-     } *M2_arrayint;
-
-typedef struct {
-     unsigned int len;
-     M2_string array[1];
-     } *M2_stringarray;
-
-extern char **tocharstarstar(M2_stringarray);
-extern M2_stringarray tostrings(int,char **);
-
 #define sizeofarray(s,len) (sizeof(*s) - sizeof(s->array) + (len)*sizeof(s->array[0]))
 
 void *GC_malloc1 (size_t size_in_bytes);
@@ -182,7 +151,6 @@ void free2 (void *s, size_t old);
 #endif
 
 void trap();
-char *getmem(unsigned int);
 
 #if defined(__STDC__) || defined(_WIN32) && !defined(__CYGWIN32__)
 extern void fatal(char *s,...);

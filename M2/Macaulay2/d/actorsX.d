@@ -1,6 +1,7 @@
 --		Copyright 1995 by Daniel R. Grayson
 
 use X;
+use C;
 use system;
 use err;
 use stdio;
@@ -8,7 +9,7 @@ use stdiop;
 use strings;
 use nets;
 use tokens;
-use arith;
+use gmp;
 use convertr;
 
 

@@ -1,13 +1,15 @@
 --		Copyright 1994 by Daniel R. Grayson
 --- here we define the recursive types involved in parsing
 
+use C;
 use system;
 use err;
 use stdio;
 use stdiop;
 use strings;
 use nets;
-use arith;
+use gmp;
+use engine;
 
 export parsefuns := {
      unary:function(Token,TokenFile,int,bool):ParseTree,
@@ -149,9 +151,6 @@ export List := {
      mutable:bool
      };
 export Error := {position:Position, message:string, report:Expr, value:Expr};
-export Handle := {
-     handle:int
-     };
 export Database := {
      filename:string,
      hash:int,
@@ -167,13 +166,17 @@ export Expr := (
      Real or Boolean or file or string or FunctionClosure or Error or Sequence
      or CompiledFunction or CompiledFunctionClosure
      or SymbolClosure or List or Rational or Integer 
-     or HashTable or Handle or Database or Nothing or Net
+     or HashTable or Database or Nothing or Net 
+     or BigReal 
+     or RawMonomial or RawMonomialOrdering or RawMonoid
+     or RawRing or RawRingElement or RawMonomialIdeal
+     or RawFreeModule or RawVector or RawMatrix or RawRingMap
      );
 export fun := function(Expr):Expr;
 
 export True := Expr(Boolean(true));	  -- don't make new ones!
-export False := Expr(Boolean(false));	  -- use toBoolean instead
-export toBoolean(v:bool):Expr := if v then True else False;
+export False := Expr(Boolean(false));	  -- use toExpr instead
+export toExpr(v:bool):Expr := if v then True else False;
 
 export nullE := Expr(Nothing());
 export notfoundE := Expr(Nothing());			    -- internal use only, not visible to user
@@ -340,7 +343,6 @@ export fileClass := newbasictype();
 export functionClass := newbasictype();
 export symbolClass := newbasictype();
 export errorClass := newbasictype();
-export handleClass := newbasictype();
 export netClass := newbasictype();
 export stringClass := newtypeof(netClass);
 export booleanClass := newbasictype();
@@ -356,7 +358,19 @@ export ringClass := newtypeof(typeClass);
        newbasicringtype():HashTable := newHashTable(ringClass,thingClass);
 export integerClass := newbasicringtype();
 export rationalClass := newbasicringtype();
+export bigRealClass := newbasicringtype();
 export doubleClass := newbasicringtype();
+export rawObjectClass := newbasictype();		    -- RawObject
+export rawMonomialClass := newtypeof(rawObjectClass);	    -- RawMonomial
+export rawMonomialOrderingClass := newtypeof(rawObjectClass); -- RawMonomialOrdering
+export rawMonoidClass := newtypeof(rawObjectClass);	    -- RawMonoid
+export rawMonomialIdealClass := newtypeof(rawObjectClass);  -- RawMonomialIdeal
+export rawRingClass := newtypeof(rawObjectClass);	    -- RawRing
+export rawRingElementClass := newtypeof(rawObjectClass);    -- RawRingElement
+export rawRingMapClass := newtypeof(rawObjectClass);	    -- RawRingMap
+export rawFreeModuleClass := newtypeof(rawObjectClass);	    -- RawFreeModule
+export rawVectorClass := newtypeof(rawObjectClass);	    -- RawVector
+export rawMatrixClass := newtypeof(rawObjectClass);	    -- RawMatrix
 export nothingClass := newbasictype();
 
 export (x:SymbolClosure) === (y:SymbolClosure) : bool := (

@@ -5,20 +5,18 @@
 #include "geovec.hpp"
 #include "text_io.hpp"
 #include "termideal.hpp"
+#include "vector.hpp"
 
 extern char system_interrupted;
 extern int comp_printlevel;
 
-stash *GB_elem::mystash;
-stash *GBZZ_comp::mystash;
-
-void GBZZ_comp::set_up0(const Matrix &m, int csyz, int nsyz)
+void GBZZ_comp::set_up0(const Matrix *m, int csyz, int nsyz)
 {
   int i;
-  A = m.get_ring()->cast_to_PolynomialRing();
+  A = m->get_ring()->cast_to_PolynomialRing();
   if (A == NULL)
     {
-      gError << "ring is not a polynomial ring";
+      ERROR("ring is not a polynomial ring");
       // MES: throw an error here.
       assert(0);
     }
@@ -32,13 +30,12 @@ void GBZZ_comp::set_up0(const Matrix &m, int csyz, int nsyz)
 
   Gsyz = R->make_FreeModule();
 
-  F = m.rows();
-  bump_up(F);
+  F = m->rows();
 
-  mingens = Matrix(F);
+  mingens = new Matrix(F);
 
-  if (nsyz < 0 || nsyz > m.n_cols())
-    nsyz = m.n_cols();
+  if (nsyz < 0 || nsyz > m->n_cols())
+    nsyz = m->n_cols();
   n_comps_per_syz = nsyz;
 
   ar_first_in_deg = 0;
@@ -59,7 +56,7 @@ void GBZZ_comp::set_up0(const Matrix &m, int csyz, int nsyz)
     termideals.append(new TermIdeal(A,Gsyz));
 }
 
-void GBZZ_comp::set_up(const Matrix &m, int csyz, int nsyz, int strat)
+void GBZZ_comp::set_up(const Matrix *m, int csyz, int nsyz, int strat)
 {
   vec f, fsyz;
   int i;
@@ -67,52 +64,50 @@ void GBZZ_comp::set_up(const Matrix &m, int csyz, int nsyz, int strat)
 
   set_up0(m, csyz, nsyz);
 
-  Fsyz = m.cols()->sub_space(n_comps_per_syz);  
-  bump_up(Fsyz);
-  syz = Matrix(Fsyz);
+  Fsyz = m->cols()->sub_space(n_comps_per_syz);  
+  syz = new Matrix(Fsyz);
 
   spairs = new s_pair_set(F,Fsyz,Gsyz,Rsyz);
 
   state = GB_COMP_NEWDEGREE;
 
-  for (i=0; i<m.n_cols(); i++)
-    if (new_generator(i, m[i], f, fsyz))  // Possibly creates a syzygy.
+  for (i=0; i<m->n_cols(); i++)
+    if (new_generator(i, (*m)[i], f, fsyz))  // Possibly creates a syzygy.
       {
 	spairs->insert_generator(f, fsyz); // Consumes f,fsyz.
 	n_gens_left++;
       }
 }
 
-void GBZZ_comp::force(const Matrix &m, const Matrix &gb, const Matrix &mchange,
-		    const Matrix &msyz)
+void GBZZ_comp::force(const Matrix *m, const Matrix *gb, const Matrix *mchange,
+		    const Matrix *msyz)
 {
-  int csyz = (msyz.n_cols() > 0);
-  set_up0(m, csyz, mchange.n_rows());
+  int csyz = (msyz->n_cols() > 0);
+  set_up0(m, csyz, mchange->n_rows());
 
-  Fsyz = mchange.rows();
-  bump_up(Fsyz);
-  syz = msyz;
+  Fsyz = mchange->rows();
+  syz = (Matrix *) msyz;
 
   state = GB_COMP_DONE;
   spairs = NULL;
 
-  for (int i=0; i<gb.n_cols(); i++)
+  for (int i=0; i<gb->n_cols(); i++)
     {
-      if (gb[i] == NULL) continue;
-      vec f = F->copy(gb[i]);
-      vec fsyz = Fsyz->copy(mchange[i]);
+      if ((*gb)[i] == NULL) continue;
+      vec f = F->copy((*gb)[i]);
+      vec fsyz = Fsyz->copy((*mchange)[i]);
       insert_gb_element(f,fsyz);
     }
 }
 
-GBZZ_comp::GBZZ_comp(const Matrix &m, int csyz, int nsyz, int strat)
+GBZZ_comp::GBZZ_comp(const Matrix *m, int csyz, int nsyz, int strat)
   : gb_comp(COMP_GB)
 {
   set_up(m, csyz, nsyz, strat);
 }
 
-GBZZ_comp::GBZZ_comp(const Matrix &m, const Matrix &gb, const Matrix &mchange, 
-		 const Matrix &syz)
+GBZZ_comp::GBZZ_comp(const Matrix *m, const Matrix *gb, const Matrix *mchange, 
+		 const Matrix *syz)
   : gb_comp(COMP_GB)
 {
   force(m, gb, mchange, syz);
@@ -136,10 +131,6 @@ GBZZ_comp::~GBZZ_comp()
 
   for (i=0; i<termideals.length(); i++)
     delete termideals[i];
-
-  // Finally, decrement ref counts (monoids are not ref counted currently)
-  bump_down(F);
-  bump_down(Fsyz);
 }
 
 void GBZZ_comp::resize(int /*nbits*/)
@@ -304,8 +295,8 @@ void GBZZ_comp::find_pairs(int me)
 
 	M->monsyz(f->monom, p->f->monom, mon2, mon1);
 	g = K->gcd(f->coeff, p->f->coeff);
-	g1 = K->divide(f->coeff, g);
-	g2 = K->divide(p->f->coeff, g);
+	g1 = K->divide(f->coeff, g); //exact division
+	g2 = K->divide(p->f->coeff, g); // exact division
 	// K->negate_to(g2);// This is not needed, since negation is handled ahead of time
 	// for ring elements.
 	vec gsyz = Gsyz->term(my_gb_num, g1, mon1);
@@ -324,8 +315,8 @@ void GBZZ_comp::find_pairs(int me)
       vec f = other->f;
       M->monsyz(p->f->monom, f->monom, mon1, mon2);
       g = K->gcd(f->coeff, p->f->coeff);
-      g1 = K->divide(f->coeff, g);
-      g2 = K->divide(p->f->coeff, g);
+      g1 = K->divide(f->coeff, g); // exact division
+      g2 = K->divide(p->f->coeff, g); // exact division
       K->negate_to(g2); 
       vec gsyz = Gsyz->term(my_gb_num, g1, mon1);
       vec gsyz2 = Gsyz->term(gbpairlocs[j], g2, mon2);
@@ -563,7 +554,7 @@ bool GBZZ_comp::insert_syzygy(vec fsyz)
     {
       if (collect_syz)
 	{
-	  syz.append(fsyz);
+	  syz->append(fsyz);
 	  return true;
 	}
       else
@@ -666,8 +657,8 @@ void GBZZ_comp::handle_element(vec f, vec fsyz, bool maybe_minimal)
 	// fsyz = c1*fsyz - c2*hsyz.
 	// NOTE: apply_gb_elements effectively computes -h, -hsyz.
 	g = K->gcd_extended(f->coeff, termgcd, u, v);
-	c1 = K->divide(termgcd, g);
-	c2 = K->divide(f->coeff, g);
+	c1 = K->divide(termgcd, g); //exact division
+	c2 = K->divide(f->coeff, g); // exact division
 	p = F->mult_by_coeff(u,f);
 	psyz = Fsyz->mult_by_coeff(u,fsyz);
 	q = F->mult_by_coeff(v,h);
@@ -736,7 +727,7 @@ void GBZZ_comp::handle_element(vec f, vec fsyz)
 	}
 
       ring_elem rem;
-      ring_elem d = K->divide(f->coeff, termgcd, rem);
+      ring_elem d = K->divide(f->coeff, termgcd, rem); // use quotientAndRemainder?
 
       if (K->is_zero(rem))
 	{
@@ -786,8 +777,8 @@ void GBZZ_comp::handle_element(vec f, vec fsyz)
 	  // fsyz = c1*fsyz - c2*hsyz.
 	  // NOTE: apply_gb_elements effectively computes -h, -hsyz.
 	  g = K->gcd_extended(f->coeff, termgcd, u, v);
-	  c1 = K->divide(termgcd, g);
-	  c2 = K->divide(f->coeff, g);
+	  c1 = K->divide(termgcd, g); // exact
+	  c2 = K->divide(f->coeff, g); // exact
 	  p = F->mult_by_coeff(u,f);
 	  psyz = Fsyz->mult_by_coeff(u,fsyz);
 	  q = F->mult_by_coeff(v,h);
@@ -892,7 +883,7 @@ bool GBZZ_comp::gen_step()
   gb_reduce(f,fsyz);
   if (f != 0)
     {
-      mingens.append(F->copy(f));
+      mingens->append(F->copy(f));
       n_mingens++;
     }
   handle_element(f, fsyz);
@@ -948,7 +939,7 @@ int GBZZ_comp::computation_complete(const int * /* stop_degree */,
 {
   if (state == GB_COMP_DONE)  return COMP_DONE;
   if (stop_gb > 0 && n_gb >= stop_gb) return COMP_DONE_GB_LIMIT;
-  if (stop_syz > 0 && syz.n_cols() >= stop_syz) return COMP_DONE_SYZ_LIMIT;
+  if (stop_syz > 0 && syz->n_cols() >= stop_syz) return COMP_DONE_SYZ_LIMIT;
   if (stop_pairs > 0 && n_computed >= stop_pairs) return COMP_DONE_PAIR_LIMIT;
   //if (stop_codim > 0 && ...) return COMP_DONE_CODIM;
   if (stop_min_gens && n_gens_left == 0) return COMP_DONE_MIN_GENS;
@@ -967,7 +958,7 @@ int GBZZ_comp::calc(const int *deg, const intarray &stop)
 
   if (stop.length() != 7) 
     {
-      gError << "inappropriate stop conditions for GB computation";
+      ERROR("inappropriate stop conditions for GB computation");
       return COMP_ERROR;
     }
   const int *stop_degree = deg;
@@ -1084,36 +1075,36 @@ int GBZZ_comp::calc(const int *deg, const intarray &stop)
 }
 
 //--- Reduction --------------------------
-Matrix GBZZ_comp::reduce(const Matrix &m, Matrix &lift)
+Matrix *GBZZ_comp::reduce(const Matrix *m, Matrix *&lift)
 {
-  Matrix red(m.rows(), m.cols(), m.degree_shift());
-  lift = Matrix(Fsyz, m.cols());
-  if (m.n_rows() != F->rank()) {
-       gError << "expected matrices to have same number of rows";
-       return red;
+  if (m->n_rows() != F->rank()) {
+       ERROR("expected matrices to have same number of rows");
+       return 0;
   }
-  for (int i=0; i<m.n_cols(); i++)
+  Matrix *red = new Matrix(m->rows(), m->cols(), m->degree_shift());
+  lift = new Matrix(Fsyz, m->cols());
+  for (int i=0; i<m->n_cols(); i++)
     {
-      vec f = F->translate(m.rows(),m[i]);
+      vec f = F->translate(m->rows(),(*m)[i]);
       vec fsyz = NULL;
 
       gb_reduce(f, fsyz);
       Fsyz->negate_to(fsyz);
-      red[i] = f;
-      lift[i] = fsyz;
+      (*red)[i] = f;
+      (*lift)[i] = fsyz;
     }
   return red;
 }
 
-int GBZZ_comp::contains(const Matrix &m)
+int GBZZ_comp::contains(const Matrix *m)
   // Return -1 if every column of 'm' reduces to zero.
   // Otherwise return the index of the first column that
   // does not reduce to zero.
 {
   // Reduce each column of m one by one.
-  for (int i=0; i<m.n_cols(); i++)
+  for (int i=0; i<m->n_cols(); i++)
     {
-      vec f = F->translate(m.rows(),m[i]);
+      vec f = F->translate(m->rows(),(*m)[i]);
       vec fsyz = NULL;
       gb_reduce(f, fsyz);
       Fsyz->remove(fsyz);
@@ -1134,61 +1125,61 @@ bool GBZZ_comp::is_equal(const gb_comp *q)
   return false;
 }
 
-Vector GBZZ_comp::reduce(const Vector &v, Vector &lift)
+Vector *GBZZ_comp::reduce(const Vector *v, Vector *&lift)
 {
-  if (!v.free_of()->is_equal(F))
+  if (!v->free_of()->is_equal(F))
     {
-      gError << "reduce: vector is in incorrect free module";
-      return Vector(F, NULL);
+      ERROR("reduce: vector is in incorrect free module");
+      return 0;
     }
-  vec f = F->copy(v.get_value());
+  vec f = F->copy(v->get_value());
   vec fsyz = NULL;
 
   gb_reduce(f, fsyz);
   Fsyz->negate_to(fsyz);
 
-  lift = Vector(Fsyz, fsyz);
-  return Vector(F, f);
+  lift = Vector::make_raw(Fsyz, fsyz);
+  return Vector::make_raw(F, f);
 }
 
 //--- Obtaining matrices as output -------
-Matrix GBZZ_comp::min_gens_matrix()
+Matrix *GBZZ_comp::min_gens_matrix()
 {
   return mingens;
 #if 0
-  Matrix result(F);
+  Matrix *result = new Matrix(F);
   for (int i=0; i<gb.length(); i++)
     if (gb[i]->is_min)
-      result.append(F->copy(gb[i]->f));
+      result->append(F->copy(gb[i]->f));
   return result;
 #endif
 }
 
-Matrix GBZZ_comp::initial_matrix(int n)
+Matrix *GBZZ_comp::initial_matrix(int n)
 {
-  Matrix result(F);
+  Matrix *result = new Matrix(F);
   for (int i=0; i<gb.length(); i++)
-    result.append(F->lead_term(n, gb[i]->f));
+    result->append(F->lead_term(n, gb[i]->f));
   return result;
 }
 
-Matrix GBZZ_comp::gb_matrix()
+Matrix *GBZZ_comp::gb_matrix()
 {
-  Matrix result(F);
+  Matrix *result = new Matrix(F);
   for (int i=0; i<gb.length(); i++)
-    result.append(F->copy(gb[gblocs[i]]->f));
+    result->append(F->copy(gb[gblocs[i]]->f));
   return result;
 }
 
-Matrix GBZZ_comp::change_matrix()
+Matrix *GBZZ_comp::change_matrix()
 {
-  Matrix result(Fsyz);
+  Matrix *result = new Matrix(Fsyz);
   for (int i=0; i<gb.length(); i++)
-    result.append(Fsyz->copy(gb[i]->fsyz));
+    result->append(Fsyz->copy(gb[i]->fsyz));
   return result;
 }
 
-Matrix GBZZ_comp::syz_matrix()
+Matrix *GBZZ_comp::syz_matrix()
 {
   return syz;
 }

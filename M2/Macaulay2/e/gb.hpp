@@ -2,7 +2,6 @@
 #ifndef _gb_hh_
 #define _gb_hh_
 
-#include "object.hpp"
 #include "relem.hpp"
 #include "matrix.hpp"
 #include "polyring.hpp"
@@ -10,6 +9,8 @@
 #include "gb_comp.hpp"
 
 #include "spair.hpp"
+
+class hilb_comp;
 
 class GB_comp : public gb_comp
 {
@@ -34,8 +35,8 @@ private:
   array<monideal_pair *> monideals; // baggage for each is 'gb_elem *'
 
   // Syzygies collected
-  Matrix syz;
-  Matrix gbmatrix;
+  Matrix *syz;
+  Matrix *gbmatrix;
 
   // statistics information, much is kept with the s_set
   int n_gb;
@@ -60,13 +61,13 @@ private:
 				// in this degree.
   int n_saved_hilb;
   hilb_comp *hf_comp;
-  RingElement hf_orig;		// The Hilbert function that we are given at the beginning
-  RingElement hf_diff;		// The difference between hf_orig and the computed hilb fcn
+  const RingElement *hf_orig;	// The Hilbert function that we are given at the beginning
+  RingElement *hf_diff;		// The difference between hf_orig and the computed hilb fcn
 private:
-  void set_up0(const Matrix &m, int csyz, int nsyz);
-  void set_up(const Matrix &m, int csyz, int nsyz, int strategy);
-  void force(const Matrix &m, const Matrix &gb, const Matrix &mchange, 
-	  const Matrix &syz);
+  void set_up0(const Matrix *m, int csyz, int nsyz);
+  void set_up(const Matrix *m, int csyz, int nsyz, int strategy);
+  void force(const Matrix *m, const Matrix *gb, const Matrix *mchange, 
+	  const Matrix *syz);
 
   // S-pair control
   s_pair *new_var_pair(gb_elem *p, const int *lcm);
@@ -85,7 +86,6 @@ private:
   void gb_sort(int lo, int hi);
 
   // Hilbert function use
-  int coeff_of(const RingElement &h, int deg) const;
   void flush_pairs(int deg);
   
   int next_degree();
@@ -105,48 +105,35 @@ private:
 
 public:
   // Forcing a GB
-  GB_comp(const Matrix &m, const Matrix &gb, const Matrix &mchange, 
-	  const Matrix &syz);
+  GB_comp(const Matrix *m, const Matrix *gb, const Matrix *mchange, 
+	  const Matrix *syz);
 
   // An honest GB computation
-  GB_comp(const Matrix &m, int collect_syz, int n_syz, int strategy);
-  GB_comp(const Matrix &m, int collect_syz, int n_syz, 
-	  RingElement hf, int strategy);
+  GB_comp(const Matrix *m, int collect_syz, int n_syz, int strategy);
+  GB_comp(const Matrix *m, int collect_syz, int n_syz, 
+	  const RingElement *hf, int strategy);
 
   ~GB_comp();
   // Performing the computation
   int calc(const int *deg, const intarray &stop_conditions);
 
   // Adding generators
-  void add_gens(int lo, int hi, const Matrix &m);
+  void add_gens(int lo, int hi, const Matrix *m);
 
   // reduction
-  Matrix reduce(const Matrix &m, Matrix &lift);
-  Vector reduce(const Vector &v, Vector &lift);
+  Matrix *reduce(const Matrix *m, Matrix *&lift);
+  Vector *reduce(const Vector *v, Vector *&lift);
 
-  virtual int contains(const Matrix &m);
+  virtual int contains(const Matrix *m);
   virtual bool is_equal(const gb_comp *q);
   
   // obtaining: mingens matrix, GB matrix, change of basis matrix, stats.
-  Matrix min_gens_matrix();
-  Matrix initial_matrix(int n);
-  Matrix gb_matrix();
-  Matrix change_matrix();
-  Matrix syz_matrix();
+  Matrix *min_gens_matrix();
+  Matrix *initial_matrix(int n);
+  Matrix *gb_matrix();
+  Matrix *change_matrix();
+  Matrix *syz_matrix();
   void debug_out(s_pair *q) const;
   void stats() const;
-
-  // infrastructure
-  friend void i_stashes();
-  static stash *mystash;
-  void *operator new(size_t) { return mystash->new_elem(); }
-  void operator delete(void *p) { mystash->delete_elem(p); }
-
-  void bin_out(buffer &) const {}
-  void text_out(buffer &o) const { o << "groebner computation"; }
-
-  class_identifier class_id() const { return CLASS_GB_comp; }
-
-  int length_of() const { return n_gb; }
 };  
 #endif

@@ -666,7 +666,7 @@ document { Ideal,
 	  TO "annihilator",
 	  TO "content",
 	  TO "fittingIdeal",
-	  TO (kernel, RingMap),
+	  SHIELD TO (kernel, RingMap),
 	  },
      "Common ways to get information about an ideal:",
      MENU {
@@ -692,7 +692,7 @@ document { Ideal,
 	  },
      "Common ways to use an ideal:",
      MENU {
-	  TO (symbol /, Ring, Ideal),
+	  SHIELD TO (symbol /, Ring, Ideal),
 	  },
      PARA,
      "An ideal ", TT "I", " is an immutable object, so if you want to 
@@ -1029,7 +1029,7 @@ document { (exteriorPower,ZZ,Matrix),
 	  "g" => { "the ", TT "p", "-th exterior power of the matrix ", TT "f", "."}
 	  },
      "Note: we may write ", TT "exteriorPower_p f", " instead of
-     ", TT "exteriorPower(p,f)", "; see ", TO "(symbol _,Function,Thing)", ".",
+     ", TT "exteriorPower(p,f)", "; see ", TO (symbol _,Function,Thing), ".",
      EXAMPLE {
 	  "R = ZZ/2[x,y];",
 	  "f = random(R^3,R^{3:-1})",

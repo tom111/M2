@@ -5,21 +5,20 @@
 #include "hilb.hpp"
 #include "geovec.hpp"
 #include "text_io.hpp"
+#include "vector.hpp"
 
 int comp_printlevel = 0;
 int nreductions = 0;
 
-extern ring_elem hilb(const Matrix &M, const Ring *RR);
+extern ring_elem hilb(const Matrix *M, const Ring *RR);
 
-stash *GB_comp::mystash;
-
-void GB_comp::set_up0(const Matrix &m, int csyz, int nsyz)
+void GB_comp::set_up0(const Matrix *m, int csyz, int nsyz)
 {
   int i;
-  R = m.get_ring()->cast_to_PolynomialRing();
+  R = m->get_ring()->cast_to_PolynomialRing();
   if (R == NULL)
     {
-      gError << "ring is not a polynomial ring";
+      ERROR("ring is not a polynomial ring");
       // MES: throw an error here.
       assert(0);
     }
@@ -28,14 +27,13 @@ void GB_comp::set_up0(const Matrix &m, int csyz, int nsyz)
   spairs = new s_pair_heap(M);
   gens = new s_pair_heap(M);
 
-  gbmatrix = Matrix(m.rows());
+  gbmatrix = new Matrix(m->rows());
 
-  if (nsyz < 0 || nsyz > m.n_cols())
-    nsyz = m.n_cols();
+  if (nsyz < 0 || nsyz > m->n_cols())
+    nsyz = m->n_cols();
   n_comps_per_syz = nsyz;
 
-  F = m.rows();
-  bump_up(F);
+  F = m->rows();
 
   ar_i = ar_j = np_i = -1;
 
@@ -65,22 +63,21 @@ void GB_comp::set_up0(const Matrix &m, int csyz, int nsyz)
     }
 }
 
-void GB_comp::set_up(const Matrix &m, int csyz, int nsyz, int strat)
+void GB_comp::set_up(const Matrix *m, int csyz, int nsyz, int strat)
 {
   int i;
   strategy = strat;
 
   set_up0(m, csyz, nsyz);
 
-  Fsyz = m.cols()->sub_space(n_comps_per_syz);  
-  bump_up(Fsyz);
-  syz = Matrix(Fsyz);
+  Fsyz = m->cols()->sub_space(n_comps_per_syz);  
+  syz = new Matrix(Fsyz);
 
   state = GB_COMP_NEWDEGREE;
 
-  for (i=0; i<m.n_cols(); i++)
+  for (i=0; i<m->n_cols(); i++)
     {
-      s_pair *p = new_gen(i, m[i]);
+      s_pair *p = new_gen(i, (*m)[i]);
       if (p != NULL)
 	{
 	  gens->insert(p);
@@ -89,48 +86,47 @@ void GB_comp::set_up(const Matrix &m, int csyz, int nsyz, int strat)
     }
 }
 
-void GB_comp::force(const Matrix &m, const Matrix &gb, const Matrix &mchange,
-		    const Matrix &msyz)
+void GB_comp::force(const Matrix *m, const Matrix *gb, const Matrix *mchange,
+		    const Matrix *msyz)
 {
-  int csyz = (msyz.n_cols() > 0);
-  set_up0(m, csyz, mchange.n_rows());
+  int csyz = (msyz->n_cols() > 0);
+  set_up0(m, csyz, mchange->n_rows());
 
-  Fsyz = mchange.rows();
-  bump_up(Fsyz);
-  syz = msyz;
+  Fsyz = mchange->rows();
+  syz = (Matrix *)(msyz);
 
   state = GB_COMP_DONE;
 
-  for (int i=0; i<gb.n_cols(); i++)
+  for (int i=0; i<gb->n_cols(); i++)
     {
-      if (gb[i] == NULL) continue;
-      vec f = F->copy(gb[i]);
-      vec fsyz = Fsyz->copy(mchange[i]);
+      if ((*gb)[i] == NULL) continue;
+      vec f = F->copy((*gb)[i]);
+      vec fsyz = Fsyz->copy((*mchange)[i]);
       gb_insert(f,fsyz,0);
     }
 }
 
-GB_comp::GB_comp(const Matrix &m, int csyz, int nsyz, int strat)
+GB_comp::GB_comp(const Matrix *m, int csyz, int nsyz, int strat)
   : gb_comp(COMP_GB)
 {
   set_up(m, csyz, nsyz, strat);
 }
 
-GB_comp::GB_comp(const Matrix &m, const Matrix &gb, const Matrix &mchange, 
-		 const Matrix &syz)
+GB_comp::GB_comp(const Matrix *m, const Matrix *gb, const Matrix *mchange, 
+		 const Matrix *syz)
   : gb_comp(COMP_GB)
 {
   force(m, gb, mchange, syz);
 }
 
-GB_comp::GB_comp(const Matrix &m, int csyz, int nsyz, 
-		 RingElement hf, int strat)
+GB_comp::GB_comp(const Matrix *m, int csyz, int nsyz, 
+		 const RingElement *hf, int strat)
   : gb_comp(COMP_GB)
 {
   // MES
   set_up(m, csyz, nsyz, strat);
   hf_orig = hf;
-  hf_diff = RingElement(hf.get_ring());
+  hf_diff = new RingElement(hf->get_ring());
   use_hilb = true;
   hilb_step = 1;
 }
@@ -180,8 +176,6 @@ GB_comp::~GB_comp()
 
   // Finally, decrement ref counts (monoids are not ref counted currently)
   delete hf_comp;
-  bump_down(F);
-  bump_down(Fsyz);
 }
 
 void GB_comp::resize(int /*nbits*/)
@@ -249,7 +243,7 @@ s_pair *GB_comp::new_gen(int i, const vec f)
   if (F->is_zero(f))
     {
       if (!Fsyz->is_zero(fsyz))
-	syz.append(fsyz);
+	syz->append(fsyz);
       return NULL;
     }
 
@@ -348,10 +342,10 @@ void GB_comp::find_pairs(gb_elem *p)
 
   if (R->is_quotient_ring())
     {
-      const MonomialIdeal &Rideal = R->get_quotient_monomials();
-      for (j = Rideal.first(); j.valid(); j++)
+      const MonomialIdeal *Rideal = R->get_quotient_monomials();
+      for (j = Rideal->first(); j.valid(); j++)
 	{
-	  Nterm * f = (Nterm *) Rideal[j]->basis_ptr();
+	  Nterm * f = (Nterm *) (*Rideal)[j]->basis_ptr();
 	  M->lcm(f->monom, f_m, find_pairs_lcm);
 	  vplcm.shrink(0);
 	  M->to_varpower(find_pairs_lcm, vplcm);
@@ -360,21 +354,21 @@ void GB_comp::find_pairs(gb_elem *p)
 	}
     }
   // Add in syzygies arising as s-pairs
-  MonomialIdeal &mi1 = monideals[p->f->comp]->mi;
-  for (Index<MonomialIdeal> i = mi1.first(); i.valid(); i++)
+  MonomialIdeal *mi1 = monideals[p->f->comp]->mi;
+  for (Index<MonomialIdeal> i = mi1->first(); i.valid(); i++)
     {
-      M->from_varpower(mi1[i]->monom().raw(), find_pairs_m);
+      M->from_varpower((*mi1)[i]->monom().raw(), find_pairs_m);
       M->lcm(find_pairs_m, f_m, find_pairs_lcm);
       vplcm.shrink(0);
       M->to_varpower(find_pairs_lcm, vplcm);
-      s_pair *q = new_s_pair(p, (gb_elem *)mi1[i]->basis_ptr(), find_pairs_lcm);
+      s_pair *q = new_s_pair(p, (gb_elem *)(*mi1)[i]->basis_ptr(), find_pairs_lcm);
       elems.insert(new Bag(q, vplcm));
     }
 
   // Add 'p' to the correct monideal
   intarray vp;
   M->to_varpower(f_m, vp);
-  mi1.insert(new Bag(p, vp));
+  mi1->insert(new Bag(p, vp));
 
   // Now minimalize these elements, and insert them into
   // the proper degree.
@@ -474,7 +468,7 @@ void GB_comp::gb_reduce(vec &f, vec &fsyz)
       M->divide(f->monom, F->base_monom(f->comp), s);
       M->to_expvector(s, div_totalexp);
       if (R->is_quotient_ring() 
-	  && R->get_quotient_monomials().search_expvector(div_totalexp, b))
+	  && R->get_quotient_monomials()->search_expvector(div_totalexp, b))
 	{
 	  Nterm *g = (Nterm *) b->basis_ptr();
 	  F->imp_ring_cancel_lead_term(f, g, coeff, reduce_ndiv);
@@ -482,7 +476,7 @@ void GB_comp::gb_reduce(vec &f, vec &fsyz)
 	  count++;
 	  nreductions++;
 	}
-      else if (monideals[f->comp]->mi_search.search_expvector(div_totalexp, b))
+      else if (monideals[f->comp]->mi_search->search_expvector(div_totalexp, b))
 	{
 	  gb_elem *q = (gb_elem *) b->basis_ptr();
 	  F->imp_cancel_lead_term(f, q->f, coeff, reduce_ndiv);
@@ -543,7 +537,7 @@ void GB_comp::gb_geo_reduce(vec &f, vec &fsyz)
       M->divide(lead->monom, F->base_monom(lead->comp), s);
       M->to_expvector(s, div_totalexp);
       if (R->is_quotient_ring() 
-	  && R->get_quotient_monomials().search_expvector(div_totalexp, b))
+	  && R->get_quotient_monomials()->search_expvector(div_totalexp, b))
 	{
 	  Nterm *g = (Nterm *) b->basis_ptr();
 	  M->divide(lead->monom, g->monom, reduce_ndiv);
@@ -553,7 +547,7 @@ void GB_comp::gb_geo_reduce(vec &f, vec &fsyz)
 	  fb.add(h);
 	  count++;
 	}
-      else if (monideals[lead->comp]->mi_search.search_expvector(div_totalexp, b))
+      else if (monideals[lead->comp]->mi_search->search_expvector(div_totalexp, b))
 	{
 	  gb_elem *q = (gb_elem *) b->basis_ptr();
 	  ring_elem c = R->Ncoeffs()->negate(lead->coeff);
@@ -630,7 +624,7 @@ void GB_comp::gb_insert(vec f, vec fsyz, int ismin)
   // insert into p->f->comp->mi_search
   intarray vp;
   M->to_varpower(f_m, vp);
-  monideals[p->f->comp]->mi_search.insert(new Bag(p, vp));
+  monideals[p->f->comp]->mi_search->insert(new Bag(p, vp));
   n_gb++;
   gb.append(p);
   M->remove(f_m);
@@ -640,7 +634,7 @@ void GB_comp::gb_insert(vec f, vec fsyz, int ismin)
   // Just make sure that when the GB is deleted at the end, that the 'f'
   // field of the gb_elem's is not removed.
 
-  gbmatrix.append(p->f);
+  gbmatrix->append(p->f);
 
   if (use_hilb)
     {
@@ -697,7 +691,7 @@ int GB_comp::s_pair_step()
     {
       if (collect_syz)
 	{
-	  syz.append(fsyz);
+	  syz->append(fsyz);
 	  return SPAIR_SYZ;
 	}
       else
@@ -742,7 +736,7 @@ int GB_comp::gen_step()
     {
       if (collect_syz)
 	{
-	  syz.append(fsyz);
+	  syz->append(fsyz);
 	  return SPAIR_SYZ;
 	}
       else
@@ -782,35 +776,6 @@ bool GB_comp::new_pairs_step()
   return true;
 }
 
-//---- Hilbert function use ---------------------------
-
-int GB_comp::coeff_of(const RingElement &h, int deg) const
-{
-  // This is a bit of a kludge of a routine.  The idea is to loop through
-  // all the terms of the polynomial h, expand out the exponent, and to add
-  // up the small integer values of the coefficients of those that have exp[0]=deg.
-  const PolynomialRing *P = h.get_ring()->cast_to_PolynomialRing();
-
-  int *exp = new int[P->n_vars()];
-  int result = 0;
-  for (Nterm *f = h.get_value(); f!=NULL; f=f->next)
-    {
-      P->Nmonoms()->to_expvector(f->monom, exp);
-      if (exp[0] < deg) 
-	{
-	  ERROR("Incorrect Hilbert function given");
-	}
-      else if (exp[0] == deg)
-	{
-	  int n = P->Ncoeffs()->coerce_to_int(f->coeff);
-	  result += n;
-	}
-	
-    }
-  delete [] exp;
-  return result;
-}
-
 //---- Completion testing -----------------------------
 
 int GB_comp::computation_complete(const int * /* stop_degree */,
@@ -837,7 +802,7 @@ int GB_comp::computation_complete(const int * /* stop_degree */,
       return COMP_DONE;
     }
   if (stop_gb > 0 && n_gb >= stop_gb) return COMP_DONE_GB_LIMIT;
-  if (stop_syz > 0 && syz.n_cols() >= stop_syz) return COMP_DONE_SYZ_LIMIT;
+  if (stop_syz > 0 && syz->n_cols() >= stop_syz) return COMP_DONE_SYZ_LIMIT;
   if (stop_pairs > 0 && n_computed >= stop_pairs) return COMP_DONE_PAIR_LIMIT;
   //if (stop_codim > 0 && ...) return COMP_DONE_CODIM;
   if (stop_min_gens && n_gens_left == 0) return COMP_DONE_MIN_GENS;
@@ -871,7 +836,7 @@ int GB_comp::calc(const int *deg, const intarray &stop)
 {
   if (stop.length() != 7) 
     {
-      gError << "inappropriate stop conditions for GB computation";
+      ERROR("inappropriate stop conditions for GB computation");
       return COMP_ERROR;
     }
   const int *stop_degree = deg;
@@ -922,7 +887,7 @@ int GB_comp::calc(const int *deg, const intarray &stop)
 		    {
 		      // Set up the Hilbert function computation
 		      delete hf_comp;
-		      hf_comp = new hilb_comp(hf_orig.get_ring()->cast_to_PolynomialRing(), 
+		      hf_comp = new hilb_comp(hf_orig->get_ring()->cast_to_PolynomialRing(), 
 					      gbmatrix);
 		      hilb_step = 2;
 		    }
@@ -934,11 +899,11 @@ int GB_comp::calc(const int *deg, const intarray &stop)
 		    }
 		  
 		  // At this point we have a completed Hilbert polynomial
-		  RingElement h = hf_comp->value();
-		  hf_diff = h - hf_orig;
+		  RingElement *h = hf_comp->value();
+		  hf_diff = (*h) - (*hf_orig);
 		  hilb_step = 0;
 		}
-	      n_in_degree = coeff_of(hf_diff, this_degree);
+	      n_in_degree = hilb_comp::coeff_of(hf_diff, this_degree);
 	      if (n_in_degree == 0) flush_pairs(this_degree);
 	    }
 	  if (comp_printlevel >= 1)
@@ -1055,36 +1020,36 @@ int GB_comp::calc(const int *deg, const intarray &stop)
 }
 
 //--- Reduction --------------------------
-Matrix GB_comp::reduce(const Matrix &m, Matrix &lift)
+Matrix *GB_comp::reduce(const Matrix *m, Matrix *&lift)
 {
-  Matrix red(m.rows(), m.cols(), m.degree_shift());
-  lift = Matrix(Fsyz, m.cols());
-  if (m.n_rows() != F->rank()) {
-       gError << "expected matrices to have same number of rows";
-       return red;
+  if (m->n_rows() != F->rank()) {
+       ERROR("expected matrices to have same number of rows");
+       return 0;
   }
-  for (int i=0; i<m.n_cols(); i++)
+  Matrix *red = new Matrix(m->rows(), m->cols(), m->degree_shift());
+  lift = new Matrix(Fsyz, m->cols());
+  for (int i=0; i<m->n_cols(); i++)
     {
-      vec f = F->translate(m.rows(),m[i]);
+      vec f = F->translate(m->rows(),(*m)[i]);
       vec fsyz = NULL;
 
       gb_reduce(f, fsyz);
       Fsyz->negate_to(fsyz);
-      red[i] = f;
-      lift[i] = fsyz;
+      (*red)[i] = f;
+      (*lift)[i] = fsyz;
     }
   return red;
 }
 
-int GB_comp::contains(const Matrix &m)
+int GB_comp::contains(const Matrix *m)
   // Return -1 if every column of 'm' reduces to zero.
   // Otherwise return the index of the first column that
   // does not reduce to zero.
 {
   // Reduce each column of m one by one.
-  for (int i=0; i<m.n_cols(); i++)
+  for (int i=0; i<m->n_cols(); i++)
     {
-      vec f = F->translate(m.rows(),m[i]);
+      vec f = F->translate(m->rows(),(*m)[i]);
       vec fsyz = NULL;
       gb_reduce(f, fsyz);
       Fsyz->remove(fsyz);
@@ -1105,12 +1070,12 @@ bool GB_comp::is_equal(const gb_comp *q)
   // Loop through every GB element: in each monideal[i]->mi_search
   for (int i=0; i<F->rank(); i++)
     {
-      Index<MonomialIdeal> j1 = this->monideals[i]->mi_search.first();
-      Index<MonomialIdeal> j2 = that->monideals[i]->mi_search.first();
+      Index<MonomialIdeal> j1 = this->monideals[i]->mi_search->first();
+      Index<MonomialIdeal> j2 = that->monideals[i]->mi_search->first();
       for (;j1.valid() && j2.valid();j1++, j2++)
 	{
-	  gb_elem *f1 = (gb_elem *) (this->monideals[i]->mi_search)[j1]->basis_ptr();
-	  gb_elem *f2 = (gb_elem *) (that->monideals[i]->mi_search)[j2]->basis_ptr();
+	  gb_elem *f1 = (gb_elem *) (*this->monideals[i]->mi_search)[j1]->basis_ptr();
+	  gb_elem *f2 = (gb_elem *) (*that->monideals[i]->mi_search)[j2]->basis_ptr();
 	  if (!F->is_equal(f1->f,f2->f))
 	    return false;
 	}
@@ -1120,42 +1085,42 @@ bool GB_comp::is_equal(const gb_comp *q)
   return true;
 }
 
-Vector GB_comp::reduce(const Vector &v, Vector &lift)
+Vector *GB_comp::reduce(const Vector *v, Vector *&lift)
 {
-  if (!v.free_of()->is_equal(F))
+  if (!v->free_of()->is_equal(F))
     {
-      gError << "reduce: vector is in incorrect free module";
-      return Vector(F, NULL);
+      ERROR("reduce: vector is in incorrect free module");
+      return 0;
     }
-  vec f = F->copy(v.get_value());
+  vec f = F->copy(v->get_value());
   vec fsyz = NULL;
 
   gb_reduce(f, fsyz);
   Fsyz->negate_to(fsyz);
 
-  lift = Vector(Fsyz, fsyz);
-  return Vector(F, f);
+  lift = Vector::make_raw(Fsyz, fsyz);
+  return Vector::make_raw(F, f);
 }
 
 //--- Obtaining matrices as output -------
-Matrix GB_comp::min_gens_matrix()
+Matrix *GB_comp::min_gens_matrix()
 {
-  Matrix result(F);
+  Matrix *result = new Matrix(F);
   for (int i=0; i<gb.length(); i++)
     if (gb[i]->is_min)
-      result.append(F->copy(gb[i]->f));
+      result->append(F->copy(gb[i]->f));
   return result;
 }
 
-Matrix GB_comp::initial_matrix(int n)
+Matrix *GB_comp::initial_matrix(int n)
 {
-  Matrix result(F);
+  Matrix *result = new Matrix(F);
   for (int i=0; i<gb.length(); i++)
-    result.append(F->lead_term(n, gb[i]->f));
+    result->append(F->lead_term(n, gb[i]->f));
   return result;
 }
 
-Matrix GB_comp::gb_matrix()
+Matrix *GB_comp::gb_matrix()
 {
   return gbmatrix;
 //  Matrix result(F);
@@ -1164,15 +1129,15 @@ Matrix GB_comp::gb_matrix()
 //  return result;
 }
 
-Matrix GB_comp::change_matrix()
+Matrix *GB_comp::change_matrix()
 {
-  Matrix result(Fsyz);
+  Matrix *result = new Matrix(Fsyz);
   for (int i=0; i<gb.length(); i++)
-    result.append(Fsyz->copy(gb[i]->fsyz));
+    result->append(Fsyz->copy(gb[i]->fsyz));
   return result;
 }
 
-Matrix GB_comp::syz_matrix()
+Matrix *GB_comp::syz_matrix()
 {
   return syz;
 }

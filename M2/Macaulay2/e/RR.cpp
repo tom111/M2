@@ -4,7 +4,6 @@
 #include <stdio.h>
 #include <math.h>
 #include "text_io.hpp"
-#include "bin_io.hpp"
 #include "monoid.hpp"
 #include "relem.hpp"
 #include "ringmap.hpp"
@@ -15,7 +14,7 @@
 #define RR_RINGELEM(a) ((ring_elem) ((Nterm *) (a)))
 
 RR::RR(const Monoid *D,double epsilon) 
-  : Ring(0,0,0,this /* Visual C WARNING */,trivial_monoid,D),
+  : Ring(0,0,0,this /* Visual C WARNING */,Monoid::get_trivial_monoid(),D),
     epsilon(epsilon)
 {
   RR_stash = new stash("RR", sizeof(RRelem_rec));
@@ -24,7 +23,7 @@ RR::RR(const Monoid *D,double epsilon)
 RR *RR::create(const Monoid *D, double epsilon)
 {
   RR *obj = new RR(D,epsilon);
-  return (RR *) intern(obj);
+  return obj;
 }
 
 RR::~RR()
@@ -98,11 +97,6 @@ void RR::elem_text_out(buffer &o, const ring_elem ap) const
       sprintf(s, "%f", a);
       o << s;
     }
-}
-
-void RR::elem_bin_out(buffer &o, const ring_elem a) const
-{
-  bin_double_out(o, RR_VAL(a));
 }
 
 ring_elem RR::from_int(int n) const
@@ -230,7 +224,7 @@ ring_elem RR::power(const ring_elem f, mpz_t n) const
 {
   int n1;
   if (!Z::get_si(n1, n)) 
-    { gError << "exponent too large"; }
+    { ERROR("exponent too large"); }
   return RR::power(f,n1);
 }
 
@@ -360,7 +354,7 @@ void RR::degree(const ring_elem, int *d) const
 {
   degree_monoid()->one(d);
 }
-void RR::degree_weights(const ring_elem, const int *, int &lo, int &hi) const
+void RR::degree_weights(const ring_elem, const M2_arrayint, int &lo, int &hi) const
 {
   lo = hi = 0;
 }
@@ -369,14 +363,14 @@ int RR::primary_degree(const ring_elem) const
   return 0;
 }
 
-ring_elem RR::homogenize(const ring_elem f, int, int deg, const int *) const
+ring_elem RR::homogenize(const ring_elem f, int, int deg, const M2_arrayint) const
 {
   if (deg != 0) 
-    gError << "homogenize: no homogenization exists";
+    ERROR("homogenize: no homogenization exists");
   return f;
 }
 
-ring_elem RR::homogenize(const ring_elem f, int, const int *) const
+ring_elem RR::homogenize(const ring_elem f, int, const M2_arrayint) const
 {
   return f;
 }

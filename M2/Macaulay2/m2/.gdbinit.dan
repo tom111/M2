@@ -1,2 +1,8 @@
+directory /src/pkgmgr/libfac/
+directory /src/pkgmgr/libfac/libfac/
+directory /src/pkgmgr/factory/
+directory /src/pkgmgr/factory/factory/
+directory /src/pkgmgr/gmp/gmp-4.1/
+directory /src/pkgmgr/gmp/gmp-4.1/mpz/
 source .gdb-files
 source .gdb-run-it

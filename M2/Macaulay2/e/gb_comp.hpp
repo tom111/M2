@@ -3,10 +3,14 @@
 #ifndef _gb_comp_hh_
 #define _gb_comp_hh_
 
-#include "object.hpp"
+#include "hash.hpp"
+#include "intarray.hpp"
 
 class binomialGB_comp;
 class sagbi_comp;
+class Matrix;
+class RingElement;
+class Vector;
 
 extern "C" char system_interrupted;
 extern int comp_printlevel;
@@ -70,7 +74,7 @@ const int STOP_MIN_GENS = 5;
 //--- above to be removed soon -----------------------------
 
 //class gb_comp : public mutable_object
-class gb_comp : public type
+class gb_comp : public mutable_object
 {
 protected:
   int _kind;  // GB_comp:1, GBinhom_comp:2, EGB1:13
@@ -80,31 +84,27 @@ public:
 
   int kind() const { return _kind; }
 
-  static gb_comp *make(Matrix &m, bool dosyz, int nsyz, int strategy);
-  static gb_comp *make(Matrix &m, bool dosyz, int nsyz, RingElement &hf, int strategy);
-  static gb_comp *force(Matrix &gens, Matrix &gb, Matrix &change, Matrix &syz);
+  static gb_comp *make(const Matrix *m, bool dosyz, int nsyz, int strategy);
+  static gb_comp *make(const Matrix *m, bool dosyz, int nsyz, const RingElement *hf, int strategy);
+  static gb_comp *force(const Matrix *gens, 
+			const Matrix *gb, 
+			const Matrix *change, 
+			const Matrix *syz);
 
   virtual int calc(const int *deg, const intarray &stop_conditions) = 0;
   
   virtual void stats() const = 0;
-  virtual Matrix min_gens_matrix() = 0;
-  virtual Matrix gb_matrix() = 0;
-  virtual Matrix syz_matrix() = 0;
-  virtual Matrix change_matrix() = 0;
-  virtual Matrix initial_matrix(int n=-1) = 0;
+  virtual Matrix *min_gens_matrix() = 0;
+  virtual Matrix *gb_matrix() = 0;
+  virtual Matrix *syz_matrix() = 0;
+  virtual Matrix *change_matrix() = 0;
+  virtual Matrix *initial_matrix(int n=-1) = 0;
 
-  virtual Matrix reduce(const Matrix &m, Matrix &result_lift) = 0;
-  virtual Vector reduce(const Vector &v, Vector &result_lift) = 0;
+  virtual Matrix *reduce(const Matrix *m, Matrix * &result_lift) = 0;
+  virtual Vector *reduce(const Vector *v, Vector * &result_lift) = 0;
 
-  virtual int contains(const Matrix &m) = 0;
+  virtual int contains(const Matrix *m) = 0;
   virtual bool is_equal(const gb_comp *q) = 0;
-
-  // Infrastructure
-  class_identifier class_id() const { return CLASS_gb_comp; }
-  type_identifier  type_id () const { return TY_GB_COMP; }
-  const char * type_name   () const { return "gb_comp"; }
-
-  gb_comp * cast_to_gb_comp   () { return this; }
 
   // These can be overridden by the specific computation
   void text_out(buffer &o) const { o << "GB computation"; }

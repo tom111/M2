@@ -1,6 +1,6 @@
 --		Copyright 1994 by Daniel R. Grayson
 
-export string := array(char);
+use C;
 import sleep(t:int):int;
 import getpid():int;
 import exit(x:int):void;

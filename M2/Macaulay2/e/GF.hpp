@@ -9,7 +9,7 @@ class GF : public Ring
   //int P; // this is defined in class Ring
   const PolynomialRing *K; // This should be the ring ((Z/p)[t])/f(t).
 
-  const RingElement primitive_element;  // An element of K
+  const RingElement *primitive_element;  // An element of K
   int x_exponent;			// (primitive_element)^(x_exponent) = x,
 					// the given generator of K.
   int Q;        // this is GF(Q) = GF(P^Qexp)
@@ -22,13 +22,11 @@ class GF : public Ring
   int *one_table;   // Indexed from 0..Q1
   int *from_int_table;
 
-  GF(const RingElement prim);
+  GF(const RingElement *prim);
 protected:
   virtual ~GF();
 public:
-  static GF * create(const RingElement prim);
-
-  class_identifier class_id() const { return CLASS_GF; }
+  static GF * create(const RingElement *prim);
 
   int to_int(int a) const;
 
@@ -59,10 +57,12 @@ public:
   virtual bool is_homogeneous(const ring_elem f) const;
   virtual void degree(const ring_elem f, int *d) const;
   virtual int primary_degree(const ring_elem f) const;
-  virtual void degree_weights(const ring_elem f, const int *wts, int &lo, int &hi) const;
+  virtual void degree_weights(const ring_elem f, const M2_arrayint wts, 
+			      int &lo, int &hi) const;
 
-  virtual ring_elem homogenize(const ring_elem f, int v, int deg, const int *wts) const;
-  virtual ring_elem homogenize(const ring_elem f, int v, const int *wts) const;
+  virtual ring_elem homogenize(const ring_elem f, int v, int deg, 
+			       const M2_arrayint wts) const;
+  virtual ring_elem homogenize(const ring_elem f, int v, const M2_arrayint wts) const;
 
   virtual ring_elem copy(const ring_elem f) const;
   virtual void remove(ring_elem &f) const;
@@ -94,7 +94,6 @@ public:
   virtual ring_elem random() const;
 
   virtual void elem_text_out(buffer &o, const ring_elem f) const;
-  virtual void elem_bin_out(buffer &o, const ring_elem f) const;
 
   virtual ring_elem eval(const RingMap *map, const ring_elem f) const;
 

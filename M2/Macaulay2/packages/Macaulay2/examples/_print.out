@@ -1,9 +1,0 @@
---package "Macaulay2Core" loaded
---package "PrimaryDecomposition" loaded
---loading the Macaulay2 documentation
---package "Macaulay2" loaded
-
-i1 : print "Hello world!"
-Hello world!
-
-i2 : 

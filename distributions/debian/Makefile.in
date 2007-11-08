@@ -8,6 +8,7 @@ include ../Makefile.filenames
 PKG_DEB = @package@-@DEBIANARCH@-@OS@.deb
 PKG_COM_DEB = @package@-all.deb
 TAROPTIONS = --owner=0 --group=0 --mode=a+rX,og-ws
+.PHONY : prepare
 ############################## main targets
 all install :: tidy_before
 all install :: ../../$(PKG_DEB) ../../$(PKG_COM_DEB)
@@ -54,7 +55,9 @@ macaulay2-common/control.tar.gz : macaulay2-common/control macaulay2-common/post
 	cd macaulay2-common && chmod 0755 postinst prerm
 	tar cfz $@ $(TAROPTIONS) -C macaulay2-common control postinst prerm
 
+.prepared : ; $(MAKE) prepare && touch $@
 prepare : ../../$(PKG_TZ) ../../$(PKG_COM_TZ)
+	rm -rf tmp@FINALPREFIX@ tmp-common@FINALPREFIX@
 	@MKDIR_P@ tmp@FINALPREFIX@
 	@MKDIR_P@ tmp-common@FINALPREFIX@
 	tar xfp ../../$(PKG_TZ) @TAR_COMPRESS_OPTION@
@@ -96,11 +99,17 @@ clean :: tidy
 	rm -rf ../../$(PKG_DEB)
 	rm -rf ../../$(PKG_COM_DEB)
 distclean : clean; rm -f Makefile control
-macaulay2/control : macaulay2/control.prelim macaulay2/data.tar.gz
+always :
+libraries-used : .prepared always
+	ldd tmp@FINALPREFIX@/@bindirtail@/M2@EXE@ | sed -e 's/.* => //' -e 's/^	//' -e 's/ .*//' | egrep '^/' | egrep `echo "@LIBFILES@" | sed -e 's=\([^ ][^ ]*\)=/\1\\\\.=g' -e 's/  */|/g'` >$@
+packages-used : libraries-used
+	cat libraries-used | while read x ; do find /var/lib/dpkg/info -name \*.list | xargs egrep -l "^$$x"; done | sort | uniq | sed -e 's=.*/==' -e 's=\.list$$==' >$@
+macaulay2/control : macaulay2/control.prelim macaulay2/data.tar.gz packages-used
 	(cat $< && \
 	 size=`gunzip<macaulay2/data.tar.gz|wc -c` && \
 	 size=`echo $$size | sed 's/^\([0-9][0-9]*\).*/\1/'` && \
-	 echo Installed-Size: $$size \
+	 echo Installed-Size: $$size && \
+	 cat packages-used | while read x ; do echo Depends: $$x ; done \
 	) >$@
 macaulay2-common/control : macaulay2-common/control.prelim macaulay2-common/data.tar.gz
 	(cat $< && \
@@ -109,6 +118,7 @@ macaulay2-common/control : macaulay2-common/control.prelim macaulay2-common/data
 	 echo Installed-Size: $$size \
 	) >$@
 Makefile : Makefile.in; cd ../..; ./config.status distributions/debian/Makefile
+macaulay2/control.prelim : macaulay2/control.prelim.in; cd ../..; ./config.status distributions/debian/macaulay2/control.prelim
 
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/distributions/debian "

@@ -2,7 +2,7 @@ Package: macaulay2
 Version: @PACKAGE_VERSION@
 Section: math
 Priority: extra
-Depends: libc6 (>= 2.3.4-1), macaulay2-common (= @PACKAGE_VERSION@)
+Depends: macaulay2-common (= @PACKAGE_VERSION@)
 Maintainer: Daniel R. Grayson <dan@math.uiuc.edu>
 Architecture: @DEBIANARCH@
 Description: a software system for algebraic geometry research

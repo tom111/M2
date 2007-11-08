@@ -5,7 +5,7 @@ TIDY = yes
 CHOWN = chown
 prefixtail=$(shell echo @FINALPREFIX@ | sed 's=^/==')
 include ../Makefile.filenames
-PKG_DEB = @package@-@DEBIANARCH@-@OS@.deb
+PKG_DEB = @package@-@UBUNTUARCH@-@OS@.deb
 PKG_COM_DEB = @package@-all.deb
 TAROPTIONS = --owner=0 --group=0 --mode=a+rX,og-ws
 .PHONY : prepare
@@ -13,7 +13,7 @@ TAROPTIONS = --owner=0 --group=0 --mode=a+rX,og-ws
 all install :: tidy_before
 all install :: ../../$(PKG_DEB) ../../$(PKG_COM_DEB)
 	@ echo "============================================================================="
-	@ echo "debian package files prepared: "
+	@ echo "ubuntu package files prepared: "
 	@ echo "        $(PKG_DEB)"
 	@ echo "        $(PKG_COM_DEB)"
 	@ echo "============================================================================="
@@ -23,15 +23,15 @@ endif
 #################################
 
 ifneq (@DEBUG@,no)
-$(error expected --disable-debug, in order to make a debian package)
+$(error expected --disable-debug, in order to make a ubuntu package)
 endif
 
 ifneq (@OPTIMIZE@,yes)
-$(error expected --enable-optimize, in order to make a debian package)
+$(error expected --enable-optimize, in order to make a ubuntu package)
 endif
 
 ifneq (@ENCAP@,yes)
-$(error expected --enable-encap, in order to make a debian package)
+$(error expected --enable-encap, in order to make a ubuntu package)
 endif
 
 ../../$(PKG_DEB) : @srcdir@/macaulay2/debian-binary macaulay2/control.tar.gz macaulay2/data.tar.gz
@@ -117,9 +117,9 @@ macaulay2-common/control : macaulay2-common/control.prelim macaulay2-common/data
 	 size=`echo $$size | sed 's/^\([0-9][0-9]*\).*/\1/'` && \
 	 echo Installed-Size: $$size \
 	) >$@
-Makefile : Makefile.in; cd ../..; ./config.status distributions/debian/Makefile
-macaulay2/control.prelim : macaulay2/control.prelim.in; cd ../..; ./config.status distributions/debian/macaulay2/control.prelim
+Makefile : Makefile.in; cd ../..; ./config.status distributions/ubuntu/Makefile
+macaulay2/control.prelim : macaulay2/control.prelim.in; cd ../..; ./config.status distributions/ubuntu/macaulay2/control.prelim
 
 # Local Variables:
-# compile-command: "make -C $M2BUILDDIR/distributions/debian "
+# compile-command: "make -C $M2BUILDDIR/distributions/ubuntu "
 # End:

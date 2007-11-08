@@ -43,11 +43,11 @@ install :: tarballs
 endif
 clean ::; rm -f ../$(PKG_TGZ) ../$(PKG_TBZ) ../$(PKG_COM_TGZ) ../$(PKG_COM_TBZ)
 
-ifeq "@DEBIAN@" "yes"
-install :: debian
+ifeq "@UBUNTU@" "yes"
+install :: ubuntu
 endif
-debian : ../$(PKG_TZ) ../$(PKG_COM_TZ) ; $(MAKE) -C debian install
-check clean distclean :: ; $(MAKE) -C debian $@
+ubuntu : ../$(PKG_TZ) ../$(PKG_COM_TZ) ; $(MAKE) -C ubuntu install
+check clean distclean :: ; $(MAKE) -C ubuntu $@
 
 ifeq "@RPM@" "yes"
 install :: rpm

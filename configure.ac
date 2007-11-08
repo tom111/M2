@@ -96,10 +96,10 @@ AC_CANONICAL_HOST()
 AC_SUBST(ARCH,$build_cpu)
 AC_DEFINE_UNQUOTED(ARCH,"$ARCH",[machine hardware type])
 
-AC_SUBST(DEBIANARCH,"")
+AC_SUBST(UBUNTUARCH,"")
 case $ARCH in
-  x86_64) DEBIANARCH=amd64 ;;
-  *) DEBIANARCH=$ARCH ;;
+  x86_64) UBUNTUARCH=amd64 ;;
+  *) UBUNTUARCH=$ARCH ;;
 esac
 
 AC_VALIDATE_CACHED_SYSTEM_TUPLE()
@@ -367,9 +367,9 @@ then ENCAP=yes STRIP=yes M2TARFILE=yes
      fi
 fi
 
-AC_SUBST(DEBIAN,no)
-AC_ARG_ENABLE(debian,  AS_HELP_STRING(--enable-debian,prepare a binary package for debian (enables encap)), DEBIAN=$enableval)
-test "$DEBIAN" = yes && ENCAP=yes M2TARFILE=yes
+AC_SUBST(UBUNTU,no)
+AC_ARG_ENABLE(debian,  AS_HELP_STRING(--enable-debian,prepare a binary package for debian (enables encap)), UBUNTU=$enableval)
+test "$UBUNTU" = yes && ENCAP=yes M2TARFILE=yes
 
 AC_SUBST(RPM,no)
 AC_ARG_ENABLE(rpm,  AS_HELP_STRING(--enable-rpm,prepare a binary rpm package (enables encap)), RPM=$enableval)
@@ -668,7 +668,7 @@ AC_SUBST(DESC,$PACKAGE_VERSION-$host_cpu-$OS-$REL)
 # by the 'configure' script, will be simply "alpha".
 
 if ! test "$FAKEROOT"
-then if test "$DEBIAN" = yes -o "$RPM" = yes
+then if test "$UBUNTU" = yes -o "$RPM" = yes
      then AC_MSG_ERROR([program "fakeroot" not installed, required for creating debian or rpm distributions])
      elif test "$M2TARFILE" = yes
      then AC_MSG_NOTICE([warning: program "fakeroot" not installed, tar file will appear to contain files not owned by root])

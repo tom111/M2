@@ -227,7 +227,7 @@ document {
      ", TT"a*r + b*s", " is the greatest common divisor ", TT "d", " of ", TT "a", "
      and ", TT "b", ".",
      PARA{},
-     "Works for integers or elements of polynomial rings.",
+     "Works for integers or elements of polynomial rings in onve variable.",
      SeeAlso => "gcd"}
 document {
      Key => mod,

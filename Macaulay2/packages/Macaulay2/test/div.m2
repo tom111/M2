@@ -21,11 +21,6 @@ R = QQ[x]
 gcdCoefficients(x,x^2-5)
 rawExtendedGCD(raw x, raw(x^2-5))
 
-R = QQ[x,y]
-a = x^5+y; b = x^6+y^2+1;
-m = gcdCoefficients(f,g)
-assert( m#0 == a*m#1 + b*m#2 )			    -- the documentation claims this will work (??)
-
 R = ZZ[x]
 gcdCoefficients(x,x^2-5)
 rawExtendedGCD(raw x, raw(x^2-5))

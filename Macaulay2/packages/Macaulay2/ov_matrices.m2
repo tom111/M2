@@ -14,7 +14,7 @@ document {
 	  TO "extracting information about a matrix",
 	  TO "basic arithmetic of matrices",
 	  TO "concatenating matrices",
- 	  TO "submatrices",
+ 	  -- Mike wanted this: TO "submatrices",
 	  TO "differentiation",
 	  "determinants and related computations",
 	  TO "rank of a matrix",
@@ -322,9 +322,12 @@ document {
        "++"
      }
 
+{*
+-- Mike wanted this: 
 document {
      Key => "submatrices",
      }
+*}
 
 document {
      Key => "differentiation",

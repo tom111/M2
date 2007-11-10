@@ -1,9 +1,10 @@
 scan((
 	  FollowLinks,Hilbert,Options,InstallPrefix,PackagePrefix,Exclude,Encapsulate,
 	  Algorithm,DebuggingMode,Dense,DivideConquer,First,Format,GBDegrees,Hermitian,CoefficientRing,Undo,SourceCode,Description,Variables,
-	  Boxes,BaseRow,HorizontalSpace,VerticalSpace,Alignment,Minimize
+	  Boxes,BaseRow,HorizontalSpace,VerticalSpace,Alignment,Minimize,FileName,Unmixed,Decompose,CompleteIntersection, AbsoluteLinks,
+	  CheckDocumentation, IgnoreExampleErrors, MakeDocumentation, MakeInfo, MakeLinks, RemakeAllDocumentation, RerunExamples, UserMode
 	  ),
-     s -> document { Key => s, "A symbol used as the name of an optional argument, for some function(s)." })
+     s -> if s =!= null then document { Key => s, "A symbol used as the name of an optional argument, for some function(s)." })
 scan((
      	  Center, Right, Left, Quotient
 	  ),

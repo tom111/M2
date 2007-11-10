@@ -800,11 +800,11 @@ installPackage Package := opts -> pkg -> (
 	       if pkg#"processed documentation"#?fkey then pkg#"processed documentation"#fkey
 	       {*
 	       else if pkg#"processed documentation database"#?fkey then value pkg#"processed documentation database"#fkey 
-	       else (
-		    if debugLevel > 0 then stderr << "--warning: missing documentation node: " << fkey << endl;
-		    );
 	       *}
-	       );
+	       else (
+		    stderr << "--warning: missing documentation node: " << fkey << endl;
+		    null
+		    ));
 
 	  -- make info file
 	  if opts.MakeInfo then (

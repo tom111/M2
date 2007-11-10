@@ -124,9 +124,11 @@ document {
      geometry and the predecessor of this program."
      }
 
+{* -- Mike wanted this: 
 document {
      Key => "preface",
      }
+*}
 
 document {
      Key => "LAYOUT",
@@ -221,9 +223,10 @@ document {
 	  }
      }
 
-
+{* -- Mike wanted this: 
 document { Key => "frequently encountered problems",
      }
+*}
 
 document {
      Key => "specifying typical values",
@@ -330,10 +333,11 @@ document {
      
      }
 
+{* -- Mike wanted this: 
 document {
      Key => "Resources required",
      }
-
+*}
 
 document {
      Key => "debugging",

@@ -55,6 +55,12 @@ document {
      SeeAlso => { cacheValue }
      }
 
+document {
+     Key => CacheFunction,
+     Headline => "the class of cache functions",
+     "Functions of class ", TO "CacheFunction", " are created and used by ", TO "cacheValue", " and by ", TO "stashValue", "."
+     }
+
 undocumented (addHook,MutableHashTable,Thing,Function)
 document {
      Key => { (addHook,HashTable,Thing,Function), addHook },
@@ -324,14 +330,6 @@ document { Key => PrimaryTag,
      Headline => "for internal use only: a symbol used in storing documentation" }
 document { Key => LoadDocumentation,
      Headline => "when loading a package, load the documentation, too" }
-document { Key => [loadPackage, LoadDocumentation],
-     Usage => "loadPackage(..., LoadDocumentation => ...)",
-     SeeAlso => beginDocumentation,
-     Consequences => {{ "when the package is loaded, the documentation is loaded, too" }}}
-document { Key => [needsPackage, LoadDocumentation],
-     Usage => "needsPackage(..., LoadDocumentation => ...)",
-     SeeAlso => beginDocumentation,
-     Consequences => {{ "when the package is loaded, the documentation is loaded, too" }}}
 document { Key => {ofClass,(ofClass, Type),(ofClass, ImmutableType),(ofClass, List)}, 
      Headline => "English phrases for types",
      Usage => "ofClass T",

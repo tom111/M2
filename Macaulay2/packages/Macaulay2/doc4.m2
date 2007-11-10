@@ -647,7 +647,7 @@ document {
      }
 
 document {
-     Key => {(getPackage,String), getPackage},
+     Key => {(getPackage,String), getPackage, CurrentVersion, [getPackage,CurrentVersion], [getPackage,Version],Repository,[getPackage,Repository]},
      Headline => "download a package from the repository",
      SYNOPSIS (
 	  Usage => ///getPackage pkgname///,

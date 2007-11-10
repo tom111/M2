@@ -67,7 +67,7 @@ document {
 	      TO "using sockets",
      	  "packages",
 	      TO "packages",
-	      TO "a sample package: Quaternions",
+	      -- Mike wanted this: TO "a sample package: Quaternions",
      	  "system facilities",
 	      TO "system facilities",
 	  "debugging",

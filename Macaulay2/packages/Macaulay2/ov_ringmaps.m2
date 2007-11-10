@@ -90,7 +90,7 @@ document {
 	  TO "basic construction, source and target of a ring map",
 	  TO "evaluation and composition of ring maps",
 	  TO "kernel and image of a ring map",
-	  TO "preimage of an ideal",
+	  -- Mike wanted this: TO "preimage of an ideal",
 	  TO "graphIdeal",
 	  TO "graphRing"
 	  },

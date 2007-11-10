@@ -33,7 +33,7 @@ document {
 	  TO "a first Macaulay 2 session",
 	  TO "reading the documentation",
 	  TO "getting help or reporting bugs",
-	  TO "what to read next??"
+	  -- Mike wanted this: TO "what to read next??"
 	  }
      }
 
@@ -588,10 +588,12 @@ document {
      try to handle these requests quickly."
      }
 
+{*
+-- Mike wanted this: 
 document {
      Key => "what to read next??",
      }
-
+*}
 
 document {
      Key => "a first Macaulay 2 session",

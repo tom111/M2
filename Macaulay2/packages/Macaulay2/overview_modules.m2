@@ -798,9 +798,11 @@ document {
      }
 
 -- no links to this node
+{* -- Mike wanted this: 
 document {
      Key => "kernel, cokernel and image of a map of modules",
      }
+*}
 
 -- no links to this node
 document {
@@ -815,6 +817,8 @@ document {
 	  },
      "Include here: generators, relations."
      }
+
+{* -- Mike wanted this: 
 
 -- no links to this node
 document {
@@ -836,4 +840,5 @@ document {
 document {
      Key => "Hom module",
      }
+*}
 

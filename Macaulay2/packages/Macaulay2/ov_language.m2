@@ -950,6 +950,16 @@ sp := seeParsing()
 dictionaryPath = select(dictionaryPath, d -> d =!= Core#"private dictionary")
 
 document {
+     Key => seeParsing,
+     Usage => "seeParsing()",
+     Headline => "display parsing precedence table for Macaulay2 operators",
+     PARA {
+	  "We intend to eliminate this function in favor of ", TO "operatorAttributes", "."
+	  },
+     SeeAlso => {"parsing precedence, in detail"}
+     }
+
+document {
      Key => "parsing precedence, in detail",
      "A newline ends a statement if it can, otherwise it acts like any
      white space.",

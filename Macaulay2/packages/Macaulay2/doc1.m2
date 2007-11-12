@@ -1,12 +1,13 @@
 scan((
-	  FollowLinks,Hilbert,Options,InstallPrefix,PackagePrefix,Exclude,Encapsulate,
+	  FollowLinks,Hilbert,Options,InstallPrefix,PackagePrefix,Exclude,Encapsulate,CompleteIntersection,MaximalRank,MaxReductionCount,Reverse,
 	  Algorithm,DebuggingMode,Dense,DivideConquer,First,Format,GBDegrees,Hermitian,CoefficientRing,Undo,SourceCode,Description,Variables,
-	  Boxes,BaseRow,HorizontalSpace,VerticalSpace,Alignment,Minimize,FileName,Unmixed,Decompose,CompleteIntersection, AbsoluteLinks,
-	  CheckDocumentation, IgnoreExampleErrors, MakeDocumentation, MakeInfo, MakeLinks, RemakeAllDocumentation, RerunExamples, UserMode
+	  Boxes,BaseRow,HorizontalSpace,VerticalSpace,Alignment,Minimize,FileName,Unmixed,Decompose, AbsoluteLinks,
+	  CheckDocumentation, IgnoreExampleErrors, MakeDocumentation, MakeInfo, MakeLinks, RemakeAllDocumentation, RerunExamples, UserMode, Generic,
+	  KeepZeroes
 	  ),
      s -> if s =!= null then document { Key => s, "A symbol used as the name of an optional argument, for some function(s)." })
 scan((
-     	  Center, Right, Left, Quotient
+     	  Center, Right, Left, Quotient, Intersection
 	  ),
      s -> document { Key => s, "A symbol used as the value of an optional argument, for some function(s)." })
 
@@ -349,10 +350,20 @@ document {
      "This function should be replaced by something more generally useful."
      }
 document {
-     Key => {baseName,(baseName, Symbol),(baseName, IndexedVariable),(baseName, RingElement),(baseName, Subscript),(baseName, Holder)},
+     Key => {baseName,(baseName, Symbol),(baseName, IndexedVariable),(baseName, RingElement),
+	  (baseName, Subscript),(baseName, Holder),(baseName,IndexedVariableTable)},
      Headline => "the base name of a generator",
-     TT "baseName x", " -- returns the variable or symbol upon which a generator of a
-     monoid or polynomial ring is based."
+     TT "baseName x", " -- returns the variable or symbol upon which an indexed variable table
+     or a generator of a monoid or polynomial ring is based.",
+     EXAMPLE lines ///
+     	  R = QQ[x_1 .. x_4,y]
+	  y
+	  baseName y
+	  x_1
+	  baseName x_1
+	  x
+	  baseName x
+     ///
      }
 document {
      Key => {isIsomorphism,(isIsomorphism, Matrix)},
@@ -709,7 +720,7 @@ document {
      SeeAlso =>{ ".", "#?" }
      }
 
-undocumented (autoload, Function, String)
+undocumented {(autoload, Function, String)}
 document {
      Key => {(autoload, Symbol, String),autoload},
      Headline => "arrange for a function to be loaded automatically",

@@ -70,6 +70,21 @@ document {
      }
 
 document {
+     Key => Standard,
+     Headline => "the standard top level printing method",
+     "This symbol is used (tentatively) as the first element of a pair to specify various top level interpreter methods.",
+     SeeAlso => { TeXmacs, Print, NoPrint, BeforePrint, AfterPrint,AfterNoPrint}
+     }
+
+document {
+     Key => TeXmacs,
+     Headline => "the TeXmacs top level printing method",
+     "This symbol is used (tentatively) as the first element of a pair to specify various top level interpreter methods, in connection with
+     the use of TeXmacs as front end.",
+     SeeAlso => { Standard, Print, NoPrint, BeforePrint, AfterPrint,AfterNoPrint}
+     }
+
+document {
      Key => Print,
      Headline => "top level method for printing results",
      Usage => "X#{Standard,Print} = f",
@@ -182,15 +197,14 @@ document {
 document {
      Key => Function,
      Headline => "the class of all functions",
-     "Common ways to make a function:",
-     UL {
-	  TO "->"
-	  },
-     "Returning from functions:",
-     UL {
-	  TO "return"
-	  },
-     SeeAlso => "functions"
+     SeeAlso => { 
+	  "using functions",
+	  "using functions with optional inputs",
+	  "making functions",
+	  "local variables in a function",
+	  "making functions with a variable number of arguments",
+	  "making new functions with optional arguments"
+	  }
      }
 
 document {

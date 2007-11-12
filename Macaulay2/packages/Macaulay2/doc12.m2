@@ -585,7 +585,7 @@ undocumented {
      (symbol _,Expression,Thing), (symbol _,Thing,Expression)
      }
 
-undocumented {(value, RingElement),(value, Nothing)}
+undocumented {(value, RingElement),(value, Nothing), (value, IndexedVariableTable)}
 
 document {
      Key => {Expression,

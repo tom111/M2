@@ -885,10 +885,11 @@ document { Key => Wrap,
 
 document { Key => {BettiTally,
 	  (symbol ++,BettiTally,BettiTally), 
-	  (symbol **,BettiTally,BettiTally), 
+	  (symbol **,BettiTally,BettiTally), (symbol *,QQ,BettiTally),(symbol *,ZZ,BettiTally),(lift, BettiTally, ZZ),
 	  (symbol SPACE,BettiTally,Array), 
-	  (dual,BettiTally),
-	  (regularity,BettiTally)},
+	  (dual,BettiTally),(degree, BettiTally),(codim, BettiTally),(regularity,BettiTally),(hilbertPolynomial, ZZ, BettiTally),
+	  (hilbertSeries, ZZ, BettiTally),(pdim, BettiTally),(poincare, BettiTally)
+	  },
      Headline => "the class of all Betti tallies",
      "A Betti tally is a special type of ", TO "Tally", " that is printed as a display of 
      graded Betti numbers.  The class was created
@@ -903,16 +904,33 @@ document { Key => {BettiTally,
 	  peek oo
      ///,
      "For convenience, the operations of direct sum (", TO "++", "), tensor product (", TO "**", "), ", 
-     TO "dual", ", ", TO regularity, ", and degree shifting (numbers in brackets), have
+     TO codim, ", ",
+     TO degree, ", ",
+     TO dual, ", ",
+     TO hilbertPolynomial, ", ",
+     TO hilbertSeries, ", ",
+     TO pdim, ", ",
+     TO poincare, ", ",
+     TO regularity, ", and degree shifting (numbers in brackets or parentheses), have
      been implemented for Betti tallies.  These operations mimic the corresponding operations on chain complexes.",
      EXAMPLE lines ///
-     	  t ++ t[-5]
+     	  t(5)
+     	  t[-5]
+     	  t ++ oo
 	  t ** t
 	  dual t
 	  regularity t
      ///,
-     "Different combinations of the degree vectors can be displayed by using ", TO (betti,BettiTally), "."
+     "A Betti tally can be multiplied by an integer or by a rational number, and the values can be lifted
+     to integers, when possible.",
+     EXAMPLE lines ///
+     	  (1/2) * t
+	  2 * oo
+	  lift(oo,ZZ)
+     ///,     
+     "Various combinations of the degree vectors can be displayed by using ", TO (betti,BettiTally), "."
      }
+
 document { Key => (betti,BettiTally),
      Headline => "view and set the weights of a betti display",
      Usage => "betti(t, Weights=>w)",

@@ -408,7 +408,6 @@ export {
 	symbol TT,
 	symbol Table,
         symbol TeXmacs,
-        symbol TeXmacsEvaluate,
 	symbol Tally,
 	symbol Thing,
 	symbol Time,

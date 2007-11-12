@@ -246,7 +246,10 @@ makeTree := x -> (
      else (
 	  if not missingReferences#?x then (
 	       missingReferences#x = true;
-	       if chkdoc then stderr << "--warning: missing reference to documentation as subnode: " << x << endl;
+	       if chkdoc then (
+	       	    stderr << "--warning: missing reference to documentation as subnode: " << x << endl;
+		    -- error("missing reference to documentation as subnode: ", toString x);
+		    );
 	       );
 	  new TreeNode from { x , new ForestNode}
 	  ))
@@ -646,18 +649,6 @@ installPackage Package := opts -> pkg -> (
 		    str();
 		    ));
 
-     	  {*
-     	  -- Make sure the processed documentation database exists, even if empty, so when running the examples,
-	  -- M2 doesn't read in all the documentation sources each time.  For the package Macaulay2 this makes a big
-	  -- difference.
-	  dbname := docDir | "documentation" | databaseSuffix;
-     	  if opts.RemakeAllDocumentation and fileExists dbname then removeFile dbname;
-     	  if not fileExists dbname then (
-	       stderr << "--creating empty database for processed documentation in " << dbname << endl;
-	       close openDatabaseOut dbname;
-	       );
-     	  *}
-
 	  -- make example output files, or else copy them from old package directory tree
 	  exampleDir' := realpath(currentSourceDir|buildPackage|"/examples") | "/";
 	  infn' := fkey -> exampleDir'|toFilename fkey|".m2";
@@ -718,7 +709,9 @@ installPackage Package := opts -> pkg -> (
 		    )
 	       else (
 		    fkey := DocumentTag.FormattedKey tag;
-		    if not opts.RemakeAllDocumentation and rawDocUnchanged#?fkey then (
+		    if not opts.MakeInfo 		    -- when making the info file, we need to process all the documentation
+		    and not opts.RemakeAllDocumentation
+		    and rawDocUnchanged#?fkey then (
 			 if debugLevel > 0 then stderr << "--skipping     " << tag << endl;
 			 )
 		    else (
@@ -733,32 +726,9 @@ installPackage Package := opts -> pkg -> (
 		    )
 	       );
 
-          {*
-     	  -- the processed documentation database isn't used
-
-	  -- cache processed documentation in database
-	  dbnametmp := dbname | ".tmp";
-	  if fileExists dbnametmp then removeFile dbnametmp;
-	  if fileExists dbname then (
-	       tmp2 := openDatabase dbname;   -- just to make sure the database file isn't open for writing
-	       copyFile(dbname,dbnametmp);
-	       close tmp2;
-	       );
-	  stderr << "--storing processed documentation in " << dbname << endl;
-	  prockey := "processed documentation database";
-	  if pkg#?prockey and isOpen pkg#prockey then close pkg#prockey;
-	  docDatabase := openDatabaseOut dbnametmp;
-	  scan(pairs pkg#"processed documentation", (k,v) -> docDatabase#k = toExternalString v);
-	  close docDatabase;
-     	  *}
-
 	  shield (
-     --	       moveFile(dbnametmp,dbname);
 	       moveFile(rawdbnametmp,rawdbname);
 	       );
-
-     --   pkg#prockey = openDatabase dbname;
-     --	  addEndFunction(() -> if pkg#?prockey and isOpen pkg#prockey then close pkg#prockey);
 
 	  rawkey := "raw documentation database";
 	  pkg#rawkey = openDatabase rawdbname;
@@ -798,13 +768,8 @@ installPackage Package := opts -> pkg -> (
 	  -- helper routine
 	  getPDoc := fkey -> (
 	       if pkg#"processed documentation"#?fkey then pkg#"processed documentation"#fkey
-	       {*
-	       else if pkg#"processed documentation database"#?fkey then value pkg#"processed documentation database"#fkey 
-	       *}
-	       else (
-		    stderr << "--warning: missing documentation node: " << fkey << endl;
-		    null
-		    ));
+	       else error("internal error: documentation node not processed yet: ",fkey)
+	       );
 
 	  -- make info file
 	  if opts.MakeInfo then (

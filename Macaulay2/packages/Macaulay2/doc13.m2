@@ -61,7 +61,7 @@ document {
      "Functions of class ", TO "CacheFunction", " are created and used by ", TO "cacheValue", " and by ", TO "stashValue", "."
      }
 
-undocumented (addHook,MutableHashTable,Thing,Function)
+undocumented {(addHook,MutableHashTable,Thing,Function)}
 document {
      Key => { (addHook,HashTable,Thing,Function), addHook },
      Headline => "add a hook function to an object for later processing",
@@ -73,7 +73,7 @@ document {
      SourceCode => {(addHook,HashTable,Thing,Function), (addHook,MutableHashTable,Thing,Function)},
      SeeAlso => { runHooks, removeHook }
      }
-undocumented (removeHook,MutableHashTable,Thing,Function)
+undocumented {(removeHook,MutableHashTable,Thing,Function)}
 document {
      Key => { (removeHook,HashTable,Thing,Function), removeHook },
      Headline => "remove a hook function from an object",
@@ -85,7 +85,7 @@ document {
      SourceCode => {(removeHook,HashTable,Thing,Function), (removeHook,MutableHashTable,Thing,Function)},
      SeeAlso => { runHooks, removeHook }
      }
-undocumented (runHooks,MutableHashTable,Thing,Thing)
+undocumented {(runHooks,MutableHashTable,Thing,Thing)}
 document {
      Key => { (runHooks,HashTable,Thing,Thing), runHooks },
      Headline => "run the hook functions stored in an object",
@@ -101,7 +101,7 @@ document {
      SourceCode => { (runHooks,HashTable,Thing,Thing), (runHooks,MutableHashTable,Thing,Thing) },
      SeeAlso => { addHook, removeHook }
      }
-undocumented (generateAssertions, List)
+undocumented {(generateAssertions, List)}
 document { Key => {generateAssertions,(generateAssertions, String)},
      Headline => "generate assert statements from experimental input",
      Usage => "generateAssertions x",

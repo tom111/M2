@@ -357,7 +357,8 @@ makeMonoid := (opts) -> (
      opts = new OptionTable from opts;
      makeit1 opts)
 
-monoid Array := monoid List := opts -> args -> (
+monoid List := opts -> args -> monoid (new Array from args, opts, Local => true)
+monoid Array := opts -> args -> (
      (opts,args) = override(opts,toSequence args);
      if opts.Variables === null
      then opts = merge(opts, new OptionTable from {Variables => deepSplice sequence args}, last)

@@ -310,7 +310,8 @@ document {
      PARA{},
      "Indicates that the Groebner basis should be sorted by lead term; usually
      this is a bad idea.  Normally the basis is sorted only by degree. The
-     running time can change either for the good or bad."
+     running time can change either for the good or bad.",
+     SeeAlso => {[gb,Strategy]}
      }
 
 document {
@@ -318,7 +319,8 @@ document {
      TT "Homogeneous", " -- a strategy used with the keyword ", TO "Strategy", ".",
      PARA{},
      "This is an alternate Groebner basis algorithm which can be used if the submodule
-     is homogeneous, and the ring is a (quotient of) a polynomial ring over a field."
+     is homogeneous, and the ring is a (quotient of) a polynomial ring over a field.",
+     SeeAlso => {[gb,Strategy]}
      }
 
 document {
@@ -326,7 +328,8 @@ document {
      TT "Inhomogeneous", " -- a strategy used with the keyword ", TO "Strategy", ".",
      PARA{},
      "This is the default Groebner basis algorithm used if the submodule is
-     inhomogeneous, and the ring is a (quotient of) a polynomial ring over a field."
+     inhomogeneous, and the ring is a (quotient of) a polynomial ring over a field.",
+     SeeAlso => {[gb,Strategy]}
      }
 
 document {
@@ -337,7 +340,8 @@ document {
      routine will be replaced by one which will handle long polynomials more
      efficiently using \"geobuckets\", which accomodate the terms in buckets
      of geometrically increasing length.  This method was first used
-     successfully by Thomas Yan, graduate student in CS at Cornell."
+     successfully by Thomas Yan, graduate student in CS at Cornell.",
+     SeeAlso => {[gb,Strategy]}
      }
 
 document {

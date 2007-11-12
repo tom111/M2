@@ -347,6 +347,17 @@ document {
      behind the scenes, so may not get garbage collected, even if ", TT "t", " is a local variable."
      }
 document {
+     Key => IndexedVariableTable,
+     "This class is used as part of the implementation indexed variables.  Objects of this class contain
+     the values of the indexed variables that share the same base.",
+     EXAMPLE lines ///
+     	  p_1 = a
+	  p_2 = b
+	  p
+	  peek p
+     ///
+     }
+document {
      Key => MonoidElement,
      Headline => "the class of all monoid elements",
      SeeAlso => "monoid"}

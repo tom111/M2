@@ -30,7 +30,7 @@ document {
 	       -- Mike wanted this: TO "saturation",
 	       -- Mike wanted this: TO "fibers of a map between varieties",
 	       -- Mike wanted this: TO "solving systems of polynomial equations",
-     	       TO "integralClosure",
+     	       -- Mike wanted this, but it's in another package (!): TO "integralClosure",
      	       TO "primaryDecomposition",
 	       TO "combinatorial functions",
           "The Macaulay 2 Language",

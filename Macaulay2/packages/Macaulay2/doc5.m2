@@ -235,7 +235,22 @@ assert( a == 3 )
 document {
      Key => Tally,
      Headline => "the class of all tally results",
-     TT "Tally", " -- a class designed to hold tally results, i.e., multisets."
+     TT "Tally", " -- a class designed to hold tally results, i.e., multisets.",
+     SeeAlso => {VirtualTally}
+     }
+
+document {
+     Key => VirtualTally,
+     "The only difference between this class and ", TO "Tally", " is that this class allows negative numbers.",
+     EXAMPLE lines ///
+     	  x = tally {a,b,b,c,c,c}
+     	  y = tally {a,a,a,b,b,c}
+     	  x' = new VirtualTally from x
+     	  y' = new VirtualTally from y
+	  x-y
+	  x'-y'
+     ///,
+     SeeAlso => { BettiTally }
      }
 
 document {

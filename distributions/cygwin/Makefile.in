@@ -44,7 +44,7 @@ server/Macaulay2/@package@-@CYGWIN_RELEASE@.tar.bz2 : Makefile server/Macaulay2 
 	rm -rf files
 	mkdir files
 	@MKDIR_P@ files$(prefixdir)
-	@FAKEROOT@ tar xzf ../../@PKG_TGZ@ -C files$(prefixdir)
+	@FAKEROOT@ tar xzf ../../$(PKG_TGZ) -C files$(prefixdir)
 	mv files$(prefixdir)/@package@ files$(prefixdir)/$(prefixtail)
 	cd files$(finalprefix) && rm -f INSTALL encapinfo postinstall preremove
 	@MKDIR_P@ files/etc/postinstall files@FINALPREFIX@

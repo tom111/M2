@@ -23,6 +23,7 @@ $(error expected --enable-encap, in order to make a cygwin package)
 endif
 
 include ../../include/config.Makefile
+include ../Makefile.filenames
 VPATH = @srcdir@
 
 finalprefix=@FINALPREFIX@

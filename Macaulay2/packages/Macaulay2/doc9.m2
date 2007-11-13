@@ -1,4 +1,19 @@
+-- -*- coding: utf-8 -*-
 --		Copyright 1993-2007 by Daniel R. Grayson 
+
+document {
+     Key => {(markedGB, Matrix, Matrix), markedGB},
+     Usage => "markedGB(lt,m)",
+     Headline => "make a marked Gröbner basis",
+     Inputs => {
+	  "lt" => {"the matrix of monomials in (the columns of) m to mark as lead terms, with respect to an
+	       unspecified monomial ordering"},
+	  "m" => {"the matrix whose columns are to form the generators of a Gröbner basis"}
+	  },
+     Outputs => {
+	  GroebnerBasis => {"the resulting Gröbner basis"}
+	  }
+     }
 
 document {
      Key => utf8,
@@ -6,7 +21,7 @@ document {
      SYNOPSIS (
      	  Usage => "utf8 x",
 	  Inputs => {
-	       "x" => List => {"a list of small natural numbers to serve as characgter codes"}
+	       "x" => List => {"a list of small natural numbers to serve as character codes"}
 	       },
 	  Outputs => {
 	       String => {"a string obtained by encoding the character codes in ", TT "x", " according to the utf-8 encoding standard"}

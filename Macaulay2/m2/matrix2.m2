@@ -287,7 +287,7 @@ Matrix % RingElement := (f,r) -> f % (r * id_(target f))    -- this could be spe
 index = method()
 index RingElement := f -> rawIndexIfVariable raw f
 
-degree (RingElement, RingElement) := opts -> (x,f) -> (
+degree (RingElement, RingElement) := (x,f) -> (
      if index x === null then error "expected a variable";
      first max degrees source first coefficients(f,Variables=>x)
      )

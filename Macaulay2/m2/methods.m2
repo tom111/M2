@@ -154,7 +154,7 @@ setupMethods((), {
 use = method()
 use Thing := identity
 
-degree = method ( Options => { Weights => null } )
+degree = method ( )
 
 random = method(Options => {
 	  MaximalRank => false

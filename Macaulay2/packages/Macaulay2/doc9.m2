@@ -2,11 +2,32 @@
 --		Copyright 1993-2007 by Daniel R. Grayson 
 
 document {
+     Key => {powermod,(powermod,ZZ,ZZ,ZZ)},
+     Headline => "powers of integers mod N",
+     Usage => "powermod(x,i,N)",
+     Inputs => {
+	  "x" => ZZ,
+	  "i" => ZZ,
+	  "N" => ZZ
+	  },
+     Outputs => {
+	  ZZ => {"the ", TT "i", "-th power of ", TT "x", " modulo ", TT "N"}
+	  },
+     EXAMPLE lines ///
+     	  powermod(2,3,10)
+     	  powermod(2,4,10)
+     	  powermod(2,30000,100000)
+     	  powermod(2,30000,100000000000000000000)
+	  powermod(2,3331333,3331333)
+     ///
+     }     
+
+document {
      Key => {(markedGB, Matrix, Matrix), markedGB},
      Usage => "markedGB(lt,m)",
      Headline => "make a marked Gröbner basis",
      Inputs => {
-	  "lt" => {"the matrix of monomials in (the columns of) m to mark as lead terms, with respect to an
+	  "lt" => {"the matrix of monomials in (the columns of) ", TT "m", " to mark as lead terms, with respect to an
 	       unspecified monomial ordering"},
 	  "m" => {"the matrix whose columns are to form the generators of a Gröbner basis"}
 	  },

@@ -368,7 +368,7 @@ then ENCAP=yes STRIP=yes M2TARFILE=yes
 fi
 
 AC_SUBST(UBUNTU,no)
-AC_ARG_ENABLE(debian,  AS_HELP_STRING(--enable-debian,prepare a binary package for debian (enables encap)), UBUNTU=$enableval)
+AC_ARG_ENABLE(ubuntu,  AS_HELP_STRING(--enable-ubuntu,prepare a binary package for ubuntu (enables encap)), UBUNTU=$enableval)
 test "$UBUNTU" = yes && ENCAP=yes M2TARFILE=yes
 
 AC_SUBST(RPM,no)
@@ -561,7 +561,7 @@ fi
 
 AC_SUBST(FINALPREFIX,/usr)
 AC_ARG_WITH(final-prefix,
-    AS_HELP_STRING(--with-final-prefix=...,final installation prefix (/usr) (used by libtool and debian installation scripts)),
+    AS_HELP_STRING(--with-final-prefix=...,final installation prefix (/usr) (used by libtool and ubuntu installation scripts)),
     FINALPREFIX=$withval)
 case $FINALPREFIX in
     /*) ;;
@@ -669,7 +669,7 @@ AC_SUBST(DESC,$PACKAGE_VERSION-$host_cpu-$OS-$REL)
 
 if ! test "$FAKEROOT"
 then if test "$UBUNTU" = yes -o "$RPM" = yes
-     then AC_MSG_ERROR([program "fakeroot" not installed, required for creating debian or rpm distributions])
+     then AC_MSG_ERROR([program "fakeroot" not installed, required for creating ubuntu or rpm distributions])
      elif test "$M2TARFILE" = yes
      then AC_MSG_NOTICE([warning: program "fakeroot" not installed, tar file will appear to contain files not owned by root])
      fi

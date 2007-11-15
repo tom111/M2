@@ -114,7 +114,7 @@ sum ChainComplexMap := Matrix => f -> (
 	       map(tar, src, matrix table(t,s,
 		    	 (j,i) -> if j == i+d then f_i else map(T_j,S_i,0))))))
 
-degree ChainComplexMap := opts -> f -> f.degree
+degree ChainComplexMap := f -> f.degree
 
 net ChainComplexMap := f -> (
      complete f;
@@ -723,7 +723,7 @@ hilbertPolynomial(ZZ,BettiTally) := o -> (nvars,B) -> (
      else sum(p, (d,c) -> (
 	       if #d === 0 then d = 0 else d = d#0;
 	       c * hilbertFunctionQ(n,-d))))
-degree BettiTally := o -> (B) -> (
+degree BettiTally := (B) -> (
      f := poincare B;
      if f === 0 then return 0;
      T := (ring f)_0;

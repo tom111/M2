@@ -203,6 +203,7 @@ document {
 	  "making functions",
 	  "local variables in a function",
 	  "making functions with a variable number of arguments",
+	  "making functions with multiple return values",
 	  "making new functions with optional arguments"
 	  }
      }
@@ -1820,6 +1821,30 @@ document {
       	  "random(R^{1,2,3},R^{1,2,3})"
 	  },
      SeeAlso => {"setRandomSeed"}
+     }
+
+document {
+     Key => (random,List),
+     Headline => "shuffle a list randomly",
+     Usage => "random x",
+     Inputs => { "x" },
+     Outputs => { List => {"a new list containing the elements of ", TT "x", " in a shuffled random order"} },
+     EXAMPLE lines ///
+     	  random toList (0 .. 12)
+     ///
+     }
+
+document {
+     Key => {scanLines, (scanLines,Function,String)},
+     Headline => "apply a function to each line of a file",
+     Usage => "scanLines(f,fn)",
+     Inputs => { "f", "fn" => "the name of a file" },
+     Outputs => {
+	  {
+	       "returns ", TO "null", " unless the function uses ", TT "break x", " with a non-null value for ", TT "x", ",
+	       in which case scanning stops and ", TT "x", " is returned immediately"
+	       }
+	  }
      }
 
 document {

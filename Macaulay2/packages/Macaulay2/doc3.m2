@@ -931,7 +931,7 @@ document { Key => {BettiTally,
      "Various combinations of the degree vectors can be displayed by using ", TO (betti,BettiTally), "."
      }
 
-document { Key => (betti,BettiTally),
+document { Key => {(betti,BettiTally)},
      Headline => "view and set the weights of a betti display",
      Usage => "betti(t, Weights=>w)",
      Inputs => { 

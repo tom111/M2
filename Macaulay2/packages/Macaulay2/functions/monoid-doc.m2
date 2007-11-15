@@ -1,7 +1,7 @@
 document {
      Key => {monoid,(monoid, Array),(monoid, List),(monoid, PolynomialRing),(monoid, QuotientRing), [monoid,DegreeRank], DegreeRank,Heft,[monoid,Heft],
 	  Inverses,[monoid,Inverses],MonomialSize,[monoid,MonomialSize],VariableBaseName,[monoid,VariableBaseName],
-	  WeylAlgebra,[monoid,WeylAlgebra],
+	  WeylAlgebra,[monoid,WeylAlgebra],[monoid, Weights],
 	  [monoid,Degrees],Degrees,
 	  -- [monoid,Local],
 	  SkewCommutative,[monoid,SkewCommutative],

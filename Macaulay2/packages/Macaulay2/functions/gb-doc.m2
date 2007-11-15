@@ -80,7 +80,7 @@ document {
 	  (generators,GroebnerBasis),
 	  "gbTrace",
 	  installHilbertFunction,
-	  installGroebner,
+	  -- Mike wanted this: installGroebner,
 	  gbSnapshot,
 	  gbRemove
 	  }

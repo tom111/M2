@@ -171,7 +171,7 @@ ProjectiveHilbertPolynomial + ProjectiveHilbertPolynomial := ProjectiveHilbertPo
 ProjectiveHilbertPolynomial - ProjectiveHilbertPolynomial := ProjectiveHilbertPolynomial => (h,k) -> h + -k
 ProjectiveHilbertPolynomial == ProjectiveHilbertPolynomial := (h,k) -> h === k
 dim ProjectiveHilbertPolynomial := (P) -> if #P === 0 then -1 else max keys P
-degree ProjectiveHilbertPolynomial := opts -> (P) -> if #P === 0 then 0 else P#(dim P)
+degree ProjectiveHilbertPolynomial := (P) -> if #P === 0 then 0 else P#(dim P)
 ZZ * ProjectiveHilbertPolynomial := ProjectiveHilbertPolynomial => (b,h) -> (
      if b === 1 then h 
      else if b === 0 then new ProjectiveHilbertPolynomial from {}
@@ -277,14 +277,14 @@ dim Module := M -> (
 
 fixZZ := x -> if liftable(x,ZZ) then lift(x,ZZ) else x
 
-degree Ring := opts -> R -> degree(R^1, opts)
+degree Ring := R -> degree R^1
 degree Module := (
      () -> (
      	  -- constants:
 	       ZZ1 := degreesRing 1;
 	       T := ZZ1_0;
 	       h := 1 - T;
-	  opts -> M -> (				    -- ignoring Weights option; the user can adjust afterward
+	  M -> (
 	       ev := map(ZZ,ZZ1,{1});			    -- ring maps are defined later
 	       hs := hilbertSeries M;
 	       hn := numerator hs;

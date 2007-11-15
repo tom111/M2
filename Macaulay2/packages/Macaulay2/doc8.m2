@@ -774,7 +774,12 @@ document {
      }
 
 document {
-     Key => {newRing,(newRing, Ring)},
+     Key => {newRing,(newRing, Ring),
+	  [newRing, Degrees], [newRing, Variables], [newRing, ConstantCoefficients],
+	  [newRing, Heft], [newRing, MonomialOrder], [newRing, VariableBaseName],
+     	  [newRing, DegreeRank], [newRing, Local], [newRing, Weights],
+	  [newRing, MonomialSize], [newRing, Inverses], [newRing, WeylAlgebra], [newRing, SkewCommutative], [newRing, Global]
+	  },
      Headline => "make a copy of a ring, with some features changed",
      TT "newRing(R,options)", " -- yields a ring similar to R, with 
      certain features changed.",

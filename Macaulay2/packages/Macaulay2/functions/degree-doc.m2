@@ -3,29 +3,6 @@
 --- notes: 
 
 document {
-     Key => "xdegree (old)",
-     Headline => "the degree",
-     TT "degree X", " -- returns the degree of a polynomial, vector, 
-     matrix, monomial, or module.",
-     PARA{},
-     "The degree may be an integer, or a vector of integers.  The length
-     of that vector is referred to as the 'number of degrees', and is
-     provided by ", TO "degreeLength", ".",
-     PARA{},
-     EXAMPLE {
-	  "R = ZZ/101[x,y,z]",
-      	  "degree (x^2+y^2)^5",
-      	  "F = R^{2,3,4}",
-      	  "v = F_2",
-      	  "degree v",
-	  },
-     "The degree of a module of finite length is the same as its length.",
-     EXAMPLE "degree cokernel symmetricPower ( 2, vars R )",
-     PARA{},
-     "Implemented with a method of the same name."
-     }
-
-document {
      Key => Parenthesize,
      "This class is used internally to implement the parentheses inserted by ", TO "parts", "."
      }

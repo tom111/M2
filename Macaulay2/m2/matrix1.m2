@@ -537,7 +537,7 @@ dim Ideal := I -> dim cokernel generators I
 codim Ideal := opts -> I -> codim( cokernel generators I, opts)
 Ideal + Ideal := Ideal => (I,J) -> ideal (generators I | generators J)
 Ideal + RingElement := (I,r) -> I + ideal r
-degree Ideal := opts -> I -> degree(cokernel generators I, opts)
+degree Ideal := I -> degree cokernel generators I
 trim Ideal := Ideal => options -> (cacheValue symbol trim) ((I) -> ideal trim(module I, options))
 Ideal _ ZZ := RingElement => (I,n) -> (generators I)_(0,n)
 Matrix % Ideal := Matrix => (f,I) -> f % gb I
@@ -670,7 +670,7 @@ entries Matrix := (m) -> (
 
 getshift := (f) -> rawMultiDegree f.RawMatrix
 
-degree Matrix := List => opts -> (f) -> (
+degree Matrix := List => (f) -> (
      M := source f;
      N := target f;
      d := getshift f;

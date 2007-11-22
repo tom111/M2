@@ -29,3 +29,7 @@ time (g,t,s) = smithNormalForm ( f = random(R^8,R^3,MaximalRank=>true) * matrix 
 time assert ( t*f*s == g )
 time assert ( # pivots g == 3 )
 
+-- strange bug!
+S = QQ [x, MonomialOrder => {Position => Down}]
+f = first smithNormalForm(vars S,ChangeMatrix => {true, false})
+assert( degrees raw source f == degrees source raw f )

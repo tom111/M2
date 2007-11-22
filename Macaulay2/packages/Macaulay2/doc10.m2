@@ -325,7 +325,8 @@ assert( rank C_5 == 0 )
 ///
 
 document {
-     Key => {status,(status, GroebnerBasis),(status, Resolution),(status, ChainComplex)},
+     Key => {status,(status, GroebnerBasis),(status, Resolution),(status, ChainComplex),
+	  [status, TotalPairs],[status, Monomials],[status, PairsRemaining]},
      Headline => "status of a resolution computation",
      TT "status C", " -- displays the status of the computation of a
      chain complex ", TT "C", " constructed by ", TO "resolution", ".  The display has

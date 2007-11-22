@@ -55,5 +55,7 @@ document {
 	       part(1..3, f)
 	  ///
 	  ),
-     SeeAlso => {degree, "multigradings", parts}
+     SeeAlso => {degree, 
+	  -- Mike wanted this: "multigradings",
+	  parts}
      }

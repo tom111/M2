@@ -56,7 +56,9 @@ document {
 	  TO (degree,ChainComplexMap),
 	  TO (degree,GradedModuleMap)
 	  },
-     SeeAlso => {degreeLength, degreesRing, "multigraded polynomial rings"}
+     SeeAlso => {degreeLength, degreesRing
+	  -- Mike wanted this: , "multigraded polynomial rings"
+	  }
      }
 document { 
      Key => (degree,ProjectiveVariety),

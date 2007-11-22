@@ -152,7 +152,7 @@ document {
      TO "Eliminate", ", ",
      TO "GroupLex", ", ",
      TO "GroupRevLex", ", ",
-     TO "product orders", ", ",
+     -- Mike wanted this: TO "product orders", ", ",
      TO "RevLex", ", and ",
      TO "NCLex", ".",
      HEADER2 "Graded reverse lexicographic order",
@@ -482,7 +482,7 @@ document {
      Key => GLex,
      Headline => "graded lexicographic ordering",
      "The option ", TT "GLex => n",
-     " is a shortcut for ", TT "Weights => n:1, Lex=>n", " in creating a ", TO "monomial ordering",
+     " is a shortcut for ", TT "Weights => n:1, Lex=>n", " in creating a ", TO2("monomial orders", "monomial ordering"),
      EXAMPLE lines ///
      	  R = QQ[a..d,MonomialOrder=>GLex]
 	  a^3*b+a^4+b^100
@@ -752,7 +752,7 @@ document {
 
 document {
      Key => {MonomialOrder,Position,Up,Down,Global},
-     Headline => "monomial ordering",
+     Headline => "monomial ordering",			    -- compare with "monomial orders", which already exists!
      TT "MonomialOrder", " -- an optional argument used with polynomial rings and monoids
      to indicate a
      monomial ordering other than the default (graded reverse lexicographic).",

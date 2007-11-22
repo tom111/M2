@@ -347,15 +347,16 @@ document {
      behind the scenes, so may not get garbage collected, even if ", TT "t", " is a local variable."
      }
 document {
-     Key => IndexedVariableTable,
-     "This class is used as part of the implementation indexed variables.  Objects of this class contain
+     Key => {IndexedVariableTable,((symbol _,symbol =),IndexedVariableTable,Thing)},
+     "This class is used as part of the implementation of indexed variables.  Objects of this class contain
      the values of the indexed variables that share the same base.",
      EXAMPLE lines ///
      	  p_1 = a
 	  p_2 = b
 	  p
 	  peek p
-     ///
+     ///,
+     SeeAlso => {IndexedVariable}
      }
 document {
      Key => MonoidElement,
@@ -386,6 +387,15 @@ document {
      "This is the customary way to make a polynomial ring.",
      PARA{},
      "Optional arguments (placed inside the array):",
+     UL (TO \ keys value Core#"private dictionary"#"monoidDefaults"),
+     SeeAlso => "polynomial rings"}
+document {
+     Key => (symbol SPACE, Ring, List),
+     Headline => "make a local polynomial ring",
+     TT "R{...}", " -- produces the monoid ring from a ring ", TT "R", " and the
+     ordered monoid specified by ", TT "...", ", together with the option ", TT "Local => true", ".",
+     PARA{},
+     "Optional arguments (placed inside the list):",
      UL (TO \ keys value Core#"private dictionary"#"monoidDefaults"),
      SeeAlso => "polynomial rings"}
 document {

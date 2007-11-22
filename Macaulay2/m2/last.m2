@@ -65,7 +65,7 @@ scan(values Core#"private dictionary" - set values Core.Dictionary,
 
 document { Key => Core,
      Headline => "the core part of Macaulay 2",
-     "This package contains the core functionality of Maculay 2, without the documentation, which is in the package ", TO "Maculay2::Maculay2", "."
+     "This package contains the core functionality of Macaulay 2, without the documentation, which is in the package ", TO "Macaulay2::Macaulay2", "."
      }
 
 Core#"pre-installed packages" = {}			    -- these will loaded before dumping, see below

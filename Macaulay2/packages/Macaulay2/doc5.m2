@@ -240,7 +240,7 @@ document {
      }
 
 document {
-     Key => VirtualTally,
+     Key => {VirtualTally,(symbol -,VirtualTally,VirtualTally)},
      "The only difference between this class and ", TO "Tally", " is that this class allows negative numbers.",
      EXAMPLE lines ///
      	  x = tally {a,b,b,c,c,c}

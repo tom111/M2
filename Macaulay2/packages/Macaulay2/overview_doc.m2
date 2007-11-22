@@ -316,7 +316,7 @@ document {
      }
 
 undocumented {(SYNOPSIS, Sequence),(SYNOPSIS, Thing),(SYNOPSIS, List)}
-document { Key => {SYNOPSIS, Heading},
+document { Key => {SYNOPSIS},
      PARA {
 	  "This function prepares a standardized synopsis in hypertext for use in documentation nodes."
 	  },
@@ -337,6 +337,9 @@ document { Key => {SYNOPSIS, Heading},
 	  ///
 	  ),
 ",
+     PARA {
+	  "The options are used just as with ", TO "document", "."
+	  },
      "Here is an example of its use.",
      PRE "     SYNOPSIS {
 	  Heading => \"using binary methods for method functions\",

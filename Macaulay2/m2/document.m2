@@ -114,7 +114,11 @@ mdt := makeDocumentTag Thing := opts -> key -> (
      nkey := normalizeDocumentKey key;
      verifyKey nkey;
      fkey := formatDocumentTag nkey;
-     pkg := if opts#Package =!= null then opts#Package else packageKey fkey;
+     pkg := (
+	  if class nkey === Symbol and package nkey =!= Core then package nkey
+	  else if opts#Package =!= null then opts#Package 
+	  else packageKey fkey
+	  );
      new DocumentTag from {nkey,fkey,pkg,pkgTitle pkg})
 makeDocumentTag String := opts -> key -> (
      m := regex("[[:space:]]*::[[:space:]]*",key);
@@ -664,7 +668,9 @@ headline FinalDocumentTag := headline DocumentTag := tag -> (
 	  -- if debugLevel > 0 and formattedKey tag == "Ring ^ ZZ" then error "debug me";
 	  d = fetchAnyRawDocumentation formattedKey tag;    -- this is a kludge!  Our heuristics for determining the package of a tag are bad.
 	  if d === null then (
-	       if signalDocError tag then stderr << "--warning: tag has no documentation: " << tag << ", key " << toExternalString DocumentTag.Key tag << endl;
+	       if signalDocError tag
+	       and DocumentTag.Package tag === currentPackage
+	       then stderr << "--warning: tag has no documentation: " << tag << ", key " << toExternalString DocumentTag.Key tag << endl;
 	       return "missing documentation";
 	       ));
      if d#?Headline then d#Headline

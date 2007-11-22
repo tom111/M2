@@ -1,7 +1,7 @@
 document {
      Key => {monoid,(monoid, Array),(monoid, List),(monoid, PolynomialRing),(monoid, QuotientRing), [monoid,DegreeRank], DegreeRank,Heft,[monoid,Heft],
 	  Inverses,[monoid,Inverses],MonomialSize,[monoid,MonomialSize],VariableBaseName,[monoid,VariableBaseName],
-	  WeylAlgebra,[monoid,WeylAlgebra],[monoid, Weights],
+	  WeylAlgebra,[monoid,WeylAlgebra],[monoid, Weights],[monoid, MonomialOrder],
 	  [monoid,Degrees],Degrees,
 	  -- [monoid,Local],
 	  SkewCommutative,[monoid,SkewCommutative],
@@ -45,7 +45,9 @@ document {
 	  {"a new monoid"}
 	  },
      PARA {
-	  "The function ", TO "monoid", " is called whenever a polynomial ring is created, see ", TO (symbol SPACE, Ring, Array), ".  Some of the options provided
+	  "The function ", TO "monoid", " is called whenever a polynomial ring is created, see ", TO (symbol SPACE, Ring, Array), ",
+	  or when a local polynomial ring is made, see ", TO (symbol SPACE, Ring, List), ".
+	  Some of the options provided
 	  when making a monoid don't take effect until the monoid is made into a polynomial ring."
 	  },
      "Let's make a free ordered commutative monoid on the variables ", TT "a,b,c", ", with degrees 2, 3, and 4, respectively.",

@@ -409,6 +409,12 @@ document {
 --      "The row lengths should be in decreasing order.",
 --      SeeAlso => "SchurRing"}
 
+document {
+     Key => {SchurRingIndexedVariableTable,(symbol _,SchurRingIndexedVariableTable,Thing)},
+     "This class is used as part of the implementation of a type of indexed variable used just for Schur rings.",
+     SeeAlso => { IndexedVariableTable }
+     }
+
 end
 -----------------------------------------------------------------------------
 -- the rest of this file used to be schur.m2

@@ -884,7 +884,7 @@ document { Key => Wrap,
      }
 
 document { Key => {BettiTally,
-	  (symbol ++,BettiTally,BettiTally), 
+	  (symbol ++,BettiTally,BettiTally), (symbol SPACE,BettiTally,ZZ),
 	  (symbol **,BettiTally,BettiTally), (symbol *,QQ,BettiTally),(symbol *,ZZ,BettiTally),(lift, BettiTally, ZZ),
 	  (symbol SPACE,BettiTally,Array), 
 	  (dual,BettiTally),(degree, BettiTally),(codim, BettiTally),(regularity,BettiTally),(hilbertPolynomial, ZZ, BettiTally),
@@ -931,7 +931,7 @@ document { Key => {BettiTally,
      "Various combinations of the degree vectors can be displayed by using ", TO (betti,BettiTally), "."
      }
 
-document { Key => {(betti,BettiTally)},
+document { Key => {(betti,BettiTally),[betti, Weights]},
      Headline => "view and set the weights of a betti display",
      Usage => "betti(t, Weights=>w)",
      Inputs => { 

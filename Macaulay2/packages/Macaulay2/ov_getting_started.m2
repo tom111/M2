@@ -832,7 +832,7 @@ found."
 document {
      Key => "emacs",
      "The best way to edit Macaulay 2 code or to run Macaulay 2 is
-     with ", TO2{ "http://www.gnu.org/software/emacs/emacs.html", "GNU emacs"}, ", a versatile text 
+     with ", HREF { "http://www.gnu.org/software/emacs/emacs.html", "GNU emacs"}, ", a versatile text 
      editor written by Richard Stallman.",
      PARA{},
      "There is a version of emacs for Windows NT and Windows 95 called ", TT "NTemacs", ".

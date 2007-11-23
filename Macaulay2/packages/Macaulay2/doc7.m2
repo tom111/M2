@@ -79,7 +79,7 @@ document {
      ", TT "rows", ", and c is the length of the list of integers ", TT "cols", ".  
      The ", TT "(i,j)", "-th entry of the result is ", TT "f_(rows_i, cols_j)", ".",
      PARA{},
-     "Each ", TO "list of integers", " may contain ranges and repetitions, as in ", 
+     "Each list of integers may contain ranges and repetitions, as in ", 
      TT "{3, 5..7, 3:0}",
      PARA{},
      "If ", TT "rows", " or ", TT "cols", " is omitted, all the corresponding indices are used.",
@@ -121,7 +121,7 @@ document {
      c is the length of the list of integers ", TT "cols", ".  
      The ", TT "(i,j)", "-th entry of the result is ", TT "f_(i, cols_j)", ".",
      PARA{},
-     "The ", TO "list of integers", ", ", TT "cols", " may contain ranges and repetitions, as in ", 
+     "The list of integers, ", TT "cols", ", may contain ranges and repetitions, as in ", 
      TT "{3, 5..7, 3:0}",
      PARA{},
      "If the list of column indices is a permutation of 0 .. n-1, where n is
@@ -586,7 +586,7 @@ document {
      Usage => "leadTerm f",
      Inputs => {"f" => "in a polynomial ring"},
      Outputs => { RingElement => {"the lead term of ", TT "f", ""}},
-     "Each polynomial ring comes equipped with a ", TO2("monomial orders", "monomial ordering"),
+     "Each polynomial ring comes equipped with a ", TO2("monomial orderings", "monomial ordering"),
      " and this routine
      returns the lead (greatest) monomial and its coefficient.  
      Recall that the default monomial order is
@@ -611,7 +611,7 @@ document {
      Inputs => {"f" => "in a polynomial ring"},
      Outputs => { Matrix => {"the lead term matrix of ", TT "f", ""}},
      "In Macaulay2, each free module over a polynomial ring comes equipped with a ", 
-     TO2("monomial orders", "monomial order"),
+     TO2("monomial orderings", "monomial order"),
      " and this routine
      returns the matrix whose ", TT "i", "-th column is the lead term of the ", 
      TT "i", " th column of ", TT "f", ".",
@@ -718,7 +718,7 @@ document {
      PARA{},
      "If an initial integer ", TT "n", " is specified, then the returned value contains the sum
      of all of the terms with the greatest value on the first ", TT "n", " ",
-     TO2 ("parts of a monomial order", "parts of the monomial order"), "."
+     "parts of the monomial order." -- Mike wanted this: TO2 ("parts of a monomial order", "parts of the monomial order"), "."
      }
 document {
      Key => {(borel, Matrix),borel,(borel, MonomialIdeal)},

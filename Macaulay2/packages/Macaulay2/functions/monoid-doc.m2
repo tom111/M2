@@ -1,10 +1,10 @@
 document {
      Key => {monoid,(monoid, Array),(monoid, List),(monoid, PolynomialRing),(monoid, QuotientRing), [monoid,DegreeRank], DegreeRank,Heft,[monoid,Heft],
 	  Inverses,[monoid,Inverses],MonomialSize,[monoid,MonomialSize],VariableBaseName,[monoid,VariableBaseName],
-	  WeylAlgebra,[monoid,WeylAlgebra],[monoid, Weights],[monoid, MonomialOrder],
+	  WeylAlgebra,[monoid,WeylAlgebra],[monoid, Weights],[monoid, MonomialOrder],[monoid, Variables],
 	  [monoid,Degrees],Degrees,
-	  -- [monoid,Local],
-	  SkewCommutative,[monoid,SkewCommutative],
+	  [monoid,Local],
+	  SkewCommutative,[monoid,SkewCommutative],[monoid, Global],
 	  ConstantCoefficients,[monoid,ConstantCoefficients]},
      Headline => "make or retrieve a monoid",
      Usage => "monoid [a,b,c,...]",

@@ -346,8 +346,10 @@ document {
      "Warning: the values of the indexed variables ", TT "t_i", " are stored in a global location,
      behind the scenes, so may not get garbage collected, even if ", TT "t", " is a local variable."
      }
+
+undocumented {(NewFromMethod,IndexedVariableTable,Symbol)}
 document {
-     Key => {IndexedVariableTable,((symbol _,symbol =),IndexedVariableTable,Thing)},
+     Key => {IndexedVariableTable,((symbol _,symbol =),IndexedVariableTable,Thing),(symbol _,IndexedVariableTable,Thing)},
      "This class is used as part of the implementation of indexed variables.  Objects of this class contain
      the values of the indexed variables that share the same base.",
      EXAMPLE lines ///

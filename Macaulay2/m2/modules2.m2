@@ -303,6 +303,11 @@ degree Module := (
 	       while hd % h == 0 do hd = hd // h;
 	       fixZZ(ev hn/ev hd))))()
 
+length Module := M -> (
+     if not isHomogeneous then notImplemented();
+     if dim M > 0 then return infinity;
+     degree M)
+
 -----------------------------------------------------------------------------
 
 presentation(Module) := Matrix => M -> (

@@ -52,7 +52,7 @@ document {
      "For a definition of Groebner basis, see ", TO "what is a Groebner basis?", ".",
      SUBSECTION "A first Groebner basis",
      SUBSECTION "Weight vectors and non-strict monomial orders",
-        "The monomial order may be given by a weight vector (see ", TO "monomial orders", "),",
+        "The monomial order may be given by a weight vector (see ", TO "monomial orderings", "),",
         EXAMPLE lines ///
 	  R = QQ[a..f,MonomialOrder=>Weights=>{1,1,1,1,0,0}]
 	  I = ideal(a*b*c-d*e*f,a*c*e-b*d*f,a*d*f-b*c*e)

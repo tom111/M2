@@ -663,6 +663,7 @@ apropos String := (pattern) -> first \ sort unique select(flatten \\ pairs \ dic
 headline = method(Dispatch => Thing)
 headline Thing := key -> getOption(key,Headline)	    -- old method
 headline FinalDocumentTag := headline DocumentTag := tag -> (
+     if debugLevel > 0 and class DocumentTag.Key tag === Array and first DocumentTag.Key tag === SYNOPSIS then error "debug me";
      d := fetchPrimaryRawDocumentation tag;
      if d === null then (
 	  -- if debugLevel > 0 and formattedKey tag == "Ring ^ ZZ" then error "debug me";

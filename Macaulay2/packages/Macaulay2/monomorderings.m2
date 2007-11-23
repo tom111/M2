@@ -266,7 +266,7 @@ document {
      In Macaulay 2, orders on the monomials of $F$ are used for computing Groebner bases and
      syzygies, and also to determine the initial, or lead term of elements of $F$.///,
      PARA{},
-     TEX ///"The ring $R$ comes equipped with a total order on the monomials of $R$.
+     TEX ///The ring $R$ comes equipped with a total order on the monomials of $R$.
      A total order on the monomials of $F$ is called {\bf compatible} (with the order
      on $R$), if $m F_i > n F_i$ (in $F$) whenever $m > n$ (in $R$). There are many types of
      compatible orders, but several stand out: term over position up (the default in Macaulay2), 
@@ -482,7 +482,7 @@ document {
      Key => GLex,
      Headline => "graded lexicographic ordering",
      "The option ", TT "GLex => n",
-     " is a shortcut for ", TT "Weights => n:1, Lex=>n", " in creating a ", TO2("monomial orders", "monomial ordering"),
+     " is a shortcut for ", TT "Weights => n:1, Lex=>n", " in creating a ", TO2("monomial orderings", "monomial ordering"),
      EXAMPLE lines ///
      	  R = QQ[a..d,MonomialOrder=>GLex]
 	  a^3*b+a^4+b^100
@@ -752,7 +752,7 @@ document {
 
 document {
      Key => {MonomialOrder,Position,Up,Down,Global},
-     Headline => "monomial ordering",			    -- compare with "monomial orders", which already exists!
+     Headline => "monomial ordering",
      TT "MonomialOrder", " -- an optional argument used with polynomial rings and monoids
      to indicate a
      monomial ordering other than the default (graded reverse lexicographic).",

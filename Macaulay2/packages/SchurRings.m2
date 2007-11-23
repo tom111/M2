@@ -376,12 +376,12 @@ document {
      }
 
 document {
-     Key => {schurRing,(schurRing,Symbol,ZZ)},
+     Key => {schurRing,(schurRing,Symbol,ZZ),(schurRing,Thing,ZZ)},
      Headline => "make a Schur ring",
      TT "schurRing(s,n)", " -- creates a Schur ring of degree n with variables based on the symbol s",
-     PARA{},
-     "This is the representation ring for the general linear group of n by n matrices.",
-     PARA{},
+     PARA{"This is the representation ring for the general linear group of ", TT "n", " by ", TT "n", " matrices."},
+     PARA{"If ", TT "s", " is already assigned a values as a variable in a ring, its base symbol will be used,
+	  if it is possible to determine."},
      SeeAlso => {"SchurRing"}}
 
 document {

@@ -1079,6 +1079,7 @@ document { Key => listLocalSymbols,
 	  listLocalSymbols symbol x
      ///,
      SYNOPSIS (
+	  Heading => "listing local symbols with a certain type of value",
      	  Usage => "listLocalSymbols(X,f)",
      	  Inputs => { "X" => Type, "f" => {ofClass{Pseudocode,Symbol,Dictionary,Function}}},
      	  Outputs => { Net => {"a compact display of the symbols in the local dictionaries attached to the closure ", TT "f", ", and their values, provided their

@@ -20,7 +20,7 @@ document {
      PARA {
      	  "There are two basic types of documentation.  The first type documents a function or a method, as in ", TO (resolution,Module), ". The second type of 
 	  documentation is for overviews or functions with methods, as in ", TO "chain complexes", " or ", TO resolution, " respectively.
-	  The headings ", TO "Usage", ", ", TO2 {"Function ", "Function"}, ", ", TO "Inputs", ", ", TO "Outputs", ", and ", TO "Consequences", ", are 
+	  The headings ", TO "Usage", ", ", TO "Function", ", ", TO "Inputs", ", ", TO "Outputs", ", and ", TO "Consequences", ", are 
 	  useful only for documentation of the first type."
 	  },
      PARA {

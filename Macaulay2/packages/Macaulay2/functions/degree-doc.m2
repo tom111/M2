@@ -150,10 +150,13 @@ document {
      "We assume that ", TT "M", " is a graded module over a singly graded 
      polynomal ring or a quotient of a polynomial ring, 
      over a field ", TT "k", ".",
-     PARA{},
-     "If ", TT "M", " is finite dimensional over ", TT "k", ", the degree of ", TT "M", " is its dimension over ", TT "k", ".  Otherwise, 
-     the degree of ", TT "M", " is the integer ", TT "d", " such that the hilbert polynomial of ", TT "M", "
-     has the form ", TT "z |--> d z^e/e! + lower terms in z.",
+     PARA{
+	  "If ", TT "M", " is finite dimensional over ", TT "k", ", the degree
+	  of ", TT "M", " is its dimension over ", TT "k", ".  Otherwise, the
+	  degree of ", TT "M", " is the multiplicity of ", TT "M", ", i.e., the
+	  integer ", TT "d", " such that the Hilbert polynomial of ", TT "M", "
+	  has the form ", TT "z |--> d z^e/e! + lower terms in z.",
+	  },
      EXAMPLE {
 	  "R = ZZ/101[x,y,z];",
 	  "degree cokernel symmetricPower ( 2, vars R )"
@@ -163,6 +166,22 @@ document {
 	  are not all one, the answer is harder to interpret."},
      SeeAlso => {hilbertPolynomial}
      }
+
+document { 
+     Key => (length,Module),
+     Usage => "length M",
+     Inputs => {
+	  "M"
+	  },
+     Outputs => {
+	  ZZ => {"the length of ", TT "M"}
+	  },
+     "We assume that ", TT "M", " is a graded module over a singly graded 
+     polynomal ring or a quotient of a polynomial ring, 
+     over a field ", TT "k", ".  In this case, the length is the same as the degree, 
+     see ", TO (degree,Module), "."
+     }
+
 document { 
      Key => (degree,Ring),
      Usage => "degree R",

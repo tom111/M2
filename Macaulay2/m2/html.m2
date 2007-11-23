@@ -90,7 +90,9 @@ html TO   := x -> (
      r := htmlLiteral DocumentTag.FormattedKey x#0;
      if match("^ +$",r) then r = #r : "&nbsp;&nbsp;";
      concatenate( "<a href=\"", rel htmlFilename getPrimary x#0, "\" title=\"", headline x#0, "\">", r, "</a>", if x#?1 then x#1))
-html TO2  := x -> concatenate("<a href=\"", rel htmlFilename getPrimary x#0, "\">", htmlLiteral x#1, "</a>")
+html TO2  := x -> (
+     headline x#0;		   -- this is a kludge, just to generate error messages about missing links
+     concatenate("<a href=\"", rel htmlFilename getPrimary x#0, "\">", htmlLiteral x#1, "</a>"))
 
 next := tag -> ( if NEXT#?tag then HREF { htmlFilename NEXT#tag, nextButton } else nextButton, " | ")
 prev := tag -> ( if PREV#?tag then HREF { htmlFilename PREV#tag, prevButton } else prevButton, " | ")

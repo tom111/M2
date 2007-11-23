@@ -189,10 +189,9 @@ document {
      	       from ", TT "R2", " or ", TT "R3", " to ", TT "R4", " substitute 
      	       works well here. An alternative to substitute is to form the canonical 
      	       injection of R3 into R4 (the same can be done for the canonical 
-	       	    projection from R2 to R3 above - we do the example here).   For 
-     	       more on ring maps, 
-     	       see ", TO "basic, construction source and target of a ring map", ".  
-     	       Again to move elements 
+	       	    projection from R2 to R3 above - we do the example here).  ",
+	       -- Mike wanted this: "For more on ring maps, see ", TO "basic, construction source and target of a ring map", ".  ",
+     	       "To move elements 
       	       from ", TT "R4", " back to ", TT "R3", " an alternate method must 
 	       be used.  Also, 
      	       the method of constructing a map does not work well in the reverse 

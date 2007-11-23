@@ -3,7 +3,7 @@ scan((
 	  Algorithm,DebuggingMode,Dense,DivideConquer,First,Format,GBDegrees,Hermitian,CoefficientRing,Undo,SourceCode,Description,Variables,
 	  Boxes,BaseRow,HorizontalSpace,VerticalSpace,Alignment,Minimize,FileName,Unmixed,Decompose, AbsoluteLinks,
 	  CheckDocumentation, IgnoreExampleErrors, MakeDocumentation, MakeInfo, MakeLinks, RemakeAllDocumentation, RerunExamples, UserMode, Generic,
-	  KeepZeroes
+	  KeepZeroes,Heading
 	  ),
      s -> if s =!= null then document { Key => s, "A symbol used as the name of an optional argument, for some function(s)." })
 scan((
@@ -59,7 +59,7 @@ document {
 	  },
      "Some other potential help topics:",
      UL {
-	  TT "help \"monomial orders\"",
+	  -- Mike wanted this: TT "help \"monomial orders\"",
 	  TT "help \"Groebner bases\"",
 	  TT "help \"multigraded polynomial rings\""
 	  },
@@ -1016,11 +1016,13 @@ document {
      Key => newClass,
      Headline => "set the class and parent of an object",
      SYNOPSIS (
+	  Heading => "setting the class and parent",
 	  Usage => "newClass(A,B,x)",
 	  Inputs => { "A" => HashTable, "B" => HashTable, "x" },
 	  Outputs => {{"a copy (possibly) of ", TT "x", " with ", TT "A", " as class and ", TT "B", " as parent"}},
 	  ),
      SYNOPSIS (
+	  Heading => "setting the class",
 	  Usage => "newClass(A,x)",
 	  Inputs => { "A" => HashTable, "x" },
 	  Outputs => {{"a copy (possibly) of ", TT "x", " with ", TT "A", " as the new class"}},

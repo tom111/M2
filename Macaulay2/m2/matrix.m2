@@ -3,15 +3,31 @@
 -- methods of "map" with a RawMatrix replace "getMatrix", which was a private function
 map(Module,Module,RawMatrix) := opts -> (tar,src,f) -> (
      R := ring tar;
+     if raw src =!= source f or raw tar =!= target f then f = rawMatrixRemake2(raw tar, raw src, rawMultiDegree f, f, 0);
      new Matrix from {
 	  symbol ring => R,
-	  symbol source => src,
 	  symbol target => tar,
+	  symbol source => src,
 	  symbol RawMatrix => f,
 	  symbol cache => new CacheTable
 	  })
-map(Module,Nothing,RawMatrix) := opts -> (tar,nullsrc,f) -> map(tar,new Module from (ring tar,rawSource f),f,opts)
-map(Ring,RawMatrix) := opts -> (R,f) -> map(new Module from (R,rawTarget f),new Module from (R,rawSource f),f,opts)
+map(Module,Nothing,RawMatrix) := opts -> (tar,nothing,f) -> (
+     if raw tar =!= target f then f = rawMatrixRemake2(raw tar, rawSource f, rawMultiDegree f, f, 0);
+     new Matrix from {
+	  symbol ring => R,
+	  symbol target => tar,
+	  symbol source => new Module from (ring tar,rawSource f),
+	  symbol RawMatrix => f,
+	  symbol cache => new CacheTable
+	  })
+map(Ring,RawMatrix) := opts -> (R,f) -> (
+     new Matrix from {
+	  symbol ring => R,
+	  symbol target => new Module from (R,rawTarget f),
+	  symbol source => new Module from (R,rawSource f),
+	  symbol RawMatrix => f,
+	  symbol cache => new CacheTable
+	  })
 
 reduce = (tar,f) -> (
      if isFreeModule tar then f

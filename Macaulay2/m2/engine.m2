@@ -312,6 +312,9 @@ new RawMutableMatrix from RawMatrix := rawMutableMatrix
 
 RawMutableMatrix _ Sequence = (M,ij,val) -> ((i,j) -> (rawSetMatrixEntry(M,i,j,val); val)) ij
 
+degree RawMatrix := rawMultiDegree
+degrees RawMatrix :=f -> {rawMultiDegree rawTarget f,rawMultiDegree rawSource f}
+
 -- computations
 
 ReverseDictionary#RawComputation = symbol RawComputation

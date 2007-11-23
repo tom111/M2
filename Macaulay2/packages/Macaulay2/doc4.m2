@@ -611,7 +611,7 @@ document {
 	  "Q" => Matrix => "invertible (right) change of basis matrix"
 	  },
      "This function produces a diagonal matrix ", TT "D", ", and invertible matrices ", TT "P", " and ", TT "Q", " such that
-     ", TT "D = PMQ", ".  WARNING!! Even though this function is called the smith normal form, it doesn't necessarily satisfy the
+     ", TT "D = PMQ", ".  Warning: even though this function is called the Smith normal form, it doesn't necessarily satisfy the
      more stringent condition that the diagonal entries ", TT "d1, d2, ..., dn", " of ", TT "D", " satisfy: ", TT "d1|d2|...|dn.", ".",
      EXAMPLE lines ///
          M = matrix{{1,2,3},{1,34,45},{2213,1123,6543},{0,0,0}}

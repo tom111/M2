@@ -1808,17 +1808,22 @@ document {
      }
 
 document {
-     Key => (random, Module, Module),
+     Key => {(random, Module, Module),[random, MaximalRank]},
      Headline => "make a random module map",
-	Usage => "f = random(F,G)",
-	Inputs => {
-		"F" => {"a free module"},
-		"G" => {"a free module"}
-		},
-	Outputs => {"f" => {"a random, graded, degree ", TT "0", " map, from ", TT "G", " to ", TT "F"}},
-     EXAMPLE {
-	  "R = ZZ/101[x,y];",
-      	  "random(R^{1,2,3},R^{1,2,3})"
+     Usage => "f = random(F,G)",
+     Inputs => {
+	  "F" => {"a free module"},
+	  "G" => {"a free module"},
+	  MaximalRank => {"whether to ensure that the resulting map has maximal rank"}
+	  },
+     Outputs => {"f" => {"a random, graded, degree ", TT "0", " map, from ", TT "G", " to ", TT "F"}},
+     EXAMPLE lines ///
+	  R = ZZ/101[x,y];
+      	  random(R^{1,2,3},R^{1,2,3})
+	  random(ZZ^3,ZZ^6,MaximalRank=>true)
+	  ///,
+     Caveat => {
+	  "Over a polynomial ring, specifying ", TT "MaximalRank=>true", " will yield a non-homogeneous matrix."
 	  },
      SeeAlso => {"setRandomSeed"}
      }

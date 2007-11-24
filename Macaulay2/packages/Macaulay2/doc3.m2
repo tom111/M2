@@ -931,16 +931,17 @@ document { Key => {BettiTally,
      "Various combinations of the degree vectors can be displayed by using ", TO (betti,BettiTally), "."
      }
 
-document { Key => {(betti,BettiTally),[betti, Weights]},
+document { Key => {(betti,BettiTally)},
      Headline => "view and set the weights of a betti display",
-     Usage => "betti(t, Weights=>w)",
+     Usage => "betti(t, Weights => w)",
      Inputs => { 
 	  "t",
-	  Weights => List => { "w is a list with the same degree length as that of t" }
+	  Weights => List => { "a list of integers, ", TT "w", ", with the same degree length as that of ", TT "t"}
 	  },
-     Outputs => { BettiTally => {"different from the input only in its degree weights.  If ", 
-	       TT "w", " is
-	       non-null, then a new betti tally with new weight values is returned"} },
+     Outputs => {
+	  BettiTally => {"different from the input only in its degree weights.  If ", TT "w", " is
+	       non-null, then a new betti tally with new weight values is returned"}
+	       },
      EXAMPLE lines ///
      	  R = ZZ/101[a..d,Degrees=>{2:{1,0},2:{0,1}},Heft=>{1,1}];
 	  I = ideal random(R^1, R^{2:{-2,-2},2:{-3,-3}});

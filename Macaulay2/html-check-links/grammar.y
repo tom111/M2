@@ -158,7 +158,7 @@ static void checkURL(char *s) {
   if (*s == 0) return;
   s = concat(s[0] == '/' ? rootname : Dirname,s);
   if (-1 == access(s, R_OK)) {
-    error("can't reach %s",s);
+    error("can't reach %s ==> %s",s,demangle(s));
     u = concat(s,"");
 #if 0
     {

@@ -2,12 +2,41 @@
 --- author(s): caviglia, kummini 
 --- notes: 
 
+document {
+     Key => [betti, Weights],
+     Usage => "betti(..., Weights => w)",
+     Inputs => {
+	  "w" => List => { "a list of integers" }
+	  },
+     PARA {
+	  "The module or chain complex provided should be over a ring whose degree length
+	  (see ", TO "degreeLength", ") is the same as the length of the list ", TT "w", ".
+	  The dot products of w with the multi-degrees occurring will be used to construct
+	  the resulting betti tally (see ", TO "BettiTally", ")."
+	  }
+     }
+
+document {
+     Key => [regularity, Weights],
+     Usage => "regularity(..., Weights => w)",
+     Inputs => {
+	  "w" => List => { "a list of integers" }
+	  },
+     PARA {
+	  "The module or chain complex provided should be over a ring whose degree length
+	  (see ", TO "degreeLength", ") is the same as the length of the list ", TT "w", ".
+	  The dot products of w with the multi-degrees occurring will be used in
+	  the resulting computation."
+	  }
+     }
+
 document { 
-     Key => betti,
+     Key => {betti},
      Headline => "display degrees",
-	"The function ", TT "betti", " displays the degrees of generators and
-	relations of graded modules and ideals."
-      }
+     "The function ", TT "betti", " displays the degrees of generators and
+     relations of graded modules and ideals."
+     }
+
 document { 
      Key => (betti,GroebnerBasis),
      Headline => "diagram of the degrees of a groebner basis",

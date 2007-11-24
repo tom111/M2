@@ -647,7 +647,10 @@ document {
      }
 
 document {
-     Key => {(getPackage,String), getPackage, CurrentVersion, [getPackage,CurrentVersion], [getPackage,Version],Repository,[getPackage,Repository]},
+     Key => {(getPackage,String), getPackage, CurrentVersion, 
+	  [getPackage,CurrentVersion], [getPackage,Version],Repository,[getPackage,Repository],
+	  [getPackage, DebuggingMode]
+	  },
      Headline => "download a package from the repository",
      SYNOPSIS (
 	  Usage => ///getPackage pkgname///,
@@ -656,7 +659,8 @@ document {
 	       "pkgname" => String => {"the name of a package"},
 	       Version => String => {"the version to download, instead of the most recent version"},
 	       CurrentVersion => String => {"the version currently installed"},
-	       Repository => String => {"the URL of the repository"}
+	       Repository => String => {"the URL of the repository"},
+	       DebuggingMode => Boolean => {"the debugging mode to be passed to ", TO "installPackage"}
 	       },
 	  Outputs => {
 	       },

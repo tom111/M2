@@ -37,9 +37,6 @@ install install install-others install-Macaulay2 :: @encapdir@/@corecachedirtail
 ################################# util
 initialize::; $(MAKE) -C util all
 distclean clean ::; $(MAKE) DEPENDS=no -C util $@
-################################# html-check-links
-#initialize::; $(MAKE) -C html-check-links all
-distclean clean ::; $(MAKE) DEPENDS=no -C html-check-links $@
 ################################# c
 distclean clean ::; $(MAKE) DEPENDS=no -C c $@
 all justM2 ::; $(MAKE) -C c all
@@ -75,6 +72,9 @@ distclean clean ::; $(MAKE) DEPENDS=no -C d $@
 ################################# bin
 install distclean clean ::; $(MAKE) -C bin $@
 install-others install-Macaulay2 ::; $(MAKE) -C bin "install"
+################################# html-check-links
+initialize::; $(MAKE) -C html-check-links all
+check distclean clean ::; $(MAKE) DEPENDS=no -C html-check-links $@
 ################################# basictests
 check ::; $(MAKE) -C packages/Macaulay2/basictests -k
 distclean clean ::; $(MAKE) -C packages/Macaulay2/basictests $@

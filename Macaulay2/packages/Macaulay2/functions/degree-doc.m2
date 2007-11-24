@@ -147,7 +147,7 @@ document {
      Outputs => {
 	  ZZ => {"the degree of ", TT "M"}
 	  },
-     "We assume that ", TT "M", " is a graded module over a singly graded 
+     "We assume that ", TT "M", " is a graded (homogeneous) module over a singly graded 
      polynomal ring or a quotient of a polynomial ring, 
      over a field ", TT "k", ".",
      PARA{
@@ -157,14 +157,25 @@ document {
 	  integer ", TT "d", " such that the Hilbert polynomial of ", TT "M", "
 	  has the form ", TT "z |--> d z^e/e! + lower terms in z.",
 	  },
-     EXAMPLE {
-	  "R = ZZ/101[x,y,z];",
-	  "degree cokernel symmetricPower ( 2, vars R )"
+     EXAMPLE lines ///
+	  R = ZZ/101[t,x,y,z];
+	  degree (R^1 / (ideal vars R)^6)
+	  degree minors_2 matrix {{t,x,y},{x,y,z}}
+	  ///,
+     PARA {
+     	  "The algorithm computes the ", TO "hilbertSeries", " of ", TT "M", "
+	  (as a rational function), divides both numerator and denominator by ", TT "1-T", " 
+	  as often as possible, then evaluates both at ", TT "T=1", " and returns
+	  the resulting quotient as a (possibly rational) number.  When the module                                                                                 
+ 	  has finite length, then the rational function is a polynomial, and evaluating                                                                                
+ 	  it at 1 returns the dimension over the ground field, which for a graded (homogenous)
+	  is the same as the length."
 	  },
-     Caveat => {"The degree in multigraded rings is not defined.  If the base ring is ZZ, it is likely
-	  that the answer is not what you would expect.  Similarly, if the degrees of the variables
+     Caveat => {"The degree in multigraded rings is not defined.  If the base ring is ", TO "ZZ", ",
+	  or the module is not homogeneous, it is likely that the answer is not what
+	  you would expect.  Similarly, if the degrees of the variables
 	  are not all one, the answer is harder to interpret."},
-     SeeAlso => {hilbertPolynomial}
+     SeeAlso => {hilbertPolynomial, isHomogeneous}
      }
 
 document { 

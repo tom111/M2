@@ -1092,16 +1092,19 @@ initializeReverseOptionTable := () -> (
      reverseOptionTable = new MutableHashTable;
      scan(dictionaryPath, 
 	  d -> scan(values d,
-	       f -> (
-		    f = value f;
-		    if instance(f, Type) then (
-			 scan(pairs f, (m,mf) -> (
-				   if instance(m,Sequence) and instance(mf,Function) then (
+	       x -> (
+		    x = value x;
+		    if instance(x, Type) then (
+			 scan(pairs x, (m,mf) -> (
+				   if (instance(m,Sequence) or instance(m,MethodFunctionWithOptions)) and instance(mf,Function) 
+				   then (
 					om := options mf;
-					if om =!= null then scanKeys(om, s -> addro(s,m))))))
-		    else if instance(f, MethodFunctionWithOptions) then (
-			 o := options f;
-			 if o =!= null then scanKeys(o, s -> addro(s,f)))))))
+					if om =!= null then (
+					     if instance(m,MethodFunctionWithOptions) then m = (m,x);
+					     scanKeys(om, s -> addro(s,m)))))))
+		    else if instance(x, MethodFunctionWithOptions) then (
+			 o := options x;
+			 if o =!= null then scanKeys(o, s -> addro(s,x)))))))
 optionFor := s -> (
      initializeReverseOptionTable();
      ret := if reverseOptionTable#?s then keys reverseOptionTable#s else {};

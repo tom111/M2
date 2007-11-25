@@ -72,9 +72,6 @@ distclean clean ::; $(MAKE) DEPENDS=no -C d $@
 ################################# bin
 install distclean clean ::; $(MAKE) -C bin $@
 install-others install-Macaulay2 ::; $(MAKE) -C bin "install"
-################################# html-check-links
-initialize::; $(MAKE) -C html-check-links all
-check distclean clean ::; $(MAKE) DEPENDS=no -C html-check-links $@
 ################################# basictests
 check ::; $(MAKE) -C packages/Macaulay2/basictests -k
 distclean clean ::; $(MAKE) -C packages/Macaulay2/basictests $@
@@ -86,6 +83,10 @@ check ::; $(MAKE) -C packages/Macaulay2/test -k
 distclean clean ::; $(MAKE) -C packages/Macaulay2/test $@
 ################################# packages
 all check install install-others install-Macaulay2 clean distclean ::; $(MAKE) -C packages $@
+################################# html-check-links
+initialize::; $(MAKE) -C html-check-links all
+install ::; $(MAKE) DEPENDS=no -C html-check-links check
+distclean clean ::; $(MAKE) DEPENDS=no -C html-check-links $@
 ################################# probe
 clean distclean ::; $(MAKE) -C probe $@
 ################################# book, currently not made

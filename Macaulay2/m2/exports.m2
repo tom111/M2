@@ -429,6 +429,7 @@ export {
 	symbol UseSyzygies,
 	symbol GroebnerBasisOptions,
 	symbol installHilbertFunction,
+	symbol instances,
 	-- Mike wanted this: symbol installGroebner,
 	symbol gbSnapshot,
 	symbol gbRemove,

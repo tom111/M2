@@ -534,7 +534,6 @@ Ideal ^ ZZ := Ideal => (I,n) -> ideal symmetricPower(n,generators I)
 Ideal * Ideal := Ideal => (I,J) -> ideal flatten (generators I ** generators J)
 Ideal * Module := Module => (I,M) -> subquotient (generators I ** generators M, relations M)
 dim Ideal := I -> dim cokernel generators I
-codim Ideal := opts -> I -> codim( cokernel generators I, opts)
 Ideal + Ideal := Ideal => (I,J) -> ideal (generators I | generators J)
 Ideal + RingElement := (I,r) -> I + ideal r
 degree Ideal := I -> degree cokernel generators I

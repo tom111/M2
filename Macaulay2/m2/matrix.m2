@@ -3,7 +3,7 @@
 -- methods of "map" with a RawMatrix replace "getMatrix", which was a private function
 map(Module,Module,RawMatrix) := opts -> (tar,src,f) -> (
      R := ring tar;
-     if raw src =!= source f or raw tar =!= target f then f = rawMatrixRemake2(raw tar, raw src, rawMultiDegree f, f, 0);
+     if raw cover src =!= source f or raw cover tar =!= target f then f = rawMatrixRemake2(raw cover tar, raw cover src, rawMultiDegree f, f, 0);
      new Matrix from {
 	  symbol ring => R,
 	  symbol target => tar,
@@ -12,7 +12,7 @@ map(Module,Module,RawMatrix) := opts -> (tar,src,f) -> (
 	  symbol cache => new CacheTable
 	  })
 map(Module,Nothing,RawMatrix) := opts -> (tar,nothing,f) -> (
-     if raw tar =!= target f then f = rawMatrixRemake2(raw tar, rawSource f, rawMultiDegree f, f, 0);
+     if raw cover tar =!= target f then f = rawMatrixRemake2(raw cover tar, rawSource f, rawMultiDegree f, f, 0);
      new Matrix from {
 	  symbol ring => R,
 	  symbol target => tar,

@@ -729,7 +729,7 @@ degree BettiTally := (B) -> (
      T := (ring f)_0;
      while f % (1-T) == 0 do f = f//(1-T);
      substitute(f, T=>1))
-codim BettiTally := (B) -> (
+codim BettiTally := {} >> opts -> (B) -> (
      f := poincare B;
      if f === 0 then return infinity;
      T := (ring f)_0;

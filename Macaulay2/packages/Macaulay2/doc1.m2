@@ -5,11 +5,22 @@ scan((
 	  CheckDocumentation, IgnoreExampleErrors, MakeDocumentation, MakeInfo, MakeLinks, RemakeAllDocumentation, RerunExamples, UserMode, Generic,
 	  KeepZeroes,Heading
 	  ),
-     s -> if s =!= null then document { Key => s, "A symbol used as the name of an optional argument, for some function(s)." })
+     s -> if s =!= null then document {
+	  Key => s,
+	  Headline => "name for an optional argument",
+	  "A symbol used as the name of an optional argument, for some function(s)."
+	  }
+     )
+
 scan((
      	  Center, Right, Left, Quotient, Intersection
 	  ),
-     s -> document { Key => s, "A symbol used as the value of an optional argument, for some function(s)." })
+     s -> document {
+	  Key => s,
+	  Headline => "value for an optional argument",
+	  "A symbol used as the value of an optional argument, for some function(s)."
+	  }
+     )
 
 document {
      Key => "initial help",				    -- display by the help command by default
@@ -293,13 +304,14 @@ document {
      SeeAlso => ">>" }
 document {
      Key => {(symbol >>, OptionTable, Function),
-	  (symbol >>, List, Function)},
+	  (symbol >>, List, Function),(symbol >>, Boolean, Function)},
      Headline => "attaching options to a function",
      Usage => "g = defs >> fun",
      Inputs => {
 	  "defs" => { "(or ", ofClass List, " of option pairs), 
 	       whose keys are the names of the optional arguments, and whose values are the
-	       corresponding default values"},
+	       corresponding default values.  Alternatively, if ", TT "defs", " is ", TO "true", ",
+	       then all optional arguments are accepted and no defaults are provided."},
 	  "fun" => { "a function that expects optional arguments" }
 	  },
      Outputs => {
@@ -324,8 +336,26 @@ document {
 	  g x
 	  g(x,y,b=>66)
 	  g(t,u,a=>44,b=>77)
+	  h = true >> opts -> args -> {args, opts}
+	  h(t,u,c=>55)
 	  ///,
      SeeAlso => {"making new functions with optional arguments", "OptionTable", "Option", "=>"}
+     }
+
+document {
+     Key => {(symbol ++, OptionTable, OptionTable),(symbol ++, OptionTable, List)},
+     Usage => "x ++ y",
+     Inputs => { "x", "y" },
+     Outputs => {
+	  {"a new ", TO "OptionTable", " obtained by merging x and y, preferring the default values provided by ", TT "y"}
+	  },
+     PARA {
+	  "Alternatively, y can be a list of options."
+	  },
+     EXAMPLE lines ///
+     	  options res ++ { Alpha => Omega }
+     ///,
+     SeeAlso => { Option }
      }
 
 document {
@@ -534,10 +564,13 @@ document {
      Usage => "options f",
      Inputs => { "f" },
      Outputs => {
-	  { "a hash table whose keys are the names of the optional arguments accepted by the function ", TT "f", " and whose values are the corresponding default values" }
+	  { "a hash table whose keys are the names of the optional arguments accepted by 
+	       the function ", TT "f", " and whose values are the corresponding default values;
+	       or ", TO "true", ", if the function accepts all option names and provides no default values" }
 	  },
      EXAMPLE {
 	  "options res",
+	  "options codim"
 	  }
      }
 document {

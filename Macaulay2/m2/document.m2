@@ -80,7 +80,8 @@ verifyKey Sequence := s -> (				    -- e.g., (res,Module) or (symbol **, Module,
 verifyKey Array   := s -> (				    -- e.g., [res, Strategy]
      fn := s#0;
      opt := s#1;
-     if not instance(fn, Function) then error "expected first element of document key for optional argument to be a function";
+     if not instance(fn, Function) and not instance(fn, Sequence)
+     then error "expected first element of document key for optional argument to be a function or sequence";
      if not (options fn)#?opt then error("expected ", opt, " to be an option of ", fn))
 
 -----------------------------------------------------------------------------
@@ -380,7 +381,11 @@ formatDocumentTag Sequence := record(
 	  else if             fSeq#?(class s#-1,#s)             then fSeq#(class s#-1,#s)
 	  else if             fSeq#?#s                          then fSeq#(#s)
 								else toString) s)
-formatDocumentTag Array := s -> concatenate( toString s#0, "(..., ", toString s#1, " => ...)" )
+formatDocumentTag Array := s -> (
+     if class s#0 === Sequence and # s#0 > 0
+     then concatenate( toString s#0#0, "(",between(",",apply(drop(s#0,1),toString)),", ", toString s#1, " => ...)" )
+     else concatenate( toString s#0, "(..., ", toString s#1, " => ...)" )
+     )
 
 -----------------------------------------------------------------------------
 -- fixing up hypertext
@@ -867,7 +872,13 @@ processInputOutputItems := (key,fn) -> x -> (
 	  };
      if optsymb =!= null then r = (
 	  if #r == 0
-	  then SPAN between(", ", nonnull ( TO2{ [fn,optsymb], concatenate(toString optsymb," => ...") }, LATER { () -> commentize (headline [fn,optsymb]) } ))
+	  then SPAN between(", ", 
+	       nonnull ( 
+		    TO2{ 
+			 [ if options key =!= null then key else fn, optsymb],
+			 concatenate(toString optsymb," => ...") },
+		    LATER { () -> commentize (headline [fn,optsymb]) }
+		    ))
 	  else SPAN (TT ( toString optsymb, " => " ), r));
      r)
 
@@ -1069,12 +1080,33 @@ help String := key -> (
 	       );
 	  fixup DIV {topheader key, b, caveat key, seealso key, theMenu key}))
 
-optionFor := s -> unique select( value \ flatten(values \ dictionaryPath), f -> instance(f, Function) and (options f)#?s) -- this is slow!
+instances = method()
+instances Type := X -> hashTable apply(select(flatten(values \ dictionaryPath), i -> instance(value i,X)), i -> (i,value i))
 
---ret := k -> (
---     t := typicalValue k;
---     if t =!= Thing then fixup DIV {"Class of returned value: ", TO t, commentize headline t}
---     )
+reverseOptionTable := null
+addro := (sym,meth) -> (
+     if not reverseOptionTable#?sym then reverseOptionTable#sym = new MutableHashTable;
+     reverseOptionTable#sym#meth = true;
+     )
+initializeReverseOptionTable := () -> (
+     reverseOptionTable = new MutableHashTable;
+     scan(dictionaryPath, 
+	  d -> scan(values d,
+	       f -> (
+		    f = value f;
+		    if instance(f, Type) then (
+			 scan(pairs f, (m,mf) -> (
+				   if instance(m,Sequence) and instance(mf,Function) then (
+					om := options mf;
+					if om =!= null then scanKeys(om, s -> addro(s,m))))))
+		    else if instance(f, MethodFunctionWithOptions) then (
+			 o := options f;
+			 if o =!= null then scanKeys(o, s -> addro(s,f)))))))
+optionFor := s -> (
+     initializeReverseOptionTable();
+     ret := if reverseOptionTable#?s then keys reverseOptionTable#s else {};
+     reverseOptionTable = null;
+     ret)
 
 documentationValue := method()
 

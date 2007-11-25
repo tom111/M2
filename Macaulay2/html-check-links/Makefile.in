@@ -10,7 +10,7 @@ YACC = bison
 	sed 's="bison.simple"="/usr/share/bison.simple"=' <$< >$@.tmp
 	mv $@.tmp $@
 LEX = flex
-LFLAGS += -f -s -i
+LFLAGS += -f -s -i --8bit -v
 CFLAGS += -Wall -g
 HSRC := buffer.h html-check-links.h getmem.h grammar.h
 CSRC := html-check-links.c getmem.c buffer.c
@@ -21,6 +21,9 @@ CFILES := $(CSRC) $(LSRC:.l=.c) $(YSRC:.y=.fixed.c)
 YFLAGS += -d
 YFLAGS += --verbose
 LOADLIBES += -lgc -ldl
+ifeq (@DEBUG@,yes)
+CPPFLAGS += -DYYDEBUG
+endif
 ifdef FULLDEBUG
 LDFLAGS := -g
 CPPFLAGS += -DDEBUG

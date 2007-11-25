@@ -95,7 +95,7 @@ static void process(char *f) {
 int main(int argc, char **argv) {
   int i = 1;
 # ifdef DEBUG
-    yydebug = 1;
+  /*    yydebug = 1; */
 # endif
   if (argc > i+1 && 0 == strcmp("--root",argv[i])) rootname = argv[i+1], i += 2;
   for (; i<argc; i++) process(argv[i]);

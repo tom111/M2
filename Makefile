@@ -77,16 +77,17 @@ monitor:
 
 count count-source-code-lines:
 	find . \( \
-	-name BUILD -prune -o \
-	-name .svn -prune -o \
-	-name regex -prune -o \
-	-name examples -prune -o \
-	-name test -prune -o \
-	-name TST -prune -o \
-	-name EXA -prune -o \
-	-name ComputationsBook -prune -o \
-	-name bugs\* -prune -o \
-	-name basictests -prune -o \
+	-name BUILD -prune -false -o \
+	-name .svn -prune -false -o \
+	-name bugs -prune -false -o \
+	-name autoconf-\* -prune -false -o \
+	-name regex -prune -false -o \
+	-name examples -prune -false -o \
+	-name test -prune -false -o \
+	-name TST -prune -false -o \
+	-name EXA -prune -false -o \
+	-name ComputationsBook -prune -false -o \
+	-name basictests -prune -false -o \
 	-name \*.m2 -o \
 	-name \*.c -o \
 	-name \*.h -o \
@@ -95,10 +96,17 @@ count count-source-code-lines:
 	-name configure.ac -o \
 	-name Makefile.in -o \
 	-name Makefile -o \
-	-name GNUMakefile \) -a -type f \
-	| xargs wc -l
+	-name GNUMakefile \) \
+	-not -name bug\* \
+	-not -name demo\* \
+	-not -name test\* \
+	| xargs wc -l > /tmp/$@-$$$$ && \
+	egrep -v ' total$$' /tmp/$@-$$$$ && \
+	egrep ' total$$' /tmp/$@-$$$$ && \
+	egrep ' total$$' /tmp/$@-$$$$ | awk '{sum += $$1}; END { print sum, "grand total" }' && \
+	rm /tmp/$@-$$$$
 
 # Local Variables:
 # mode: Makefile
-# compile-command: "make -f Makefile"
+# compile-command: "make -f Makefile "
 # End:

@@ -863,7 +863,7 @@ processInputOutputItems := (key,fn) -> x -> (
      default := if optsymb =!= null and text =!= null and #text > 0 then (
 	  if fn === null or fn === () then error ("default value for option ",toString optsymb, " not accessible, function not specified");
 	  t := toString (options fn)#optsymb;
-	  if not match("^--Function",t) then SPAN{"default value " ,t});
+	  if not match("^\\{\\*Function",t) then SPAN{"default value " ,t});
      r := SPAN splice between_", " nonnull nonempty { 
 	  if idname =!= null then TT idname, 
 	  if type =!= null and type =!= Nothing then ofClass type, -- type Nothing, treated as above

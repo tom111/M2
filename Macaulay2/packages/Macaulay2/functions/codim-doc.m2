@@ -9,7 +9,10 @@ document {
      }
 
 document { 
-     Key => {[(codim,Ideal), Generic],[(codim,Module), Generic]},
+     Key => {[(codim,Ideal), Generic],[(codim,Module), Generic],
+	  [(codim,CoherentSheaf), Generic],[(codim,MonomialIdeal), Generic],
+	  [(codim,PolynomialRing), Generic],[(codim,ProjectiveVariety), Generic],
+	  [(codim,QuotientRing), Generic]},
      Usage => "codim(...,Generic=>true)",
      Consequences => {
 	  "Allows the computation of the codimension to proceed without an error message, even if the ring is
@@ -20,17 +23,15 @@ document {
 document { 
      Key => {(codim,QuotientRing),(codim, PolynomialRing)},
      Usage => "codim R",
-     Inputs => {"R"
-	  },
-     Outputs => {ZZ
-	  },
+     Inputs => {"R"},
+     Outputs => {ZZ => {"the codimension of ", TT "R"}},
      "Computes the codimension of the presentation ideal of ", TT "R",
      " over its ambient polynomial ring.",
      EXAMPLE {
 	  "R = QQ[x,y]/(ideal(x,y) * ideal(x-1))",
           "codim R"
 	  },
-     "However the following may not be the expected result.",
+     "However, the following may not be the expected result.",
      EXAMPLE {
 	  "R = QQ[x,y]/(ideal(x,y) * ideal(x-1))",
           "codim R",
@@ -91,7 +92,7 @@ document {
      EXAMPLE {
 	  "R = ZZ/101[a..e];",
 	  "I = monomialCurveIdeal(R,{2,3,5,7})",
-	  "J = ideal presentation singularLocus(R/I)",
+	  "J = ideal presentation singularLocus(R/I);",
 	  "codim J",
 	  "radical J"	  
 	  },

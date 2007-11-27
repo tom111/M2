@@ -75,6 +75,29 @@ include/config.h.in.stamp : configure.ac # aclocal.m4
 monitor:
 	@[ -f include/config.h.in ] || (set -x ; rm -f include/config.h.in.stamp)
 
+count count-source-code-lines:
+	find . \( \
+	-name BUILD -prune -o \
+	-name .svn -prune -o \
+	-name regex -prune -o \
+	-name examples -prune -o \
+	-name test -prune -o \
+	-name TST -prune -o \
+	-name EXA -prune -o \
+	-name ComputationsBook -prune -o \
+	-name bugs\* -prune -o \
+	-name basictests -prune -o \
+	-name \*.m2 -o \
+	-name \*.c -o \
+	-name \*.h -o \
+	-name \*.hpp -o \
+	-name \*.cpp -o \
+	-name configure.ac -o \
+	-name Makefile.in -o \
+	-name Makefile -o \
+	-name GNUMakefile \) -a -type f \
+	| xargs wc -l
+
 # Local Variables:
 # mode: Makefile
 # compile-command: "make -f Makefile"

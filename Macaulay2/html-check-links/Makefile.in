@@ -10,7 +10,7 @@ YACC = bison
 	sed 's="bison.simple"="/usr/share/bison.simple"=' <$< >$@.tmp
 	mv $@.tmp $@
 LEX = flex
-LFLAGS += -f -s -i --8bit -v
+LFLAGS += -f -s -i -8 -v
 CFLAGS += -Wall -g
 HSRC := buffer.h html-check-links.h getmem.h grammar.h
 CSRC := html-check-links.c getmem.c buffer.c

@@ -227,7 +227,7 @@ getPrimary = tag -> (
      do tag = d#PrimaryTag;
      tag)
 
-fetchPrimaryRawDocumentation := tag -> (
+fetchPrimaryRawDocumentation = tag -> (
      while (
      	  d := fetchRawDocumentation tag;
      	  d =!= null and d#?PrimaryTag

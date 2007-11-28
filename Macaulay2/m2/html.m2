@@ -88,16 +88,25 @@ html HREF := x -> (
 tex  HREF := x -> concatenate("\\special{html:<a href=\"", texLiteral rel first x, "\">}", tex last x, "\\special{html:</a>}")
 html TO   := x -> (
      tag := x#0;
-     fkey := DocumentTag.FormattedKey tag;
-     r := htmlLiteral fkey;
+     d := fetchPrimaryRawDocumentation tag;
+     r := htmlLiteral DocumentTag.FormattedKey tag;
      if match("^ +$",r) then r = #r : "&nbsp;&nbsp;";
-     if isMissingDoc tag then
-     concatenate( "<em>", r, "</em>", if x#?1 then x#1, " (missing documentation <!-- tag: ",fkey," -->)")
+     if d#?"undocumented" and d#"undocumented" === true then (
+	  if signalDocError tag then stderr << "--warning: tag cited also declared as undocumented: " << tag << endl;
+	  concatenate( "<em>", r, "</em>", if x#?1 then x#1, " (missing documentation <!-- tag: ",toString DocumentTag.Key tag," -->)")
+	  )
+     else if d === null					    -- isMissingDoc
+     then concatenate( "<em>", r, "</em>", if x#?1 then x#1, " (missing documentation <!-- tag: ",toString DocumentTag.Key tag," -->)")
      else concatenate( "<a href=\"", rel htmlFilename getPrimary x#0, "\" title=\"", headline x#0, "\">", r, "</a>", if x#?1 then x#1))
 html TO2  := x -> (
      tag := x#0;
      headline tag;		   -- this is a kludge, just to generate error messages about missing links
-     if isMissingDoc tag
+     d := fetchPrimaryRawDocumentation tag;
+     if d#?"undocumented" and d#"undocumented" === true then (
+	  if signalDocError tag then stderr << "--warning: tag cited also declared as undocumented: " << tag << endl;
+	  concatenate("<em>", htmlLiteral x#1, "</em> (missing documentation <!-- tag: ",DocumentTag.FormattedKey tag," -->)")
+	  )
+     else if d === null					    -- isMissingDoc
      then concatenate("<em>", htmlLiteral x#1, "</em> (missing documentation <!-- tag: ",DocumentTag.FormattedKey tag," -->)")
      else concatenate("<a href=\"", rel htmlFilename getPrimary x#0, "\">", htmlLiteral x#1, "</a>"))
 

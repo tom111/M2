@@ -724,6 +724,16 @@ document {
      SeeAlso => {CoherentSheaf, cohomology}
      }
 
+document {
+     Key => {(instances, Type),instances},
+     Usage => "instances X",
+     Inputs => { "X" },
+     Outputs => {{"a hashtable listing global symbols whose values are instances of type ", TT "X"}},
+     EXAMPLE lines ///
+     	  20!
+	  instances ZZ
+	  ///
+     }
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

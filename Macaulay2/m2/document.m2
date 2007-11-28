@@ -677,13 +677,14 @@ headline FinalDocumentTag := headline DocumentTag := tag -> (
 	       if signalDocError tag
 	       and DocumentTag.Package tag === currentPackage
 	       then stderr << "--warning: tag has no documentation: " << tag << ", key " << toExternalString DocumentTag.Key tag << endl;
-	       return "missing documentation";
+	       return null;
 	       ));
      if d#?Headline then d#Headline
      else headline DocumentTag.Key tag			    -- revert to old method, eliminate?
      )
 commentize = s -> if s =!= null then concatenate(" -- ",s)
 -----------------------------------------------------------------------------
+isMissingDoc = tag -> null === fetchPrimaryRawDocumentation tag
 isUndocumented = tag -> (
      d := fetchRawDocumentation tag;
      d =!= null and d#?"undocumented" and d#"undocumented" === true)
@@ -1081,7 +1082,7 @@ help String := key -> (
 	  fixup DIV {topheader key, b, caveat key, seealso key, theMenu key}))
 
 instances = method()
-instances Type := X -> hashTable apply(select(flatten(values \ dictionaryPath), i -> instance(value i,X)), i -> (i,value i))
+instances Type := HashTable => X -> hashTable apply(select(flatten(values \ dictionaryPath), i -> instance(value i,X)), i -> (i,value i))
 
 reverseOptionTable := null
 addro := (sym,meth) -> (

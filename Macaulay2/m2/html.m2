@@ -87,12 +87,19 @@ html HREF := x -> (
      )
 tex  HREF := x -> concatenate("\\special{html:<a href=\"", texLiteral rel first x, "\">}", tex last x, "\\special{html:</a>}")
 html TO   := x -> (
-     r := htmlLiteral DocumentTag.FormattedKey x#0;
+     tag := x#0;
+     fkey := DocumentTag.FormattedKey tag;
+     r := htmlLiteral fkey;
      if match("^ +$",r) then r = #r : "&nbsp;&nbsp;";
-     concatenate( "<a href=\"", rel htmlFilename getPrimary x#0, "\" title=\"", headline x#0, "\">", r, "</a>", if x#?1 then x#1))
+     if isMissingDoc tag then
+     concatenate( "<em>", r, "</em>", if x#?1 then x#1, " (missing documentation <!-- tag: ",fkey," -->)")
+     else concatenate( "<a href=\"", rel htmlFilename getPrimary x#0, "\" title=\"", headline x#0, "\">", r, "</a>", if x#?1 then x#1))
 html TO2  := x -> (
-     headline x#0;		   -- this is a kludge, just to generate error messages about missing links
-     concatenate("<a href=\"", rel htmlFilename getPrimary x#0, "\">", htmlLiteral x#1, "</a>"))
+     tag := x#0;
+     headline tag;		   -- this is a kludge, just to generate error messages about missing links
+     if isMissingDoc tag
+     then concatenate("<em>", htmlLiteral x#1, "</em> (missing documentation <!-- tag: ",DocumentTag.FormattedKey tag," -->)")
+     else concatenate("<a href=\"", rel htmlFilename getPrimary x#0, "\">", htmlLiteral x#1, "</a>"))
 
 next := tag -> ( if NEXT#?tag then HREF { htmlFilename NEXT#tag, nextButton } else nextButton, " | ")
 prev := tag -> ( if PREV#?tag then HREF { htmlFilename PREV#tag, prevButton } else prevButton, " | ")

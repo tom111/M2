@@ -26,8 +26,6 @@ addStartFunction(
 	  )
      )
 
-addStartFunction( () -> if sourceHomeDirectory =!= null then Core#"source directory" = sourceHomeDirectory|"m2/" )
-
 addStartFunction( () -> if not noinitfile and prefixDirectory =!= null then makePackageIndex() )
 
 addStartFunction( () -> if not noinitfile then (
@@ -62,11 +60,6 @@ unexportedSymbols = () -> hashTable apply(pairs Core#"private dictionary", (n,s)
 
 scan(values Core#"private dictionary" - set values Core.Dictionary,
      s -> if mutable s and value s === s then stderr << symbolLocation s << ": warning: mutable unexported unset symbol in Core: " << s << endl)
-
-document { Key => Core,
-     Headline => "the core part of Macaulay 2",
-     "This package contains the core functionality of Macaulay 2, without the documentation, which is in the package ", TO "Macaulay2::Macaulay2", "."
-     }
 
 Core#"pre-installed packages" = {}			    -- these will loaded before dumping, see below
 Core#"base packages" = {}				    -- these will be kept visible with other packages are loaded

@@ -292,6 +292,7 @@ AC_SUBST(PACKAGES,"
   ChainComplexExtras
   Benchmark
   Schubert2
+  Browse
 ")
 
 # convert the newlines in the list above to spaces

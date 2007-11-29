@@ -735,6 +735,15 @@ document {
 	  ///
      }
 
+document { Key => Core,
+     Headline => "the core part of Macaulay 2",
+     PARA {
+     	  "This package contains the core functionality of Macaulay 2, without the documentation, 
+     	  which is in the package ", TO "Macaulay2", ".  It doesn't get installed in the usual way,
+	  and we hope to rename to ", TO "Macaulay2", " in the future."
+	  }
+     }
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

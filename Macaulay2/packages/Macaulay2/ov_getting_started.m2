@@ -39,7 +39,7 @@ document {
 
 document {
      Key => "teaching M2 how to find its shared libraries",
-     "Perhaps you know that your M2 executable is locate at ", TT "/foo/bar/bin/M2", ", say, but when you run
+     "Perhaps you know that your M2 executable is located at ", TT "/foo/bar/bin/M2", ", say, but when you run
      it, you get something like this:",
      PRE ////foo/bar/bin/M2
 M2: error while loading shared libraries: liblapack.so: cannot open shared object file: No such file or directory///,

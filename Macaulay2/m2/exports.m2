@@ -1133,7 +1133,7 @@ export {
 	symbol ~
 }
 
-exportMutable toList (a .. Z)
+exportMutable toList vars (0 .. 51)
 
 exportMutable {
 	symbol applicationDirectorySuffix,

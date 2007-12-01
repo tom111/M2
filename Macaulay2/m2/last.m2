@@ -68,6 +68,8 @@ Core#"base packages" = {}				    -- these will be kept visible with other packag
 endPackage "Core"
 -- after this point, private global symbols, such as noinitfile, are no longer visible
 
+flagLookup \ vars (0 .. 51)
+
 load "installedpackages.m2"
 
 scan(Core#"pre-installed packages",	-- initialized in the file installedpackages.m2, which is made from the file installedpackages

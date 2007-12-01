@@ -412,8 +412,8 @@ poincare ChainComplex := C -> (
      f)
 
 poincareN ChainComplex := (C) -> (
-     s := global S;
-     t := global T;
+     s := getGlobalSymbol "S";
+     t := getGlobalSymbol "T";
      -- this stuff has to be redone as in Poincare itself, DRG
      R := ZZ[s, t_0 .. t_(degreeLength ring C - 1), Inverses=>true, MonomialOrder => RevLex, Global => false];
      f := 0_R;

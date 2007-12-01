@@ -80,7 +80,7 @@ indices := (M,vars) -> apply(vars, x -> (
 
 degreesMonoid ZZ := memoize(
      (n) -> (
-	  T := global T;
+	  T := getGlobalSymbol "T";
 	  Zn := monoid [if n === 1 then T else T_0 .. T_(n-1),
 	       Degrees => {n : {}}, 
 	       MonomialOrder => RevLex,
@@ -91,7 +91,7 @@ degreesMonoid ZZ := memoize(
 monoidDefaults = (
      new OptionTable from {
 	  Variables => null,
-	  VariableBaseName => global p,			    -- would be overridden by Variables => {...}
+	  VariableBaseName => getGlobalSymbol "p",	    -- would be overridden by Variables => {...}
 	  Weights => {},				    -- default weight is 1, unless Local=>true
 	  Global => true,				    -- means that all variables are > 1
      	  Local => false, 				    -- means that all variables are < 1, default weight = -1, and implies Global => false

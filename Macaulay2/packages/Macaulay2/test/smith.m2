@@ -50,4 +50,3 @@ chk = M -> (
 chk vars R
 chk matrix {{x^5}}
 chk matrix {{x^5,x^7},{x^15,x^3}}
-as

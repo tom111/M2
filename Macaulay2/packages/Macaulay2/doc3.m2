@@ -28,8 +28,16 @@ document {
 document {
      Key => flagLookup,
      Headline => "flag a symbol",
-     TT "flagLookup x", " -- arranges for each subsequent reference to a
-     symbol ", TT "x", " to be flagged with a error message."
+     Usage => "flagLookup x",
+     Inputs => { "x" => Symbol },
+     Outputs => {{Boolean => "whether each subsequent reference to the symbol ", TT "x", " will result in an error message"}},
+     Consequences => {{ 
+	       "The first use arranges for each subsequent reference to the symbol ", TT "x", " to result in an error message.
+	       The second use cancels the arrangement.  Each subsequent use toggles the state."
+	       }},
+     PARA {
+	  "To get access to a flagged symbol without signalling an error, use ", TO "getGlobalSymbol", "."
+	  }
      }
 
 document {

@@ -12,6 +12,7 @@ map(Module,Module,RawMatrix) := opts -> (tar,src,f) -> (
 	  symbol cache => new CacheTable
 	  })
 map(Module,Nothing,RawMatrix) := opts -> (tar,nothing,f) -> (
+     R := ring tar;
      if raw cover tar =!= target f then f = rawMatrixRemake2(raw cover tar, rawSource f, rawMultiDegree f, f, 0);
      new Matrix from {
 	  symbol ring => R,

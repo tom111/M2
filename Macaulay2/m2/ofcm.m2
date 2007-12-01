@@ -35,21 +35,22 @@ options GeneralOrderedMonoid := M -> M.Options
 degrees GeneralOrderedMonoid := M -> M.Options.Degrees
 raw GeneralOrderedMonoid := M -> M.RawMonoid
 
-parts := (M) -> (
+monoidParts := (M) -> (
      O := monoidDefaults;
      -- o := M.Options;
      o := M#"original options";
      join(
 	  if M.?generatorExpressions then M.generatorExpressions else {},
 	  if any(o.Degrees, i -> i =!= {1}) then {Degrees => o.Degrees} else {},
+	  if any(o.Heft, i -> i =!= 1) then {Heft => o.Heft} else {},
 	  select(
-	       { MonomialOrder, MonomialSize, WeylAlgebra, SkewCommutative, Inverses, Heft }
+	       { MonomialOrder, MonomialSize, WeylAlgebra, SkewCommutative, Inverses }
 	       / (key -> if o#key =!= O#key then key => o#key),
 	       i -> i =!= null)))
 
 expression GeneralOrderedMonoid := M -> (
      T := if (options M).Local === true then List else Array;
-     new T from apply(parts M,expression))
+     new T from apply(monoidParts M,expression))
 toExternalString GeneralOrderedMonoid := M -> toString expression M
 toString GeneralOrderedMonoid := M -> (
      if ReverseDictionary#?M then return toString ReverseDictionary#M;

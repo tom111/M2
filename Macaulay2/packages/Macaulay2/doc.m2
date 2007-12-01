@@ -449,7 +449,7 @@ document {
      TT "describe x", " -- returns ", ofClass Net, " containing the 
      real description of ", TT "x", ", bypassing the feature which causes
      certain types of things to acquire, for brevity, the names of global variables to which
-     they are assigned.",
+     they are assigned.  For polynomial rings, it also displays the options used at creation.",
      PARA{},
      EXAMPLE lines ///
 	  R = ZZ/101[a,b,c_1,c_2];
@@ -457,6 +457,8 @@ document {
       	  describe R
 	  toString describe R
 	  toExternalString R
+	  QQ[x,d,WeylAlgebra=>{x=>d}]
+	  describe oo
 	  ///,
      SeeAlso => {"toString", "toExternalString"}
      }

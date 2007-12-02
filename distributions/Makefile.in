@@ -45,9 +45,10 @@ clean ::; rm -f ../$(PKG_TGZ) ../$(PKG_TBZ) ../$(PKG_COM_TGZ) ../$(PKG_COM_TBZ)
 
 ifeq "@UBUNTU@" "yes"
 install :: ubuntu
+check :: ; $(MAKE) -C ubuntu $@
 endif
 ubuntu : ../$(PKG_TZ) ../$(PKG_COM_TZ) ; $(MAKE) -C ubuntu install
-check clean distclean :: ; $(MAKE) -C ubuntu $@
+clean distclean :: ; $(MAKE) -C ubuntu $@
 
 ifeq "@RPM@" "yes"
 install :: rpm

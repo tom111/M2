@@ -30,7 +30,9 @@ document {
      Headline => "flag a symbol",
      Usage => "flagLookup x",
      Inputs => { "x" => Symbol },
-     Outputs => {{Boolean => "whether each subsequent reference to the symbol ", TT "x", " will result in an error message"}},
+     Outputs => {
+	  Boolean => {"whether each subsequent reference to the symbol ", TT "x", " will result in an error message"}
+	  },
      Consequences => {{ 
 	       "The first use arranges for each subsequent reference to the symbol ", TT "x", " to result in an error message.
 	       The second use cancels the arrangement.  Each subsequent use toggles the state."

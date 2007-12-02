@@ -2,9 +2,8 @@ Package: macaulay2
 Version: @PACKAGE_VERSION@
 Section: math
 Priority: extra
-Depends: macaulay2-common (= @PACKAGE_VERSION@)
 Maintainer: Daniel R. Grayson <dan@math.uiuc.edu>
-Architecture: @DEBIANARCH@
+Architecture: @UBUNTUARCH@
 Description: a software system for algebraic geometry research
  Macaulay 2 is a software system for algebraic geometry research, written by
  Daniel R. Grayson and Michael E. Stillman.  Based on Groebner bases, it

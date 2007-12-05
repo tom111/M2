@@ -46,7 +46,7 @@ DIR = $(shell pwd)
 NEW = @encapdir@/@htmldirtail@/Macaulay2/html
 check : html-check-links
 	@echo "make: Entering directory \`$(NEW)'"
-	cd $(NEW) && find . -name \*.html | xargs "$(DIR)"/html-check-links
+	(cd $(NEW) && find . -name \*.html | xargs "$(DIR)"/html-check-links) || true
 	@echo "make: Leaving directory \`$(NEW)'"
 
 Makefile : Makefile.in

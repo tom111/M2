@@ -1,7 +1,7 @@
 {\rtf1\ansi\ansicpg1252\cocoartf949
 {\fonttbl\f0\fswiss\fcharset0 Helvetica;\f1\fnil\fcharset0 Monaco;}
 {\colortbl;\red255\green255\blue255;}
-\margl1440\margr1440\vieww11800\viewh16700\viewkind0
+\margl1440\margr1440\vieww12920\viewh16900\viewkind0
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\qc\pardirnatural
 
 \f0\b\fs24 \cf0 Macaulay2 on MacOS X\
@@ -23,11 +23,14 @@ This file tells how to get Macaulay2 installed and running on your MacOS X 10.4 
 \
 In your browser, download one of the files\
 \
-	http://www.math.uiuc.edu/Macaulay2/Downloads/MacOSX/Macaulay2-1.1-macosx-ppc.dmg\
-	http://www.math.uiuc.edu/Macaulay2/Downloads/MacOSX/Macaulay2-1.1-macosx-i386.dmg\
-	http://www.math.uiuc.edu/Macaulay2/Downloads/MacOSX/Macaulay2-1.1-x86_64-MacOS-10.5.dmg\
+	http://www.math.uiuc.edu/Macaulay2/Downloads/MacOSX/Macaulay2-1.0.9test-x86_64-MacOS-10.5.dmg\
+	http://www.math.uiuc.edu/Macaulay2/Downloads/MacOSX/Macaulay2-1.0.9test-i386-MacOS-10.5.dmg\
+	http://www.math.uiuc.edu/Macaulay2/Downloads/MacOSX/Macaulay2-1.0.9test-i386-MacOS-10.4.dmg\
+	http://www.math.uiuc.edu/Macaulay2/Downloads/MacOSX/Macaulay2-1.0.9test-ppc-MacOS-10.4.dmg\
 \
-If there is a later version, use that instead. Mount this disk image by double-clicking on it, and drag the Macaulay2 folder in this mounted disk to somewhere on your disk. One possible location is your Applications folder (your system Applications folder, at top level on your main disk).  There are (or will be soon) versions for MacOS 10.4 (Tiger) and MacOS 10.5 (Leopard), running on intel (i386), 64 bit intel (x86_64, Intel Core 2 Duo), or PowerPC (ppc, either G4 or G5 processors).\
+If there is a later version, use that instead. Mount this disk image by double-clicking on it, and drag the Macaulay2 folder in this mounted disk to somewhere on your disk. One possible location is your Applications folder (your system Applications folder, at top level on your main disk).  There are versions for MacOS 10.4 (Tiger) and MacOS 10.5 (Leopard), running on intel (i386), 64 bit intel (x86_64, Intel Core 2 Duo), or PowerPC (ppc, either G4 or G5 processors).  The versions for 10.4 (Tiger) should run on 10.5 (Leopard), but the versions for 10.5 do 
+\b not
+\b0  work on 10.4!\
 \
 
 \b Step 2. Installation
@@ -39,7 +42,7 @@ The easiest way to set up these files is to do the following in a Terminal windo
 \
 First change to the Macaulay2 folder (here we suppose that it is in your Applications directory), and then run the 'setup' routine in Macaulay2:\
 \
-	cd /Applications/Macaulay2-1.1\
+	cd /Applications/Macaulay2-1.0.9test\
 	cd bin\
 	./M2\
 	  setup()  -- this line and the next are typed inside of Macaulay2\
@@ -60,7 +63,7 @@ In a Terminal window, type 'M2' (without the quotes).  If Macaulay2 has been ins
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
 
 \f1\fs18 \cf0 	indigo% M2\
-	Macaulay 2, version 1.0\
+	Macaulay 2, version 1.0.9test\
 	with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings, TangentCone\
 	i1 : \
 \

@@ -39,7 +39,7 @@ SEDOPTS = -e 's=^\.="=' -e 's=$$="='
 	rmdir files@FINALPREFIX@/@package@
 	cd files@FINALPREFIX@ && rm -f INSTALL encapinfo postinstall preremove
 	cat Macaulay2-body.spec >Macaulay2.spec
-	(cd files && find . -type d -o -type f -o -type l) | sed $(SEDOPTS) >>Macaulay2.spec
+	(cd files && find . -type d -a -not -name . -prune -o -type f -o -type l) | sed $(SEDOPTS) >>Macaulay2.spec
 	@FAKEROOT@ rpmbuild -bb Macaulay2.spec
 ../../@PKG_COM_RPM@ : Macaulay2-common-body.spec ../../$(PKG_COM_TZ) Makefile
 	rm -rf files-common
@@ -49,7 +49,7 @@ SEDOPTS = -e 's=^\.="=' -e 's=$$="='
 	rmdir files-common@FINALPREFIX@/@package@
 	cd files-common@FINALPREFIX@ && rm -f INSTALL encapinfo postinstall preremove
 	cat Macaulay2-common-body.spec >Macaulay2-common.spec
-	(cd files-common && find . -type d -o -type f -o -type l) | sed $(SEDOPTS) >>Macaulay2-common.spec
+	(cd files-common && find . -type d -a -not -name . -prune -o -type f -o -type l) | sed $(SEDOPTS) >>Macaulay2-common.spec
 	@FAKEROOT@ rpmbuild -bb Macaulay2-common.spec
 tidy : ; rm -rf files files-common Macaulay2.spec Macaulay2-common.spec
 clean :: tidy; rm -f ../../@PKG_RPM@ ../../@PKG_COM_RPM@

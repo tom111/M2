@@ -206,6 +206,19 @@ Microsoft Windows XP and Vista notes
 Linux notes
 ----------------------
 
+See below for specific instructions for ubuntu and debian.  To make a
+distribution tar file from the source code svn 1.1 branch, here is one way:
+
+      svn checkout svn://macaulay2.math.uiuc.edu/Macaulay2/release-branches/1.1 M2-1.1
+      cd M2-1.1
+      make
+      mkdir BUILD/opt64
+      cd BUILD/opt64
+      ../../configure --prefix=$PWD/installed \
+          --enable-tarfile \
+          --enable-build-libraries="gc gdbm gmp mpfr readline ntl factory libfac blas lapack"
+
+
 ----------------------
 MacOS X notes
 ----------------------

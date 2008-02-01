@@ -241,8 +241,10 @@ There are several methods for installing Macaulay2 under Mac OS X.
 
     To make a 64 bit (intel) distribution disk image:
 
-	  svn co svn://Macaulay2.math.uiuc.edu/Macaulay2/trunk/M2 M2
-	  cd M2
+          svn checkout svn://macaulay2.math.uiuc.edu/Macaulay2/release-branches/1.1 M2-1.1
+	  #  or for the main branch:
+	  #svn co svn://Macaulay2.math.uiuc.edu/Macaulay2/trunk/M2 M2
+	  cd M2-1.1
 	  make
 	  mkdir BUILD/opt64
 	  cd BUILD/opt64

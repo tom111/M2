@@ -662,10 +662,10 @@ if test $BUILD_factory = no -o $BUILD_libfac = no
 then AC_LANG(C++)
      AC_CHECK_HEADER(factory.h,,BUILD_factory=yes BUILD_libfac=yes)
      AC_CHECK_HEADER(factor.h,,BUILD_factory=yes BUILD_libfac=yes)
-     LIBS="$SINGULARLIBS $LIBS -lcfmem"
+     LIBS="$SINGULARLIBS $LIBS -lcfmem -lntl"
      AC_SEARCH_LIBS(factoryVersion,,,BUILD_factory=yes BUILD_libfac=yes)
      AC_SEARCH_LIBS(libfac_version,,,BUILD_factory=yes BUILD_libfac=yes)
-     AC_MSG_CHECKING([whether (recent) libfac and factory libraries are installed (-lfac -lcf -lcfmem)])
+     AC_MSG_CHECKING([whether (recent) libfac and factory libraries are installed (-lfac -lcf -lcfmem -lntl)])
      AC_RUN_IFELSE( [[ /* this is line 1 */
 	     #include <stdio.h>
 	     #include <string.h>

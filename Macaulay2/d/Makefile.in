@@ -270,8 +270,9 @@ M2_LIBRARIES += -L. -lfactory_init2 @SINGULARLIBS@ -lfactory_init1
 endif
 M2_LIBDEPS    += libfactory_init1.a libfactory_init2.a
 
-M2_LIBRARIES +=  @BUILTLIBS@ @LIBS@
+M2_LIBRARIES +=  @BUILTLIBS@
 
+# I'm not sure whether compiling statically with libstdc++ is a good idea
 M2_LIBRARIES += -lstdc++
 
 ifeq (@USE_FLIBS@,yes)
@@ -282,6 +283,11 @@ endif
 ifeq "@STATIC@" "yes"
 M2_LIBRARIES += $(UNSTATIC)
 endif
+
+# warning: @LIBS@ could contain -lncurses, and it is always a mistake to
+# compile statically with ncurses, because we aren't providing the terminal
+# capabilities database for it along with our program
+M2_LIBRARIES +=  @LIBS@
 
 ifeq (@USE_FLIBS@,yes)
 M2_LIBRARIES += @FLIBS_DYNAMIC@

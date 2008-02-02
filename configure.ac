@@ -85,13 +85,13 @@ AC_SUBST(NODENAME,"`uname -n`")
 AC_DEFINE_UNQUOTED(NODENAME,"$NODENAME",hostname used for compilation)
 
 if test -f /etc/issue
-then ISSUE_FLAVOR=[`</etc/issue head -1 | sed 's/ .*//'`]
-     ISSUE_RELEASE=[`</etc/issue head -1 | sed 's/.* \([0-9][0-9.]*\).*/\1/'`]
-     case $ISSUE_FLAVOR in
-	 Fedora)
-	     if grep 'Fedora Core' /etc/issue >/dev/null
-	     then ISSUE_FLAVOR=FedoraCore
-	     fi ;;
+then ISSUEFILE=[`</etc/issue head -1`]
+     ISSUE_FLAVOR=[`</etc/issue head -1 | sed 's/ .*//'`]
+     ISSUE_RELEASE=[`</etc/issue head -1 | sed 's/[^0-9]* \([0-9][0-9.]*\).*/\1/'`]
+     case $ISSUEFILE in
+	 "Fedora Core"*) ISSUE_FLAVOR=FedoraCore ;;
+	 "Red Hat Enterprise"*) ISSUE_FLAVOR=RedHatEnterprise ;;
+	 "Red Hat"*) ISSUE_FLAVOR=RedHat ;;
      esac
      case "$ISSUE_FLAVOR" in
        *" "*) AC_MSG_ERROR([internal error: ISSUE_FLAVOR contains spaces: $ISSUE_FLAVOR]) ;;
@@ -99,10 +99,12 @@ then ISSUE_FLAVOR=[`</etc/issue head -1 | sed 's/ .*//'`]
      case "$ISSUE_RELEASE" in
        *" "*) AC_MSG_ERROR([internal error: ISSUE_RELEASE contains spaces: $ISSUE_RELEASE]) ;;
      esac
+     AC_SUBST(ISSUEFILE)
      AC_SUBST(ISSUE_FLAVOR)
      AC_SUBST(ISSUE_RELEASE)
      AC_SUBST(ISSUE,$ISSUE_FLAVOR-$ISSUE_RELEASE)
-     AC_MSG_NOTICE([issue found: $ISSUE])
+     AC_MSG_NOTICE([issue found: $ISSUEFILE])
+     AC_MSG_NOTICE([issue to be used: $ISSUE])
 fi
 
 AC_SUBST(OS,"`  uname -s | sed s=/=-=g  `")
@@ -570,9 +572,9 @@ then
 	else AC_MSG_RESULT(found $lib)
 	fi
     else AC_MSG_RESULT(none found)
-	LIBS=$SAVELIBS
 	BUILD_ntl=yes
     fi 
+    LIBS=$SAVELIBS
 
     if test $BUILD_ntl = no
     then AC_MSG_CHECKING([whether ntl library is recent enough, using NTL/version.h])

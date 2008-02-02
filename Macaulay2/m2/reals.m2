@@ -68,7 +68,7 @@ new ComplexField of Nothing' from ZZ := memoize(
 	       symbol precision => prec,
 	       symbol Engine => true,
 	       symbol isBasic => true,
-	       symbol baseRings => {ZZ,QQ},
+	       symbol baseRings => {ZZ,QQ,RR},
 	       symbol RawRing => rawCC prec
 	       }))
 precision InexactField := R -> R.precision
@@ -212,25 +212,35 @@ numeric Constant := c -> c#1 defaultPrecision
 numeric(ZZ,Constant) := (prec,c) -> c#1 prec
 
 Constant + Constant := (c,d) -> numeric c + numeric d
+Constant + RingElement := 
 Constant + InexactNumber := (c,x) -> numeric(precision x,c) + x
+RingElement + Constant :=
 InexactNumber + Constant := (x,c) -> x + numeric(precision x,c)
 + Constant := c -> numeric c
 - Constant := c -> - numeric c
 Constant - Constant := (c,d) -> numeric c - numeric d
+Constant - RingElement :=
 Constant - InexactNumber := (c,x) -> numeric(precision x,c) - x
+RingElement - Constant :=
 InexactNumber - Constant := (x,c) -> x - numeric(precision x,c)
 Constant * Constant := (c,d) -> numeric c * numeric d
+Constant * RingElement :=
 Constant * InexactNumber := (c,x) -> numeric(precision x,c) * x
+RingElement * Constant :=
 InexactNumber * Constant := (x,c) -> x * numeric(precision x,c)
 Constant / Constant := (c,d) -> numeric d / numeric d
+Constant / RingElement :=
 Constant / InexactNumber := (c,x) -> numeric(precision x,c) / x
+RingElement / Constant :=
 InexactNumber / Constant := (x,c) -> x / numeric(precision x,c)
 Constant ^ Constant := (c,d) -> (numeric c) ^ (numeric d)
 Constant ^ InexactNumber := (c,x) -> (numeric(precision x,c)) ^ x
 InexactNumber ^ Constant := (x,c) -> x ^ (numeric(precision x,c))
 
 Constant == Constant := (c,d) -> numeric d == numeric d
+Constant == RingElement :=
 Constant == InexactNumber := (c,x) -> numeric(precision x,c) == x
+RingElement == Constant :=
 InexactNumber == Constant := (x,c) -> x == numeric(precision x,c)
 
 Constant _ Ring := (c,R) -> (numeric c)_R

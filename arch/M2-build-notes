@@ -12,6 +12,7 @@ distribution tar file from the source code svn 1.1 branch, here is one way:
       cd BUILD/opt64
       ../../configure --prefix=$PWD/installed \
           --enable-tarfile \
+	  --enable-rpm \
           --enable-build-libraries="gc gdbm gmp mpfr readline ntl factory libfac blas lapack"
 
 

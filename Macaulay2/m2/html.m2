@@ -1173,7 +1173,7 @@ viewHelp = key -> (
 	       };
 	  fn := htmlFilename DocumentTag.FormattedKey getPrimary makeDocumentTag key;
 	  p := null;
-	  scan(prefixes, dir -> if fileExists (dir|fn) then p = dir|fn);
+	  scan(prefixes, dir -> if fileExists (dir|fn) then (p = dir|fn;break));
 	  if p === null then error("html file not found: ",fn)
 	  else show new URL from { fix p }
 	  );

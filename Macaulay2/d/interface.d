@@ -661,8 +661,8 @@ export rawGaloisField(e:Expr):Expr := (
 setupfun("rawGaloisField", rawGaloisField);
 
 export rawFractionRing(e:Expr):Expr := (
-     when e is R:RawRing do Expr(
-	  Ccode(RawRing,"(engine_RawRing)IM2_Ring_frac(",
+     when e is R:RawRing do toExpr(
+	  Ccode(RawRingOrNull,"(engine_RawRingOrNull)IM2_Ring_frac(",
 	       "(Ring *)", R,
 	       ")"))
      else WrongArg("a raw ring")

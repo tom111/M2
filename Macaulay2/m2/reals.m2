@@ -266,7 +266,18 @@ toString ComplexField := R -> concatenate("CC_",toString R.precision)
 
 expression RealField := R -> new Subscript from {symbol RR, R.precision}
 expression ComplexField := R -> new Subscript from {symbol CC, R.precision}
-expression RR := x -> if x < 0 then new Minus from {-x} else new Holder from {x}
+expression RR := x -> (
+     if x < 0 
+     then (
+	  if x == -1 
+	  then - expression 1
+	  else new Minus from { -x }
+	  )
+     else (
+	  if x == 1 then expression 1 
+	  else new Holder from {x}
+	  )
+     )
 expression CC := z -> (
      x := realPart z;
      y := imaginaryPart z;

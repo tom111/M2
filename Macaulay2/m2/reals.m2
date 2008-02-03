@@ -200,7 +200,6 @@ char InexactField := R -> 0
 
 -- symbolic/numeric constant expressions
 
-Constant = new Type of BasicList
 pi = new Constant from { symbol pi, pi0 }
 EulerConstant = new Constant from { symbol EulerConstant, mpfrConstantEuler }
 ii = new Constant from { symbol ii, ConstantII }
@@ -231,7 +230,7 @@ InexactNumber * Constant := (x,c) -> x * numeric(precision x,c)
 Constant / Constant := (c,d) -> numeric d / numeric d
 Constant / RingElement :=
 Constant / InexactNumber := (c,x) -> numeric(precision x,c) / x
-RingElement / Constant :=
+RingElement / Constant := (x,c) -> (1/numeric(precision x,c)) * x
 InexactNumber / Constant := (x,c) -> x / numeric(precision x,c)
 Constant ^ Constant := (c,d) -> (numeric c) ^ (numeric d)
 Constant ^ InexactNumber := (c,x) -> (numeric(precision x,c)) ^ x
@@ -271,11 +270,14 @@ expression RR := x -> if x < 0 then new Minus from {-x} else new Holder from {x}
 expression CC := z -> (
      x := realPart z;
      y := imaginaryPart z;
-     if y == 0 then return expression x;
-     if x == 0 then return expression y * ii;
-     if y == -1 then return expression x - ii;
-     if y == 1 then return expression x + ii;
-     expression x + expression y * hold symbol ii)
+     if y == 0 then expression x
+     else if x == 0 
+     then if y == 1 then hold ii
+     else if y == -1 then - hold ii
+     else y * hold ii
+     else if y == -1 then x - hold ii
+     else if y == 1 then x + hold ii
+     else x + y * hold ii)
 net InexactField := R -> net expression R
 net CC := z -> simpleToString z
 toExternalString RR := toExternalString0

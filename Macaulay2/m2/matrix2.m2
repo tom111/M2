@@ -406,7 +406,7 @@ coefficient(RingElement,RingElement) := (m,f) -> (
      if size m != 1 or leadCoefficient m != 1 then error "expected a monomial";
      RM := ring f;
      R := coefficientRing RM;
-     new R from rawCoefficient(raw R, raw f, rawLeadMonomialR m))
+     promote(rawCoefficient(raw R, raw f, rawLeadMonomialR m), R))
 RingElement _ MonoidElement := RingElement => (f,m) -> coefficient(m,f)
 RingElement _ RingElement := RingElement => (f,m) -> coefficient(m,f)
 

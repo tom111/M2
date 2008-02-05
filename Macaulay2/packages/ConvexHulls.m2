@@ -405,10 +405,7 @@ document {
 document {
      Key => polarCone,
      Headline => "find the polar dual of a rational convex polyhedral cone",
-     Usage => {
-	  TT "polarCone(A, B)", " -- find the polar cone", BR{},
-	  "(A', B') = polarCone(A, B)"
-	  },
+     Usage => "(A',B') = polarCone(A,B)",
      Inputs => {
 	  "A" => {"a ", TT "d", " by ", TT "n", " matrix over ", TO "ZZ", " or ", TO "QQ", "."},
 	  "B" => {"a ", TT "d", " by ", TT "r", " matrix over ", TO "ZZ", " or ", TO "QQ", "."}
@@ -427,8 +424,8 @@ document {
      	  "The polar cone ", TT "(A',B')", " is, by definition, the 
      	  set of vectors ", TT "z", " satisfying ", TT "(transpose z) * x <= 0", " for all ", TT "x", " in ", TT "C", "."},
      PARA {
-     	  "The output", TT "(A', B')", " is valid input and hence 
-     	  describes a cone in same manner that ", TT "(A, B)", " does."}, 
+     	  "The output", TT "(A',B')", " is valid input and hence 
+     	  describes a cone in same manner that ", TT "(A,B)", " does."}, 
      PARA { "Three sample calculations using", TT "polarCone", " are given below."},
      UL {
 	  {

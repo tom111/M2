@@ -15,7 +15,7 @@ Prefix: @FINALPREFIX@
 %post
 #!/bin/sh -e
 prefix=@FINALPREFIX@
-mkdir $prefix/@corecachedirtail@
+[ @DUMPDATA@ = yes -a -d $prefix/@corecachedirtail@ ] || mkdir $prefix/@corecachedirtail@
 [ @DUMPDATA@ = yes ] && $prefix/bin/M2 --dumpdata
 %preun
 #! /bin/sh -e

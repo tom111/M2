@@ -793,7 +793,10 @@ void gbA::minimalize_pairs_ZZ(spairs &new_set)
       /* Now get the coefficient */
       /* This is the lcm divided by the lead coeff, but it depends on the kind of spair */
       if (a->type == SPAIR_SKEW)
-	coeffs.push_back(globalZZ->one().get_mpz());
+	{
+	  coeffs.push_back(globalZZ->one().get_mpz());
+	  coeffs2.push_back(0); // will never be referred to below
+	}
       else 
 	{
 	  /* */

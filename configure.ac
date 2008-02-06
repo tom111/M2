@@ -337,6 +337,7 @@ AC_SUBST(PACKAGES,"
   Benchmark
   Schubert2
   Browse
+  InvolutiveBases
 ")
 
 # convert the newlines in the list above to spaces

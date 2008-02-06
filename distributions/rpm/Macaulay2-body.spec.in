@@ -17,6 +17,11 @@ Prefix: @FINALPREFIX@
 prefix=@FINALPREFIX@
 [ @DUMPDATA@ = yes -a -d $prefix/@corecachedirtail@ ] || mkdir $prefix/@corecachedirtail@
 [ @DUMPDATA@ = yes ] && $prefix/bin/M2 --dumpdata
+%preun
+#! /bin/sh -e
+prefix=@FINALPREFIX@
+rm -f $prefix/@corecachedirtail@/*-data
+rm -f $prefix/@corecachedirtail@/*-data.maps
 %description
 Macaulay 2 is a software system for algebraic geometry research, written by
 Daniel R. Grayson and Michael E. Stillman.  Based on Groebner bases, it

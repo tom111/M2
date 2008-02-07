@@ -375,8 +375,7 @@ addHook(Module, symbol minimalPresentation, (opts,M) -> (
 
 addHook(Module, symbol minimalPresentation, (opts,M) -> (
      	  R := ring M;
-	  if instance(R,PolynomialRing) and numgens R === 1 and isField coefficientRing R then (
-	       pushvar(symbol flagInhomogeneity,false);
+	  if instance(R,PolynomialRing) and numgens R === 1 and isField coefficientRing R and not isHomogeneous M then (
 	       f := presentation M;
 	       k := coefficientRing R;
 	       x := local x;
@@ -393,7 +392,6 @@ addHook(Module, symbol minimalPresentation, (opts,M) -> (
 	       (g,ch) = (p' g,p' ch);
 	       N := cokernel g;
 	       N.cache.pruningMap = map(M,N,id_(target ch) // ch);	    -- yuk, taking an inverse here, gb should give inverse change matrices, or the pruning map should go the other way
-     	       popvar symbol flagInhomogeneity;
 	       break N)))
 
 minimalPresentation(Matrix) := Matrix => opts -> (m) -> (

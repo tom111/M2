@@ -776,7 +776,7 @@ assert( toString toCC( 8.88888, 0.1 ) == "8.9+.1*ii" )
 assert( toString toCC( 8.88888, -0.1 ) == "8.9-.1*ii" )
 assert( toString toCC( 0., 8.88888) == "8.9*ii" )
 assert( toString toCC( 0.001, 8.88888 ) == "8.9*ii" )
-assert( toString toCC( 0.01, 8.88888 ) == "8.9" )
+assert( toString toCC( 0.01, 8.88888 ) == "8.9*ii" )
 assert( toString toCC( 0.1, 8.88888 ) == ".1+8.9*ii" )
 assert( toString toCC( -0.1, 8.88888 ) == "-.1+8.9*ii" )
 

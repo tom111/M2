@@ -121,6 +121,7 @@ complement Matrix := Matrix => (f) -> (
      else error "complement: expected matrix over affine ring or finitely generated ZZ-algebra")
 
 mingens Module := Matrix => opts -> (cacheValue symbol mingens) ((M) -> (
+	  if not member(opts.Strategy, {Complement, null}) then error "mingens: unrecognized Strategy option";
  	  mingb := m -> gb (m, StopWithMinimalGenerators=>true, Syzygies=>false, ChangeMatrix=>false);
 	  zr := f -> if f === null or f == 0 then null else f;
 	  F := ambient M;
@@ -130,15 +131,14 @@ mingens Module := Matrix => opts -> (cacheValue symbol mingens) ((M) -> (
 		    if opts.Strategy === Complement and isHomogeneous M and isAffineRing ring M then (
 			 c := mingens mingb (M.generators|M.relations);
 			 c * complement(M.relations // c))
-		    else if opts.Strategy === null then (
+		    else (
 	  	    	 tot := mingb(M.generators|M.relations);
 		    	 rel := mingb(M.relations);
-		    	 mingens mingb (mingens tot % rel))
-		    else error "mingens: unrecognized Strategy option")
+		    	 mingens mingb (mingens tot % rel)))
 	       else mingens mingb M.generators)
 	  else (
 	       if M.?relations then (
-		    if opts.Strategy === complement and isHomogeneous M.relations then (
+		    if opts.Strategy === Complement and isHomogeneous M.relations then (
 			 complement M.relations)
 		    else mingens mingb (id_F % mingb(M.relations)))
 	       else id_F)))

@@ -157,13 +157,13 @@ trim Module := Module => opts -> (cacheValue symbol trim) ((M) -> (
 	  zr := f -> if f === null or f == 0 then null else f;
 	  F := ambient M;
 	  epi := g -> -1 === rawGBContains(g, rawIdentity(raw F,0));
-	  epi2 := f -> epi raw mingb f;
 	  N := if M.?generators then (
 	       if M.?relations then (
 		    if opts.Strategy === Complement then (
 			 gns := mingens(M,opts);
 			 rlns := mingens(image M.relations,opts);
-			 gns = if not epi2 gns then gns;
+			 gns' := mingb gns;
+			 gns = if not epi raw gns' then generators gns';
 			 if gns === M.generators and rlns === M.relations then M
 			 else subquotient(F, gns, zr rlns))
 		    else if opts.Strategy === null then (

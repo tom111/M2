@@ -71,7 +71,7 @@ files called: INSTALL (this file), encapinfo, postinstall, and preremove.
 
    The easiest and best way to install Macaulay2 is with "epkg", available from
 
-   	http://encap.cso.uiuc.edu/epkg/
+   	http://www.encap.org/epkg/
 
    The files encapinfo, preremove, and postinstall in the top level directory
    or init files for that program, whose purpose is to put appropriate

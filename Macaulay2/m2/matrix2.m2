@@ -163,7 +163,7 @@ trim Module := Module => opts -> (cacheValue symbol trim) ((M) -> (
 			 gns := mingens(M,opts);
 			 rlns := mingens(image M.relations,opts);
 			 gns' := mingb gns;
-			 gns = if not epi raw gns' then generators gns';
+			 gns = if not epi raw gns' then mingens gns';
 			 if gns === M.generators and rlns === M.relations then M
 			 else subquotient(F, gns, zr rlns))
 		    else if opts.Strategy === null then (

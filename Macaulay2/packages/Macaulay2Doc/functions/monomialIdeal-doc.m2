@@ -39,7 +39,7 @@ document {
      EXAMPLE lines ///
      R == ZZ[x,y]
      monomialIdeal(2*x,y)
-     ///
+     ///,
      SeeAlso => {MonomialIdeal}
      }
 document { 
@@ -65,6 +65,7 @@ document {
      EXAMPLE lines ///
      R == ZZ[x,y]
      monomialIdeal ideal(2*x,y)
+     ///,
      SeeAlso => {MonomialIdeal,monomialSubideal}
      }
 

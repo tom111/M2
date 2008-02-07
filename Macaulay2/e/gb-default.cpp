@@ -1118,22 +1118,47 @@ void gbA::spairs_sort(int len, spair *&ps)
   if (ps == 0 || ps->next == 0) return;
   if (len <= 1) return;
   spairs a; // array of spair's
+  spairs b; // these are the ones which are uncomputed, but whose lead_of_spoly is 0.
   a.reserve(len);
   for (spair *p = ps; p != 0; p=p->next)
-    a.push_back(p);
+    {
+      if ((p->type > gbA::SPAIR_SKEW) || p->lead_of_spoly)
+	a.push_back(p);
+      else
+	b.push_back(p);
+    }
 
   SPolySorter SP(R,_F);
   QuickSorter<SPolySorter>::sort(&SP,&a[0],a.size());
 
-  //  sort(a.begin(), a.end(), spoly_sorter(R,_F));
+  int asize = a.size();
+  int bsize = b.size();
 
-  spairs::iterator j = a.begin();
+  if (asize > 0) 
+    {
+      ps = a[0];
+      for (int i=1; i<asize; i++)
+	a[i-1]->next = a[i];
+    }
+  else if (bsize > 0)
+    {
+      ps = b[0];
+      //debugging// fprintf(stderr, "bsize is %d\n",bsize);
+    }
+  else 
+    {
+      ps = 0;
+      return;
+    }
 
-  for (spairs::iterator i = j+1; i != a.end(); j=i, i++)
-    (*j)->next = *i;
-  (*j)->next = 0;
-
-  ps = a[0];
+  if (asize > 0)
+    a[asize-1]->next = (bsize > 0 ? b[0] : 0);
+  if (bsize > 0) 
+    {
+      for (int i=1; i<bsize; i++)
+	b[i-1]->next = b[i];
+      b[bsize-1]->next = 0;
+    }
 }
 
 

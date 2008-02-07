@@ -368,6 +368,7 @@ void gbA::spair_delete(spair *&p)
       R->gbvector_remove(p->x.f.f);
       R->gbvector_remove(p->x.f.fsyz);
     }
+  R->gbvector_remove(p->lead_of_spoly);
   lcm_stash->delete_elem(p->lcm);
   spair_stash->delete_elem(p);
 }

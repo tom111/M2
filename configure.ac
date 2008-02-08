@@ -151,18 +151,18 @@ AC_PROG_CC()
 AC_SUBST(GCC)
 
 AC_PROG_FC()
-AC_SUBST(FLIBS_DYNAMIC,"")
-AC_SUBST(FLIBS_STATIC,"")
-AC_SUBST(FLIBS_FLAGS,"")
+AC_SUBST(FCLIBS_DYNAMIC,"")
+AC_SUBST(FCLIBS_STATIC,"")
+AC_SUBST(FCLIBS_FLAGS,"")
 if test "$FC"
-then AC_F77_DUMMY_MAIN()
-     AC_F77_WRAPPERS()
-     AC_F77_LIBRARY_LDFLAGS()
-     for i in $FLIBS
+then AC_FC_DUMMY_MAIN()
+     AC_FC_WRAPPERS()
+     AC_FC_LIBRARY_LDFLAGS()
+     for i in $FCLIBS
      do case $i in
-	     -L*) FLIBS_FLAGS="$FLIBS_FLAGS $i" ;;
-	     -lgcc_s|-lm) FLIBS_DYNAMIC="$FLIBS_DYNAMIC $i" ;;
-	     *) FLIBS_STATIC="$FLIBS_STATIC $i" ;;
+	     -L*) FCLIBS_FLAGS="$FCLIBS_FLAGS $i" ;;
+	     -lgcc_s|-lm) FCLIBS_DYNAMIC="$FCLIBS_DYNAMIC $i" ;;
+	     *) FCLIBS_STATIC="$FCLIBS_STATIC $i" ;;
 	esac
      done
 fi
@@ -457,16 +457,16 @@ AC_SUBST(BUILTLIBS,"")
 
 # this list reflects dependencies
 #  factory needs ntl and gmp, libfac needs factory
-#  lapack needs blas
+#  lapack includes blas, makes both libblas and liblapack
 #  mpfr needs gmp
-AC_SUBST(LIBLIST, "gc    gdbm    gmp    mpfr    readline    ntl    factory        libfac blas    lapack")
+AC_SUBST(LIBLIST, "gc    gdbm    gmp    mpfr    readline    ntl    factory        libfac lapack")
 AC_SUBST(LIBFILES,"libgc libgdbm libgmp libmpfr libreadline libntl libcf libcfmem libfac libblas liblapack")
 for i in $LIBLIST
 do eval BUILD_$i=no
 done
 
 LIBLIST=" $LIBLIST "
-AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,list of libraries to build from downloaded source code (e.g., gc gdbm gmp mpfr readline ntl factory libfac blas lapack)),
+AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,list of libraries to build from downloaded source code (e.g., gc gdbm gmp mpfr readline ntl factory libfac lapack)),
     [for i in $enableval
     do case $LIBLIST in
 	    *" $i "*) eval BUILD_$i=yes ;;
@@ -620,7 +620,7 @@ AC_ARG_WITH(lapack, AS_HELP_STRING(--without-lapack,[compile and link without la
 test "$LAPACK" = no; val=$?
 AC_DEFINE_UNQUOTED(LAPACK,$val,whether to link with lapack)
 
-AC_SUBST(USE_FLIBS,no)
+AC_SUBST(USE_FCLIBS,no)
 if test "$LAPACK" = yes
 then AC_MSG_CHECKING([whether the vecLib framework is available])
      SAVELIBS=$LIBS
@@ -634,21 +634,17 @@ then AC_MSG_CHECKING([whether the vecLib framework is available])
 	 [
 	     AC_MSG_RESULT(no)
 	     LIBS=$SAVELIBS
-	     if test $BUILD_blas = no
-	     then AC_LANG(Fortran 77)
-		  AC_SEARCH_LIBS(sgemv,blas f77blas,,BUILD_blas=yes)
-	     fi
 	     if test $BUILD_lapack = no
-	     then AC_LANG(Fortran 77)
+	     then AC_LANG(Fortran)
+		  AC_SEARCH_LIBS(sgemv,blas f77blas,,BUILD_lapack=yes)
 		  AC_SEARCH_LIBS(dgetrf,lapack,,BUILD_lapack=yes)
 	     fi
 	 ])
 fi
-test $BUILD_blas = yes && BUILTLIBS="-lblas $BUILTLIBS"
-test $BUILD_lapack = yes && BUILTLIBS="-llapack $BUILTLIBS"
+test $BUILD_lapack = yes && BUILTLIBS="-llapack -lblas $BUILTLIBS"
 
-if test $BUILD_blas = yes -o $BUILD_lapack = yes
-then USE_FLIBS=yes
+if test $BUILD_lapack = yes
+then USE_FCLIBS=yes
 fi
 
 # after this point we add no more libraries to $LIBS, e.g., with AC_SEARCH_LIBS()

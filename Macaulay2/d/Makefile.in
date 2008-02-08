@@ -275,9 +275,9 @@ M2_LIBRARIES +=  @BUILTLIBS@
 # I'm not sure whether compiling statically with libstdc++ is a good idea
 M2_LIBRARIES += -lstdc++
 
-ifeq (@USE_FLIBS@,yes)
-M2_LIBRARIES += @FLIBS_FLAGS@
-M2_LIBRARIES += @FLIBS_STATIC@
+ifeq (@USE_FCLIBS@,yes)
+M2_LIBRARIES += @FCLIBS_FLAGS@
+M2_LIBRARIES += @FCLIBS_STATIC@
 endif
 
 ifeq "@STATIC@" "yes"
@@ -289,8 +289,8 @@ endif
 # capabilities database for it along with our program
 M2_LIBRARIES +=  @LIBS@
 
-ifeq (@USE_FLIBS@,yes)
-M2_LIBRARIES += @FLIBS_DYNAMIC@
+ifeq (@USE_FCLIBS@,yes)
+M2_LIBRARIES += @FCLIBS_DYNAMIC@
 endif
 
 LINK_OUTPUT_OPTION = $(OUTPUT_OPTION)

@@ -84,27 +84,21 @@ fi
 AC_SUBST(NODENAME,"`uname -n`")
 AC_DEFINE_UNQUOTED(NODENAME,"$NODENAME",hostname used for compilation)
 
+AC_SUBST(ISSUE)
 if test -f /etc/issue
-then ISSUEFILE=[`</etc/issue head -1`]
-     ISSUE_FLAVOR=[`</etc/issue head -1 | sed 's/ .*//'`]
-     ISSUE_RELEASE=[`</etc/issue head -1 | sed 's/[^0-9]* \([0-9][0-9.]*\).*/\1/'`]
-     case $ISSUEFILE in
-	 "Fedora Core"*) ISSUE_FLAVOR=FedoraCore ;;
-	 "Red Hat Enterprise"*) ISSUE_FLAVOR=RedHatEnterprise ;;
-	 "Red Hat"*) ISSUE_FLAVOR=RedHat ;;
+then ISSUE_FLAVOR=[`</etc/issue head -1 | sed 's/^\([A-Za-z ]*\).*/\1/' | sed 's/ //g' `]
+     ISSUE_RELEASE=[`</etc/issue head -1 | sed 's/[^0-9]*\([0-9.]*\).*/\1/'`]
+     case $ISSUE_FLAVOR in
+	 "FedoraCore"*) ISSUE_FLAVOR=FedoraCore ;;
+	 "RedHatEnterprise"*) ISSUE_FLAVOR=RedHatEnterprise ;;
+	 "RedHat"*) ISSUE_FLAVOR=RedHat ;;
+	 "") ISSUE_FLAVOR=unknown ;;
      esac
-     case "$ISSUE_FLAVOR" in
-       *" "*) AC_MSG_ERROR([internal error: ISSUE_FLAVOR contains spaces: $ISSUE_FLAVOR]) ;;
+     case $ISSUE_RELEASE in
+	 "") ISSUE_RELEASE=unknown ;;
      esac
-     case "$ISSUE_RELEASE" in
-       *" "*) AC_MSG_ERROR([internal error: ISSUE_RELEASE contains spaces: $ISSUE_RELEASE]) ;;
-     esac
-     AC_SUBST(ISSUEFILE)
-     AC_SUBST(ISSUE_FLAVOR)
-     AC_SUBST(ISSUE_RELEASE)
-     AC_SUBST(ISSUE,$ISSUE_FLAVOR-$ISSUE_RELEASE)
-     AC_MSG_NOTICE([issue found: $ISSUEFILE])
-     AC_MSG_NOTICE([issue to be used: $ISSUE])
+     ISSUE=$ISSUE_FLAVOR-$ISSUE_RELEASE
+     AC_MSG_NOTICE([issue to be used in distribution file names: $ISSUE])
 fi
 
 AC_SUBST(OS,"`  uname -s | sed s=/=-=g  `")

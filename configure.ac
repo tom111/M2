@@ -650,45 +650,61 @@ if ! test "$SINGULARLIBS"
 then SINGULARLIBS="-lfac -lcf"
 fi
 AC_SUBST(SINGULARLIBS)
-if test $BUILD_factory = no -o $BUILD_libfac = no
-then AC_LANG(C++)
-     AC_CHECK_HEADER(factory.h,,BUILD_factory=yes BUILD_libfac=yes)
-     AC_CHECK_HEADER(factor.h,,BUILD_factory=yes BUILD_libfac=yes)
-     LIBS="$SINGULARLIBS $LIBS -lcfmem"
-     AC_SEARCH_LIBS(factoryVersion,ntl,,BUILD_factory=yes BUILD_libfac=yes)
-     AC_SEARCH_LIBS(libfac_version,ntl,,BUILD_factory=yes BUILD_libfac=yes)
-     AC_MSG_CHECKING([whether (recent) libfac and factory libraries are installed (-lfac -lcf -lcfmem and maybe -lntl)])
-     AC_RUN_IFELSE( [[ /* this is line 1 */
-	     #include <stdio.h>
-	     #include <string.h>
-	     #include <factory.h>
-	     #include <factor.h>
-             #include <templates/ftmpl_inst.cc>
-	     extern const char * libfac_version;
-	     int foo () { return SW_USE_NTL; }
-	     int main () {
-		  FILE *msg = fdopen(]]AS_MESSAGE_FD[[,"w");
-		  static int factoryV[3], fV[3] = {3,0,3}, fOK;
-		  static int  libfacV[3], lV[3] = {3,0,1}, lOK;
-		  sscanf(FACTORYVERSION,"%d.%d.%d", &factoryV[0], &factoryV[1], &factoryV[2]);
-		  sscanf(libfac_version,"%d.%d.%d", &libfacV[0], &libfacV[1], &libfacV[2]);
-		  fOK = factoryV[0] > fV[0] ||
-		        factoryV[0] == fV[0] && factoryV[1] > fV[1] ||
-		        factoryV[0] == fV[0] && factoryV[1] == fV[1] && factoryV[2] >= fV[2];
-		  lOK = libfacV[0] > lV[0] ||
-		        libfacV[0] == lV[0] && libfacV[1] > lV[1] ||
-		        libfacV[0] == lV[0] && libfacV[1] == lV[1] && libfacV[2] >= lV[2];
-		  fprintf(msg,"(factory-%s %s %d.%d.%d, libfac-%s %s %d.%d.%d) ",
-		      FACTORYVERSION, fOK ? ">=" : "<", fV[0], fV[1], fV[2],
-		      libfac_version, lOK ? ">=" : "<", lV[0], lV[1], lV[2]
-		      );
-		  return !( lOK && fOK );
-	          }
-	     ]],
-	  AC_MSG_RESULT(yes),
-	  AC_MSG_RESULT(no); BUILD_factory=yes BUILD_libfac=yes)
-     LIBS=$SAVELIBS
-fi
+while test $BUILD_factory = no -o $BUILD_libfac = no
+do AC_LANG(C++)
+   AC_CHECK_HEADER(factory.h,,BUILD_factory=yes BUILD_libfac=yes ; break)
+   AC_CHECK_HEADER(factor.h,,BUILD_factory=yes BUILD_libfac=yes ; break)
+   SLIBS="$SINGULARLIBS -lcfmem"
+   LIBS="$SLIBS $SAVELIBS"
+   AC_MSG_CHECKING([whether factory library is installed ($SLIBS)])
+   AC_LINK_IFELSE( [[ #include <factory.h>
+		      #include <templates/ftmpl_inst.cc>
+		      int main () { return 0 ; }
+	       ]],
+       AC_MSG_RESULT(yes),
+       AC_MSG_RESULT(no)
+       SLIBS="$SLIBS -lntl"
+       LIBS="$SLIBS $SAVELIBS"
+       AC_MSG_CHECKING([whether factory library is installed ($SLIBS)])
+       AC_LINK_IFELSE( [[ #include <factory.h>
+			  #include <templates/ftmpl_inst.cc>
+			  int main () { return 0 ; }
+		   ]],
+	   AC_MSG_RESULT(yes),
+	   AC_MSG_RESULT(no); BUILD_factory=yes BUILD_libfac=yes; break
+	   ))
+   AC_MSG_CHECKING([whether (recent) libfac and factory libraries are installed ($LIBS)])
+   AC_RUN_IFELSE( [[ /* this is line 1 */
+	   #include <stdio.h>
+	   #include <string.h>
+	   #include <factory.h>
+	   #include <factor.h>
+	   #include <templates/ftmpl_inst.cc>
+	   extern const char * libfac_version;
+	   int main () {
+		FILE *msg = fdopen(]]AS_MESSAGE_FD[[,"w");
+		static int factoryV[3], fV[3] = {3,0,3}, fOK;
+		static int  libfacV[3], lV[3] = {3,0,1}, lOK;
+		sscanf(FACTORYVERSION,"%d.%d.%d", &factoryV[0], &factoryV[1], &factoryV[2]);
+		sscanf(libfac_version,"%d.%d.%d", &libfacV[0], &libfacV[1], &libfacV[2]);
+		fOK = factoryV[0] > fV[0] ||
+		      factoryV[0] == fV[0] && factoryV[1] > fV[1] ||
+		      factoryV[0] == fV[0] && factoryV[1] == fV[1] && factoryV[2] >= fV[2];
+		lOK = libfacV[0] > lV[0] ||
+		      libfacV[0] == lV[0] && libfacV[1] > lV[1] ||
+		      libfacV[0] == lV[0] && libfacV[1] == lV[1] && libfacV[2] >= lV[2];
+		fprintf(msg,"(factory-%s %s %d.%d.%d, libfac-%s %s %d.%d.%d) ",
+		    FACTORYVERSION, fOK ? ">=" : "<", fV[0], fV[1], fV[2],
+		    libfac_version, lOK ? ">=" : "<", lV[0], lV[1], lV[2]
+		    );
+		return !( lOK && fOK );
+		}
+	   ]],
+	AC_MSG_RESULT(yes),
+	AC_MSG_RESULT(no); BUILD_factory=yes BUILD_libfac=yes)
+   break
+done
+LIBS=$SAVELIBS
 
 AC_SUBST(FINALPREFIX,/usr)
 AC_ARG_WITH(final-prefix,

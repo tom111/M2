@@ -8,12 +8,12 @@ distribution tar file from the source code svn 1.1 branch, here is one way:
       svn checkout svn://macaulay2.math.uiuc.edu/Macaulay2/release-branches/1.1 M2-1.1
       cd M2-1.1
       make
-      mkdir BUILD/opt64
-      cd BUILD/opt64
+      mkdir BUILD/opt
+      cd BUILD/opt
       ../../configure --prefix=$PWD/installed \
           --enable-tarfile \
 	  --enable-rpm \
-          --enable-build-libraries="gc gdbm gmp mpfr readline ntl factory libfac blas lapack"
+          --enable-build-libraries="gc gdbm gmp mpfr readline ntl factory libfac lapack"
 
 
 ----------------------
@@ -112,32 +112,11 @@ sudo apt-get install flex
 others to get:
 sudo apt-get install emacs
 
-## get M2 source code
-svn co svn://macaulay2.math.uiuc.edu/Macaulay2/trunk/M2 M2
-## prepare the configure script
-cd M2
-make
 
-## normal (optimized) version
-mkdir BUILD/normal
-cd BUILD/normal
-../../configure --prefix=/usr/local
-make
-make install
-
-## I do this:
-../../configure --prefix=/home/mike/src/M2/BUILD/normal-installed --enable-experimental-code --enable-static
-## sometimes (depending on configuration), I need to add
-../../configure --prefix=/home/mike/src/M2/BUILD/normal-installed \
-  --enable-experimental-code --enable-static \
-  --enable-build-libraries="gc gdbm gmp readline ntl factory libfac blas lapack"
-
-
-## This file consists of my (MES) notes for quickly getting the Macaulay2
-## development environment setup on a computer.
-## These steps change over time.  If you wish to use this to get a source
-## distribution set up so that you can help develop Macaulay2, please
-## email us! (macaulay2@math.uiuc.edu)
+#------------------------------------------------------
+#- Below this line are older notes that have not ------
+#- been considered lately!! ---------------------------
+#------------------------------------------------------
 
 svn co svn://macaulay2.math.uiuc.edu/mike/home-dir
 svn co svn://macaulay2.math.uiuc.edu/capybara/trunk/capybara capybara

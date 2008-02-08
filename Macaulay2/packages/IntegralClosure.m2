@@ -130,8 +130,6 @@ idealizer0 = (C,w) -> (
      I := C#"pending"#0;
      J := C#"pending"#1;
      Jc := ideal compress (generators J % generators I);
- --    << "--checking Jc " << Jc << endl;
- --    error "debug me";
      -- Find an element of J, a nzd in S/I.  Need to make sure we donot 
      -- choose an element in I, so first we reduce J mod I.
      J1 := I:Jc_0;
@@ -221,10 +219,7 @@ idealizer0 = (C,w) -> (
 	       C#"blocks" = {numgens R2};
 	       C#"vars" = toSequence R2.gens;
 	       -- See the note in "normal0" about the if char R = 0 statement.
---	       << "--new J " << newJ << endl;
 	       newJ = radical0 newJ;
---	       << "--new I " << newI << endl;
---	       << "--after radical0 new J " << newJ << endl;
 	       C#"todo" = append(C#"todo", {newI,newJ});
 	       C#"pending" = null;
 	       C#"rings" = R2;
@@ -640,8 +635,13 @@ TEST ///
 R = ZZ/101[symbol x..symbol z,Degrees=>{2,5,6}]/(z*y^2-x^5*z-x^8)
 time J = integralClosure (R,Variable => symbol b) 
 use ring ideal J
-assert(ideal J == ideal(b_1*x^2-y*z, x^6-b_1*y+x^3*z, -b_1^2+x^4*z+x*z^2))
-assert(ICfractions R == substitute(matrix {{y*z/x^2, x, y, z}},frac R))
+-- the engine has changed
+oldIdeal = ideal(b_1*x^2-y*z, x^6-b_1*y+x^3*z, -b_1^2+x^4*z+x*z^2)
+-- assert(ideal J == oldIdeal)
+newIdeal = substitute(oldIdeal, b_1 => b_1/42 )
+assert(ideal J == newIdeal)
+-- assert(ICfractions R == substitute(matrix {{y*z/x^2, x, y, z}},frac R))
+assert(ICfractions R == substitute(matrix {{42 * y*z/x^2, x, y, z}},frac R))
 ///
 
 -- multigraded test

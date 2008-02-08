@@ -666,17 +666,15 @@ timefun(a:Code):Expr := (
      v := etime();
      ret := eval(a);
      x := etime();
-     y := etime();
      when ret
      is Error do ret
-     else list(timeClass,Sequence(toExpr((x-v)-(y-x)),ret)));
+     else list(timeClass,Sequence(toExpr(x-v),ret)));
 setupop(timingS,timefun);
 showtimefun(a:Code):Expr := (
      v := etime();
      ret := eval(a);
      x := etime();
-     y := etime();
-     stdout << "     -- used " << (x-v)-(y-x) << " seconds" << endl;
+     stdout << "     -- used " << x-v << " seconds" << endl;
      ret);
 setupop(timeS,showtimefun);
 

@@ -20,7 +20,7 @@ newRing Ring := Ring => opts -> (R) -> (
      then
          error "cannot change the number of variables using 'newRing'";
          
-     if opts.DegreeRank =!= nothing and opts.Degrees === nothing then opts = first override(opts, Degrees => null);
+     if opts.DegreeRank =!= nothing and opts.Degrees === nothing then opts = first override(opts, (Degrees => null, Heft => null));
      opts = mergeOptions((monoid R).Options,opts);
      f := presentation R;
      A := ring f;

@@ -1134,15 +1134,15 @@ void gbA::spairs_sort(int len, spair *&ps)
   int asize = a.size();
   int bsize = b.size();
 
-  if (asize > 0) 
-    {
-      ps = a[0];
-      for (int i=1; i<asize; i++)
-	a[i-1]->next = a[i];
-    }
-  else if (bsize > 0)
+  if (bsize > 0) 
     {
       ps = b[0];
+      for (int i=1; i<bsize; i++)
+	b[i-1]->next = b[i];
+    }
+  else if (asize > 0)
+    {
+      ps = a[0];
       //debugging// fprintf(stderr, "bsize is %d\n",bsize);
     }
   else 
@@ -1151,13 +1151,13 @@ void gbA::spairs_sort(int len, spair *&ps)
       return;
     }
 
-  if (asize > 0)
-    a[asize-1]->next = (bsize > 0 ? b[0] : 0);
-  if (bsize > 0) 
+  if (bsize > 0)
+    b[bsize-1]->next = (asize > 0 ? a[0] : 0);
+  if (asize > 0) 
     {
-      for (int i=1; i<bsize; i++)
-	b[i-1]->next = b[i];
-      b[bsize-1]->next = 0;
+      for (int i=1; i<asize; i++)
+	a[i-1]->next = a[i];
+      a[asize-1]->next = 0;
     }
 }
 

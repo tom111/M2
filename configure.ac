@@ -85,7 +85,8 @@ AC_SUBST(NODENAME,"`uname -n`")
 AC_DEFINE_UNQUOTED(NODENAME,"$NODENAME",hostname used for compilation)
 
 AC_SUBST(ISSUE)
-if test -f /etc/issue
+AC_ARG_WITH(issue, AS_HELP_STRING([--with-issue=...,specify the OS issue (e.g., Ubuntu-7.10)]),ISSUE=$withval)
+if test -f /etc/issue -a ! "$ISSUE"
 then ISSUE_FLAVOR=[`</etc/issue head -1 | sed 's/^\([A-Za-z ]*\).*/\1/' | sed 's/ //g' `]
      ISSUE_RELEASE=[`</etc/issue head -1 | sed 's/[^0-9]*\([0-9.]*\).*/\1/'`]
      case $ISSUE_FLAVOR in
@@ -98,8 +99,8 @@ then ISSUE_FLAVOR=[`</etc/issue head -1 | sed 's/^\([A-Za-z ]*\).*/\1/' | sed 's
 	 "") ISSUE_RELEASE=unknown ;;
      esac
      ISSUE=$ISSUE_FLAVOR-$ISSUE_RELEASE
-     AC_MSG_NOTICE([issue to be used in distribution file names: $ISSUE])
 fi
+AC_MSG_NOTICE([issue to be used in distribution file names: $ISSUE])
 
 AC_SUBST(OS,"`  uname -s | sed s=/=-=g  `")
 AC_SUBST(REL,"`  uname -r | sed -e s=/=-=g -e 's= =+=' -e 's=[()]==g'  `")

@@ -34,16 +34,25 @@ prefixdir = /.
 endif
 
 all install :: \
-	server/Macaulay2 \
-	server/Macaulay2/@package@-@CYGWIN_RELEASE@.tar.bz2 \
-	server/Macaulay2/@package@-@CYGWIN_RELEASE@-src.tar.bz2 \
-	server/Macaulay2/setup.hint \
-	server/setup.ini
+		server/Macaulay2 \
+		server/Macaulay2/@package@-@CYGWIN_RELEASE@.tar.bz2 \
+		server/Macaulay2/@package@-@CYGWIN_RELEASE@-src.tar.bz2 \
+		server/Macaulay2/setup.hint \
+		server/setup.ini \
+		tidy
 	@ echo "============================================================================="
 	@ echo "the cygwin package files have been prepared in cygwin/server"
 	@ echo "============================================================================="
 server/setup.ini : ; PATH=`cd @srcdir@; pwd`:$(PATH) $(MAKE) -C server setup.ini
 server/Macaulay2 : ; @MKDIR_P@ $@
+
+TIDY = yes
+ifeq ($(TIDY),yes)
+tidy :
+	rm -rf files
+else
+tidy :
+endif
 
 .prepared : server/Macaulay2 postinstall.sh preremove.sh \
 	    ../../$(PKG_TGZ) ../../$(PKG_COM_TGZ)
@@ -64,7 +73,6 @@ endif
 
 server/Macaulay2/@package@-@CYGWIN_RELEASE@.tar.bz2 : .prepared
 	(cd files && @FAKEROOT@ tar cjf - *) >$@
-	rm -rf files
 
 libraries-used : .prepared
 	cygcheck files@FINALPREFIX@/@bindirtail@/M2@EXE@ \
@@ -74,42 +82,50 @@ libraries-used : .prepared
 	| egrep "(/lib/|/bin/).*\.dll$$" \
 	| sed -e 's=.*/lib/=/lib/=' -e 's=.*/bin/=/bin/=' \
 	| sort | uniq \
-	> $@
+	| tee $@
 
 packages-used : libraries-used
 	cat libraries-used \
 	| while read x ; do cygcheck -f $$x ; done \
 	| sort | uniq \
 	| sed 's/\([a-zA-Z0-9]*\)-\([0-9.]*\)-.*/\1 \2/' \
-	> $@
+	| tee $@
 
 setup.hint : setup.hint-base packages-used
 	( set -e ; \
 	  cat setup.hint-base ; \
 	  echo -n "requires:" ; \
 	  cat packages-used |while read pkg rel ; do echo -n " $$pkg" ; done ; \
-	  echo ) >$@
+	  echo ) | tee $@
 
 server/Macaulay2/setup.hint : setup.hint server/Macaulay2 ; cp $< $@
 
 ifeq (@SRCTARFILE@,)
-@package@-@CYGWIN_RELEASE@ : always ; rm -f $@ && ln -sf @srcdir@/../.. $@
-src-files : always ; svn ls -R @srcdir@/../.. | egrep -v '/$$' | sed 's=^=@package@-@CYGWIN_RELEASE@/=' >$@
+@package@-@CYGWIN_RELEASE@ : always
+	rm -f $@
+	ln -sf @srcdir@/../.. $@
+src-files : always
+	svn ls -R @srcdir@/../.. | egrep -v '/$$' | sed 's=^=@package@-@CYGWIN_RELEASE@/=' >$@
 mkrt : src-files @package@-@CYGWIN_RELEASE@
 ifneq (@FAKEROOT@,)
 	cat src-files | @FAKEROOT@ xargs chown root.root
 endif
-server/Macaulay2/@package@-@CYGWIN_RELEASE@-src.tar.bz2 : server/Macaulay2 mkrt src-files ; @FAKEROOT@ tar cfj $@ --files-from=src-files
+server/Macaulay2/@package@-@CYGWIN_RELEASE@-src.tar.bz2 : server/Macaulay2 mkrt src-files
+	@FAKEROOT@ tar cfj $@ --files-from=src-files
 else
-src-tree : @SRCTARFILE@ ; rm -rf $@ && @MKDIR_P@ $@ && tar xzf $< -C $@ && rm -f @package@-@CYGWIN_RELEASE@ && ln -s srctree/* @package@-@CYGWIN_RELEASE@
+src-tree : @SRCTARFILE@
+	rm -rf $@
+	@MKDIR_P@ $@
+	tar xzf $< -C $@
+	rm -f @package@-@CYGWIN_RELEASE@
+	ln -s srctree/* @package@-@CYGWIN_RELEASE@
 mkrt : src-tree
 ifneq (@FAKEROOT@,)
 	@FAKEROOT@ chown -R root.root src-tree
 endif
-server/Macaulay2/@package@-@CYGWIN_RELEASE@-src.tar.bz2 : server/Macaulay2 mkrt ; @FAKEROOT@ tar cfj $@ @package@-@CYGWIN_RELEASE@/.
+server/Macaulay2/@package@-@CYGWIN_RELEASE@-src.tar.bz2 : server/Macaulay2 mkrt
+	@FAKEROOT@ tar cfj $@ @package@-@CYGWIN_RELEASE@/.
 endif
-
-
 
 install :: Macaulay2.README
 	@INSTALL@ -d @encapdir@@FINALPREFIX@/share/doc/Cygwin

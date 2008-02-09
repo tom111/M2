@@ -45,7 +45,8 @@ all install :: \
 server/setup.ini : ; PATH=`cd @srcdir@; pwd`:$(PATH) $(MAKE) -C server setup.ini
 server/Macaulay2 : ; @MKDIR_P@ $@
 
-.prepared : Makefile server/Macaulay2 postinstall.sh preremove.sh
+.prepared : server/Macaulay2 postinstall.sh preremove.sh \
+	    ../../$(PKG_TGZ) ../../$(PKG_COM_TGZ)
 	set -x ; if [ -d files ] ; then mv files junk ; rm -rf junk & fi
 	mkdir files
 	@MKDIR_P@ files$(prefixdir)
@@ -65,9 +66,7 @@ server/Macaulay2/@package@-@CYGWIN_RELEASE@.tar.bz2 : .prepared
 	(cd files && @FAKEROOT@ tar cjf - *) >$@
 	rm -rf files
 
-always :
-
-libraries-used : .prepared always
+libraries-used : .prepared
 	cygcheck files@FINALPREFIX@/@bindirtail@/M2@EXE@ \
 	| sed -e 's/^  *//' \
 	| dd conv=lcase \
@@ -75,14 +74,21 @@ libraries-used : .prepared always
 	| egrep "(/lib/|/bin/).*\.dll$$" \
 	| sed -e 's=.*/lib/=/lib/=' -e 's=.*/bin/=/bin/=' \
 	| sort | uniq \
-	| tee $@
+	> $@
 
 packages-used : libraries-used
 	cat libraries-used \
 	| while read x ; do cygcheck -f $$x ; done \
 	| sort | uniq \
 	| sed 's/\([a-zA-Z0-9]*\)-\([0-9.]*\)-.*/\1 \2/' \
-	| tee $@
+	> $@
+
+setup.hint : setup.hint-base packages-used
+	( set -e ; \
+	  cat setup.hint-base ; \
+	  echo -n "requires:" ; \
+	  cat packages-used |while read pkg rel ; do echo -n " $$pkg" ; done ; \
+	  echo ) >$@
 
 server/Macaulay2/setup.hint : setup.hint server/Macaulay2 ; cp $< $@
 
@@ -112,7 +118,7 @@ install :: Macaulay2.README
 clean ::; rm -rf server files src-files
 distclean : clean; rm -f Makefile Macaulay2.README setup.hint
 Makefile : Makefile.in; cd ../..; ./config.status distributions/cygwin/Makefile
-setup.hint : setup.hint.in; cd ../..; ./config.status distributions/cygwin/setup.hint
+setup.hint-base : setup.hint-base.in; cd ../..; ./config.status distributions/cygwin/setup.hint-base
 Macaulay2.README : Macaulay2.README.in; cd ../..; ./config.status distributions/cygwin/Macaulay2.README
 
 # Local Variables:

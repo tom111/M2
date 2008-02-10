@@ -106,15 +106,22 @@ AC_MSG_NOTICE([issue to be used in distribution file names: $ISSUE])
 AC_SUBST(OS,"`  uname -s | sed s=/=-=g  `")
 AC_SUBST(REL,"`  uname -r | sed -e s=/=-=g -e 's= =+=' -e 's=[()]==g'  `")
 
-case $OS in
-  Darwin) LIBS="$LIBS -lgcc_s.10.5" ;; # what kind of crock is this??
-esac
-
 case $OS-$REL in
   Darwin-7.*) REL=10.3 ; OS=MacOS ;;
   Darwin-8.*) REL=10.4 ; OS=MacOS ;;
   Darwin-9.*) REL=10.5 ; OS=MacOS ;;
   Darwin-*) echo "Darwin release number translation needed in configure.ac" >&2 ; exit 1
+esac
+
+case $OS in
+  MacOS) 
+	AC_MSG_NOTICE([[*** This is MacOS, but we are not adding -lgcc_s.10.5 to LIBS for you, 
+because there might be a better way.  See the discussion in emacs info about -static-libgcc
+and -shared-libgcc, try both of those in LDFLAGS, and also try -lgcc and -lgcc_eh in LIBS.
+If all else fails, add "LIBS=-lgcc_s.10.5" to the configure command line.  Check whether the 
+binary ends up requiring a sharable library with a similar name. ***]])
+	dnl # LIBS="$LIBS -lgcc_s.10.5" # what kind of crock is this??
+	;;
 esac
 
 AC_DEFINE_UNQUOTED(OS,"$OS",[operating system name, obtained with uname -s, perhaps modified])
@@ -145,23 +152,6 @@ AC_PROG_INSTALL()
 AC_PROG_AWK()
 AC_PROG_CC()
 AC_SUBST(GCC)
-
-AC_PROG_FC()
-AC_SUBST(FCLIBS_DYNAMIC,"")
-AC_SUBST(FCLIBS_STATIC,"")
-AC_SUBST(FCLIBS_FLAGS,"")
-if test "$FC"
-then AC_FC_DUMMY_MAIN()
-     AC_FC_WRAPPERS()
-     AC_FC_LIBRARY_LDFLAGS()
-     for i in $FCLIBS
-     do case $i in
-	     -L*) FCLIBS_FLAGS="$FCLIBS_FLAGS $i" ;;
-	     -lgcc_s|-lm) FCLIBS_DYNAMIC="$FCLIBS_DYNAMIC $i" ;;
-	     *) FCLIBS_STATIC="$FCLIBS_STATIC $i" ;;
-	esac
-     done
-fi
 
 AC_PROG_CXX()
 AC_PROG_YACC()
@@ -281,6 +271,26 @@ AC_ARG_ENABLE(altivec, AS_HELP_STRING(--enable-altivec,compile with "-faltivec" 
     CFLAGS="CFLAGS -faltivec"
     CXXFLAGS="$CXXFLAGS -faltivec"
 )
+
+
+AC_PROG_FC()
+AC_SUBST(FCLIBS_DYNAMIC,"")
+AC_SUBST(FCLIBS_STATIC,"")
+AC_SUBST(FCLIBS_FLAGS,"")
+if test "$FC"
+then AC_FC_DUMMY_MAIN()
+     AC_FC_WRAPPERS()
+     AC_FC_LIBRARY_LDFLAGS()
+     for i in $FCLIBS
+     do case $i in
+	     -L*) FCLIBS_FLAGS="$FCLIBS_FLAGS $i" ;;
+	     -lgcc_s) FCLIBS_DYNAMIC="$FCLIBS_DYNAMIC $i" ;; dnl # see discussion in emacs info about -static-libgcc and -shared-libgcc
+	     -lm) FCLIBS_DYNAMIC="$FCLIBS_DYNAMIC $i" ;;
+	     *) FCLIBS_STATIC="$FCLIBS_STATIC $i" ;;
+	esac
+     done
+fi
+
 
 if test "$PTHREADS" = yes
 then AC_SEARCH_LIBS(pthread_mutex_trylock,pthread)

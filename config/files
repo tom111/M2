@@ -56,6 +56,7 @@ Macaulay2/emacs/Makefile
 Macaulay2/html-check-links/Makefile
 Macaulay2/packages/Style/Makefile
 Macaulay2/m2/Makefile
+Macaulay2/m2/VERSION
 Macaulay2/man/M2-help.1
 Macaulay2/man/M2.1
 Macaulay2/man/Makefile

@@ -229,16 +229,17 @@ encapDirectory = null	   -- encap directory, after installation, if present, e.g
 fullCopyright := false
 matchpart := (pat,i,s) -> substring_((regex(pat, s))#i) s
 notdir := s -> matchpart("[^/]*$",0,s)
-dir := s -> ( m := regex(".*/",s); if 0 == #m then "./" else substring_(m#0) s)
 noloaddata := false
 nosetup := false
 noinitfile = false
 interpreter := commandInterpreter
 
+{*
 getRealPath := fn -> (					    -- use this later if realpath doesn't work
      local s;
      while ( s = readlink fn; s =!= null ) do fn = if isAbsolutePath s then s else minimizeFilename(fn|"/../"|s);
      fn)
+*}
 
 pathsearch := e -> (
      if not isFixedExecPath e then (
@@ -248,61 +249,6 @@ pathsearch := e -> (
 	  scan(PATH, p -> if fileExists (p|"/"|e) then (e = p|"/"|e; break));
 	  );
      e)
-
-exe := (
-     processExe := "/proc/self/exe";  -- this is a reliable way to get the executable in linux
-     if fileExists processExe then realpath processExe
-     else realpath pathsearch commandLine#0)
-bindir := dir exe
-bindirsuffix := LAYOUT#"bin";
-
-setPrefixFromBindir := bindir -> if bindir =!= null then (
-     if bindirsuffix === substring(bindir,-#bindirsuffix) then (
-	  prefixdir := substring(bindir,0,#bindir-#bindirsuffix);
- 	  setup := prefixdir | LAYOUT#"m2" | "setup.m2";
-	  if fileExists setup then prefixDirectory = realpath prefixdir | "/"
-	  else (
-	      stderr
-	      << "--warning: expected setup file here: " << setup << endl
-	      << "--:        because we seem to be running an " << version#"M2 name" << " found in " << bindir << endl
-	      << "--:        Perhaps " << version#"M2 name" << " has been moved or copied to a different directory." << endl;
-	      error "file setup.m2 not found"))
-     else (
-	  stderr
-	  << "--warning: expected directory " << bindir << " to end with " << bindirsuffix << endl
-     	  << "--:        because we seem to be running an " << version#"M2 name" << " found there." << endl
-	  << "--:        Perhaps " << version#"M2 name" << " has been moved or copied to a different directory." << endl;
-	  error "file setup.m2 not found"))
-
-if fileExists (bindir | "../c/scc1") then (
-     -- we're running from the build directory
-     buildHomeDirectory = minimizeFilename(bindir|"../");
-     sourceHomeDirectory = (
-	  if fileExists (buildHomeDirectory|"m2/setup.m2") then buildHomeDirectory 
-	  else (
-	       srcdirfile := buildHomeDirectory|"srcdir";
-	       if fileExists srcdirfile then (
-		    srcdir := minimizeFilename (concatPath(buildHomeDirectory,first lines get srcdirfile)|"/");
-		    setup := srcdir | "m2/setup.m2";
-		    if fileExists setup then srcdir
-		    else ( stderr << "--warning: file missing: " << setup << endl; )
-		    )
-	       else ( stderr << "--warning: file missing: " << srcdirfile << endl; )));
-     ) else (
-     -- we hope we're running from an installed version with files still in the right place
-     setPrefixFromBindir bindir)
-
-if prefixDirectory =!= null and fileExists (prefixDirectory | "encapinfo") then (
-     -- now get the second to last entry in the chain of symbolic links, which will be in the final prefix directory
-     encapDirectory = prefixDirectory;
-     prev := null;
-     fn := pathsearch commandLine#0;
-     local s;
-     while ( s = readlink fn; s =!= null ) do (prev = fn; fn = if isAbsolutePath s then s else minimizeFilename(fn|"/../"|s););
-     if prev =!= null 
-     and fileExists(dir prev | LAYOUT#"m2" | "setup.m2") -- make sure some of the other links have been made
-     and fileExists(dir prev | LAYOUT#"m2" | "exports.m2") -- make sure some of the other links have been made
-     then setPrefixFromBindir dir prev)
 
 phase := 1
 
@@ -504,6 +450,60 @@ processCommandLineOptions := phase0 -> (			    -- 3 passes
 	  ))
 
 if firstTime then processCommandLineOptions 1
+
+exe := (
+     {*
+     -- this can be a reliable way to get the executable in linux
+     -- but we don't want to use it because we don't want to chase symbolic links
+     processExe := "/proc/self/exe";
+     if fileExists processExe and readlink processExe =!= null then readlink processExe
+     else 
+     *}
+     pathsearch commandLine#0)
+dir := s -> ( m := regex(".*/",s); if 0 == #m then "./" else substring_(m#0) s)
+bindirsuffix := LAYOUT#"bin";
+issuffix := (s,t) -> s === substring(t,-#s)
+fromexetoprefix := exe -> (
+     bindir := dir exe;
+     if issuffix(bindirsuffix,bindir) then substring(bindir,0,#bindir-#bindirsuffix))
+fromexetom2dir := exe -> (
+     prefix := fromexetoprefix exe;
+     if prefix =!= null then prefix | LAYOUT#"m2")
+while true do (
+     -- search for VERSION file with right version number in it, or for ../c/scc1, whichever comes first
+     -- this works either in the build directory or in the final install directory, even if symbolic links intervene
+     if fileExists (dir exe | "../c/scc1") then (		    -- we are in the build directory
+	  buildHomeDirectory = minimizeFilename(dir exe|"../");
+	  sourceHomeDirectory = (
+	       if fileExists (buildHomeDirectory|"m2/setup.m2") then buildHomeDirectory 
+	       else (
+		    srcdirfile := buildHomeDirectory|"srcdir";   -- special file buit by the configure script during compilation
+		    if fileExists srcdirfile then (
+			 srcdir := minimizeFilename (concatPath(buildHomeDirectory,first lines get srcdirfile)|"/");
+			 setup := srcdir | "m2/setup.m2";
+			 if fileExists setup then srcdir
+			 else ( stderr << "--warning: file missing: " << setup << endl; )
+			 )
+		    else ( stderr << "--warning: file missing: " << srcdirfile << endl; )));
+	  break);
+     m2dir := fromexetom2dir exe;
+     if m2dir =!= null then (
+	  VERSIONfn := m2dir | "VERSION";
+	  if fileExists VERSIONfn then (
+	       VERSION := get VERSIONfn;
+	       if VERSION === version#"VERSION" then (
+		    prefixDirectory = fromexetoprefix exe;  --  found it
+		    break;
+		    )));
+     if null === readlink exe then (
+	  stderr
+	  << "--warning: expected to find file " << format VERSIONfn << " containing " << format version#"VERSION" << endl
+	  << "--:        because we seem to be running " << format exe << endl
+	  << "--:        Perhaps " << commandLine#0 << " has been moved or copied to a different directory." << endl;
+	  error "file VERSION containing current version number not found");
+     s := readlink exe;
+     exe = if isAbsolutePath s then s else minimizeFilename(exe|"/../"|s);
+     )
 
 if firstTime and not nobanner then (
      if topLevelMode === TeXmacs then stderr << TeXmacsBegin << "verbatim:";

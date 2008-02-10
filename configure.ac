@@ -21,7 +21,7 @@ AC_DEFUN(IS_DECLARED,[
 ])
 
 echo "relevant environment variable values, if any:"
-for x in CC FC CXX CPPFLAGS CFLAGS FCFLAGS CXXFLAGS LDFLAGS LIBS SINGULARLIBS
+for x in CC FC CXX CPPFLAGS CFLAGS FCFLAGS CXXFLAGS LDFLAGS LIBS SINGULARLIBS ISSUE
 do eval v=\$$x
    test "$v" && echo "   $x=$v"
 done
@@ -84,7 +84,7 @@ fi
 AC_SUBST(NODENAME,"`uname -n`")
 AC_DEFINE_UNQUOTED(NODENAME,"$NODENAME",hostname used for compilation)
 
-AC_SUBST(ISSUE)
+AC_SUBST(ISSUE) dnl no initial value
 AC_ARG_WITH(issue, AS_HELP_STRING([--with-issue=...,specify the OS issue (e.g., Ubuntu-7.10)]),ISSUE=$withval)
 if test -f /etc/issue -a ! "$ISSUE"
 then ISSUE_FLAVOR=[`</etc/issue head -1 | sed 's/^\([A-Za-z ]*\).*/\1/' | sed 's/ //g' `]
@@ -133,7 +133,7 @@ AC_CANONICAL_HOST()
 AC_SUBST(ARCH,$build_cpu)
 AC_DEFINE_UNQUOTED(ARCH,"$ARCH",[machine hardware type])
 
-AC_SUBST(DEBARCH,"")
+AC_SUBST(DEBARCH,)
 case $ARCH in
   x86_64) DEBARCH=amd64 ;;
   *) DEBARCH=$ARCH ;;
@@ -151,7 +151,7 @@ AC_PROG_RANLIB()
 AC_PROG_INSTALL()
 AC_PROG_AWK()
 AC_PROG_CC()
-AC_SUBST(GCC)
+AC_SUBST(GCC) dnl gets set to yes or no somehow
 
 AC_PROG_CXX()
 AC_PROG_YACC()
@@ -211,9 +211,9 @@ EOF
     static struct s4 { s4() { fputs("a4",stdout); } } x;
     void a4(){}
 EOF
-    AC_SUBST(CONSTRUCTOR_ORDER)
-    AC_SUBST(CONSTRUCTOR_ORDER_OBJ)
-    AC_SUBST(CONSTRUCTOR_ORDER_LIB)
+    AC_SUBST(CONSTRUCTOR_ORDER,)
+    AC_SUBST(CONSTRUCTOR_ORDER_OBJ,)
+    AC_SUBST(CONSTRUCTOR_ORDER_LIB,)
     if (set -xe
 	$CXX -c conf_test1.cc -o conf_testo1.o
 	$CXX -c conf_test2.cc -o conf_testa2.o
@@ -254,7 +254,7 @@ AC_LANG(C++)
 AC_CHECK_HEADERS(NTL/tools.h)
 AC_LANG(C)
 
-AC_SUBST(HAVE_PERSONALITY,"")
+AC_SUBST(HAVE_PERSONALITY,)
 AC_CHECK_FUNC(personality, HAVE_PERSONALITY=1, HAVE_PERSONALITY=0)
 
 AC_SUBST(PTHREADS,no)  AC_ARG_ENABLE(pthreads, AS_HELP_STRING(--enable-pthreads,enable pthreads in gc), PTHREADS=$enableval)
@@ -274,9 +274,9 @@ AC_ARG_ENABLE(altivec, AS_HELP_STRING(--enable-altivec,compile with "-faltivec" 
 
 
 AC_PROG_FC()
-AC_SUBST(FCLIBS_DYNAMIC,"")
-AC_SUBST(FCLIBS_STATIC,"")
-AC_SUBST(FCLIBS_FLAGS,"")
+AC_SUBST(FCLIBS_DYNAMIC,)
+AC_SUBST(FCLIBS_STATIC,)
+AC_SUBST(FCLIBS_FLAGS,)
 if test "$FC"
 then AC_FC_DUMMY_MAIN()
      AC_FC_WRAPPERS()
@@ -380,10 +380,10 @@ if test "$DEVELOPMENT" = yes
 then AC_DEFINE_UNQUOTED(DEVELOPMENT,1,whether to build a development version)
 fi
 
-AC_SUBST(DEVELOPER,"")
+AC_SUBST(DEVELOPER,)
 AC_ARG_WITH(developer, AS_HELP_STRING(--with-developer=...,specify the name of the developer ($USER)),DEVELOPER=$withval)
 
-AC_SUBST(DUMPDATA,"")
+AC_SUBST(DUMPDATA,)
 AC_ARG_ENABLE(dumpdata, AS_HELP_STRING(--disable-dumpdata,do not cache data with dumpdata), DUMPDATA=$enableval)
 if ! test "$DUMPDATA"
 then case $OS in
@@ -398,14 +398,14 @@ else case $DUMPDATA in
 fi
 test "$DUMPDATA" = no;   val=$?; AC_DEFINE_UNQUOTED(DUMPDATA,  $val,whether to use dumpdata)
 
-AC_SUBST(TAR_COMPRESS_OPTION,"")
+AC_SUBST(TAR_COMPRESS_OPTION,)
 case $COMPRESS in
    gz) TAR_COMPRESS_OPTION=--gzip ;;
   bz2) TAR_COMPRESS_OPTION=--bzip ;;
     *) AC_MSG_ERROR(unrecognized option for enable-compress) ;;
 esac
 
-AC_SUBST(SRCTARFILE,"")
+AC_SUBST(SRCTARFILE,)
 AC_ARG_WITH(srctarfile, AS_HELP_STRING(--with-srctarfile=...,source tar file to use for inclusion with distributions (cygwin)),
     dirname=`dirname  "$withval"`
     SRCTARFILE=`cd "$dirname" && pwd`/`basename "$withval"`)
@@ -431,7 +431,7 @@ AC_SUBST(DMG,no)
 AC_ARG_ENABLE(dmg,  AS_HELP_STRING(--enable-dmg,prepare a *.dmg package (for Mac OS) (enables encap)), DMG=$enableval)
 test "$DMG" = yes && ENCAP=yes M2TARFILE=yes
 
-AC_SUBST(M2SUFFIX,"")
+AC_SUBST(M2SUFFIX,)
 test "$program_suffix" != NONE && M2SUFFIX=$program_suffix
 AC_ARG_ENABLE(dummy, AS_HELP_STRING(--program-suffix=...,suffix to append to executable name M2))
 
@@ -459,7 +459,7 @@ AC_LANG(C++)
 AC_COMPILE_IFELSE([# 1 "foo" 1 3 4
 	template <class T> struct A { };],AC_MSG_RESULT(no);ISYSTEM=yes,AC_MSG_RESULT(yes))
 
-AC_SUBST(BUILTLIBS,"")
+AC_SUBST(BUILTLIBS,)
 
 # this list reflects dependencies
 #  factory needs ntl and gmp, libfac needs factory
@@ -562,7 +562,6 @@ then
     AC_LANG(C++)
     AC_CHECK_HEADER(NTL/version.h,,BUILD_ntl=yes)
 
-    SAVELIBS=$LIBS
     AC_MSG_CHECKING(for ntl library)
     FOUND=
     for lib in "" "-lntl"
@@ -575,13 +574,12 @@ then
     done
     if test "$FOUND"
     then if test "$lib"
-	then AC_MSG_RESULT(none needed)
-	else AC_MSG_RESULT(found $lib)
+	then AC_MSG_RESULT([$lib])
+	else AC_MSG_RESULT([none needed])
 	fi
     else AC_MSG_RESULT(none found)
 	BUILD_ntl=yes
     fi 
-    LIBS=$SAVELIBS
 
     if test $BUILD_ntl = no
     then AC_MSG_CHECKING([whether ntl library is recent enough, using NTL/version.h])
@@ -626,7 +624,6 @@ AC_ARG_WITH(lapack, AS_HELP_STRING(--without-lapack,[compile and link without la
 test "$LAPACK" = no; val=$?
 AC_DEFINE_UNQUOTED(LAPACK,$val,whether to link with lapack)
 
-AC_SUBST(USE_FCLIBS,no)
 if test "$LAPACK" = yes
 then AC_MSG_CHECKING([whether the vecLib framework is available])
      SAVELIBS=$LIBS
@@ -649,10 +646,6 @@ then AC_MSG_CHECKING([whether the vecLib framework is available])
 fi
 test $BUILD_lapack = yes && BUILTLIBS="-llapack -lblas $BUILTLIBS"
 
-if test $BUILD_lapack = yes
-then USE_FCLIBS=yes
-fi
-
 # after this point we add no more libraries to $LIBS, e.g., with AC_SEARCH_LIBS()
 SAVELIBS=$LIBS
 
@@ -660,7 +653,7 @@ SAVELIBS=$LIBS
 if ! test "$SINGULARLIBS"
 then SINGULARLIBS="-lfac -lcf"
 fi
-AC_SUBST(SINGULARLIBS)
+AC_SUBST(SINGULARLIBS) dnl no initial value
 while test $BUILD_factory = no -o $BUILD_libfac = no
 do AC_LANG(C++)
    AC_CHECK_HEADER(factory.h,,BUILD_factory=yes BUILD_libfac=yes ; break)
@@ -726,7 +719,7 @@ case $FINALPREFIX in
     *) AC_MSG_ERROR(final prefix should begin with /) ;;
 esac
 
-AC_SUBST(NM_DEMANGLES,"")
+AC_SUBST(NM_DEMANGLES,)
 AC_MSG_CHECKING(whether nm accepts the demangle option)
 if nm --help 2>&1 | grep demangle >/dev/null
    then NM_DEMANGLES=yes; AC_MSG_RESULT(yes)
@@ -747,7 +740,7 @@ AC_RUN_IFELSE([
     AC_MSG_RESULT([yes (cross-compiling, not tested)]))
 AC_DEFINE_UNQUOTED(GETADDRINFO_WORKS,$GETADDRINFO_WORKS,[whether getaddrinfo can handle numeric service (port) numbers])
 
-AC_SUBST(LIBRARIES,"")
+AC_SUBST(LIBRARIES,)
 for i in $LIBLIST
 do eval t=\$BUILD_$i
    test "$t" = yes && LIBRARIES="$LIBRARIES $i"
@@ -755,7 +748,7 @@ done
 
 TESTFLAG=-Wno-strict-aliasing
 AC_MSG_CHECKING(whether $CC accepts $TESTFLAG)
-AC_SUBST(HAVE_NO_STRICT_ALIASING,"")
+AC_SUBST(HAVE_NO_STRICT_ALIASING,)
 SAVE=$CFLAGS
 CFLAGS="$TESTFLAG $CFLAGS"
 AC_LANG(C)
@@ -764,7 +757,7 @@ M2_CPPFLAGS="$M2_CPPFLAGS $TESTFLAG"
 CFLAGS=$SAVE
 AC_MSG_RESULT($HAVE_NO_STRICT_ALIASING)
 
-AC_SUBST(M2_CPPFLAGS)
+AC_SUBST(M2_CPPFLAGS,)
 
 AC_MSG_CHECKING(whether $CC accepts -Wfatal-errors)
 AC_LANG(C)
@@ -813,7 +806,7 @@ then
 fi
 
 AC_SUBST(package,Macaulay2-$PACKAGE_VERSION)
-AC_SUBST(encapdir,"")
+AC_SUBST(encapdir,)
 if test "$ENCAP" = yes
 then encapdir="\${prefix}/$package"
 else encapdir="\${prefix}"
@@ -835,17 +828,35 @@ then if test "$DEB" = yes -o "$RPM" = yes
      fi
 fi
 
+# Here we split up LIBS into two parts, LIBS_STATIC and LIBS_DYNAMIC.
+# M2 will get linked against LIBS_STATIC and then against LIBS_DYNAMIC.
+# Under --enable-static the libraries in LIBS_STATIC will be linked statically.
+AC_SUBST(LIBS_STATIC,)
+AC_SUBST(LIBS_DYNAMIC,)
+for i in $LIBS
+do case $i in 
+	# we must link dynamically with some libraries
+	-lncurses | dnl ncurses has a database which we aren't providing and whose location we don't know
+	-lsocket  | dnl dynamic loading of libraries is used to determine the current way to look up an IP number
+	-lgcc_s*  ) dnl libgcc_s comes only in dynamic form
+	   LIBS_DYNAMIC="$LIBS_DYNAMIC $i" ;;
+	*) 
+	   LIBS_STATIC="$LIBS_STATIC $i" ;;
+   esac
+done
+
 # Here we compute the relative positions of various subdirectories with respect to ${prefix}, so we can record the layout
 # of the directory tree, and check that the subdirectories specified are within the tree.
-AC_SUBST(bindirtail) AC_SUBST(datadirtail) AC_SUBST(datarootdirtail) AC_SUBST(docdirtail) AC_SUBST(dvidirtail)
-AC_SUBST(htmldirtail) AC_SUBST(includedirtail) AC_SUBST(infodirtail) AC_SUBST(libdirtail) AC_SUBST(libexecdirtail)
-AC_SUBST(localedirtail) AC_SUBST(localstatedirtail) AC_SUBST(mandirtail) AC_SUBST(pdfdirtail)
-AC_SUBST(psdirtail) AC_SUBST(sbindirtail) AC_SUBST(sharedstatedirtail) AC_SUBST(sysconfdirtail)
+AC_SUBST(bindirtail,) AC_SUBST(datadirtail,) AC_SUBST(datarootdirtail,) AC_SUBST(docdirtail,) AC_SUBST(dvidirtail,)
+AC_SUBST(htmldirtail,) AC_SUBST(includedirtail,) AC_SUBST(infodirtail,) AC_SUBST(libdirtail,) AC_SUBST(libexecdirtail,)
+AC_SUBST(localedirtail,) AC_SUBST(localstatedirtail,) AC_SUBST(mandirtail,) AC_SUBST(pdfdirtail,)
+AC_SUBST(psdirtail,) AC_SUBST(sbindirtail,) AC_SUBST(sharedstatedirtail,) AC_SUBST(sysconfdirtail,)
 
 AC_MSG_NOTICE([using LIBRARIES    = $LIBRARIES (libraries to be built from downloaded sources)])
-AC_MSG_NOTICE([using BUILTLIBS    = $BUILTLIBS (linker options for most of them)])
-AC_MSG_NOTICE([using SINGULARLIBS = $SINGULARLIBS (linker options for some of them)])
-AC_MSG_NOTICE([using LIBS         = $LIBS (M2 linker options)])
+AC_MSG_NOTICE([using BUILTLIBS    = $BUILTLIBS])
+AC_MSG_NOTICE([using SINGULARLIBS = $SINGULARLIBS])
+AC_MSG_NOTICE([using LIBS_STATIC  = $LIBS_STATIC])
+AC_MSG_NOTICE([using LIBS_DYNAMIC = $LIBS_DYNAMIC])
 
 BUILDING=yes
 AC_ARG_ENABLE(building, AS_HELP_STRING(--disable-building,disable automatic building of libraries), BUILDING=$enableval)

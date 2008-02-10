@@ -520,7 +520,7 @@ installPackage = method(Options => {
 	  MakeInfo => true,
 	  RemakeAllDocumentation => true,		    -- until we get better dependency graphs between documentation nodes, "false" here will confuse users
 	  RerunExamples => false,
-	  AbsoluteLinks => false,
+	  AbsoluteLinks => true,
 	  MakeLinks => true,
 	  DebuggingMode => false
 	  })
@@ -1101,7 +1101,7 @@ makePackageIndex List := path -> (
 	       HEADER3 "Documentation",
 	       UL splice {
                	    if prefixDirectory =!= null then HREF { prefixDirectory | LAYOUT#"packagehtml" "Macaulay2Doc" | "index.html", "Macaulay 2" },
-		    apply(toSequence unique reverse path, pkgdir -> (
+		    apply(toSequence unique path, pkgdir -> (
 			      prefixDirectory := minimizeFilename(pkgdir | relativizeFilename(LAYOUT#"packages",""));
 			      p := prefixDirectory | LAYOUT#"docm2";
 			      if isDirectory p then (

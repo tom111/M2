@@ -1116,7 +1116,7 @@ makePackageIndex List := path -> (
 				   r = sort r;
 				   DIV {
 					HEADER3 {"Packages in ", toAbsolutePath prefixDirectory},
-					if #r > 0 then UL apply(r, pkg -> HREF { prefixDirectory | LAYOUT#"packagehtml" pkg | "index.html", pkg }) 
+					if #r > 0 then UL apply(r, pkg -> HREF { realpath ( prefixDirectory | LAYOUT#"packagehtml" pkg | "index.html" ), pkg }) 
 					}
 				   )
 			      )

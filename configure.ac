@@ -505,6 +505,13 @@ then AC_SEARCH_LIBS(__gmpz_init,gmp,,BUILD_gmp=yes)
 fi
 test $BUILD_gmp = yes && BUILTLIBS="-lgmp $BUILTLIBS"
 
+AC_SUBST(ULIMIT_T,yes)
+AC_SUBST(ULIMIT_M,yes)
+AC_SUBST(ULIMIT_V,yes)
+( ulimit -t 2000 2>/dev/null) || ULIMIT_T=no
+( ulimit -m 2000 2>/dev/null) || ULIMIT_M=no
+( ulimit -v 2000 2>/dev/null) || ULIMIT_V=no
+
 AC_LANG(C)
 if test $BUILD_mpfr = no
 then AC_SEARCH_LIBS(mpfr_init,mpfr,,BUILD_mpfr=yes)

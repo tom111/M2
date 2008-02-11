@@ -37,7 +37,7 @@ names include these:
      @PACKAGE_TARNAME@-@PACKAGE_VERSION@-common.tar.gz
      @PACKAGE_TARNAME@-@PACKAGE_VERSION@-@ARCH@-@OS@-@ISSUE@.tar.gz
 
-If there is a later version than @VERSION@, use that instead. 
+If there is a later version than @PACKAGE_VERSION@, use that instead. 
 
 The files with "common" in the name contain the Macaulay 2 files that are
 independent of the architecture of your computer.  The files with a string such
@@ -62,7 +62,7 @@ in /foo/bar, as follows.
 first parameter to j.)
 
 After unpacking the tar files, you will see that a directory tree rooted at
-/foo/bar/Macaulay2-@VERSION@ has been created.  The subdirectories and files
+/foo/bar/Macaulay2-@PACKAGE_VERSION@ has been created.  The subdirectories and files
 are organized in a way that mimics the usual unix tree of subdirectories rooted
 at /usr.  For example, there are subdirectories called bin, info, lib, and
 share.  There are also some extra files called: INSTALL (this file), encapinfo,
@@ -75,7 +75,7 @@ postinstall, and preremove.
    Arrange for Macaulay 2 to set up your .emacs files and your command shell
    init files so that M2 will be on the path.
 
-        cd /foo/bar/Macaulay2-@VERSION@
+        cd /foo/bar/Macaulay2-@PACKAGE_VERSION@
 	cd bin
 	./M2 -e 'setup();exit 0' 
 
@@ -117,7 +117,7 @@ postinstall, and preremove.
    The files encapinfo, preremove, and postinstall in the top level directory
    or init files for that program, whose purpose is to put appropriate
    symbolic links from locations under /usr or /usr/local to the files in 
-   /foo/bar/Macaulay2-@VERSION@.  If you do this, then Macaulay2's files can
+   /foo/bar/Macaulay2-@PACKAGE_VERSION@.  If you do this, then Macaulay2's files can
    be found without modifying any paths.  Otherwise, each user will have to
    run our "setup()" command, as described above, to set the paths correctly.
    The paths we have in mind are the environment variables "LD_LIBRARY_PATH",
@@ -139,11 +139,11 @@ postinstall, and preremove.
    may wipe out the previous version of Macaulay 2, and because there is
    no reliable way to remove all the files you've installed.
 
-   Copy the contents of the subdirectories of /foo/bar/Macaulay2-@VERSION@ into
+   Copy the contents of the subdirectories of /foo/bar/Macaulay2-@PACKAGE_VERSION@ into
    /usr or /usr/local/.  If you have gnu "cp", the following command will do
    it:
 
-      cd /foo/bar/Macaulay2-@VERSION@
+      cd /foo/bar/Macaulay2-@PACKAGE_VERSION@
       cp -ai bin info lib share /usr/local
 
    The "i" option to "cp" will prompt you before clobbering a file in the
@@ -156,7 +156,7 @@ postinstall, and preremove.
    On some systems Macaulay2 comes with dynamic libraries, in the
    "lib/Macaulay2/Core/lib" subdirectory, so if you want to change /usr/local
    to something nonstandard, M2 may not be able to find its dynamic libraries
-   unless you add /foo/bar/Macaulay2-@VERSION@/lib to the search path.  Under
+   unless you add /foo/bar/Macaulay2-@PACKAGE_VERSION@/lib to the search path.  Under
    linux, that would involve editing /etc/ld.so.conf or setting the environment
    variable LD_LIBRARY_PATH.
 
@@ -192,7 +192,7 @@ Macaulay2 has been installed properly, then you should see a prompt
 such as this:
 
 	% M2
-	Macaulay 2, version @VERSION@
+	Macaulay 2, version @PACKAGE_VERSION@
 	with packages: Classic, Core, Elimination, IntegralClosure, 
 	               LLLBases, Parsing, PrimaryDecomposition, 
 		       SchurRings, TangentCone

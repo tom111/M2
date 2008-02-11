@@ -113,10 +113,10 @@ case $OS-$REL in
   Darwin-*) echo "Darwin release number translation needed in configure.ac" >&2 ; exit 1
 esac
 
-case $OS-$REL in
+case $OS in
   dnl Here we normalize the name of the OS for windows for startup.m2, which
   dnl needs to know that C:/FOO/BAR is an absolute path.
-  something) OS=MicrosoftWindows ;;
+  CYGWIN*) OS=MicrosoftWindows ;;
 esac
 
 case $OS in

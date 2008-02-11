@@ -558,6 +558,10 @@ dispatcherMethod := m -> m#-1 === Sequence and (
      f := lookup m;
      any(dispatcherFunctions, g -> functionBody f === functionBody g))
 
+
+-- get installFile
+load "install.m2"
+
 installPackage Package := opts -> pkg -> (
      use pkg;
      chkdoc = opts.CheckDocumentation;			    -- oops, this will have a lingering effect...

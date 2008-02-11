@@ -129,7 +129,7 @@ if firstTime then (
 	  match("/", filename)
 	  );
      re := "/";						    -- /foo/bar
-     if version#"operating system" === "Windows-95-98-NT" 
+     if version#"operating system" === "MicrosoftWindows" 
      then re = re | "|.:/";				    -- "C:/FOO/BAR"
      re = re | "|\\$";					    -- $www.uiuc.edu:80
      re = re | "|!";					    -- !date
@@ -451,29 +451,35 @@ processCommandLineOptions := phase0 -> (			    -- 3 passes
 
 if firstTime then processCommandLineOptions 1
 
-exe := (
+exe := minimizeFilename (
      {*
      -- this can be a reliable way to get the executable in linux
-     -- but we don't want to use it because we don't want to chase symbolic links
+     -- but we don't want to use it because we don't want to chase symbolic links and it does that for us
      processExe := "/proc/self/exe";
      if fileExists processExe and readlink processExe =!= null then readlink processExe
      else 
      *}
-     pathsearch commandLine#0)
-dir := s -> ( m := regex(".*/",s); if 0 == #m then "./" else substring_(m#0) s)
+     if isAbsolutePath commandLine#0 then commandLine#0 else
+     if isStablePath commandLine#0 then concatenate(currentDirectory|commandLine#0)
+     else pathsearch commandLine#0)
+if not isAbsolutePath exe then exe = currentDirectory | exe ;
+dir  := s -> ( m := regex(".*/",s); if 0 == #m then "./" else substring(m#0#0  ,m#0#1-1,s))
+base := s -> ( m := regex(".*/",s); if 0 == #m then s    else substring(m#0#1+1,      s))
+exe = concatenate(realpath dir exe, "/", base exe)
 bindirsuffix := LAYOUT#"bin";
 issuffix := (s,t) -> s === substring(t,-#s)
 fromexetoprefix := exe -> (
-     bindir := dir exe;
+     bindir := dir exe | "/";
      if issuffix(bindirsuffix,bindir) then substring(bindir,0,#bindir-#bindirsuffix))
 fromexetom2dir := exe -> (
      prefix := fromexetoprefix exe;
      if prefix =!= null then prefix | LAYOUT#"m2")
+VERSIONfn := "VERSION"
 while true do (
      -- search for VERSION file with right version number in it, or for ../c/scc1, whichever comes first
      -- this works either in the build directory or in the final install directory, even if symbolic links intervene
-     if fileExists (dir exe | "../c/scc1") then (		    -- we are in the build directory
-	  buildHomeDirectory = minimizeFilename(dir exe|"../");
+     if fileExists (dir dir exe | "/c/scc1") then (		    -- we are in the build directory
+	  buildHomeDirectory = dir dir exe | "/";
 	  sourceHomeDirectory = (
 	       if fileExists (buildHomeDirectory|"m2/setup.m2") then buildHomeDirectory 
 	       else (
@@ -488,21 +494,22 @@ while true do (
 	  break);
      m2dir := fromexetom2dir exe;
      if m2dir =!= null then (
-	  VERSIONfn := m2dir | "VERSION";
+	  VERSIONfn = m2dir | "VERSION";
 	  if fileExists VERSIONfn then (
 	       VERSION := get VERSIONfn;
-	       if VERSION === version#"VERSION" then (
+	       VERSIONregex := concatenate("^[[:space:]]*",version#"VERSION","[[:space:]]*$");
+	       if match(VERSIONregex,VERSION) then (
 		    prefixDirectory = fromexetoprefix exe;  --  found it
 		    break;
 		    )));
      if null === readlink exe then (
 	  stderr
 	  << "--warning: expected to find file " << format VERSIONfn << " containing " << format version#"VERSION" << endl
-	  << "--:        because we seem to be running " << format exe << endl
+	  << "--:        We seem to be running " << format exe << endl
 	  << "--:        Perhaps " << commandLine#0 << " has been moved or copied to a different directory." << endl;
 	  error "file VERSION containing current version number not found");
      s := readlink exe;
-     exe = if isAbsolutePath s then s else minimizeFilename(exe|"/../"|s);
+     exe = if isAbsolutePath s then s else realpath dir exe | "/" | s;
      )
 
 if firstTime and not nobanner then (

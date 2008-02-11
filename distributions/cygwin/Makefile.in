@@ -128,8 +128,8 @@ server/Macaulay2/@package@-@CYGWIN_RELEASE@-src.tar.bz2 : server/Macaulay2 mkrt
 endif
 
 install :: Macaulay2.README
-	@INSTALL@ -d @encapdir@@FINALPREFIX@/share/doc/Cygwin
-	@INSTALL@ Macaulay2.README @encapdir@@FINALPREFIX@/share/doc/Cygwin
+	@INSTALL@ -d @encapdir@/share/doc/Cygwin
+	@INSTALL@ Macaulay2.README @encapdir@/share/doc/Cygwin
 
 clean ::; rm -rf server files src-files
 distclean : clean; rm -f Makefile Macaulay2.README setup.hint

@@ -463,8 +463,8 @@ exe := minimizeFilename (
      if isStablePath commandLine#0 then concatenate(currentDirectory|commandLine#0)
      else pathsearch commandLine#0)
 if not isAbsolutePath exe then exe = currentDirectory | exe ;
-dir  := s -> ( m := regex(".*/",s); if 0 == #m then "./" else substring(m#0#0  ,m#0#1-1,s))
-base := s -> ( m := regex(".*/",s); if 0 == #m then s    else substring(m#0#1+1,      s))
+dir  := s -> ( m := regex(".*/",s); if 0 == #m then "./" else substring(m#0#0,m#0#1-1,s))
+base := s -> ( m := regex(".*/",s); if 0 == #m then s    else substring(m#0#1,      s))
 exe = concatenate(realpath dir exe, "/", base exe)
 bindirsuffix := LAYOUT#"bin";
 issuffix := (s,t) -> s === substring(t,-#s)

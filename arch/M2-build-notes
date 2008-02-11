@@ -95,6 +95,32 @@ MacOS X notes
           make
 	  make install
 
+#######################################
+## cygwin notes #######################
+#######################################
+Installed cygwin from cygwin.org, by clicking on setup.exe
+  Choosing the defaults for everything
+  Choosing a mirror
+  Installing all the default packages
+Rerun setup.exe again from the web, although perhaps there is a way to do it locally)
+  Installed (under editors): emacs, emacs-X11 (this gets an older version 21.1.2, but it seems fine)
+Rerun setup.exe again from the web
+  Added the URL:
+    http://www.math.uiuc.edu/Macaulay2/Repositories/cygwin
+  clicked on it
+  chose (under Math), Macaulay2 (version 1.1-2)
+  installed it
+Back on windows XP desktop
+Double-click on Cygwin icon
+  M2
+  setup() -- inside M2
+  exit
+At the prompt:
+  startX
+In the window that pops up:
+  M2
+Now f12 starts M2 fine.  The key f11 works as it should too.
+
 #######################################################
 ## Ubuntu source code install #########################
 ## These notes work the same for 32 or 64 bit Ubuntu ##

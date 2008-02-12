@@ -1,9 +1,8 @@
 # @configure_input@
+# see http://cygwin.com/setup.html for info on making cygwin packages
 
 # override this on the make command line, as needed!
 DISTRIBUTION = @DISTRIBUTION@
-
-# see http://cygwin.com/setup.html for info on making cygwin packages
 
 ifneq (@FINALPREFIX@,/usr)
 $(error expected --with-final-prefix=/usr, to comply with cygwin package standards)
@@ -133,9 +132,12 @@ install :: Macaulay2.README
 	@INSTALL@ -d @encapdir@/share/doc/Cygwin
 	@INSTALL@ Macaulay2.README @encapdir@/share/doc/Cygwin
 
+upload :; rsync --verbose --compress --archive --rsh='ssh -x -a' server/. u00:to/Macaulay2/Repositories/cygwin-test
 clean ::; rm -rf server files src-files
 distclean : clean; rm -f Makefile Macaulay2.README setup.hint
 Makefile : Makefile.in; cd ../..; ./config.status distributions/cygwin/Makefile
+postinstall.sh : postinstall.sh.in; cd ../..; ./config.status distributions/cygwin/postinstall.sh
+preremove.sh : preremove.sh.in; cd ../..; ./config.status distributions/cygwin/preremove.sh
 setup.hint-base : setup.hint-base.in; cd ../..; ./config.status distributions/cygwin/setup.hint-base
 Macaulay2.README : Macaulay2.README.in; cd ../..; ./config.status distributions/cygwin/Macaulay2.README
 

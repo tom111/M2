@@ -1,6 +1,10 @@
 #! /bin/sh
 
-# this is the cygwin preremove script, to be installed in /etc/preremove/Macaulay2.sh
+# This is the cygwin preremove script, to be installed in /etc/preremove/Macaulay2.sh
+# and to be renamed to /etc/preremove/Macaulay2.sh.done after completion
+
+# This script will be run in a hostile environment by setup.exe, and there is no way
+# to test it in advance in the same environment.
 
 cd @FINALPREFIX@/share/info
 for p in @PACKAGES@

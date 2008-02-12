@@ -35,9 +35,7 @@ addHook(Module, symbol codim, (opts,M) -> break (
 	  if not opts.Generic and not isAffineRing ring M
 	  then error "codim: expected an affine ring (consider Generic=>true to work over QQ)";
 	  p := generators gb presentation M;
-	  n := rank target p;
-	  c := infinity;
-	  for i from 0 to n-1 when c > 0 do c = min(c,codim(monomialIdealOfRow(i,p)));
+	  c := codim monomialIdeal toList applyKeys ( set flatten entries leadTerm p, leadMonomial);
 	  c - codim(R,opts))))
 
 MonomialIdeal ^ ZZ := MonomialIdeal => (I,n) -> SimplePowerMethod(I,n)

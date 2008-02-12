@@ -111,7 +111,7 @@ Rerun setup.exe again from the web
   chose (under Math), Macaulay2 (version 1.1-2)
   installed it
 Back on windows XP desktop
-Double-click on Cygwin icon
+Double-click on Cygwin icon -- should not need to do this!!
   M2
   setup() -- inside M2
   exit

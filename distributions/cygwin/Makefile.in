@@ -1,5 +1,8 @@
 # @configure_input@
 
+# override this on the make command line, as needed!
+DISTRIBUTION = @DISTRIBUTION@
+
 # see http://cygwin.com/setup.html for info on making cygwin packages
 
 ifneq (@FINALPREFIX@,/usr)
@@ -33,17 +36,16 @@ ifeq ($(prefixdir),/)
 prefixdir = /.
 endif
 
-all install :: \
-		server/Macaulay2 \
-		server/Macaulay2/@package@-@CYGWIN_RELEASE@.tar.bz2 \
-		server/Macaulay2/@package@-@CYGWIN_RELEASE@-src.tar.bz2 \
-		server/Macaulay2/setup.hint \
-		server/setup.ini \
-		tidy
+DISTFILES := server/Macaulay2/@package@-$(DISTRIBUTION).tar.bz2 \
+	     server/Macaulay2/@package@-$(DISTRIBUTION)-src.tar.bz2 \
+	     server/Macaulay2/setup.hint
+
+all install :: server/Macaulay2 $(DISTFILES) server/setup.ini tidy
 	@ echo "============================================================================="
 	@ echo "the cygwin package files have been prepared in cygwin/server"
 	@ echo "============================================================================="
-server/setup.ini : ; PATH=`cd @srcdir@; pwd`:$(PATH) $(MAKE) -C server setup.ini
+server/setup.ini : $(DISTFILES)
+	PATH=`cd @srcdir@; pwd`:$(PATH) $(MAKE) -C server setup.ini
 server/Macaulay2 : ; @MKDIR_P@ $@
 
 TIDY = yes
@@ -71,7 +73,7 @@ ifneq (@FAKEROOT@,)
 	@FAKEROOT@ chown -R root.root files
 endif
 
-server/Macaulay2/@package@-@CYGWIN_RELEASE@.tar.bz2 : .prepared
+server/Macaulay2/@package@-$(DISTRIBUTION).tar.bz2 : .prepared
 	(cd files && @FAKEROOT@ tar cjf - *) >$@
 
 libraries-used : .prepared
@@ -101,30 +103,30 @@ setup.hint : setup.hint-base packages-used
 server/Macaulay2/setup.hint : setup.hint server/Macaulay2 ; cp $< $@
 
 ifeq (@SRCTARFILE@,)
-@package@-@CYGWIN_RELEASE@ : always
+@package@-$(DISTRIBUTION) : always
 	rm -f $@
 	ln -sf @srcdir@/../.. $@
 src-files : always
-	svn ls -R @srcdir@/../.. | egrep -v '/$$' | sed 's=^=@package@-@CYGWIN_RELEASE@/=' >$@
-mkrt : src-files @package@-@CYGWIN_RELEASE@
+	svn ls -R @srcdir@/../.. | egrep -v '/$$' | sed 's=^=@package@-$(DISTRIBUTION)/=' >$@
+mkrt : src-files @package@-$(DISTRIBUTION)
 ifneq (@FAKEROOT@,)
 	cat src-files | @FAKEROOT@ xargs chown root.root
 endif
-server/Macaulay2/@package@-@CYGWIN_RELEASE@-src.tar.bz2 : server/Macaulay2 mkrt src-files
+server/Macaulay2/@package@-$(DISTRIBUTION)-src.tar.bz2 : server/Macaulay2 mkrt src-files
 	@FAKEROOT@ tar cfj $@ --files-from=src-files
 else
 src-tree : @SRCTARFILE@
 	rm -rf $@
 	@MKDIR_P@ $@
 	tar xzf $< -C $@
-	rm -f @package@-@CYGWIN_RELEASE@
-	ln -s srctree/* @package@-@CYGWIN_RELEASE@
+	rm -f @package@-$(DISTRIBUTION)
+	ln -s srctree/* @package@-$(DISTRIBUTION)
 mkrt : src-tree
 ifneq (@FAKEROOT@,)
 	@FAKEROOT@ chown -R root.root src-tree
 endif
-server/Macaulay2/@package@-@CYGWIN_RELEASE@-src.tar.bz2 : server/Macaulay2 mkrt
-	@FAKEROOT@ tar cfj $@ @package@-@CYGWIN_RELEASE@/.
+server/Macaulay2/@package@-$(DISTRIBUTION)-src.tar.bz2 : server/Macaulay2 mkrt
+	@FAKEROOT@ tar cfj $@ @package@-$(DISTRIBUTION)/.
 endif
 
 install :: Macaulay2.README

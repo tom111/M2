@@ -1,5 +1,5 @@
 AC_INIT(Macaulay 2, 1.1, Macaulay2@math.uiuc.edu, Macaulay2) dnl -*- autoconf -*-
-AC_SUBST(CYGWIN_RELEASE,2)
+AC_SUBST(DISTRIBUTION,1) dnl use this starting number to sequentially number the downstream distributions
 AC_CONFIG_HEADERS(include/config.h)
 AC_CONFIG_FILES(m4_include(config/files))
 AC_SUBST(CONFIGURED_FILES,"$ac_config_files")

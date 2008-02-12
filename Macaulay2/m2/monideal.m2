@@ -32,6 +32,8 @@ addHook(Module, symbol codim, (opts,M) -> break (
      else if isField R then 0
      else if R === ZZ then if M ** QQ == 0 then 1 else 0
      else (
+	  if not opts.Generic and not isAffineRing ring M
+	  then error "codim: expected an affine ring (consider Generic=>true to work over QQ)";
 	  p := generators gb presentation M;
 	  n := rank target p;
 	  c := infinity;

@@ -1143,7 +1143,7 @@ browserMethods := hashTable {
      "firefox" => "firefox \"%s\"&",
      "open" => "open \"%s\"",
      "netscape" => "netscape -remote \"openURL(%s)\"",
-     "windows firefox" => "/cygdrive/c/Program\\ Files/Mozilla\\ Firefox/firefox -remote \"openURL(%s)\""
+     "windows firefox" => "/cygdrive/c/Program\\ Files/Mozilla\\ Firefox/firefox -remote \"openURL(%s)\" & "
      }
 URL = new SelfInitializingType of BasicList
 new URL from String := (URL,str) -> new URL from {str}

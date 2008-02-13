@@ -34,11 +34,10 @@ document {
       	  M = monomialIdeal vars R
 	  J = monomialIdeal 0_R
 	  ///,
-     "Warning: if the coefficient ring is ZZ, then contrary to what we said above, lead monomials whose coefficient is not a unit
-     are omitted.  This behavior may change in the future.  Here is an example.",
+     "If the coefficient ring is ZZ, lead coefficients of the monomials are ignored.",
      EXAMPLE lines ///
-     R == ZZ[x,y]
-     monomialIdeal(2*x,y)
+       R = ZZ[x,y]
+       monomialIdeal(2*x,3*y)
      ///,
      SeeAlso => {MonomialIdeal}
      }
@@ -60,11 +59,10 @@ document {
      	  monomialIdeal I	  
 	  monomialSubideal I
 	  ///,
-     "Warning: if the coefficient ring is ZZ, then contrary to what we said above, lead monomials whose coefficient is not a unit
-     are omitted.  This behavior may change in the future.  Here is an example.",
+     "If the coefficient ring is ZZ, lead coefficients of the monomials are ignored.",
      EXAMPLE lines ///
-     R == ZZ[x,y]
-     monomialIdeal ideal(2*x,y)
+       R = ZZ[x,y]
+       monomialIdeal ideal(2*x,3*y)
      ///,
      SeeAlso => {MonomialIdeal,monomialSubideal}
      }

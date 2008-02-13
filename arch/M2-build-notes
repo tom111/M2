@@ -120,6 +120,7 @@ At the prompt:
 In the window that pops up:
   M2
 Now f12 starts M2 fine.  The key f11 works as it should too.
+Download firefox, make it the default browser
 
 #######################################################
 ## Ubuntu source code install #########################

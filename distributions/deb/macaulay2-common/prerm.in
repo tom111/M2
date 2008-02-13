@@ -3,7 +3,7 @@ prefix=@FINALPREFIX@
 case "$1" in
     remove|deconfigure|upgrade)
 	for p in @PACKAGES@
-	do install-info --remove --quiet --info-dir="$prefix/share/info" "$prefix/share/info/$p.info" ; fi
+	do install-info --remove --quiet --info-dir="$prefix/share/info" "$prefix/share/info/$p.info"
 	done ;;
     failed-upgrade) ;;
     *) echo "prerm called with unknown argument \`$1'" >&2

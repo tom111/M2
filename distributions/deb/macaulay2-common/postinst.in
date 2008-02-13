@@ -3,7 +3,7 @@ prefix=@FINALPREFIX@
 case "$1" in
     abort-upgrade|configure)
 	for p in @PACKAGES@
-	do install-info --quiet --info-dir="$prefix/share/info" "$prefix/share/info/$p.info" ; fi
+	do install-info --quiet --info-dir="$prefix/share/info" "$prefix/share/info/$p.info"
 	done ;;
     abort-remove|abort-deconfigure) ;;
     *) echo "postinst called with unknown argument \`$1'" >&2

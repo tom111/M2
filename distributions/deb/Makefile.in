@@ -99,7 +99,7 @@ clean :: tidy
 distclean : clean; rm -f Makefile control
 always :
 libraries-used : .prepared always
-	ldd tmp@FINALPREFIX@/@bindirtail@/M2@EXE@ | sed -e 's/.* => //' -e 's/^	//' -e 's/ .*//' | egrep '^/' | egrep `echo "@LIBFILES@" | sed -e 's=\([^ ][^ ]*\)=/\1\\\\.=g' -e 's/  */|/g'` >$@ || true
+	ldd tmp@FINALPREFIX@/@bindirtail@/M2@EXE@ | sed -e 's/.* => //' -e 's/^	//' -e 's/ .*//' | egrep '^/' >$@ || true
 packages-used : libraries-used
 	cat libraries-used | while read x ; do find /var/lib/dpkg/info -name \*.list | xargs egrep -l "^$$x"; done | sort | uniq | sed -e 's=.*/==' -e 's=\.list$$==' >$@
 macaulay2/control : macaulay2/control.prelim macaulay2/data.tar.gz packages-used
@@ -107,7 +107,7 @@ macaulay2/control : macaulay2/control.prelim macaulay2/data.tar.gz packages-used
 	 size=`gunzip<macaulay2/data.tar.gz|wc -c` && \
 	 size=`echo $$size | sed 's/^\([0-9][0-9]*\).*/\1/'` && \
 	 echo Installed-Size: $$size && \
-	 echo -n "Depends: libc6 (>= 2.3.4-1), macaulay2-common (= @PACKAGE_VERSION@)" && \
+	 echo -n "Depends: macaulay2-common (= @PACKAGE_VERSION@)" && \
 	 cat packages-used | while read x ; do echo -n ", $$x" ; done && \
 	 echo \
 	) >$@

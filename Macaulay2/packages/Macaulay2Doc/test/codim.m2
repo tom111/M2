@@ -10,3 +10,15 @@ f = (M,N) -> assert( codim (M++N, Generic => true) == min(codim(M, Generic => tr
 f(quotient module ideal x, quotient module ideal(x,y))
 f(quotient module ideal x, quotient module ideal 0_R)
 f(quotient module ideal 1_R, quotient module ideal(x,y))
+
+R = QQ[x,y]
+assert ( 0 == codim ( R^2 ) )
+assert ( 0 == codim (ideal 0_R ))
+assert ( 0 == codim ( cokernel map(R^3, R^0, 0)  ) )
+assert ( 1 == codim (ideal ( 2*x )  ) )
+assert ( 2 == codim (ideal ( 2*x , 3*y )  ) )
+assert ( infinity == codim (R^0  ) )
+assert ( infinity == codim (ideal 1_R ))
+f(quotient module ideal x, quotient module ideal(x,y))
+f(quotient module ideal x, quotient module ideal 0_R)
+f(quotient module ideal 1_R, quotient module ideal(x,y))

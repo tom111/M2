@@ -73,21 +73,23 @@ SEDOPTS = -e 's=^\.="=' -e 's=$$="='
 
 libraries-used : .prepared always
 	ldd files@FINALPREFIX@/@bindirtail@/M2@EXE@ > $@.tmp
-	cat $@.tmp \
-	| sed -e 's/.* => //' -e 's/^	//' -e 's/ .*//' \
-	| egrep '^/' \
-	| egrep `echo "@LIBFILES@" \
-	| sed -e 's=\([^ ][^ ]*\)=/\1\\\\.=g' -e 's/  */|/g'` >$@ \
-	|| true
+	cat $@.tmp | sed -e 's/.* => //' -e 's/^	//' -e 's/ .*//' | egrep '^/' >$@ || true
 	rm $@.tmp
 
 STRIP_VERSION_CMD := sed 's/-[0-9][0-9.]*[0-9]\(-\|$$\).*//'
 
-packages-used : libraries-used
+packages-used : libraries-used Makefile
 	cat libraries-used \
 	| while read x ; \
-	do rpm --query -f "$$x" | sed 's/\(.*\)-\([0-9][0-9.]*[0-9]\)\(-.*$$\|$$\)/\1 \2/' ; \
+	do rpm --query -f "$$x" | sed 's/\([^.]*\)-\([0-9][0-9.]*[0-9]\)\(-.*$$\|$$\)/\1 \2/' ; \
 	done | sort | uniq | sed -e 's=.*/==' -e 's=\.list$$==' >$@
+
+test-install :
+	sudo rpm -i -v ../../@PKG_COM_RPM@
+	sudo rpm -i -v ../../@PKG_RPM@
+test-remove  :
+	sudo rpm -e -v Macaulay2-@PACKAGE_VERSION@
+	sudo rpm -e -v Macaulay2-common-@PACKAGE_VERSION@
 
 check : ; rpmlint -i ../../@PKG_RPM@ ../../@PKG_COM_RPM@
 tidy : ; rm -rf files files-common Macaulay2.spec Macaulay2-common.spec

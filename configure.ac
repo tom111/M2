@@ -164,7 +164,7 @@ AC_PROG_CXX()
 AC_PROG_YACC()
 AC_PROG_MKDIR_P()
 
-AC_MSG_CHECKING([whether linking C++ programs with gcc works])
+AC_MSG_CHECKING([whether linking C++ programs with C compiler $CC works])
 cat >unwindtest-main.cpp <<EOF
 #include "unwindtest-monomials.hpp"
 int main(int argc, char **argv) { Monomials *M = new Monomials(); return 1; }
@@ -177,9 +177,10 @@ cat >unwindtest-monomials.cpp <<EOF
 Monomials::Monomials() {}
 EOF
 if   (  set -x
-	$CXX $CPPFLAGS $CXXFLAGS -O3 -c -o unwindtest-main.o unwindtest-main.cpp &&
-	$CXX $CPPFLAGS $CXXFLAGS -O3 -c -o unwindtest-monomials.o unwindtest-monomials.cpp &&
-	$CC $LDFLAGS unwindtest-main.o unwindtest-monomials.o $LIBS -lstdc++ -o unwindtest-main
+	$CXX $CPPFLAGS $CXXFLAGS -O3 -c -o unwindtest-main.$OBJEXT unwindtest-main.cpp &&
+	$CXX $CPPFLAGS $CXXFLAGS -O3 -c -o unwindtest-monomials.$OBJEXT unwindtest-monomials.cpp &&
+	$CC $LDFLAGS unwindtest-main.$OBJEXT unwindtest-monomials.$OBJEXT $LIBS -lstdc++ -o unwindtest-main &&
+	test -f unwindtest-main$EXEEXT
      ) >&AS_MESSAGE_LOG_FD 2>&1
 then AC_MSG_RESULT(yes); rm -f unwindtest-*
 else AC_MSG_RESULT(no);  AC_MSG_ERROR([failure: linking C++ program with $CC, see file config.log])
@@ -222,13 +223,18 @@ EOF
     AC_SUBST(CONSTRUCTOR_ORDER_OBJ,)
     AC_SUBST(CONSTRUCTOR_ORDER_LIB,)
     if (set -xe
-	$CXX -c conf_test1.cc -o conf_testo1.o
-	$CXX -c conf_test2.cc -o conf_testa2.o
-	ar ru libconf_testa2.a conf_testa2.o
-	$CXX -c conf_test3.cc -o conf_testo3.o
-	$CXX -c conf_test4.cc -o conf_testa4.o
-	ar ru libconf_testa4.a conf_testa4.o
-	$CXX conf_main.cc -L. conf_testo1.o -lconf_testa2 conf_testo3.o -lconf_testa4 -o conf_main
+	$CXX -c conf_test1.cc
+	$CXX -c conf_test2.cc
+	$CXX -c conf_test3.cc
+	$CXX -c conf_test4.cc
+	if test $CXX = cl
+	then lib conf_test2.$OBJEXT
+	     lib conf_test4.$OBJEXT
+	     $CXX conf_main.cc conf_test1.$OBJEXT conf_test2.lib conf_test3.$OBJEXT conf_test4.lib -o conf_main
+	else ar ru libconf_test2.a conf_test2.$OBJEXT
+	     ar ru libconf_test4.a conf_test4.$OBJEXT
+	     $CXX conf_main.cc -L. conf_test1.$OBJEXT -lconf_test2 conf_test3.$OBJEXT -lconf_test4 -o conf_main
+	fi
 	./conf_main
 	) 2>&AS_MESSAGE_LOG_FD 1>&AS_MESSAGE_LOG_FD
     then CONSTRUCTOR_ORDER=`./conf_main`
@@ -240,7 +246,7 @@ EOF
 	     *a2*a4*) CONSTRUCTOR_ORDER_LIB=LR ;;
 	     *a4*a2*) CONSTRUCTOR_ORDER_LIB=RL ;;
 	 esac
-	 rm -f libconf_test*.a conf_test*.cc conf_test*.o conf_main*.cc conf_main
+	 rm -f libconf_test*.a conf_test*.cc conf_test*.$OBJEXT conf_main*.cc conf_main
 	 AC_MSG_RESULT([link order o1a2o3a4, construction order $CONSTRUCTOR_ORDER, obj order $CONSTRUCTOR_ORDER_OBJ, lib order $CONSTRUCTOR_ORDER_LIB])
     else AC_MSG_ERROR([test failed, see config.log])
     fi

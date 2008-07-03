@@ -4,7 +4,7 @@ include ../../include/config.Makefile
 VPATH = @srcdir@
 all::
 CPPFLAGS += -I@srcdir@ -I.
-YACC = bison
+YACC = @YACC@
 %.tab.c: %.y; $(YACC.y) $< $(OUTPUT_OPTION)
 %.fixed.c : %.tab.c
 	sed 's="bison.simple"="/usr/share/bison.simple"=' <$< >$@.tmp

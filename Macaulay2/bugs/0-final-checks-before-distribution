@@ -4,6 +4,8 @@ things to do manually before release
 
        add test files
 
+       run ldd M2 to see that we don't depend on any of our own sharable libraries (yet)
+
        check that readline and history and name completion work in an xterm
 
        look at html documentation 

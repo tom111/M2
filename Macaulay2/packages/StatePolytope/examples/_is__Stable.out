@@ -7,6 +7,40 @@ i2 : I = ideal(a*c-b^2,a*d-b*c,b*d-c^2);
 o2 : Ideal of R
 
 i3 : isStable(3,I)
+polymake: WARNING: directory /Users/mike/.polymake created for keeping individual user settings
+polymake: WARNING: file rgb.txt not found - no symbolic color names will be allowed
+polymake: WARNING: common::javaview_configure - autoconfiguration failed:
+'javaview' start script not found
+polymake: WARNING: common::postscript.rules - autoconfiguration failed:
+No known PostScript viewer program found,
+please specify your favorite viewer in the customization file.
+polymake: WARNING: common::geomview.rules - autoconfiguration failed:
+geomview main program not found
+polymake: WARNING: common::jreality_configure - autoconfiguration failed:
+bsh.jar not found
+polymake: WARNING: common::povray.rules - autoconfiguration failed:
+No known povray rendering program found,
+please specify your favorite viewer in the customization file.
+polymake: WARNING: polytope::porta.rules - autoconfiguration failed:
+PORTA package not found
+polymake: WARNING: polytope::bastat.rules - autoconfiguration failed:
+bastat program 'intpoints' not found
+polymake: WARNING: polytope::vinci.rules - autoconfiguration failed:
+'vinci' program not found
+polymake: WARNING: polytope::topcom.rules - autoconfiguration failed:
+TOPCOM program 'points2chiro' not found
+polymake: WARNING: polytope::splitstree.rules - autoconfiguration failed:
+SplitsTree package not found
+polymake: WARNING: polytope::azove.rules - autoconfiguration failed:
+'azove' program not found
+polymake: WARNING: rule cdd.convex_hull.redund: VERTICES, VERTEX_NORMALS : POINTS failed: client cdd_redund_client killed by signal 10
+polymake: WARNING: rule cdd.convex_hull.primal: FACETS, AFFINE_HULL : VERTICES | POINTS failed: client cdd_ch_client killed by signal 10
+polymake: WARNING: rule VERTICES_IN_FACETS, VERTICES : POINTS_IN_FACETS, POINTS failed: client compress_incidence killed by signal 10
+polymake: WARNING: rule cdd.convex_hull.dual: VERTICES, POINTED, FEASIBLE : FACETS | INEQUALITIES failed: client cdd_ch_client killed by signal 10
+ * Remember to run `polymake --reconfigure-rules RULENAME ... '
+ * or just `polymake --reconfigure'
+ * as soon as you have changed the customization file
+ * or installed the missing software!
 VERTICES
 1 9 6 6 9
 1 9 3 12 6
@@ -17,6 +51,10 @@ VERTICES
 1 4 14 5 7
 1 3 14 8 5
 
+polymake: WARNING: rule cdd.convex_hull.redund: VERTICES, VERTEX_NORMALS : POINTS failed: client cdd_redund_client killed by signal 10
+polymake: WARNING: rule cdd.convex_hull.primal: FACETS, AFFINE_HULL : VERTICES | POINTS failed: client cdd_ch_client killed by signal 10
+polymake: WARNING: rule VERTICES_IN_FACETS, VERTICES : POINTS_IN_FACETS, POINTS failed: client compress_incidence killed by signal 10
+polymake: WARNING: rule cdd.convex_hull.dual: VERTICES, POINTED, FEASIBLE : FACETS | INEQUALITIES failed: client cdd_ch_client killed by signal 10
 VERTICES
 1 9 6 6 9
 1 9 3 12 6
@@ -35,12 +73,21 @@ i4 : I = ideal(a^2,b^2,b*c);
 o4 : Ideal of R
 
 i5 : isStable(3,I) 
+polymake: WARNING: rule cdd.convex_hull.redund: VERTICES, VERTEX_NORMALS : POINTS failed: client cdd_redund_client killed by signal 10
+polymake: WARNING: rule cdd.convex_hull.primal: FACETS, AFFINE_HULL : VERTICES | POINTS failed: client cdd_ch_client killed by signal 10
+polymake: WARNING: rule VERTICES_IN_FACETS, VERTICES : POINTS_IN_FACETS, POINTS failed: client compress_incidence killed by signal 10
+polymake: WARNING: rule cdd.convex_hull.dual: VERTICES, POINTED, FEASIBLE : FACETS | INEQUALITIES failed: client cdd_ch_client killed by signal 10
+polymake: WARNING: rule lrs.convex_hull.dual: VERTICES, POINTED, FEASIBLE : FACETS | INEQUALITIES failed: client lrs_ch_client killed by signal 10
 VERTICES
 1 11 13 6 3
 
+polymake: WARNING: rule cdd.convex_hull.redund: VERTICES, VERTEX_NORMALS : POINTS failed: client cdd_redund_client killed by signal 10
+polymake: WARNING: rule cdd.convex_hull.primal: FACETS, AFFINE_HULL : VERTICES | POINTS failed: client cdd_ch_client killed by signal 10
+polymake: WARNING: rule VERTICES_IN_FACETS, VERTICES : POINTS_IN_FACETS, POINTS failed: client compress_incidence killed by signal 10
+polymake: WARNING: rule cdd.convex_hull.dual: VERTICES, POINTED, FEASIBLE : FACETS | INEQUALITIES failed: client cdd_ch_client killed by signal 10
 VERTICES
-1 33/4 33/4 33/4 33/4
 1 11 13 6 3
+1 33/4 33/4 33/4 33/4
 
 
 o5 = false

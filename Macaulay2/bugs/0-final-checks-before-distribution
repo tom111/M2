@@ -45,3 +45,4 @@ things to do manually before release
 
        run "make -k check" and check the output
 
+       make sure the macos x readme file is up to date

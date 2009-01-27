@@ -1,9 +1,11 @@
 # -*- Makefile -*-
 CONFIGOPTIONS += --build=i486-pc-linux-gnu
-CONFIGOPTIONS += --enable-tar
+CONFIGOPTIONS += --enable-tarfile
 CONFIGOPTIONS += --enable-static
 CONFIGOPTIONS += --enable-build-libraries=gmp
 CONFIGOPTIONS += --enable-common-staging-area
+CONFIGOPTIONS += --disable-pthreads
+BUILDOPTIONS += MAPFILE=yes
 DIRECTORY = linux
 include Makefile.include
 # Local Variables:

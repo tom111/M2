@@ -605,7 +605,7 @@ then if test $BUILD_pari = no
 	  AC_SEARCH_LIBS(pari_init,pari,,BUILD_pari=yes)
 	  AC_CHECK_HEADER(pari/pari.h,,BUILD_pari=yes)
      fi
-     test $BUILD_pari = yes && BUILTLIBS="\$(TOSTATIC) -lpari \$(UNSTATIC) $BUILTLIBS"
+     test $BUILD_pari = yes && BUILTLIBS="-lpari $BUILTLIBS"
 fi
 
 if test "$FROBBY" = yes

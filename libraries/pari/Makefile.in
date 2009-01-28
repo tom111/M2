@@ -14,7 +14,7 @@ BUILDTARGET += lib-dyn
 INSTALLTARGET += install-lib-dyn
 endif
 
-CONFIGURECMD = $(CONFIGENV) ./Configure --prefix=$(LIBRARIESDIR) --with-gmp
+CONFIGURECMD = $(CONFIGENV) ./Configure --prefix=$(LIBRARIESDIR) --with-gmp=$(LIBRARIESDIR) | tee pari-config.log
 
 ifeq (@PROFILING@,yes)
 CONFIGURECMD += -pg
@@ -32,6 +32,14 @@ endif
 endif
 
 include ../Makefile.library
+
+# we have to detect which of these two answers it gives:
+#   ### Building without GNU MP support
+#   Using GNU MP, version 4.2.1
+config-chk:
+	: test whether pari successfully found gmp library during configuration :
+	grep 'Using GNU MP' $(BUILDDIR)/pari-config.log
+
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/pari/Makefile
 run-example: example; ./example
 example: example.c -lpari

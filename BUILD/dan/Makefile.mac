@@ -8,7 +8,10 @@
 # INSTALLOPTIONS += -s
 # CONFIGOPTIONS += --enable-tarfile
 
-CONFIGOPTIONS += LDFLAGS=-static-libgcc CPPFLAGS=-DREVERSE_PARI
+CONFIGOPTIONS += LDFLAGS=-static-libgcc
+
+# we may need pari to be able to find the gmp library:
+# CONFIGOPTIONS += --enable-build-libraries=gmp
 
 DEBUG = 
 unexport DEBUG

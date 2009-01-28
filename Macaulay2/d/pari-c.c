@@ -38,13 +38,8 @@ void closepari() {
 
 #define varsizeof(x,n) (sizeof(*x)+(n-VARLEN)*sizeof(x->el[0]))
 
-#ifdef REVERSE_PARI
-#define PARI_GMP_REVERSE 1
-#else
-#define PARI_GMP_REVERSE 0
-#endif
-
-#if PARI_GMP_REVERSE
+#if 0
+/* this is necessary only if pari did not find the GNU MP library at configure time */
 #define fix(m,i) ((m)-(i)-1)
 #else
 #define fix(m,i) i

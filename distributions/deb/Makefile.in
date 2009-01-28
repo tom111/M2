@@ -72,9 +72,9 @@ prepare: .prepared
 	if [ -d tmp-common@prefix@/info ] ; \
 	then $(MKDIR_P) tmp-common@prefix@/share/info && mv tmp-common@prefix@/info/* tmp-common@prefix@/share/info && rmdir tmp-common@prefix@/info; \
 	fi
-	if [ -d tmp-common@prefix@/man ] ; \
-	then $(MKDIR_P) tmp-common@prefix@/share/man && mv tmp-common@prefix@/man/* tmp-common@prefix@/share/man && rmdir tmp-common@prefix@/man; \
-	fi
+	$(MKDIR_P) tmp@prefix@/@tail_mandir@
+	mv -v tmp-common@prefix@/@tail_mandir@/* tmp@prefix@/@tail_mandir@
+	rmdir tmp-common@prefix@/@tail_mandir@
 	$(MKDIR_P) tmp@prefix@/share/doc/macaulay2
 	$(MKDIR_P) tmp-common@prefix@/share/doc/macaulay2-common
 	cp tmp-common@docdir@/README tmp@prefix@/share/doc/macaulay2/copyright

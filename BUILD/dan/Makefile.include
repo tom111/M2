@@ -1,11 +1,10 @@
 # -*- Makefile -*-
 default:
+DIRECTORY ?= none
 ifneq ($(DIRECTORY),none)
-ifneq ($(DIRECTORY),)
 include builds/$(DIRECTORY)/include/configuration
 else
 $(warning DIRECTORY variable unset)
-endif
 endif
 .PHONY : everything world configure all install check-links distclean clean arch-chk install-it rebuild-world default
 all:banner; $(MAKE) -C builds/$(DIRECTORY) $@ $(BUILDOPTIONS)
@@ -28,6 +27,7 @@ rebuild-world: banner arch-chk distclean configure everything install check
 world: banner arch-chk configure all install check
 check-info:; $(MAKE) -C builds/$(DIRECTORY)/Macaulay2/packages $@
 ../../configure :; $(MAKE) -C ../..
+rm-dep:; find builds/$(DIRECTORY) -name \*.dep -delete
 find-M2:
 	: : : : : : : : : : : : : : : : : : M2s : : : : : : : : : : : : : : 
 	@for i in `pwd`/builds/*/StagingArea/*/bin/M2 ; do echo $$i ; done

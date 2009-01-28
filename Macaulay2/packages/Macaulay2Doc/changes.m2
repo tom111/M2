@@ -306,11 +306,11 @@ document {
 			 "The function ", TO "regex", " now has a form which restricts the range of the search."
 			 },
 		    LI {
-			 "The total Ext functor now accepts multigraded modules, see ", TO "(Ext,Module,Module)", "."
+			 "The total Ext functor now accepts multigraded modules, see ", TO (Ext,Module,Module), "."
 			 },
 		    LI {
 			 "Macaulay 2 now incorporates ", TO "frobby", ", a free library for computing
-			 the Alexander dual of a monomial ideal (see ", TO "(dual,MonomialIdeal)", ")."
+			 the Alexander dual of a monomial ideal (see ", TO (dual,MonomialIdeal), ")."
 			 },
 		    LI {
 			 "The function ", TO "select", " will now give an error message if the

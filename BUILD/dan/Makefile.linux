@@ -5,6 +5,7 @@ CONFIGOPTIONS += --enable-static
 CONFIGOPTIONS += --enable-build-libraries=gmp
 CONFIGOPTIONS += --enable-common-staging-area
 CONFIGOPTIONS += --disable-pthreads
+CONFIGOPTIONS += --with-issue=Generic
 BUILDOPTIONS += MAPFILE=yes
 DIRECTORY = linux
 include Makefile.include

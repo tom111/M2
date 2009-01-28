@@ -42,7 +42,7 @@ export PATH := @abs_top_srcdir@/autoconf/final/bin:$(PATH)
 all:install post-install
 post-install:
 show-flags:; $(CONFIGENV) :
-install: config-chk .installed-$(VERSION)
+install: .installed-$(VERSION) config-chk
 unconfigure:; rm -f .configured-$(VERSION) .compiled-$(VERSION) .installed-$(VERSION)
 reconfigure: unconfigure configure
 uninstall::; rm -f .installed-$(VERSION)
@@ -55,7 +55,7 @@ package-clean: unmark ; if [ -d $(BUILDDIR) ]; then $(MAKE) -C $(BUILDDIR) clean
 package-distclean: unmark ; if [ -d $(BUILDDIR) ]; then $(MAKE) -C $(BUILDDIR) distclean ; fi
 fetch: $(TARFILE_DIR)/$(TARFILE)
 patch: .patched-$(VERSION)
-compile: config-chk .compiled-$(VERSION)
+compile: .compiled-$(VERSION) config-chk
 configure: .configured-$(VERSION) config-chk
 config-chk:
 .installed-$(VERSION)  : .compiled-$(VERSION)   ; @ set -x ; ( cd $(BUILDDIR) && $(INSTALLCMD)   ) && touch $@

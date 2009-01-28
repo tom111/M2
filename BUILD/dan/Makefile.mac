@@ -1,6 +1,6 @@
 # -*- Makefile -*-
 
-BUILDOPTIONS += IgnoreExampleErrors=true
+# BUILDOPTIONS += IgnoreExampleErrors=true
 # BUILDOPTIONS += RemakeAllDocumentation=true RemakePackages=true
 # BUILDOPTIONS += RerunExamples=true
 # PACKAGES = Macaulay2Doc
@@ -26,7 +26,11 @@ DIRECTORY := mac.profile $(shell echo PROFILE = $(PROFILE) >&2 )
 else
 INSTALLOPTIONS += prefix=$(HOME)/local/encap
 # PREFIX = /usr/local
+
+# gc crashes if we enable pthreads, in testgc and in html-check-links
+# (under Mac OS 10.4 on power pc):
 CONFIGOPTIONS += --disable-pthreads
+
 CONFIGOPTIONS += --enable-dmg
 DIRECTORY = mac
 endif

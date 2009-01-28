@@ -1,4 +1,23 @@
 #-*- Makefile -*-
+DIRECTORY = freebsd
+include Makefile.include
+CONFIGOPTIONS += --prefix=/usr/local
+CONFIGOPTIONS += --enable-freebsd
+CONFIGOPTIONS += CPPFLAGS="-I/usr/local/include"
+CONFIGOPTIONS += LDFLAGS="-L/usr/local/lib"
+
+# The other freebsd ports all put man pages in /usr/local/man, so
+# I put these two options together just in case the common staging area is
+# is used with one of our other ports that has --mandir at the default value:
+CONFIGOPTIONS += --disable-common-staging-area --mandir='$${prefix}/man'
+
+default: install
+INSTALLOPTIONS += prefix=/usr/local/encap
+
+pre-install:;	rm -rf /usr/local/encap/Macaulay2-$(PACKAGE_VERSION)
+arch-chk:
+	[ `hostname` = freebsd.gallium ]
+	[ `uname -m` = i386 ]
 
 # build instructions under freebsd 7.1-RELEASE
 
@@ -40,26 +59,6 @@
 #  VBoxManage setextradata "Linux Guest" VBoxInternal/Devices/pcnet/0/LUN#0/Config/guestssh/GuestPort 22
 #  VBoxManage setextradata "Linux Guest" VBoxInternal/Devices/pcnet/0/LUN#0/Config/guestssh/HostPort  2222
 
-#BUILDOPTIONS += RemakeAllDocumentation=true RemakePackages=true
-#BUILDOPTIONS += RerunExamples=true
-#PACKAGES = Macaulay2Doc
-#BUILDOPTIONS += -s
-#INSTALLOPTIONS += -s
-DIRECTORY = freebsd
-include Makefile.include
-CONFIGOPTIONS  += prefix=/usr/local
-INSTALLOPTIONS += prefix=/usr/local/encap
-CONFIGOPTIONS += --enable-freebsd CPPFLAGS="-I/usr/local/include" LDFLAGS="-L/usr/local/lib"
-
-# I put these two options together just in case the common staging area is
-# is used with one of our other ports that has --mandir at the default value:
-CONFIGOPTIONS += --disable-common-staging-area --mandir='$${prefix}/man'
-# The other freebsd ports all put man pages in /usr/local/man
-
-pre-install:;	rm -rf /usr/local/encap/Macaulay2-$(PACKAGE_VERSION)
-arch-chk:
-	[ `hostname` = freebsd.gallium ]
-	[ `uname -m` = i386 ]
 # Local Variables:
 # compile-command: "time gmake -f Makefile.freebsd "
 # End:

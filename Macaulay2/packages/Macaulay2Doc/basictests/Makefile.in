@@ -14,7 +14,7 @@ LDFLAGS += -L$(DOTS)/../libraries/final/lib
 TESTRESULTS := $(notdir $(patsubst %.m2, %.okay, $(wildcard @srcdir@/*.m2)))
 
 all:
-#all:check
+all:check
 check: $(TESTRESULTS) check-gc
 
 $(TESTRESULTS) : @pre_exec_prefix@/bin/M2@EXE@
@@ -23,11 +23,12 @@ ARGS := --silent -q --stop --no-loaddata --no-setup -e 'srcdir = "@srcdir@/"'
 
 %.okay : %.m2
 	@ echo testing $<
-	@ env @pre_exec_prefix@/bin/M2@EXE@ $(ARGS) $< -e 'exit 0'
+	@ ulimit -t 20 2>/dev/null; env @pre_exec_prefix@/bin/M2@EXE@ $(ARGS) $< -e 'exit 0'
 	@ touch $@
 
 clean::	; rm -f *.okay
 LOADLIBES += @GC_LIBS@
+testgc: -lgc
 check-gc: testgc; ./testgc
 clean::; rm -f testgc
 Makefile : Makefile.in ; cd $(DOTS)/.. && ./config.status Macaulay2/packages/Macaulay2Doc/basictests/Makefile

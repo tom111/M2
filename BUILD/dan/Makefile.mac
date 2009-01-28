@@ -1,4 +1,6 @@
 # -*- Makefile -*-
+
+BUILDOPTIONS += IgnoreExampleErrors=true
 # BUILDOPTIONS += RemakeAllDocumentation=true RemakePackages=true
 # BUILDOPTIONS += RerunExamples=true
 # PACKAGES = Macaulay2Doc
@@ -6,7 +8,7 @@
 # INSTALLOPTIONS += -s
 # CONFIGOPTIONS += --enable-tarfile
 
-CONFIGOPTIONS += LDFLAGS=-static-libgcc
+CONFIGOPTIONS += LDFLAGS=-static-libgcc CPPFLAGS=-DREVERSE_PARI
 
 DEBUG = 
 unexport DEBUG
@@ -22,13 +24,15 @@ INSTALLOPTIONS += prefix=/none
 CONFIGOPTIONS += --enable-profile --disable-pthreads
 DIRECTORY := mac.profile $(shell echo PROFILE = $(PROFILE) >&2 )
 else
-INSTALLOPTIONS += prefix=$HOME/local/encap
+INSTALLOPTIONS += prefix=$(HOME)/local/encap
 # PREFIX = /usr/local
+CONFIGOPTIONS += --disable-pthreads
 CONFIGOPTIONS += --enable-dmg
 DIRECTORY = mac
 endif
 endif
 include Makefile.include
+default: install
 pre-install:;	rm -rf /usr/local/encap/Macaulay2-$(PACKAGE_VERSION)
 # Local Variables:
 # compile-command: "time make -f Makefile.mac "

@@ -276,6 +276,7 @@ mungeFile = (filename, headerline, trailerline, text) -> (
      insert := headerline | text | trailerline;
      local action;
      if fileExists filename then (
+     	  filename = realpath filename;	-- no other editor does this, but it seems like a good idea...
 	  hdr := "^" | regexpString headerline;
 	  tlr := "^" | regexpString trailerline;
      	  regexp := hdr | "(.|\n)*" | tlr ;
@@ -301,7 +302,6 @@ mungeFile = (filename, headerline, trailerline, text) -> (
 	  action = "create";
 	  newcontents = insert;
 	  );
-     filename = realpath filename;			    -- no other editor does this, but it seems like a good idea...
      tmp := filename | ".Macaulay2.tmp";
      tmp << newcontents << close;
      if promptUser then while true do (

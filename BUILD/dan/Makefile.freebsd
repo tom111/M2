@@ -29,6 +29,21 @@ arch-chk:
 # start with the developer's freebsd, X11 not needed,
 # with a 4GB disk, of which 3GB will be used
 
+# actually, it appears that asking for a 4GB disk gets a disk that occupies
+# 4 billion bytes on the host system:
+
+#      /home/dan/.VirtualBox/VDI:
+#      total used in directory 3802048 available 41142496
+#      -rw------- 1 dan dan 3990897152 Jan 27 14:35 freebsd-7.0.vdi
+
+# but you get only 3748149248 butes of that for the guest system:
+
+#        freebsd$ df
+#        Filesystem  1K-blocks    Used  Avail Capacity  Mounted on
+#        /dev/ad0s1a   3660302  916758    73%    /
+
+# and that really comes to just 3.49GB, of which 2.34GB is used.
+
 # use pkg_add -r to install the following packages:
 # 
 # required to build:

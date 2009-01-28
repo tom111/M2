@@ -34,9 +34,8 @@ profile64 :
 
 tiger32 :
 	mkdir -p tiger32
-	cd tiger32; LDFLAGS=-shared-libgcc ../../../configure \
+	cd tiger32; LDFLAGS=-static-libgcc ../../../configure \
 		--prefix="`pwd`/installed" \
-		--disable-frobby \
 		--enable-dmg \
 		--enable-build-libraries="gc gdbm gmp mpfr readline ntl factory libfac frobby pari"
 
@@ -44,7 +43,6 @@ opt32 :
 	mkdir -p opt32
 	cd opt32; LDFLAGS=-shared-libgcc ../../../configure \
 		--prefix="`pwd`/installed" \
-		--disable-frobby \
 		--enable-dmg \
 		--enable-build-libraries="gc gdbm gmp mpfr readline ntl factory libfac frobby pari"
 
@@ -63,7 +61,7 @@ profile32 :
 		--enable-profile \
 		--enable-build-libraries="gc gdbm gmp mpfr readline ntl factory libfac frobby pari"
 
-# These are for use on linux/ubuntu
+# These are for use on linux/ubuntu/redhat
 
 opt :
 	mkdir -p opt

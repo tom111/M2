@@ -1,4 +1,4 @@
-{\rtf1\ansi\ansicpg1252\cocoartf949
+{\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf430
 {\fonttbl\f0\fswiss\fcharset0 Helvetica;\f1\fnil\fcharset0 Monaco;}
 {\colortbl;\red255\green255\blue255;}
 \margl1440\margr1440\vieww12920\viewh16900\viewkind0
@@ -23,10 +23,10 @@ This file tells how to get Macaulay2 installed and running on your MacOS X 10.4 
 \
 In your browser, download one of the files\
 \
-	http://www.math.uiuc.edu/Macaulay2/Downloads/MacOSX/Macaulay2-1.1-x86_64-MacOS-10.5.dmg\
-	http://www.math.uiuc.edu/Macaulay2/Downloads/MacOSX/Macaulay2-1.1-i386-MacOS-10.5.dmg\
-	http://www.math.uiuc.edu/Macaulay2/Downloads/MacOSX/Macaulay2-1.1-i386-MacOS-10.4.dmg\
-	http://www.math.uiuc.edu/Macaulay2/Downloads/MacOSX/Macaulay2-1.1-powerpc-MacOS-10.4.dmg\
+	http://www.math.uiuc.edu/Macaulay2/Downloads/MacOSX/Macaulay2-1.1.99-x86_64-MacOS-10.5.dmg\
+	http://www.math.uiuc.edu/Macaulay2/Downloads/MacOSX/Macaulay2-1.1.99-i386-MacOS-10.5.dmg\
+	http://www.math.uiuc.edu/Macaulay2/Downloads/MacOSX/Macaulay2-1.1.99-i386-MacOS-10.4.dmg\
+	http://www.math.uiuc.edu/Macaulay2/Downloads/MacOSX/Macaulay2-1.1.99-powerpc-MacOS-10.4.dmg\
 \
 If there is a later version, use that instead. Mount this disk image by double-clicking on it, and drag the Macaulay2 folder in this mounted disk to somewhere on your disk. One possible location is your Applications folder (your system Applications folder, at top level on your main disk).  There are versions for MacOS 10.4 (Tiger) and MacOS 10.5 (Leopard), running on intel (i386, Intel Core Duo), 64 bit intel (x86_64, Intel Core 2 Duo), or PowerPC (ppc, either G4 or G5 processors).  The versions for 10.4 should run on 10.5, but the versions for 10.5 do 
 \b not
@@ -42,15 +42,13 @@ The easiest way to set up these files is to do the following in a Terminal windo
 \
 First change to the Macaulay2 folder (here we suppose that it is in your Applications folder (directory)), and then run the 'setup' routine in Macaulay2:\
 \
-	cd /Applications/Macaulay2-1.1\
+	cd /Applications/Macaulay2-1.1.99\
 	cd bin\
 	./M2\
-	  setup()  -- this line and the next are typed inside of Macaulay2\
+	  setup()  -- this line and the next are typed inside of Macaulay2: answer the prompts which follow.\
 	  exit\
 \
-It is important that you change the directory to the Macaulay2 folder first.  The 'setup' script uses this information to correctly set the init files.\
-\
-After you log out and in again, your PATH will have Macaulay2's bin directory on it.  The 'setup' routine will modify your shell command init files (such as .profile, .bashrc, .login, .cshrc), and your .emacs file.  The existing files are backed up first.\
+After you log out and in again, your PATH will have Macaulay2's bin directory on it.  The 'setup' routine will modify (some of) your shell command init files (such as .profile, .bashrc, .login, .cshrc), and your .emacs file.  The existing files are backed up first.  It also writes a file .profile-Macaulay2 in your home directory which does the actual work including putting M2 on your path.  Once again, a backup is created first, if the file already exists.\
 \
 This allows you to run Macaulay2 by typing 'M2' (without the quotes) at a terminal command line, to access the info and man pages, and to use the Macaulay2 emacs interface.\
 
@@ -63,7 +61,7 @@ In a Terminal window, type 'M2' (without the quotes).  If Macaulay2 has been ins
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
 
 \f1\fs18 \cf0 	indigo% M2\
-	Macaulay 2, version 1.1\
+	Macaulay 2, version 1.1.99\
 	with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings, TangentCone\
 	i1 : \
 \
@@ -152,11 +150,19 @@ You may need to join the group in order to post messages, but this is easy: clic
 \b Step 5.  Some suggestions to streamline your Macintosh for use with Macaulay2.
 \b0 \
 \
-There are at least three ways to run emacs on the mac: in a terminal window, under the X11 window system, or by using Aquamacs. Each of these has advantages and issues.\
+There are at least three ways to run emacs on the mac: using Aquamacs (the recommended way), in a terminal window,  and under the X11 window system.\
 \
 In all of these case, the function keys F11 and F12 are ones that Macaulay2 likes to use.  Unfortunately, the system has grabbed these.  Fortunately, it is easy to get them back:\
 \
 In System Preferences, change the keys for dashboard and expose, so that the functions keys F11 and F12 are not used. (Then you can use F12 in emacs to start Macaulay2, and F11 to send lines from a file which ends in ".m2" to Macaulay2.)\
+\
+
+\b Aquamacs (recommended)\
+
+\b0 \
+Aquamacs is a MacOSX implementation of emacs, which is designed to play well with other applications and MacOSX concepts: drag and drop, cut and paste all work.  Download the latest version of Aquamacs at http://aquamacs.org/Aquamacs.  It is quite nice to use these days.  After downloading it and moving it to your Applications folder, it is ready to run Macaulay2.\
+\
+I like smaller fonts, personally.  Changing the fonts is fairly self explanatory: Under the menu item "Options", choose "Appearance", and then set the font to a fixed-width font.  The choose "Save Options" under the "Options" menu.\
 \
 
 \b Emacs in a terminal window.
@@ -170,7 +176,7 @@ It is suggested that you change your "option key" to a "meta key":  Under Tiger,
 \b Emacs under X11.
 \b0 \
 \
-The mouse button works in this version of emacs, and in many ways is the nicest way to run emacs on the mac.  It does not support drag and drop, and doesn't play as nicely with other mac applications, but it works fine.  To install this, do the following:\
+The mouse button works in this version of emacs, and is my editor of choice.  It does not support drag and drop, and doesn't play as nicely with other mac applications, but it works fine.  To install this, do the following:\
 \
 
 \b (a) 
@@ -189,13 +195,5 @@ The mouse button works in this version of emacs, and in many ways is the nicest 
 \b0 Tweaking.  Under X11, choose "Preferences" under the X11 menu item.  Unclick the box that says: "Enable Keyboard shortcuts under X11". \
 \
 At this point, your emacs should be functional.  Start X11 (in the Utilities folder in the Applications folder, once you have installed it from the mac install disks), and in a terminal, type 'emacs&', without the quotes.  Once emacs starts up, try pressing F12.  If Macaulay2 starts up, you are on your way!\
-\
-
-\b Aquamacs\
-
-\b0 \
-Aquamacs is a MacOSX implementation of emacs, which is designed to play well with other applications and MacOSX concepts: drag and drop, cut and paste all work.  Download the latest version of Aquamacs at http://aquamacs.org/Aquamacs.  It is still being developed, so it might be a bit rough around the edges.  Still, after downloading it and moving it to your Applications folder, it is ready to run Macaulay2.\
-\
-I like smaller fonts, personally.  Change the font by selecting "Set Font for this frame..." under the Options menu.  You will need to save these changes via "Frame Appearance Themes..." also under the Options menu.\
 \
 }

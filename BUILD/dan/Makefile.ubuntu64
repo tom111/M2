@@ -1,10 +1,5 @@
 #-*- Makefile -*-
-BUILDOPTIONS += RemakeAllDocumentation=true RemakePackages=true
-#BUILDOPTIONS += -s
-#INSTALLOPTIONS += -s
-
-# CONFIGOPTIONS += --enable-tarfile
-# CONFIGOPTIONS += --enable-deb
+CONFIGOPTIONS += --enable-deb
 INSTALLOPTIONS += prefix=/usr/local/encap
 DIRECTORY = ubuntu64
 include Makefile.include
@@ -12,10 +7,6 @@ pre-install:;	rm -rf /usr/local/encap/Macaulay2-$(PACKAGE_VERSION)
 arch-chk:
 	grep -q Ubuntu /etc/issue
 	[ `uname -m` = x86_64 ]
-
-guess:
-	../../config/config.guess
-
 # Local Variables:
 # compile-command: "time make -f Makefile.ubuntu64 "
 # End:

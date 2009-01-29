@@ -64,6 +64,8 @@ macaulay2-common/control.tar.gz : macaulay2-common/control macaulay2-common/post
 T=@TAR@ --create --mode=a+rX,og-ws --exclude-from=@srcdir@/../tar-exclusions --file=-
 prepare: .prepared
 .prepared: 
+	: ensure change log is up to date...
+	fgrep 'macaulay2 (@PACKAGE_VERSION@) stable; ' <@srcdir@/changelog
 	rm -rf tmp@prefix@ tmp-common@prefix@
 	$(MKDIR_P) tmp@prefix@
 	$(MKDIR_P) tmp-common@prefix@
@@ -79,8 +81,8 @@ prepare: .prepared
 	$(MKDIR_P) tmp-common@prefix@/share/doc/macaulay2-common
 	cp tmp-common@docdir@/README tmp@prefix@/share/doc/macaulay2/copyright
 	cp tmp-common@docdir@/README tmp-common@prefix@/share/doc/macaulay2-common/copyright
-	gzip -9 <@srcdir@/macaulay2/changelog >tmp@prefix@/share/doc/macaulay2/changelog.gz
-	gzip -9 <@srcdir@/macaulay2-common/changelog >tmp-common@prefix@/share/doc/macaulay2-common/changelog.gz
+	gzip -9 <@srcdir@/changelog >tmp@prefix@/share/doc/macaulay2/changelog.Debian.gz
+	gzip -9 <@srcdir@/changelog >tmp-common@prefix@/share/doc/macaulay2-common/changelog.Debian.gz
 	@FIND@ tmp-common -name \*.info | while read x ; do gzip --best "$$x" ; done
 	@FIND@ tmp tmp-common -name man -type d | while read x ; do @FIND@ $$x -type f -not -name \*.gz | while read y ; do gzip --best "$$y" ; done ; done
 	@FIND@ tmp -name \*.so -o -name \*.so.\* -o -name \*.la | xargs chmod a-x Makefile

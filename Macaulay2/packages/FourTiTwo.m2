@@ -228,7 +228,7 @@ doc ///
      	  Interface for 4ti2
      Description
           Text
-	       Interfaces most of the functionality of the software {\tt 4ti2} available at  {\tt http://www.4ti2.de/}.
+	       Interfaces most of the functionality of the software {\tt 4ti2} available at @HREF"http://www.4ti2.de/"@.
 	       (The user needs to have {\tt 4ti2} installed on his/her machine.)
 	        
 	       A $d\times n$ integral matrix $A$ (with nonnegative entries) specifies a map from a polynomial 

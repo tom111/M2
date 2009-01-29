@@ -412,6 +412,7 @@ AC_SUBST(PACKAGES, dnl oldest first:
   StatePolytope
   Polyhedra
   Text
+  Polymake
   gfanInterface
   PieriMaps
 ")

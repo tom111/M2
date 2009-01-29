@@ -368,7 +368,8 @@ test "$MEMDEBUG" = "yes" && DEBUG=yes
 test "$DEBUG" = "yes" && STRIP=no
 test "$PROFILING" = "yes" && CFLAGS="$CFLAGS -pg" CXXFLAGS="$CXXFLAGS -pg" LDFLAGS="$LDFLAGS -pg" STRIP=no
 
-AC_SUBST(PACKAGES,"
+AC_SUBST(PACKAGES, dnl oldest first:
+"
   Macaulay2Doc
   Style
   Classic
@@ -411,6 +412,8 @@ AC_SUBST(PACKAGES,"
   StatePolytope
   Polyhedra
   Text
+  gfanInterface
+  PieriMaps
 ")
 
 # convert the newlines in the list above to spaces

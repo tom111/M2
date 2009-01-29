@@ -341,7 +341,7 @@ document {
 	  "Some references:"
 	  },
      UL {
-	  TEX "Andrzej Daszkiewicz, On the Invariant Ideals of the Symmetric Algebra $S.(V \\oplus \\bigwedge^2 V)$, J. Algebra 125, 1989, 444-473.",
+	  TEX "Andrzej Daszkiewicz, On the Invariant Ideals of the Symmetric Algebra $S.(V \\oplus \\wedge^2 V)$, J. Algebra 125, 1989, 444-473.",
 	  "William Fulton, Young Tableaux: With Applications to Representation Theory and Geometry, London Math. Society Student Texts 35, 1997.",
 	  "Jerzy Weyman, Cohomology of Vector Bundles and Syzygies, Cambridge University Press, 2002."
 	  }

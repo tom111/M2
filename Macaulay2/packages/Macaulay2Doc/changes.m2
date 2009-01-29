@@ -48,6 +48,7 @@ document {
 			      TO "ConwayPolynomials :: ConwayPolynomials",
 			      TO "EdgeIdeals :: EdgeIdeals",
 			      TO "FourTiTwo :: FourTiTwo",
+			      TO "gfanInterface::gfanInterface",
 			      TO "LocalRings :: LocalRings",
 			      TO "Polyhedra :: Polyhedra",
 			      TO "SimpleDoc :: SimpleDoc",
@@ -60,6 +61,13 @@ document {
 			 UL {
 			      LI { EM "Kronecker", ", Kronecker normal form of a matrix pencil, by Edward Carter" },
 			      LI { EM "LDL", ", the ", TT "LDL'", " factorization of a positive semidefinite matrix, by Helfried Peyrl" }
+			      } },
+		    LI { "improved packages:",
+			 UL {
+			      TO "HyperplaneArrangements::HyperplaneArrangements",
+			      TO "ReesAlgebra::ReesAlgebra",
+			      TO "PieriMaps::PieriMaps",
+			      TO "SchurFunctors::SchurFunctors"
 			      } } } },
 	  LI { "new functions:",
 	       UL {

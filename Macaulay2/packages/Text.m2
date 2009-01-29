@@ -9,6 +9,15 @@ export \\ (s -> currentPackage#"private dictionary"#s = Core#"private dictionary
      "TEX", "TITLE", "TO", "TO2", "TOH", "TR", "TT", "UL",
      "MarkUpType", "MarkUpTypeWithOptions", "IntermediateMarkUpType" }
 
+beginDocumentation()
+
+document {
+     Key => Text,
+     PARA {
+	  "This package is a repository for functions related to documentation and hypertext."
+	  }
+     }
+
 -- html.m2 documentation
 -- Bart Snapp edited nearly all of these entries.
 document {

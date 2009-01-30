@@ -56,12 +56,14 @@ weightVector(List,List) := (inL,L) -> (
      -- other cases should return null
      )
 
+runchk = cmd -> if 0 != run cmd then error("command failed: ", cmd)
+
 render = method(Options=>{Symmetries=>{}})
 render(Ideal) := opts->(I) -> (
     F := temporaryFileName();
 		render(F,I);		
 		ex := fig2dev'path |"fig2dev -Lpng "| F | " " | F |".png";
-		run ex;
+		runchk ex;
 		show URL("file://"|F|".png");
 )
 render(String, Ideal) := opts-> (F, I) -> (
@@ -81,7 +83,7 @@ render(String, Ideal) := opts-> (F, I) -> (
 	  );
      ex = gfan'path| "gfan " | ex | "  <" | f | " | gfan_render > " | F;
      writeGfanIdeal(f, I, opts.Symmetries);
-     run ex;
+     runchk ex;
   )
 
 renderStaircase = method()
@@ -100,7 +102,7 @@ renderStaircase(ZZ,ZZ,List) := (d,n,L) -> (
     F := temporaryFileName();
 		renderStaircase(F,d,n,L);		
 		ex := fig2dev'path |"fig2dev -Lpng "| F | " " | F |".png";
-		run ex;
+		runchk ex;
 		show URL("file://"|F|".png");
 )
 renderStaircase(String,ZZ,ZZ,List) := (F,d,w,L) -> (
@@ -120,7 +122,7 @@ renderStaircase(String,ZZ,ZZ,List) := (F,d,w,L) -> (
 		 ex = ex | " < " | f |" >" | F;
 		
      writeGfanIdealList(f, L);
-     run ex;
+     runchk ex;
     )
 
 groebnerCone = method()
@@ -249,9 +251,9 @@ gfan Ideal := opts -> (I) -> (
 	  );
      ex = gfan'path| "gfan " | ex | "  <" | f | " >" | f | ".out";
      writeGfanIdeal(f, I, opts.Symmetries);
-     run ex;
+     runchk ex;
      ex2 := gfan'path| "gfan_leadingterms -m <" | f | ".out >" | f | ".lt";
-     run ex2;
+     runchk ex2;
      L := readGfanIdeals(f | ".out");
      M := readGfanIdeals(f | ".lt");
      (M,L)
@@ -282,7 +284,7 @@ groebnerFan Ideal := opts -> (I) -> (
 	  );
      ex = gfan'path| "gfan " | ex | "  <" | f | "| gfan_topolyhedralfan" | ex | " >" | f | ".out";
      writeGfanIdeal(f, I, opts.Symmetries);
-     run ex;
+     runchk ex;
      readGroebnerfan(f | ".out")
      )
 

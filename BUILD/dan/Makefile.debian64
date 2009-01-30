@@ -1,0 +1,27 @@
+# -*- Makefile -*-
+
+# at first I get a message when booting:
+#     Your CPU does not support long mode. Use a 32bit distribution.
+# other's have had this problem
+# advice:
+#   turn on I/O APIC in the virtual machine, according the VirtualBox user manual
+#	tried it, doesn't help
+# advice:
+#   turn on VT-x in the virtual machine
+#       I can't, it's grayed out, because:
+# 		see
+#		    http://www.intel.com/products/processor_number/chart/core2duo.htm
+# 		which says that my T5250 doesn't have "Intel VT" virtualization technology
+
+#    gallium$ cat /proc/cpuinfo | grep 'model name' | head -1
+#    model name	: Intel(R) Core(TM)2 Duo CPU     T5250  @ 1.50GHz
+
+# VirtualBox settings:
+#  VBoxManage setextradata "debian 64" VBoxInternal/Devices/pcnet/0/LUN#0/Config/guestssh/Protocol  TCP
+#  VBoxManage setextradata "debian 64" VBoxInternal/Devices/pcnet/0/LUN#0/Config/guestssh/GuestPort 22
+#  VBoxManage setextradata "debian 64" VBoxInternal/Devices/pcnet/0/LUN#0/Config/guestssh/HostPort  2223
+
+# .ssh/config settings:
+# Host debian64
+#   Hostname localhost
+#   Port 2223

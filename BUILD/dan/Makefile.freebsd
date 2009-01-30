@@ -74,6 +74,12 @@ arch-chk:
 #  VBoxManage setextradata "Linux Guest" VBoxInternal/Devices/pcnet/0/LUN#0/Config/guestssh/GuestPort 22
 #  VBoxManage setextradata "Linux Guest" VBoxInternal/Devices/pcnet/0/LUN#0/Config/guestssh/HostPort  2222
 
+# .ssh/config settings:
+# Host freebsd
+#   Hostname localhost
+#   Port 2222
+
+
 # Local Variables:
 # compile-command: "time gmake -f Makefile.freebsd "
 # End:

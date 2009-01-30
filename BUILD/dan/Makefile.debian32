@@ -1,0 +1,22 @@
+# -*- Makefile -*-
+# using a 33MB iso image: debian-40r6-i386-businesscard.iso
+# apt-get update
+# find available packages in /var/lib/apt/lists
+# apt-get -y install ... :
+# openssh-server (sshd, with X11forwarding already on)
+# xbase-clients (xauth)
+# emacs
+# subversion
+# make
+# autoconf
+
+
+# VirtualBox settings:
+#  VBoxManage setextradata "debian 32" VBoxInternal/Devices/pcnet/0/LUN#0/Config/guestssh/Protocol  TCP
+#  VBoxManage setextradata "debian 32" VBoxInternal/Devices/pcnet/0/LUN#0/Config/guestssh/GuestPort 22
+#  VBoxManage setextradata "debian 32" VBoxInternal/Devices/pcnet/0/LUN#0/Config/guestssh/HostPort  2224
+
+# .ssh/config settings:
+#   Host debian32
+#     Hostname localhost
+#     Port 2224

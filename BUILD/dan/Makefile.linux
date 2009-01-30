@@ -7,9 +7,9 @@ CONFIGOPTIONS += --enable-build-libraries=gmp
 CONFIGOPTIONS += --enable-common-staging-area
 CONFIGOPTIONS += --disable-pthreads
 CONFIGOPTIONS += --with-issue=Generic
-BUILDOPTIONS += RemakeAllDocumentation=true RemakePackages=true
+# BUILDOPTIONS += RemakeAllDocumentation=true RemakePackages=true
 # BUILDOPTIONS += PACKAGES=" gfanInterface PieriMaps "
-BUILDOPTIONS += PACKAGES=" Macaulay2Doc "
+# BUILDOPTIONS += PACKAGES=" Macaulay2Doc "
 BUILDOPTIONS += MAPFILE=yes
 include Makefile.include
 # Local Variables:

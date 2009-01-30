@@ -51,6 +51,7 @@ document {
 			      TO "gfanInterface::gfanInterface",
 			      TO "LocalRings :: LocalRings",
 			      TO "Polyhedra :: Polyhedra",
+			      TO "Polymake :: Polymake",
 			      TO "SimpleDoc :: SimpleDoc",
 			      TO "StatePolytope :: StatePolytope",
 			      TO "SymmetricPolynomials :: SymmetricPolynomials",

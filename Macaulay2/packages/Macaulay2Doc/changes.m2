@@ -68,6 +68,7 @@ document {
 			      TO "HyperplaneArrangements::HyperplaneArrangements",
 			      TO "ReesAlgebra::ReesAlgebra",
 			      TO "PieriMaps::PieriMaps",
+			      TO "Schubert2::Schubert2",
 			      TO "SchurFunctors::SchurFunctors"
 			      } } } },
 	  LI { "new functions:",

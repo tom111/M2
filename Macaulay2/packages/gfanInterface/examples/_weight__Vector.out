@@ -1,5 +1,10 @@
 -- -*- M2-comint -*- {* hash: -1918198547 *}
---loading configuration for package "gfanInterface" from file /Users/mike/Library/Application Support/Macaulay2/init-gfanInterface.m2
+--warning: both types of layout in use for user-installed packages
+--current directory /home/dan/src/M2/1.2/BUILD/dan/builds/ubuntu64/
+--prefix  directory /home/dan/src/M2/1.2/BUILD/dan/builds/ubuntu64/StagingArea/
+{(getProperty, List, String)  }
+{(getProperty, String, String)}
+--loading configuration for package "gfanInterface" from file /home/dan/.Macaulay2/init-gfanInterface.m2
 
 i1 : R = ZZ/32003[symbol a..symbol d]
 
@@ -44,8 +49,8 @@ o6 = ideal (b*c - a*d, c  - b*d , a*c  - b d, b  - a c)
 o6 : Ideal of R
 
 i7 : time (inLs,Ls) = gfan I
-using temporary file /tmp/M2-63918-1
-     -- used 0.002359 seconds
+using temporary file /tmp/M2-19252-1
+     -- used 0.004001 seconds
 
            2          2   2      3          2   2      3          2   2  
 o7 = ({{b*d , a*d, a*c , a c}, {c , a*d, a*c , a c}, {c , b*c, a*c , a c,

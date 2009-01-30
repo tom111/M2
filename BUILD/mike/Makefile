@@ -85,3 +85,6 @@ profile :
 		--enable-profile \
 		--enable-build-libraries="gc gdbm gmp mpfr readline ntl factory libfac lapack frobby pari"
 
+upload :
+	scp darwin64/*.dmg u00.math.uiuc.edu:/home/html/www/Macaulay2/Uploads
+	scp opt32/*.dmg u00.math.uiuc.edu:/home/html/www/Macaulay2/Uploads

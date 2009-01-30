@@ -131,60 +131,46 @@ writeNmzPaths=()->
 startNmz=()->
 (
     if(not fileExists("nmzM2Exec.path"))
-    then return "startNmz(): error. First call writeNmzPaths().";
+    then error "startNmz(): first call writeNmzPaths()";
 
     inf:="nmzM2Exec.path";
     s:=get inf;
     i:=#s;
-    if(i==0)
-    then(
-         print "nmzExecPath not set";
-    )
-    else(
-        t:=s#(i-1); 
-        while(not (t=="/" or i==1))
-        do( 
-           i=i-1; 
-           s=substring(0,i,s);
-           t=s#(i-1);
-        );
-    
-       if(i==1)
-       then(
-            print "nmzExecPath not set";
-       )
-       else( 
-           nmzExecPath=s;
-           print("nmzExecPath is "|nmzExecPath);
-       );
-   );
+    if i==0 then error "nmzExecPath not set";
+
+    t:=s#(i-1); 
+    while(not (t=="/" or i==1))
+    do( 
+       i=i-1; 
+       s=substring(0,i,s);
+       t=s#(i-1);
+    );
+
+   if i==1 then error "nmzExecPath not set";
+   nmzExecPath=s;
+   print("nmzExecPath is "|nmzExecPath);
 
  if(not fileExists("nmzM2Data.path"))
-    then return "startNmz(): error. First call writeNmzPaths().";
-   inf="nmzM2Data.path";
+    then error "startNmz(): first call writeNmzPaths()";
+    inf="nmzM2Data.path";
     s=get inf;
     i=#s;
-    if(i==0)
-    then(
-         print "nmzDataPath not set";
-    )
-    else(
-        t=s#(i-1); 
-        while(not (t=="/" or i==1))
-        do( 
-           i=i-1; 
-           s=substring(0,i,s);
-           t=s#(i-1);
-        );
-    
-       if(i==1)
-       then(
-            print "nmzDataPath not set";
-       )
-       else( 
-            nmzDataPath=s;
-            print("nmzDataPath is " | nmzDataPath);
-       );
+    if i==0 then error "nmzDataPath not set";
+    t=s#(i-1); 
+    while(not (t=="/" or i==1))
+    do( 
+       i=i-1; 
+       s=substring(0,i,s);
+       t=s#(i-1);
+    );
+
+   if(i==1)
+   then(
+	print "nmzDataPath not set";
+   )
+   else( 
+	nmzDataPath=s;
+	print("nmzDataPath is " | nmzDataPath);
    );
 );
 
@@ -351,13 +337,10 @@ readNmzData=method(TypicalValue=>Matrix)
 readNmzData(String):=(nmzSuffix)->
 (
     if(nmzSuffix=="inv" or nmzSuffix=="out") 
-    then return("error: to read .inv use getNumInvs(), to read .out there is no function provided");
+    then error("to read .inv use getNumInvs(), to read .out there is no function provided");
 
-    if(not fileExists(setNmzFile()|"."|nmzSuffix))
-    then( 
-         print "readNmzData:error: no file "|setNmzFile()|"."|nmzSuffix|" found"; 
-         return();
-    );
+    if not fileExists(setNmzFile()|"."|nmzSuffix)
+    then error ("readNmzData:error: no file "|setNmzFile()|"."|nmzSuffix|" found");
 
     inf:=get(setNmzFile()|"."|nmzSuffix);
     s=lines(inf);
@@ -667,8 +650,10 @@ runNormaliz(Matrix,ZZ,ZZ):=(sgr,numCols, nmzMode)->
              options=options|" -a ";
         );
 
-    run(setNmzExec()|" -f "|options|nmzFile);
-
+    cmd := setNmzExec()|" -f "|options|nmzFile;
+    if debugLevel > 0 then << "--running command: " << cmd << endl;
+    if 0 != run cmd then error ("command failed : ", cmd);
+    if debugLevel > 0 then << "--command succeeded" << endl;
 
         if(volOption())
         then(
@@ -713,10 +698,7 @@ intmat2mons=method()
 intmat2mons(Matrix,Ring):=(expoVecs, r)->
 (
    if(numColumns(expoVecs)< numgens(r))
-   then(
-        print("intmat2mons: not enough variables in the basering");
-        return();
-   );
+   then error "intmat2mons: not enough variables in the basering";
 
    v:=vars(r);  -- the variables of the basering, a matrix with one row
    l:={};
@@ -741,10 +723,7 @@ intmat2mons1=method(TypicalValue=>Ideal)
 intmat2mons1(Matrix,Ring):=(expoVecs,r)->
 (
    if(numColumns(expoVecs)< numgens(r))
-   then(
-        print("intmat2mons1: not enough variables in the basering");
-        return();
-   );
+   then error "intmat2mons1: not enough variables in the basering";
    v:=vars(r);  -- the variables of the basering, a matrix with one row
    l:={};
 

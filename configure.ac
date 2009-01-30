@@ -985,7 +985,7 @@ AC_SUBST(DESC,$PACKAGE_VERSION-$host_cpu-$OS-$REL)
 # by the 'configure' script, will be simply "alpha".
 
 if ! test "$FAKEROOT"
-then if test "$DEB" = yes -o "$RPM" = yes
+then if test "$RPM" = yes
      then AC_MSG_ERROR([program "fakeroot" not installed, required for creating *.deb or *.rpm distributions])
      fi
 fi

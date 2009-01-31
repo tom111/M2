@@ -325,19 +325,24 @@ M2_LIBRARIES +=  $(TOSTATIC) @LIBS_STATIC@
 M2_LIBRARIES +=  $(MAYBESTATIC) @LIBS_STATIC_OR_DYNAMIC@
 # I'm not sure whether compiling statically with libstdc++ is a good idea
 M2_LIBRARIES += -lstdc++
-M2_LIBRARIES += @FCLIBS_FLAGS@
-M2_LIBRARIES += @FCLIBS_STATIC@
+
+# Under Ubuntu 8.10 -lgfortranbegin & -lgfortran come from libgfortran3, but that package isn't in Ubuntu 8.4
+# so we try to link it statically, because there are many Ubuntu users of 8.4.
+# Linking statically with -llapack -lblas results in conflicts between symbols in the two packages under Ubuntu:
+#     /usr/lib/gcc/x86_64-linux-gnu/4.3.2/../../../../lib/libblas.a(xerbla.o): In function `xerbla_':
+#     (.text+0x0): multiple definition of `xerbla_'
+#     /usr/lib/gcc/x86_64-linux-gnu/4.3.2/../../../../lib/liblapack.a(xerbla.o):(.text+0x0): first defined here
+#     collect2: ld returned 1 exit status
+# Note: static version is here:
+#  /usr/lib/gcc/x86_64-linux-gnu/4.3.2/libgfortran.a
+#  /usr/lib/gcc/x86_64-linux-gnu/4.3.2/libgfortranbegin.a
+M2_LIBRARIES += @FCLIBS_FLAGS@ $(TOSTATIC) @FCLIBS_STATIC@ $(MAYBESTATIC) @FCLIBS_DYNAMIC@
+
+M2_LIBRARIES += @LIBS_DYNAMIC@
 
 ifeq (@MYSQL@,yes)
 M2_LIBRARIES += -L/usr/lib/mysql -lmysqlclient
 endif
-
-ifeq "@STATIC@" "yes"
-M2_LIBRARIES += $(UNSTATIC)
-endif
-
-M2_LIBRARIES +=  @LIBS_DYNAMIC@
-M2_LIBRARIES += @FCLIBS_DYNAMIC@
 
 LINK_OUTPUT_OPTION = $(OUTPUT_OPTION)
 
@@ -372,7 +377,7 @@ clean::; rm -f @pre_bindir@/M2@EXE@
 	time @CC@ $(M2_LDFLAGS) $(M2_OBJECTS_AND_LIBRARIES) -lm -lc -o "$@".tmp
 	printenv LD_LIBRARY_PATH
 ifneq (@LDD@,)
-	- @LDD@ $@.tmp | ( ! egrep -v " => /usr/lib/| => /lib/|/lib/ld-linux.so|linux-gate" )
+	- @LDD@ $@.tmp
 endif
 ifeq "$(STRIP)" "yes"
 ifneq "@STRIPCMD@" ""

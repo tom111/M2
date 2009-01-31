@@ -111,27 +111,35 @@ tidy tidy_after :
 	rm -rf macaulay2-common/control.tar.gz macaulay2-common/data.tar.gz macaulay2-common/md5sums
 clean:: tidy
 	rm -rf ../../$(PKG_DEB) ../../$(PKG_COM_DEB)
-libraries-used: .prepared always
+libraries-used-directly: .prepared tmp@bindir@/M2@EXE@
+	objdump -x tmp@bindir@/M2@EXE@ | grep NEEDED | sed 's/ *NEEDED *//' | sort >$@
+clean::; rm -f libraries-used-directly
+libraries-used: .prepared tmp@bindir@/M2@EXE@
 	ldd tmp@bindir@/M2@EXE@ | sed -e 's/.* => //' -e 's/^	//' -e 's/ .*//' | egrep '^/' >$@ || true
 clean::; rm -f libraries-used
-packages-used: libraries-used
-	cat libraries-used | while read x ; do @FIND@ /var/lib/dpkg/info -name \*.list | xargs egrep -l "^$$x"; done | sort | uniq | sed -e 's=.*/==' -e 's=\.list$$==' >$@
+libraries-really-used: libraries-used libraries-used-directly
+	egrep `echo \`cat libraries-used-directly\` | sed -e 's=^=.*/=' -e 's= =|.*/=g'` <$< >$@
+packages-used: libraries-really-used
+	cat $^ |								\
+	while read x ;								\
+	do @FIND@ /var/lib/dpkg/info -name \*.list | xargs egrep -l "^$$x";	\
+	done | sort | uniq | sed -e 's=.*/==' -e 's=\.list$$==' >$@
 clean::; rm -f packages-used
 macaulay2/control : macaulay2/control.prelim macaulay2/data.tar.gz packages-used
-	(cat $< && \
-	 size=`gunzip<macaulay2/data.tar.gz|wc -c` && \
-	 size=`echo $$size | sed 's/^\([0-9][0-9]*\)[0-9][0-9][0-9].*/\1/'` && \
-	 echo Installed-Size: $$size && \
-	 echo -n "Depends: macaulay2-common (= @PACKAGE_VERSION@)" && \
-	 cat packages-used | while read x ; do echo -n ", $$x" ; done && \
-	 echo \
+	(cat $< &&								\
+	 size=`gunzip<macaulay2/data.tar.gz|wc -c` &&				\
+	 size=`echo $$size | sed 's/^\([0-9][0-9]*\)[0-9][0-9][0-9].*/\1/'` &&	\
+	 echo Installed-Size: $$size &&						\
+	 echo -n "Depends: macaulay2-common (= @PACKAGE_VERSION@)" &&		\
+	 cat packages-used | while read x ; do echo -n ", $$x" ; done &&	\
+	 echo									\
 	) >$@
 clean::; rm -f macaulay2/control
 macaulay2-common/control : macaulay2-common/control.prelim macaulay2-common/data.tar.gz
-	(cat $< && \
-	 size=`gunzip<macaulay2-common/data.tar.gz|wc -c` && \
-	 size=`echo $$size | sed 's/^\([0-9][0-9]*\)[0-9][0-9][0-9].*/\1/'` && \
-	 echo Installed-Size: $$size \
+	(cat $< &&								\
+	 size=`gunzip<macaulay2-common/data.tar.gz|wc -c` &&			\
+	 size=`echo $$size | sed 's/^\([0-9][0-9]*\)[0-9][0-9][0-9].*/\1/'` &&	\
+	 echo Installed-Size: $$size						\
 	) >$@
 clean::; rm -f macaulay2-common/control
 distclean: clean; rm -f Makefile control macaulay2/control.prelim macaulay2-common/control.prelim

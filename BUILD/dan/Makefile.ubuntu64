@@ -1,5 +1,6 @@
 #-*- Makefile -*-
 CONFIGOPTIONS += --enable-deb
+# CONFIGOPTIONS += --enable-build-libraries=lapack
 INSTALLOPTIONS += prefix=/usr/local/encap
 DIRECTORY = ubuntu64
 include Makefile.include

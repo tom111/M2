@@ -1,87 +1,29 @@
 loadPackage "Schubert2"
 pt = base n
+debuggingMode = true
+errorDepth = 0
+f = (e,n,d,m) -> (
+     V = OO_pt^m+2;
+     F = flagBundle({m-n,n+2},V);
+     (S,Q) = F.Bundles;
+     B = symmetricPower_e Q;
+     P = projectiveBundle dual B;
+     alarm 3;
+     G = symmetricPower_d Q - symmetricPower_(d-e) Q ** OO_P(-1);
+     );
+f(3,1,6,4)
 
-Macaulay 2, version 1.1.99
-with packages: Classic, Core, Elimination, IntegralClosure, LLLBases, Parsing, PrimaryDecomposition, SchurRings, SimpleDoc, TangentCone
---loaded /home/dan/src/M2/1.2/Macaulay2/packages/Schubert2.m2
+end
 
-i1 : f = (e,n,d,m) -> (
-          V = OO_pt^m+2;
-          F = flagBundle({m-n,n+2},V);
-          (S,Q) = F.Bundles;
-          B = symmetricPower_e Q;
-          P = projectiveBundle dual B;
-          G = symmetricPower_d Q - symmetricPower_(d-e) Q ** OO_P(-1);
-          );
+Here's what I get:
 
-i2 : f(2,1,5,3) -- 2-ic 1-folds on a 5-tic 3-fold, i.e., conics on a quintic threefold
 
-i3 : V
+ii7 : f(3,1,6,4)
+--error message bumped: a non unit was found in a ring declared to be a field
+../../m2/enginering.m2:357:68:(0):[8]: error: element is not invertible
+../../m2/enginering.m2:357:68:(0):[8]: --entering debugger (type help to see debugger commands)
+../../m2/enginering.m2:357:62-357:69: --source code:
+RingElement ^ ZZ := RingElement => (x,i) -> new ring x from (raw x)^i
 
-o3 = V
+iii8 : 
 
-o3 : an abstract sheaf of rank 5 on pt
-
-i4 : F     
-
-o4 = F
-
-o4 : a flag bundle with ranks {2, 3}
-
-i5 : dim F
-
-o5 = 6
-
-i6 : (S,Q) = F.Bundles
-
-o6 = (S, Q)
-
-o6 : Sequence
-
-i7 : S
-
-o7 = S
-
-o7 : an abstract sheaf of rank 2 on F
-
-i8 : Q
-
-o8 = Q
-
-o8 : an abstract sheaf of rank 3 on F
-
-i9 : B
-
-o9 = B
-
-o9 : an abstract sheaf of rank 6 on F
-
-i10 : P
-
-o10 = P
-
-o10 : a flag bundle with ranks {5, 1}
-
-i11 : G
-
-o11 = G
-
-o11 : an abstract sheaf of rank 11 on P
-
-i12 : dim P
-
-o12 = 11
-
-i13 : dim P == rank G
-
-o13 = true
-
-i14 : integral chern G
-
-o14 = 609250
-
-o14 : QQ[n]
-
-i15 : f(3,1,6,4) -- elliptic cubics on a sextic 4 fold
-  C-c C-c--error message bumped: a non unit was found in a ring declared to be a field
-stdio:7:59:(1):[1]: error: element is not invertible

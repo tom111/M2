@@ -1,0 +1,13 @@
+i1 : debug Core
+
+i2 : R = QQ[]
+
+o2 = R
+
+o2 : PolynomialRing
+
+i3 : rawMultiDegree raw 5_R
+
+o3 = {1953656691}				???
+
+o3 : List

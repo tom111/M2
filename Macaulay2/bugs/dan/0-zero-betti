@@ -1,0 +1,7 @@
+R := QQ[x]
+Z := ker matrix {{1_R}} -- zero module
+C := res Z -- zero complex
+betti C  -- oops:
+debugError()
+  -- stdio:28:1:(1):[0]: error: expected lists of the same length
+

@@ -1,0 +1,119 @@
+loadPackage "Schubert2"
+pt = base()
+f = (m,d,n,e) -> (
+     V = OO_pt^m+2;
+     F = flagBundle({m-n,n+2},V);
+     );
+f(3,5,1,2)
+F
+F
+dim F
+V
+point
+f = (m,d,n,e) -> (
+     V = OO_point^m+2;
+     F = flagBundle({m-n,n+2},V);
+     );
+f(3,5,1,2)
+V
+F     
+dim F
+(S,Q) = F.Bundles
+S
+Q
+dual V
+
+end
+
+
+Macaulay 2, version 1.1.99
+with packages: Classic, Core, Elimination, IntegralClosure, LLLBases, Parsing, PrimaryDecomposition, SchurRings, SimpleDoc, TangentCone
+--loaded /home/dan/src/M2/1.2/Macaulay2/packages/Schubert2.m2
+
+i1 : pt = base()
+
+o1 = pt
+
+o1 : an abstract variety of dimension 0
+
+i2 : f = (m,d,n,e) -> (
+          V = OO_pt^m+2;
+          F = flagBundle({m-n,n+2},V);
+          );
+
+i3 : f(3,5,1,2)
+
+i4 : F
+
+o4 = F
+
+o4 : a flag bundle with ranks {2, 3}
+
+i5 : F     
+
+o5 = F
+
+o5 : a flag bundle with ranks {2, 3}
+
+i6 : dim F
+
+o6 = 6
+
+i7 : V
+
+o7 = V
+
+o7 : an abstract sheaf of rank 5 on pt
+
+i8 : point
+
+o8 = point
+
+o8 : an abstract variety of dimension 0
+
+i9 : f = (m,d,n,e) -> (
+          V = OO_point^m+2;
+          F = flagBundle({m-n,n+2},V);
+          );
+--warning: f redefined
+
+i10 : f(3,5,1,2)
+
+i11 : V
+
+o11 = V
+
+o11 : an abstract sheaf of rank 5 on point
+
+i12 : F     
+
+o12 = F
+
+o12 : a flag bundle with ranks {2, 3}
+
+i13 : dim F
+
+o13 = 6
+
+i14 : (S,Q) = F.Bundles
+
+o14 = (S, Q)
+
+o14 : Sequence
+
+i15 : S
+
+o15 = S
+
+o15 : an abstract sheaf of rank 2 on F
+
+i16 : Q
+
+o16 = Q
+
+o16 : an abstract sheaf of rank 3 on F
+
+i17 : dual V
+
+
+ *** out of memory, exiting ***

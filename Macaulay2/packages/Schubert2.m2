@@ -482,7 +482,7 @@ coerce := (F,G) -> (
      )
 
 AbstractSheaf ++ ZZ := AbstractSheaf + ZZ := (F,n) -> n ++ F
-ZZ ++ AbstractSheaf := ZZ + AbstractSheaf := (n,F) -> if n === 0 then F else OO_(Y)^n ++ F
+ZZ ++ AbstractSheaf := ZZ + AbstractSheaf := (n,F) -> if n === 0 then F else OO_(variety F)^n ++ F
 
 AbstractSheaf ++ AbstractSheaf :=
 AbstractSheaf + AbstractSheaf := (

@@ -1,0 +1,3 @@
+add --enable-download and make downloading not happen without permission from it
+
+for security

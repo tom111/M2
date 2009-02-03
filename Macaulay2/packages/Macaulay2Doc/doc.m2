@@ -525,7 +525,7 @@ document {
      help
      return
      disassemble current
-     step -3
+     step(-3)
      step
      step
      t

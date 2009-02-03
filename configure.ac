@@ -307,13 +307,13 @@ AC_SUBST(ENCAP,no)     AC_ARG_ENABLE(encap, AS_HELP_STRING(--enable-encap,encaps
 AC_SUBST(XCODE,no)     AC_ARG_ENABLE(xcode, AS_HELP_STRING(--enable-xcode,create Macaulay2/d/interpret.a for use with xcode), XCODE=$enableval)
 
 AC_SUBST(FROBBY,yes)
-AC_ARG_ENABLE(frobby, AS_HELP_STRING(--disable-frobby,[download, compile, and link with frobby library]), FROBBY=$enableval)
+AC_ARG_ENABLE(frobby, AS_HELP_STRING(--disable-frobby,[do not download, compile, and link with frobby library]), FROBBY=$enableval)
 if test "$FROBBY" = yes
 then AC_DEFINE(HAVE_FROBBY,1,[whether we are linking with the frobby library])
 fi
 
 AC_SUBST(PARI,yes)
-AC_ARG_ENABLE(pari, AS_HELP_STRING(--disable-pari,[download, compile, and link with pari library]), PARI=$enableval)
+AC_ARG_ENABLE(pari, AS_HELP_STRING(--disable-pari,[do not download, compile, and link with pari library]), PARI=$enableval)
 if test "$PARI" = yes
 then AC_DEFINE(HAVE_PARI,1,[whether we are linking with the pari library])
 fi

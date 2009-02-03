@@ -1,0 +1,9 @@
+This doesn't seem to flush the output!
+
+for k from 2 to 14 do (
+     d = 2*k-3;
+     lin(1,d,k-1);
+     assert( dim F == rank G );
+     << "lines in a generic " << ic d << " " << k-1 << "-fold: " << flush;
+     << integral chern G << endl;
+     )

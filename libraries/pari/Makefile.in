@@ -39,9 +39,11 @@ include ../Makefile.library
 # we have to detect which of these two answers it gives:
 #   ### Building without GNU MP support
 #   Using GNU MP, version 4.2.1
-config-chk:
+config-chk: .config-checked-$(VERSION)
+.config-checked-$(VERSION) : $(BUILDDIR)/pari-config.log
 	: test whether pari successfully found gmp library during configuration :
-	grep 'Using GNU MP' $(BUILDDIR)/pari-config.log
+	grep 'Using GNU MP' $^
+	touch $@
 
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/pari/Makefile
 run-example: example; ./example

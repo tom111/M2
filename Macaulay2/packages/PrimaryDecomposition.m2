@@ -5,6 +5,8 @@ newPackage(
      Headline => "functions for primary decomposition (pre-loaded)"
      )
 export {
+     primaryDecomposition,
+     irreducibleDecomposition,
      isPrimary,
      EisenbudHunekeVasconcelos,					    -- cryptic
      Hybrid,
@@ -30,9 +32,12 @@ export {
 --     minSatPPD,
 --     sortByDegree
 
-load "PrimaryDecomposition/GTZ.m2"
-load "PrimaryDecomposition/Shimoyama-Yokoyama.m2"
-load "PrimaryDecomposition/Eisenbud-Huneke-Vasconcelos.m2"
+primaryDecomposition = method( TypicalValue => List, Options => { Strategy => null } )
+
+
+load "./PrimaryDecomposition/GTZ.m2"
+load "./PrimaryDecomposition/Shimoyama-Yokoyama.m2"
+load "./PrimaryDecomposition/Eisenbud-Huneke-Vasconcelos.m2"
 
 binomialCD = (I) -> error "Binomial strategy not implemented yet"
 
@@ -125,6 +130,36 @@ isPrimary(Ideal,Ideal) := (Q,P) -> (
      else false
      )
 
+minimalPrimes MonomialIdeal := decompose MonomialIdeal := (cacheValue symbol minimalPrimes) (
+     (I) -> (
+	  minI := dual radical I;
+	  apply(flatten entries generators minI, monomialIdeal @@ support)))
+
+irreducibleDecomposition = method();
+irreducibleDecomposition MonomialIdeal := List => (I) -> (
+     -- probably written by Greg Smith
+     R := ring I;
+     aI := first exponents lcm I;
+     M := first entries generators dual I;
+     apply(M, m -> (
+	       s := first keys standardForm leadMonomial m;
+	       monomialIdeal apply(keys s, v -> R_v^(aI#v + 1 - s#v))))
+     )
+
+primaryDecomposition MonomialIdeal := List => o -> (I) -> (
+     R := ring I;
+     aI := first exponents lcm I;
+     J := dual I;
+     M := first entries generators J;
+     H := new MutableHashTable;
+     scan(M, m -> (
+	       s := first keys standardForm leadMonomial m;
+	       Q := monomialIdeal apply(keys s, v -> R_v^(aI#v + 1 - s#v));
+	       ind := sort keys s;
+	       if not H#?ind then H#ind = Q
+	       else H#ind = intersect(H#ind,Q)));
+     apply(ass0 I, ind -> H#ind)
+     )
 
 beginDocumentation()
 
@@ -147,7 +182,7 @@ document {
      SeeAlso => { (primaryDecomposition, Ideal) }
      }
 
-load "PrimaryDecomposition/doc.m2"
+load "./PrimaryDecomposition/doc.m2"
 
 TEST ///
      testResult = method()

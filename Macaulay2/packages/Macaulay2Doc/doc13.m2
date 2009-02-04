@@ -309,17 +309,7 @@ document { Key => showHtml,
      "The result is the same as ", TT "show x", ".",
      Caveat => "This function may be phased out."
      }
-document { Key => {(irreducibleDecomposition,MonomialIdeal),irreducibleDecomposition},
-     Headline => "express a monomial ideal as an intersection of irreducible monomial ideals",
-     Usage => "irreducibleDecomposition I",
-     Inputs => { "I" },
-     EXAMPLE lines ///
-        QQ[x..z];
-        I = monomialIdeal (x*y^3, x*y^2*z)
-	w = irreducibleDecomposition I
-	assert( I == intersect w )
-     ///,
-     Outputs => {{ "a list of irreducible monomial ideals whose intersection is ", TT "I" }}}
+
 undocumented {(isConstant, Number)}
 document { Key => {isConstant,(isConstant, RingElement)},
      Headline => "whether a ring element is constant",

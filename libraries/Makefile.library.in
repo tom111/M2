@@ -85,7 +85,11 @@ else
 ifneq (@CURL@,)
 FETCHER = @CURL@
 else
+ifeq (@DOWNLOAD@,yes)
 $(error either curl or wget is needed for downloading library source code, please install one of them and reconfigure)
+else
+FETCHER = false
+endif
 endif
 endif
 endif
@@ -104,7 +108,14 @@ CHECKFETCHED = case "$(URL)" in									\
 	esac
 $(TARFILE_DIR)/$(TARFILE) :
 	$(MKDIR_P) $(TARFILE_DIR)
+ifeq (@DOWNLOAD@,yes)
 	(cd $(TARFILE_DIR) && $(FETCHER) $(URL)/$(TARFILE) $(FETCHOPTS) && $(CHECKFETCHED))
+else
+	@ echo "error: third-party library source code not present: $(LIBNAME)" >&2
+	@ echo "       in file $@" >&2
+	@ echo "       and not configured for automatic downloading with --enable-download" >&2
+	@ false
+endif
 distclean: package-distclean
 clean::; rm -rf .patched* .untarred* $(LIBNAME)* .compiled* .configured* .installed* .untarred2* diffs tmp $(TARDIR) $(UNTARDIR) $(OLDUNTARDIR)
 distclean: clean ; rm -rf Makefile

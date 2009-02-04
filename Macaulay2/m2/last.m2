@@ -94,12 +94,17 @@ noinitfile' := noinitfile
 load "installedpackages.m2"
 Core#"base packages" = {}				    -- these will be kept visible while other packages are loaded
 path = packagepath
+Function.GlobalReleaseHook = (X,x) -> (
+     stderr << "--warning: function " << toString X << " redefined" << endl;
+     if hasAttribute(x,ReverseDictionary) then removeAttribute(x,ReverseDictionary);
+     )
 endPackage "Core" -- after this point, private global symbols, such as noinitfile, are no longer visible, and public symbols have been exported
 flagLookup \ vars (0 .. 51)
 scan(Core#"pre-installed packages",	-- initialized in the file installedpackages.m2, which is made from the file installedpackages
      pkg -> needsPackage(pkg, DebuggingMode => not stopIfError))
 Core#"base packages" = join(Core#"pre-installed packages",Core#"base packages")
 if not noinitfile' then path = join(userpath',path)
+if #OutputDictionary > 0 then error("symbols entered into OutputDictionary during startup phase: ",toString keys OutputDictionary)
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

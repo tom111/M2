@@ -4,6 +4,7 @@
 # BUILDOPTIONS += RerunExamples=true
 # BUILDOPTIONS += IgnoreExampleErrors=true
 # BUILDOPTIONS += PACKAGES="Polyhedra"
+# BUILDOPTIONS += PACKAGES="Macaulay2Doc"
 # BUILDOPTIONS += -s
 # INSTALLOPTIONS += -s
 # CONFIGOPTIONS += --enable-tarfile

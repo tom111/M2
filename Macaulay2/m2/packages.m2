@@ -317,6 +317,8 @@ findSynonyms Symbol := x -> (
      sort unique r)
 
 warn0 := (sym,front,behind,syns) -> (
+     -- just for debugging:
+     -- error("symbol '",sym,"' in ",toString behind," is shadowed by a symbol in ",toString front);
      stderr << "--warning: symbol '" << sym << "' in " << behind << " is shadowed by a symbol in " << front << endl;
      if #syns > 0
      then if #syns > 1

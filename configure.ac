@@ -580,6 +580,9 @@ AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,list 
        esac
     done])
 
+AC_SUBST(DOWNLOAD,no)
+AC_ARG_ENABLE(download, AS_HELP_STRING(--enable-download,enable automatic downloading of needed third-party libraries), DOWNLOAD=$enableval)
+
 # the order of these segments also reflects dependencies
 AC_LANG(C)
 AC_SEARCH_LIBS(tgoto,ncurses curses)

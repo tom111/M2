@@ -278,39 +278,6 @@ associatedPrimes MonomialIdeal := List => o -> (I) -> (
      R := ring I;
      apply(inds, ind -> monomialIdeal apply(ind, v -> R_v)))
 
---  PRIMARY DECOMPOSITION  ---------------------------------
-
-minimalPrimes MonomialIdeal := decompose MonomialIdeal := (cacheValue symbol minimalPrimes) (
-     (I) -> (
-	  minI := dual radical I;
-	  apply(flatten entries generators minI, monomialIdeal @@ support)))
-
-irreducibleDecomposition = method();
-irreducibleDecomposition MonomialIdeal := List => (I) -> (
-     R := ring I;
-     aI := first exponents lcm I;
-     M := first entries generators dual I;
-     apply(M, m -> (
-	       s := first keys standardForm leadMonomial m;
-	       monomialIdeal apply(keys s, v -> R_v^(aI#v + 1 - s#v))))
-     )
-
-primaryDecomposition MonomialIdeal := List => o -> (I) -> (
-     R := ring I;
-     aI := first exponents lcm I;
-     J := dual I;
-     M := first entries generators J;
-     H := new MutableHashTable;
-     scan(M, m -> (
-	       s := first keys standardForm leadMonomial m;
-	       Q := monomialIdeal apply(keys s, v -> R_v^(aI#v + 1 - s#v));
-	       ind := sort keys s;
-	       if not H#?ind then H#ind = Q
-	       else H#ind = intersect(H#ind,Q)));
-     apply(ass0 I, ind -> H#ind)
-     )
-
-
 --  TESTING IF A THING IS A SQUARE FREE MONOMIAL IDEAL  ----
 isSquareFree = method(TypicalValue => Boolean)		    -- could be isRadical?
 -- isSquareFree Thing := x -> false

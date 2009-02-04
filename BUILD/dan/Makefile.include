@@ -33,6 +33,7 @@ find-M2:
 	@for i in `pwd`/builds/*/StagingArea/*/bin/M2 ; do echo $$i ; done
 	: : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : 
 CONFIGOPTIONS += --enable-encap
+CONFIGOPTIONS += --enable-download
 CONFIGOPTIONS += --enable-common-staging-area
 PREFIX ?= /usr
 CONFIGOPTIONS += --prefix=$(PREFIX)

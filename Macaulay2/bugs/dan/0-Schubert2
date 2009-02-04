@@ -1,7 +1,0 @@
-can we work over QQ itself yet?
-
-i45 : integral chern B
-
-o45 = 27
-
-o45 : QQ[]

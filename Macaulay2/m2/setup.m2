@@ -71,19 +71,6 @@ getSymbol = nm -> (
      error "no mutable dictionary on path";
      )
 
------------
-
-addStartFunction(
-     () -> (
-	  Function.GlobalReleaseHook = (X,x) -> (
-	       stderr << "--warning: " << toString X << " redefined" << endl;
-	       if hasAttribute(x,ReverseDictionary) then removeAttribute(x,ReverseDictionary);
-	       );
-	  )
-     )
-
----------------------------------
-
 if notify then stderr << "--loading " << minimizeFilename currentFileName << endl
 
 match := X -> null =!= regex X -- defined as a method later

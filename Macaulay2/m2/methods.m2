@@ -2,9 +2,9 @@
 
 -- temporary definitions to get error messages to work before methods are working, so we can debug methods
 assert( class between === Symbol )
-between = (m,v) -> mingle(v,#v-1:m)
+between = (m,v) -> mingle(v,#v-1:m)			    -- provisional
 assert( class toString === Symbol )
-toString = x -> (
+toString = x -> (					    -- provisional
      if hasAttribute(x,ReverseDictionary) then simpleToString getAttribute(x,ReverseDictionary)
      else if class x === Net then concatenate between("\n",unstack x)
      else simpleToString x
@@ -245,7 +245,6 @@ length = method(TypicalValue => ZZ, Dispatch => Thing)
 codim = method( Options => true )
 radical = method( Options=>{ Unmixed=>false, CompleteIntersection => null, Strategy => Decompose } )
 regularity = method( TypicalValue => ZZ, Options => { Weights => null } )
-primaryDecomposition = method( TypicalValue => List, Options => { Strategy => null } )
 associatedPrimes = method( TypicalValue => List, Options =>{ Strategy => 1 } )
 
 toString = method(Dispatch => Thing, TypicalValue => String)

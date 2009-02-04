@@ -702,6 +702,21 @@ document { Key => (symbol ||,GradedModuleMap,GradedModuleMap),
      ///
      }
 
+for n in {BasisElementLimit, PairLimit, DegreeLimit} do document {
+     Key => [quotient,n],
+     PARA {
+     	  "The value for this optional argument is passed through to ", TO gb, " when
+     	  one of the following methods is used: ", TO (quotient,Ideal,Ideal), ", ", TO (quotient,Ideal,RingElement), ",
+     	  ", TO (quotient,Module,Ideal), ", ", TO (quotient,Module,Module), ", and ", TO (quotient,Module,RingElement), "."
+	  }
+     }
+
+document { Key => [saturate,BasisElementLimit],
+     "The value for this optional argument is passed through to ", TO gb, " when
+     one of the following methods is used: ", TO (saturate,Ideal), ", ", TO (saturate,Ideal,Ideal), ",
+     ", TO (saturate,Ideal,RingElement), "."
+     }
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

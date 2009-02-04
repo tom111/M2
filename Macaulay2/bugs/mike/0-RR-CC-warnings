@@ -1,6 +1,0 @@
-the engine should give an error message when an algorithm is run over RR or CC
-that may be wrong due to round off error
-
-list of bad algorithms:
-  gb, res, forceGB (is this one OK over RR, CC)
-  factor, gcd?

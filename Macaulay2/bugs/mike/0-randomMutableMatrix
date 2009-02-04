@@ -1,3 +1,5 @@
+
+
 R = ZZ
 M = mutableMatrix(ZZ, 10, 20)
 fillMatrix(M)
@@ -11,7 +13,6 @@ tally flatten entries matrix M
 end
 
 Document correctly, with links between them:
-randomHeight
 randomMutableMatrix
 fillMatrix
 setRandomSeed

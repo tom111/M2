@@ -533,7 +533,9 @@ document { Key => {(randomMutableMatrix, ZZ, ZZ, RR, ZZ),
 	  Dense => {"whether the encoding of the matrix should be dense or not: see ", TO MutableMatrix}
 	  },
      Outputs => {
-	  {"a random mutable ", TT "nrows", " by ", TT "ncols", " matrix of integers.  The absolute value of the entries is bounded by ", TT "max", ", and
+	  {"a random mutable ", TT "nrows", " by ", TT "ncols", " matrix of integers.  
+	       The absolute value of the 
+	       entries is less than ", TT "max", ", and
 	       the frequency of entries equal to zero is given by ", TT "zerof", "." }
 	  },
      "This function has been superceded by ", TO fillMatrix, ", which works over 

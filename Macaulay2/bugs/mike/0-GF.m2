@@ -1,10 +1,10 @@
 -- Current problems with galois fields
--- (1) inclusion maps from one GF to another are difficult
+-- (1) inclusion maps from one GF to another are difficult FIXED
 -- (2) ring maps display with internal confusing information FIXED
--- (3) no factorization
+-- (3) no factorization TO BE DONE
 -- (4) no gcd's FIXED
--- (5) module structure of one GF wrt a smaller one
-
+-- (5) module structure of one GF wrt a smaller one TO BE DONE
+--     this should be a special case of pushForward.
 restart
 loadPackage "ConwayPolynomials"
 setRandomSeed 0

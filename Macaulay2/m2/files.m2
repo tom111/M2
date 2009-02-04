@@ -418,6 +418,7 @@ local dotemacsFix
 setupEmacs = method()
 setup = method()
 mungeEmacs = () -> (
+     dotemacsFix = concatenate(emacsHeader, apply(emacsfixes, (var,dir) -> fix(var,dir,emacstempl)), dotemacsFix0);
      supplantStringFile(dotemacsFix,"~/"|M2emacs,false);
      mungeFile("~/"|".emacs", ";; Macaulay 2 start", ";; Macaulay 2 end", M2emacsRead )
      )
@@ -435,7 +436,6 @@ installMethod(setup, () -> (
      prelim();
      dotprofileFix = concatenate(shHeader, apply(shellfixes, (var,dir) -> fix(var,dir,bashtempl)));
      dotloginFix = concatenate(shHeader,apply(shellfixes, (var,dir) -> fix(var,dir,cshtempl)));
-     dotemacsFix = concatenate(emacsHeader, apply(emacsfixes, (var,dir) -> fix(var,dir,emacstempl)), dotemacsFix0);
      supplantStringFile(dotprofileFix,"~/"|M2profile,false);
      supplantStringFile(dotloginFix,"~/"|M2login,false);
      fileExists("~/"|".bash_profile") and mungeFile("~/"|".bash_profile",startToken,endToken,M2profileRead) or

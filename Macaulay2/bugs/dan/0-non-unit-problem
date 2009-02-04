@@ -1,3 +1,7 @@
+-- -*- M2 -*-
+
+-- this is for Mike to fix, verify that it happens
+
 loadPackage "Schubert2"
 pt = base n
 debuggingMode = true

@@ -1,3 +1,7 @@
+-- -*- M2 -*-
+
+-- this traces to mike/0-rawMultiDegree
+
 loadPackage "Schubert2"
 pt = base()
 f = (m,d,n,e) -> (

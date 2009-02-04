@@ -178,7 +178,6 @@ random = method(Options => {
 	  MaximalRank => false,
 	  Density => 1.,
 	  UpperTriangular => false,
-	  Norm => 1.,
 	  Height => 10
 	  })
 random Type := opts -> (X) -> (

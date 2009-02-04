@@ -470,6 +470,12 @@ document {
 --     }     
 --
 
+document {
+     Key => {[(dual,MonomialIdeal),Strategy], [(dual,MonomialIdeal,List),Strategy], [(dual,MonomialIdeal,RingElement),Strategy]},
+     PARA {
+	  "Specify ", TT "Strategy => 1", " to test an older strategy for performing the computation."
+	  }
+     }
 
 document {
      Key => (dual,MonomialIdeal,List),

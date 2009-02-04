@@ -713,10 +713,13 @@ for n in {BasisElementLimit, PairLimit, DegreeLimit} do document {
 	  }
      }
 
-document { Key => [saturate,BasisElementLimit],
-     "The value for this optional argument is passed through to ", TO gb, " when
-     one of the following methods is used: ", TO (saturate,Ideal), ", ", TO (saturate,Ideal,Ideal), ",
-     ", TO (saturate,Ideal,RingElement), "."
+for n in {BasisElementLimit,PairLimit} do document {
+     Key => [saturate,n],
+     PARA {
+     	  "The value for this optional argument is passed through to ", TO gb, " when
+     	  one of the following methods is used: ", TO (saturate,Ideal), ", ", TO (saturate,Ideal,Ideal), ",
+     	  ", TO (saturate,Ideal,RingElement), "."
+	  }
      }
 
 -- Local Variables:

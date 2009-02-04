@@ -299,7 +299,6 @@ export {
 	symbol NoPrint,
 	symbol NonAssociativeProduct,
 	-- symbol NonLinear,
-	symbol Norm,
 	symbol Nothing,
 	symbol Number,
 	symbol Numeric,

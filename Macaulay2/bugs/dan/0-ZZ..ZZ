@@ -1,9 +1,11 @@
 make ZZ..ZZ method interruptable
 and possibly limit it to 1,000,000 max if Mike agrees
 
-oops this got check in
+oops this got checked in
 
 ask Mike
+
+He agrees, document it
 
 --- Macaulay2/d/actors.d	(revision 8203)
 +++ Macaulay2/d/actors.d	(revision 8204)

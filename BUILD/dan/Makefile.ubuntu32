@@ -19,12 +19,12 @@ PROFILE =
 unexport PROFILE
 ifeq ($(DEBUG),yes)
 INSTALLOPTIONS += prefix=/none
-CONFIGOPTIONS += --enable-debug --disable-pthreads
+CONFIGOPTIONS += --enable-debug --disable-pthreads --enable-build-libraries=pari
 DIRECTORY = ubuntu32.debug
 else
 ifeq ($(PROFILE),yes)
 INSTALLOPTIONS += prefix=/none
-CONFIGOPTIONS += --enable-profile --disable-pthreads
+CONFIGOPTIONS += --enable-profile --disable-pthreads --enable-build-libraries=pari
 DIRECTORY := ubuntu32.profile $(shell echo PROFILE = $(PROFILE) >&2 )
 else
 INSTALLOPTIONS += prefix=/usr/local/encap
@@ -32,6 +32,7 @@ CONFIGOPTIONS += --enable-deb
 DIRECTORY = ubuntu32
 endif
 endif
+
 include Makefile.include
 default: install
 pre-install:;	rm -rf /usr/local/encap/Macaulay2-$(PACKAGE_VERSION)

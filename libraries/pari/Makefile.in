@@ -17,7 +17,7 @@ BUILDTARGET += lib-dyn
 INSTALLTARGET += install-lib-dyn
 endif
 
-CONFIGURECMD = $(CONFIGENV) ./Configure --prefix=$(LIBRARIESDIR) --with-gmp=$(LIBRARIESDIR) | tee pari-config.log
+CONFIGURECMD = $(CONFIGENV) ./Configure --prefix=$(LIBRARIESDIR) --with-gmp=$(LIBRARIESDIR)
 
 ifeq (@PROFILING@,yes)
 CONFIGURECMD += -pg
@@ -33,6 +33,8 @@ INSTALLOPTIONS = -C `config/objdir`
 BUILDOPTIONS = -C `config/objdir`
 endif
 endif
+
+CONFIGURECMD += | tee pari-config.log
 
 include ../Makefile.library
 

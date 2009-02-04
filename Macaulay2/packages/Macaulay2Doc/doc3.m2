@@ -536,9 +536,12 @@ document { Key => {(randomMutableMatrix, ZZ, ZZ, RR, ZZ),
 	  {"a random mutable ", TT "nrows", " by ", TT "ncols", " matrix of integers.  The absolute value of the entries is bounded by ", TT "max", ", and
 	       the frequency of entries equal to zero is given by ", TT "zerof", "." }
 	  },
+     "This function has been superceded by ", TO fillMatrix, ", which works over 
+     more rings, is much faster for large matrices, and is more flexible.",
      EXAMPLE lines ///
           randomMutableMatrix(10,15,.9,100)
-     ///
+     ///,
+     SeeAlso => {mutableMatrix, fillMatrix, setRandomSeed, random}
      }
 document { Key => {(mutableMatrix, Ring, ZZ, ZZ),(mutableMatrix, RingFamily, ZZ, ZZ) },
      Headline => "make a mutable matrix filled with zeroes",

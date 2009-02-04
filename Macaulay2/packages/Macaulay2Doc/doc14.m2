@@ -396,18 +396,20 @@ document {
 	  "n" => ZZ => {"if specified, the maximum number of entries to replace"},
 	  Density => RR => {"the fraction of entries of ", TT "M", " to be replaced, if ", TT "n", " is
 	       not specified"},
-	  UpperTriangular => Boolean => "whether to fill entries only above the diagonal"
+	  UpperTriangular => Boolean => "whether to fill entries only above the diagonal",
+	  Height => ZZ => "a bound on the absolute values of the generated random numbers"
 	  },
      Outputs => {"M"},
      Consequences => {{ "some entries of M are replaced with randomly generated numbers, whose
-	       size depends on the value of the global variable ", TT "randomHeight" }},
+	       size depends on the value of the option ", TT "Height" }},
      EXAMPLE lines ///
 	  printingPrecision = 2
 	  fillMatrix(mutableMatrix(RR,5,10))
 	  fillMatrix(mutableMatrix(ZZ,5,10),UpperTriangular=>true)
 	  fillMatrix(mutableMatrix(QQ,5,10),Density=>.2,Height=>1000)
 	  fillMatrix(mutableMatrix(ZZ,5,10),25,Height=>1000)
-	  ///
+	  ///,
+     SeeAlso => {setRandomSeed, random, mutableMatrix}
      }
 
 document { 

@@ -1,3 +1,5 @@
+2/4/09: This seems to have been fixed along time ago...
+
 matrix{{1+ii,1+0.00002*ii},{3,4+ii}}
 CC[c,d]
 M = matrix {{c+d}}

@@ -90,14 +90,14 @@ ring_elem Ring::var(int v) const
 
 ring_elem Ring::power(const ring_elem gg, mpz_t m) const
 {
-  bool negated = false;
   ring_elem ff = gg;
   int cmp = mpz_sgn(m);
   if (cmp == 0) return one();
+  mpz_t n;
+  mpz_init_set(n, m);
   if (cmp < 0)
     {
-      negated = true;
-      mpz_neg(m,m);
+      mpz_neg(n,n);
       ff = invert(ff);
       if (is_zero(ff))
 	{
@@ -105,8 +105,6 @@ ring_elem Ring::power(const ring_elem gg, mpz_t m) const
 	  return ff;
 	}
     }
-  mpz_t n;
-  mpz_init_set(n, m);
   ring_elem prod = from_int(1);
   ring_elem base = copy(ff);
   ring_elem tmp;
@@ -122,7 +120,6 @@ ring_elem Ring::power(const ring_elem gg, mpz_t m) const
       if (mpz_sgn(n) == 0)
 	{
 	  mpz_clear(n);
-	  if (negated) mpz_neg(m,m);
 	  return prod;
 	}
       else
@@ -131,7 +128,6 @@ ring_elem Ring::power(const ring_elem gg, mpz_t m) const
 	  base = tmp;
 	}
     }
-
 }
 
 ring_elem Ring::power(const ring_elem gg, int n) const

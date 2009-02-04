@@ -452,7 +452,10 @@ Expression     .. Holder := (x,y) -> BinaryOperation{symbol ..,x,y#0}
 Holder         .. Holder := (x,y) -> BinaryOperation{symbol ..,x#0,y#0}
 InfiniteNumber .. InfiniteNumber :=
 InfiniteNumber .. ZZ             :=
-ZZ             .. InfiniteNumber := (x,y) -> if x < y then BinaryOperation{symbol ..,x,y} else ()
+ZZ             .. InfiniteNumber := (x,y) -> if x < y then (
+     error "infinite range requested";
+     -- BinaryOperation{symbol ..,x,y}
+     ) else ()
 Expression     .. Expression     :=
 Thing          .. Expression     :=
 Expression     .. Thing          := (x,y) -> BinaryOperation{symbol ..,x,y}

@@ -29,7 +29,8 @@ ARGS := --silent -q --stop --no-loaddata --no-setup -e 'srcdir = "@srcdir@/"'
 clean::	; rm -f *.okay
 LOADLIBES += @GC_LIBS@
 testgc: -lgc
-check-gc: testgc; ./testgc
+check-gc: testgc.okay
+testgc.okay : testgc ; ./testgc && touch $@
 clean::; rm -f testgc
 Makefile : Makefile.in ; cd $(DOTS)/.. && ./config.status Macaulay2/packages/Macaulay2Doc/basictests/Makefile
 distclean :clean; rm -f Makefile

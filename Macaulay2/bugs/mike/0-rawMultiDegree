@@ -1,3 +1,9 @@
+debug Core
+R = QQ[]
+rawMultiDegree raw 5_R
+
+end
+
 i1 : debug Core
 
 i2 : R = QQ[]

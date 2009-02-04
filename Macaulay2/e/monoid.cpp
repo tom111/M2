@@ -550,11 +550,11 @@ void Monoid::elem_text_out(buffer &o, const_monomial m) const
 
 void Monoid::multi_degree(const_monomial m, monomial result) const
 {
-  if (nvars_ == 0) return;
   if (degree_monoid()->n_vars() == 0) return;
-
   degree_monoid()->one(result);
+  if (nvars_ == 0) return;
   monomial mon1 = degree_monoid()->make_one();
+
   to_expvector(m, EXP1_);
 
   for (int i=0; i<nvars_; i++)

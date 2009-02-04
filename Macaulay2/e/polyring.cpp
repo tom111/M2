@@ -481,7 +481,7 @@ bool PolyRing::multi_degree(const ring_elem f, int *degf) const
 {
   Nterm *t = f;
   int *e = degree_monoid()->make_one();
-  if (t == 0) 
+  if (t == 0 || M_->n_vars() == 0) 
     {
       degree_monoid()->one(degf);
       return true;

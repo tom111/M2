@@ -1,4 +1,4 @@
-     -- this computation proves a theorem for Claire Voisin and Olivia deBarre
+     -- this computation proves a theorem for Claire Voisin and Olivier Debarre
      -- it takes a little too long for inclusion in the package: 120 seconds
 loadPackage "Schubert2"
 G = flagBundle {6,4}

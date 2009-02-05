@@ -20,12 +20,12 @@ PROFILE =
 unexport PROFILE
 ifeq ($(DEBUG),yes)
 INSTALLOPTIONS += prefix=/none
-CONFIGOPTIONS += --enable-debug --disable-pthreads --enable-build-libraries=pari
+CONFIGOPTIONS += --enable-debug --disable-pthreads
 DIRECTORY = ubuntu32.debug
 else
 ifeq ($(PROFILE),yes)
 INSTALLOPTIONS += prefix=/none
-CONFIGOPTIONS += --enable-profile --disable-pthreads --enable-build-libraries=pari
+CONFIGOPTIONS += --enable-profile --disable-pthreads
 DIRECTORY := ubuntu32.profile $(shell echo PROFILE = $(PROFILE) >&2 )
 else
 INSTALLOPTIONS += prefix=/usr/local/encap

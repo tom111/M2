@@ -32,6 +32,5 @@ raw f // raw g
 
 x//(0_R)
 -- Local Variables:
--- M2-send-to-buffer: "*gud*"
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test euclid.out"
 -- End:

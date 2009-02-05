@@ -146,6 +146,27 @@ irreducibleDecomposition MonomialIdeal := List => (I) -> (
 	       monomialIdeal apply(keys s, v -> R_v^(aI#v + 1 - s#v))))
      )
 
+--  ASSOCIATED PRIMES  -------------------------------------
+ass0 := (I) -> (
+     if I.cache#?associatedPrimes
+     then I.cache#associatedPrimes
+     else I.cache#associatedPrimes = (
+     	  R := ring I;
+     	  J := dual I;
+     	  M := first entries generators J;
+	  H := new MutableHashTable;
+     	  scan(M, m -> (
+		    s := rawIndices raw m;
+		    if not H#?s then H#s = true));
+	  inds := sort apply(keys H, ind -> (#ind, ind));
+	  apply(inds, s -> s#1)
+     ))
+
+associatedPrimes MonomialIdeal := List => o -> (I) -> (
+     inds := ass0 I;
+     R := ring I;
+     apply(inds, ind -> monomialIdeal apply(ind, v -> R_v)))
+
 primaryDecomposition MonomialIdeal := List => o -> (I) -> (
      R := ring I;
      aI := first exponents lcm I;

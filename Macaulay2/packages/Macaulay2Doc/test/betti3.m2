@@ -4,9 +4,6 @@ assert ( (min {} .. max {}) === () )
 assert ( (infinity .. infinity) === () )
 assert ( (infinity .. 0) === () )
 assert ( (0 .. -infinity) === () )
-assert( instance(-infinity .. infinity, Expression ) )
-assert( instance(0 .. infinity, Expression ) )
-assert( instance(-infinity .. 0, Expression ) )
 
 R = QQ[x]
 betti res R^0

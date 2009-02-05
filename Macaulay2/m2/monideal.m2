@@ -257,27 +257,6 @@ dual MonomialIdeal := alexopts >> o -> (I) -> (
 	 dual(I, first exponents lcm I, o)
     ))
 
---  ASSOCIATED PRIMES  -------------------------------------
-ass0 := (I) -> (
-     if I.cache#?associatedPrimes
-     then I.cache#associatedPrimes
-     else I.cache#associatedPrimes = (
-     	  R := ring I;
-     	  J := dual I;
-     	  M := first entries generators J;
-	  H := new MutableHashTable;
-     	  scan(M, m -> (
-		    s := rawIndices raw m;
-		    if not H#?s then H#s = true));
-	  inds := sort apply(keys H, ind -> (#ind, ind));
-	  apply(inds, s -> s#1)
-     ))
-
-associatedPrimes MonomialIdeal := List => o -> (I) -> (
-     inds := ass0 I;
-     R := ring I;
-     apply(inds, ind -> monomialIdeal apply(ind, v -> R_v)))
-
 --  TESTING IF A THING IS A SQUARE FREE MONOMIAL IDEAL  ----
 isSquareFree = method(TypicalValue => Boolean)		    -- could be isRadical?
 -- isSquareFree Thing := x -> false

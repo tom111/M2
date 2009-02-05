@@ -102,7 +102,7 @@ ring_elem Ring::power(const ring_elem gg, mpz_t m) const
       ff = invert(ff);
       if (is_zero(ff))
 	{
-	  ERROR("element is not invertible");
+	  ERROR("negative power of noninvertible element requested");
 	  return ff;
 	}
     }
@@ -141,7 +141,7 @@ ring_elem Ring::power(const ring_elem gg, int n) const
       ff = invert(ff);
       if (is_zero(ff))
 	{
-	  ERROR("element is not invertible");
+	  ERROR("negative power of noninvertible element requested");
 	  return ff;
 	}
     }

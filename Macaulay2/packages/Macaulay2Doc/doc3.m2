@@ -462,7 +462,7 @@ document {
      }
 
 document {
-     Key => {operatorAttributes, Flexible, Binary, Prefix, Postfix},
+     Key => {"operatorAttributes", Flexible, Binary, Prefix, Postfix},
      Usage => "operatorAttributes",
      Outputs => {{ "an experimental hash table that give information about ", TO "operators", " in the Macaulay 2 language" }},
      "Meanings of the symbols used:",
@@ -1181,11 +1181,14 @@ document { Key => (module, Vector),
 	  class v
      ///}
 
-document { Key => {package,(package, Dictionary), (package, Thing), (package, HashTable), (package, Function), (package, DocumentTag), (package, Symbol)},
+document { Key => {package,(package, Dictionary), (package, Thing),
+	  (package, HashTable), (package, Function), (package, DocumentTag), (package, Symbol),
+	  (package, Sequence)
+	  },
      Headline => "get containing package",
      Usage => "package x",
      Inputs => {"x"},
-     Outputs => {{"the package in which ", TT "x", " was defined"}},
+     Outputs => {{"the package in which the documentation key ", TT "x", " was defined"}},
      EXAMPLE lines ///
      	  package sin
 	  package poly
@@ -1200,7 +1203,7 @@ document { Key => {(rotate, ZZ, VisibleList),rotate},
 	 rotate(3,p)
 	 rotate(-3,p)
      ///}
-document { Key => fileDictionaries,
+document { Key => "fileDictionaries",
      Headline => "local dictionaries for loaded files",
      Usage => "fileDictionaries#fn",
      Inputs => { "fn" => String },

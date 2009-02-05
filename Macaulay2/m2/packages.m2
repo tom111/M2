@@ -386,7 +386,7 @@ endPackage String := title -> (
      if notify then stderr << "--package \"" << pkg << "\" loaded" << endl;
      pkg)
 
-package = method ()
+package = method (Dispatch => Thing)
 package Dictionary := d -> (
      if currentPackage =!= null and (currentPackage.Dictionary === d or currentPackage#?"private dictionary" and currentPackage#"private dictionary" === d)
      then currentPackage 
@@ -401,6 +401,7 @@ package Symbol := s -> (
 	       if d === PackageDictionary and class value s === Package then break value s
 	       else if package d =!= null then break package d)));
 package HashTable := package Function := x -> if hasAttribute(x,ReverseDictionary) then package getAttribute(x,ReverseDictionary)
+package Sequence := s -> package youngest s
 
 use Package := pkg -> (
      a := member(pkg,loadedPackages);

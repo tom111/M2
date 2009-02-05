@@ -1,6 +1,7 @@
 --		Copyright 1993-2002 by Daniel R. Grayson
 
 Constant = new Type of BasicList
+globalAssignment Constant
 
 precedence = method(Dispatch => Thing)
 rightPrecedence = method(Dispatch => Thing)

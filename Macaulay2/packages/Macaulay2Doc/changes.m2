@@ -206,6 +206,11 @@ document {
 			 },
 		    LI {"The function ", TO "minors", " has been altered so the ideal of ", TT "n", " by ", TT "n", " minors that it provides for negative
 			 values of ", TT "n", " is the unit ideal."
+			 },
+		    LI {
+			 "The optional argument to ", TO monoid, " and to polynomial ring creation 
+			 named ", TT "ConstantCoefficients", " has been removed.  Specifying ", TT "ConstantCoefficients=>false", " 
+			 can be accomplished by specifying ", TT "Join=>false", ".  See ", TO Join, "."
 			 }
 		    }
 	       },

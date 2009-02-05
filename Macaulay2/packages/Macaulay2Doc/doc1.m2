@@ -584,16 +584,6 @@ document {
      TT "options R", " -- returns the options used when the polynomial
      ring ", TT "R", " was created."
      }
-document { Key => (options, MarkUpType),
-     "Optional arguments of mark up types allow attributes to be added to html elements.",
-     EXAMPLE lines ///
-     	  needsPackage "Text"
-     	  DIV
-     	  options DIV
-	  d = DIV { "class" => "examples", "hi there" }
-	  html d
-	  net d
-     ///}
 document { Key => (options, Package),
      EXAMPLE lines ///
      	  options Core

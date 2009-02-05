@@ -1327,7 +1327,7 @@ document {
      removeFile "test-file"
      get "!date"
      ///,
-     SeeAlso =>{ read, removeFile, close, (symbol <<, File, Thing) }
+     SeeAlso =>{ read, removeFile, "close", (symbol <<, File, Thing) }
      }
 
 document {

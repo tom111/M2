@@ -170,13 +170,12 @@ document {
      primary decompositions of ideals.",
      Subnodes => {
 	  TO (associatedPrimes, Ideal),
-	  TO [associatedPrimes,Strategy],
 	  TO (localize,Ideal,Ideal),
 	  TO [localize,Strategy],
 	  TO (primaryComponent, Ideal, Ideal),
 	  TO [primaryComponent,Strategy],
 	  TO [primaryComponent,Increment],
-	  -- this is part of the Macaulay2 package, sorry! TO (primaryDecomposition, Ideal),
+	  TO (primaryDecomposition, Ideal),
 	  TO [primaryDecomposition,Strategy]
 	  },
      SeeAlso => { (primaryDecomposition, Ideal) }

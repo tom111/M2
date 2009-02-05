@@ -48,9 +48,10 @@ loadPackage String := opts -> pkgtitle -> (
      -- this was bad, because loadDepth might become negative, and then it gets converted to 255 in the pseudocode
      -- another problem was that loading the file might have resulted in an error.
      load filename;
+     actualFilename := loadedFiles#(#loadedFiles-1);
      -- if opts.DebuggingMode =!= true then loadDepth = loadDepth + 1;
      remove(packageLoadingOptions,pkgtitle);
-     if not PackageDictionary#?pkgtitle then error("the file ", filename, " did not define a package called ", pkgtitle);
+     if not PackageDictionary#?pkgtitle then error("the file ", actualFilename, " did not define a package called ", pkgtitle);
      value PackageDictionary#pkgtitle)
 
 needsPackage = method(Options => options loadPackage)
@@ -359,7 +360,8 @@ endPackage String := title -> (
      exportDict := pkg.Dictionary;
      scan(sortByHash values exportDict, s -> if not ws#?s then (
 	       protect s;
-	       if value s =!= s and not hasAttribute(value s,ReverseDictionary) then setAttribute((value s),ReverseDictionary,s)));
+	       ---if value s =!= s and not hasAttribute(value s,ReverseDictionary) then setAttribute((value s),ReverseDictionary,s)
+	       ));
      if true or pkg =!= Core then (			    -- protect it later
 	  protect pkg#"private dictionary";
 	  protect exportDict;

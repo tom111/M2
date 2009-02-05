@@ -3,7 +3,7 @@ ifneq ($(CONFIG_MAKEFILE),)
 $(error config.Makefile already loaded)
 endif
 CONFIG_MAKEFILE = loaded
-.PHONY: all check initialize clean distclean install always reconfigure
+.PHONY: all check initialize clean distclean install always reconfigure big-check
 all:
 
 SHELL = /bin/sh

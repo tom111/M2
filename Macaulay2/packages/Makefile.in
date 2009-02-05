@@ -65,7 +65,8 @@ $(foreach i, $(PACKAGES), $(eval $(call bld,$i)))
 # check::check-info
 
 clean::; rm -rf tmp *.installed
-clean check ::; $(MAKE) -C ComputationsBook $@
+clean::; $(MAKE) -C ComputationsBook $@
+big-check ::; $(MAKE) -C ComputationsBook check
 Makefile: Makefile.in; cd ../..; ./config.status Macaulay2/packages/Makefile
 distclean:clean
 	$(MAKE) -C ComputationsBook $@

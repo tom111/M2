@@ -1,5 +1,6 @@
      -- this computation proves a theorem for Claire Voisin and Olivia deBarre
      -- it takes a little too long for inclusion in the package: 120 seconds
+loadPackage "Schubert2"
 G = flagBundle {6,4}
 (S,Q) = G.Bundles
 E = exteriorPower_3 S

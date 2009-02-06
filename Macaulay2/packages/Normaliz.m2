@@ -5,25 +5,25 @@ newPackage(
            Authors=>{{Name=> "G. Kaempf",
                     Email=>"gkaempf@mathematik.uni-osnabrueck.de"}},
            Headline=>"a package to use Normaliz in Macaulay 2",
-           DebuggingMode=> false,
-	   AuxiliaryFiles => true
+	   AuxiliaryFiles => true,
+           DebuggingMode => false
            )
 
 export{setNmzExecPath, getNmzExecPath,
-       setNmzVersion, getNmzVersion,
+       setNmzVersion,  getNmzVersion,
        setNmzFilename, getNmzFilename,
        setNmzDataPath, getNmzDataPath,
        setNmzFile,
-       writeNmzPaths,
+       writeNmzPaths, 
        startNmz, 
        rmNmzFiles,
        writeNmzData, readNmzData,
        getNumInvs, showNumInvs, exportNumInvs,
-       setHilbOption, setVolOption, setCOption, setAllfOption, setSOption, setNOption, setPOption, setDOption,setIOption,
-       hilbOption, volOption, cOption, allfOption, sOption, nOption, pOption, dOption,iOption,
-       normaliz,
+       normaliz, setNmzOption, showNmzOptions,
        mons2intmat, intmat2mons,
-       normalToricRing, intclToricRing, ehrhartRing, intclMonIdeal
+       normalToricRing, intclToricRing, ehrhartRing, intclMonIdeal,
+       torusInvariants,
+       valRing, valRingIdeal
       }
 
 
@@ -32,15 +32,22 @@ nmzExecPath="";
 nmzDataPath="";
 nmzFilename="";
 nmzVersion="";
-nmzHilbOption=false;
-nmzVolOption=false;
-nmzCOption=false;
-nmzAllfOption=false;
-nmzSOption=false;
-nmzNOption=false;
-nmzPOption=false;
-nmzDOption=false;
-nmzIOption=false;
+-- component 1 is name of option
+-- 2 is default value
+-- 3 is command line option to be passed to Normaliz
+-- 4 indicates whether file "gen" is generated
+-- value 2 of 4 indicates "no influence"
+
+nmzOptions= new MutableList from {
+            new MutableList from {"hvect",false,"-p",false},
+            new MutableList from {"triang",false,"-v",false},
+            new MutableList from {"supp",false,"-s",false},
+            new MutableList from {"normal",false,"-n",true},
+            new MutableList from {"hilb",false,"-h",true},
+            new MutableList from {"dual",false,"-d",true},
+            new MutableList from {"control",false,"-c",2},
+            new MutableList from {"allf",false,"-a",2},
+            new MutableList from {"ignore",true,"-i",2}};
 -------------------------------------------------------------
 
 --  filenames and paths
@@ -54,7 +61,7 @@ setNmzExecPath String :=stringNmzExecPath->
  
  if(not stringNmzExecPath=="")
  then(
-     if(not stringNmzExecPath#(#stringNmzExecPath-1)=="/")
+     if(not stringNmzExecPath#-1=="/")
      then(
             stringNmzExecPath=stringNmzExecPath|"/";
         );
@@ -102,7 +109,7 @@ setNmzDataPath String :=stringNmzDataPath->
 (
   if(not stringNmzDataPath=="")
     then(
-        if(not stringNmzDataPath#(#stringNmzDataPath-1)=="/")
+        if(not stringNmzDataPath#-1=="/")
         then(
             stringNmzDataPath=stringNmzDataPath|"/";
         );
@@ -127,50 +134,64 @@ writeNmzPaths=()->
 );
 
 
--- retrieves the path names written by writeNmzPaths() 
+-- retrieves the path names written by writeNmzPaths 
 startNmz=()->
 (
     if(not fileExists("nmzM2Exec.path"))
-    then error "startNmz(): first call writeNmzPaths()";
+    then error("startNmz():. First call writeNmzPaths().");
 
     inf:="nmzM2Exec.path";
     s:=get inf;
     i:=#s;
-    if i==0 then error "nmzExecPath not set";
+    if(i==0)          -- this is allowed
+    then(
+         print "nmzExecPath not set";
+    )
+    else(
+        t:=s#(i-1); 
+        while(not (t=="/" or i==1))
+        do( 
+           i=i-1; 
+           s=substring(0,i,s);
+           t=s#(i-1);
+        );
+    
+       if(i==1)
+       then(
+            print "nmzExecPath not set";
+       )
+       else( 
+           nmzExecPath=s;
+           print("nmzExecPath is "|nmzExecPath);
+       );
+   );
 
-    t:=s#(i-1); 
-    while(not (t=="/" or i==1))
-    do( 
-       i=i-1; 
-       s=substring(0,i,s);
-       t=s#(i-1);
-    );
-
-   if i==1 then error "nmzExecPath not set";
-   nmzExecPath=s;
-   print("nmzExecPath is "|nmzExecPath);
-
- if(not fileExists("nmzM2Data.path"))
-    then error "startNmz(): first call writeNmzPaths()";
+   if(not fileExists("nmzM2Data.path"))
+    then error("startNmz(): First call writeNmzPaths().");
     inf="nmzM2Data.path";
     s=get inf;
     i=#s;
-    if i==0 then error "nmzDataPath not set";
-    t=s#(i-1); 
-    while(not (t=="/" or i==1))
-    do( 
-       i=i-1; 
-       s=substring(0,i,s);
-       t=s#(i-1);
-    );
-
-   if(i==1)
-   then(
-	print "nmzDataPath not set";
-   )
-   else( 
-	nmzDataPath=s;
-	print("nmzDataPath is " | nmzDataPath);
+    if(i==0)         -- this is allowed
+    then(
+         print "nmzDataPath not set";
+    )
+    else(
+        t=s#(i-1); 
+        while(not (t=="/" or i==1))
+        do( 
+           i=i-1; 
+           s=substring(0,i,s);
+           t=s#(i-1);
+        );
+    
+       if(i==1)
+       then(
+            print "nmzDataPath not set";
+       )
+       else( 
+            nmzDataPath=s;
+            print("nmzDataPath is " | nmzDataPath);
+       );
    );
 );
 
@@ -215,11 +236,11 @@ setNmzExec=()->
 -- removes the files created for and by normaliz
 rmNmzFiles=()->
 (
-    suffixes:={"in","gen","out","sup","egn","esp","inv","tri","typ","hom"};
+    suffixes:={"in","gen","out","sup","egn","esp","inv","tri","typ","hom","ext"};
     for i from 0 to #suffixes-1 
     do(
-      if(fileExists( getNmzFilename()|"."|suffixes#i))
-      then removeFile(getNmzFilename()|"."|suffixes#i);
+      if(fileExists( setNmzFile()|"."|suffixes#i))
+      then removeFile(setNmzFile()|"."|suffixes#i);
     );
 );
 
@@ -230,72 +251,44 @@ rmNmzFiles=()->
 
 ---------------------------------------------------------
 
--- returns true if c is a cipher or -
-isCipher=method(TypicalValue=>Boolean)
-isCipher String :=(c)->(
- cipher:="-0123456789";
-  
-  for i from 0 to 10 
-  do(
-      if(cipher#i==c) then return true;
-  );
-  return false; 
-);
-
 -- returns the next number in the string s, and the remaining string 
 getNumber=method(TypicalValue=>(String,String))
-getNumber String :=s->(
-   r:="";
-   while((not s=="") and isCipher(s#0))
-   do(
-      r=r|(s#0);  
-      s=substring(1,#s-1,s);
-   );
-  return(r,s);
+getNumber String :=s->
+(
+    l:=regex("[0-9,-]+",s);
+    if( instance(l,Nothing)) then error("getNumber: no number found in the string.");
+    if(l#0#0!=0) then error("getNumber: string must begin with a number");
+    return(substring(l#0,s),substring(l#0#0+l#0#1,s));
 );
 
 -- returns the next word (marked by whitespaces) in the string s, starting at position j and replaces "_" by " ", and the position of the first whitespace
 -- if s contains no whitespace, the returned position is not in the string!
 getKeyword=(s,j)->
 (
-  if(not s#(#s-1)==" ") then s=s|" "; -- geschummelt
-  key:="";
-  tmp:=s#j;
-  while(not tmp==" ")
-  do(
-     if(tmp=="_") then tmp=" ";
-      key=key|tmp;
-      j=j+1;
-      tmp=s#j;
-  );
-  return((key,j));  -- j=position whitespace
+   l:=regex("[[:alnum:],-,_]+",j,s);
+   if( instance(l,Nothing)) then error("getKeyword: no word found in the string."); 
+   if(l#0#0!=j) then << "warning: getKeyword: no word at the beginning of the string.";
+   return(replace("_"," ",substring(l#0,s)),l#0#0+l#0#1); 
 );
+
 
 -- eliminates whitespaces and -, and transforms the next letter to upper case if possible
 elimWhitespaces=s->
-(
-   tmp:="";
-   i:=0;
-   while(i<#s)
-   do(
-      if(s#i==" " or s#i=="-")
-      then( 
-           if(s#(i+1)==" " or s#(i+1)=="-")
-           then( 
-                i=i+1;
-           )
-           else( 
-                tmp=tmp|toUpper(s#(i+1));
-                i=i+2;
-           );
-      )
-      else( 
-           tmp=tmp|s#i;
-           i=i+1;
-      );
+(   
+    tmp:="";
+    while(match("[ -]",s))          -- while   or - is found
+    do(
+       l:=regex("[ -]",s);
+       pos:=l#0#0;     -- position of   or -
+       tmp=tmp|substring(0,pos,s);
+       if(pos+1<#s)
+       then tmp=tmp|toUpper(s#(pos+1));
+       s=substring(pos+2,s); 
    );
-   return tmp;  
+   tmp=tmp|s;
+   return tmp;
 );
+
 -------------------------------------------------------------
 
 -- input and output to/from normaliz
@@ -332,15 +325,17 @@ writeNmzData(Matrix,ZZ):=(sgr, nmzMode)->
 
 
 -- reads the Normaliz output file with the specified suffix
--- suffix should not be inv or out or num
+-- suffix should not be inv, in or out 
 readNmzData=method(TypicalValue=>Matrix)
 readNmzData(String):=(nmzSuffix)->
 (
-    if(nmzSuffix=="inv" or nmzSuffix=="out") 
-    then error("to read .inv use getNumInvs(), to read .out there is no function provided");
+    if(nmzSuffix=="inv" or nmzSuffix=="out" or nmzSuffix=="in") 
+    then error("readNmzData: To read .inv use getNumInvs(), to read .out or .in there is no function provided");
 
-    if not fileExists(setNmzFile()|"."|nmzSuffix)
-    then error ("readNmzData:error: no file "|setNmzFile()|"."|nmzSuffix|" found");
+    if(not fileExists(setNmzFile()|"."|nmzSuffix))
+    then( 
+        error("readNmzData: No file "|setNmzFile()|"."|nmzSuffix|" found. Perhaps you need to activate another option.");
+    );
 
     inf:=get(setNmzFile()|"."|nmzSuffix);
     s=lines(inf);
@@ -393,7 +388,7 @@ getNumInvs=()->
     inv:=0;
 
     if(not fileExists(setNmzFile()|".inv"))
-    then return "getNumInvs(): error: no file "|setNmzFile()|".inv"|" found.";
+    then error("getNumInvs(): No file "|setNmzFile()|".inv"|" found.");
 
     inf:=get(setNmzFile()|".inv");  
     s:=lines(inf);
@@ -442,7 +437,7 @@ getNumInvs=()->
 showNumInvs=()->
 (
     if(not fileExists(setNmzFile()|".inv"))
-    then return "showNumInvs(): error: no file "|setNmzFile()|".inv"|" found.";
+    then error("showNumInvs: No file "|setNmzFile()|".inv"|" found.");
 
     l:=getNumInvs();
     for i from 0 to #l-1
@@ -456,12 +451,10 @@ opts={Print => false}
 exportNumInvs=opts >> o->()->
 (
     if(not fileExists(setNmzFile()|".inv"))
-    then return "exportNumInvs(): error: no file "|setNmzFile()|".inv"|" found.";
-  
-   
+    then error("exportNumInvs(): No file "|setNmzFile()|".inv"|" found.");
 
-  l:=getNumInvs();
-  for i from 0 to #l-1
+    l:=getNumInvs();
+    for i from 0 to #l-1
     do(
        value("nmz"|elimWhitespaces(" "|l#i#0)|"="|toString(l#i#1));
        if(o.Print)
@@ -477,190 +470,64 @@ exportNumInvs=opts >> o->()->
 
 ----------------------------------------------------------
 
--- input: true or false 
-
-setHilbOption=method()
-setHilbOption Boolean :=onOff->
+setNmzOption=method()
+setNmzOption (String,Boolean):=(s, onoff)->
 (
-   if(onOff)
-   then nmzHilbOption=true
-   else nmzHilbOption=false;
-
-);
-
-setVolOption=method()
-setVolOption Boolean :=onOff->
-(
-   if(onOff)
-   then nmzVolOption=true
-   else nmzVolOption=false;
-
-);
-
-setCOption=method()
-setCOption Boolean :=onOff->
-(
-   if(onOff)
-   then nmzCOption=true
-   else nmzCOption=false;
-);
-
-setAllfOption=method()
-setAllfOption Boolean :=onOff->
-(
-   if(onOff)
-   then nmzAllfOption=true
-   else nmzAllfOption=false;
-);
-
-setSOption=method()
-setSOption Boolean :=onOff->
-(
-   if(onOff)
-   then nmzSOption=true
-   else nmzSOption=false;
-);
-
-setNOption=method()
-setNOption Boolean :=onOff->
-(
-   if(onOff)
-   then nmzNOption=true
-   else nmzNOption=false;
-);
-
-setPOption=method()
-setPOption Boolean :=onOff->
-(
-   if(onOff)
-   then nmzPOption=true
-   else nmzPOption=false;
-);
-
-setIOption=method()
-setIOption Boolean :=onOff->
-(
-   if(onOff)
-   then nmzIOption=true
-   else nmzIOption=false;
-);
-
-setDOption=method()
-setDOption Boolean :=onOff->
-(
-   if(onOff)
-   then nmzDOption=true
-   else nmzDOption=false;
-);
-
-hilbOption=()->
-(
-   return nmzHilbOption;
-);
-
-volOption=()->
-(
-    return(nmzVolOption);
-);
-
-cOption=()->
-(
-    return(nmzCOption);
-);
-
-allfOption=()->
-(
-    return(nmzAllfOption);
+   for i from 0 to #nmzOptions-1
+   do( 
+        if(s==nmzOptions#i#0)
+        then(
+            nmzOptions#i#1=onoff;
+            return(true);
+        );
+    );
+    print("setNmzOption: Invalid option "| s);
+    return(false);
 )
 
-sOption=()->
+collectNmzOptions=()->
 (
-    return(nmzSOption);
-);
+  
+   options:=" -f ";
+   gengen:=true;     -- indicates whether "gen" is generated
+    for i from 0 to #nmzOptions-1
+    do(   
+        if(nmzOptions#i#1)
+        then(
+            options=options|nmzOptions#i#2|" ";
+            if(nmzOptions#i#3=!=2)
+            then(
+                gengen=nmzOptions#i#3;
+            );
+        );
+    );
+    return(options,gengen);
+)
 
-nOption=()->
+showNmzOptions=()->
 (
-    return(nmzNOption);
-);
+  << "The following options are set:"<< endl;
+  (options,gegen):=collectNmzOptions();
+  << options;
+)
 
-pOption=()->
-(
-    return(nmzPOption);
-);
-
-dOption=()->
-(
-    return(nmzDOption);
-);
-
-iOption=()->
-(
-    return(nmzIOption);
-);
 
 runNormaliz=method()
 runNormaliz(Matrix,ZZ,ZZ):=(sgr,numCols, nmzMode)->
 (
     doWriteNmzData(sgr,numCols,nmzMode);
-    options:="";
+    (options,gengen):=collectNmzOptions();
 
-        if(sOption())
-        then(
-             options=options|" -s ";
-        );
-
-        if(volOption())
-        then(
-             options=options|" -v ";  
-        );
-
-        if(nOption())
-        then(
-             options=options|" -n ";
-        );
-
-        if(pOption())
-        then(
-             options=options|" -p ";
-        );
-
-        if(hilbOption())
-        then(
-             options=options|" -h ";
-        );
-
-        if(dOption())
-        then(
-             options=options|" -d ";
-        );
-
-        if(iOption())
-        then(
-             options=options|" -i ";
-        );
-
-
-        if(cOption())
-        then(
-             options=options|" -c ";
-        );
-
-        if(allfOption())
-        then(
-             options=options|" -a ";
-        );
-
-    cmd := setNmzExec()|" -f "|options|nmzFile;
+    cmd := setNmzExec()|options|nmzFile;
     if debugLevel > 0 then << "--running command: " << cmd << endl;
     if 0 != run cmd then error ("command failed : ", cmd);
     if debugLevel > 0 then << "--command succeeded" << endl;
 
-        if(volOption())
-        then(
-             return(); -- return nothing if volOption is on
-        );
+        if(not gengen)  -- return nothing if .gen is not
+        then(           -- generated
+             return; 
+       );
     return(readNmzData("gen"));
-
 );
 
 
@@ -698,7 +565,9 @@ intmat2mons=method()
 intmat2mons(Matrix,Ring):=(expoVecs, r)->
 (
    if(numColumns(expoVecs)< numgens(r))
-   then error "intmat2mons: not enough variables in the basering";
+   then(
+        error("intmat2mons: not enough variables in the basering");
+   );
 
    v:=vars(r);  -- the variables of the basering, a matrix with one row
    l:={};
@@ -717,19 +586,20 @@ intmat2mons(Matrix,Ring):=(expoVecs, r)->
 
 );
 
--- beachtet eine Zeile nur, wenn der letzte Eintrag 1 ist
--- muss den Ring als Parameter kriegen!
-intmat2mons1=method(TypicalValue=>Ideal)
-intmat2mons1(Matrix,Ring):=(expoVecs,r)->
+-- takes only the rows with last entry d
+--intmat2monsSel=method(TypicalValue=>Ideal)
+intmat2mons(Matrix,Ring,ZZ):=(expoVecs,r,d)->
 (
    if(numColumns(expoVecs)< numgens(r))
-   then error "intmat2mons1: not enough variables in the basering";
+   then(
+        error("intmat2mons: not enough variables in the basering");
+   );
    v:=vars(r);  -- the variables of the basering, a matrix with one row
    l:={};
 
    for i from 0 to numRows(expoVecs)-1 
    do(
-      if(expoVecs_(i,numColumns(expoVecs)-1)==1)
+      if(expoVecs_(i,numColumns(expoVecs)-1)==d)
       then (
              m:=1;
              for j from 0 to numColumns(expoVecs)-2 
@@ -753,12 +623,11 @@ runIntclToricRing=method()
 runIntclToricRing(Ideal,ZZ):=(I,nmzMode)->
 (
     expoVecs:=mons2intmat(I);
-    if(volOption()) -- if volume option is on, return nothing
-    then(
-        runNormaliz(expoVecs,numColumns(expoVecs),nmzMode);
-        return();
-    );
-    return( intmat2mons( runNormaliz(expoVecs,numColumns(expoVecs),nmzMode),ring(I) ) );
+     
+     res:=runNormaliz(expoVecs,numColumns(expoVecs),nmzMode);
+     if(instance(res,Nothing))
+     then return
+     else return(intmat2mons(res,ring(I)));
 );
 
 intclToricRing=method()
@@ -791,22 +660,19 @@ runIntclMonIdeal(Ideal,ZZ):=(I,nmzMode)->
         );
     );
 
-    if(volOption()) -- if volume option is on, return nothing
-    then(
-        runNormaliz(expoVecs,numColumns(expoVecs),nmzMode);
-        return();
-    );
+    if(instance(runNormaliz(expoVecs,numColumns(expoVecs),nmzMode),Nothing))
+    then return;
 
     nmzData:=runNormaliz(expoVecs,numColumns(expoVecs)-1+lastComp,nmzMode);
 
     if(lastComp==1)
     then(
-         I1=intmat2mons1(nmzData,ring(I)); 
-         return(I1);  
+         I1=intmat2mons(nmzData,ring(I),1); 
+         return({I1});  
     )
     else
     (
-        I1=intmat2mons1(nmzData,ring(I));
+        I1=intmat2mons(nmzData,ring(I),1);
         I2=intmat2mons(nmzData,ring(I));
        return({I1,I2});
     );
@@ -825,6 +691,85 @@ intclMonIdeal Ideal :=I->
     return(runIntclMonIdeal(I,3));
 );
 
+--------------------------------------------------------
+
+-- torus invariants and valuation rings and ideals
+
+--------------------------------------------------------
+torusInvariants=method()
+torusInvariants (Matrix, Ring) :=(T,R)->
+(
+
+    if(numgens(R)!=numColumns(T))
+    then(
+          error("torusInvariants: wrong number of columns in matrix");
+    );
+    
+    (options,gengen):=collectNmzOptions();
+
+    if(not gengen)  -- return nothing
+    then(
+         runNormaliz(T,numColumns(T),5);
+         return;
+    );
+    return(intmat2mons( runNormaliz(T,numColumns(T),5),R ) );
+)
+
+valRing=method()
+valRing (Matrix,Ring) :=(V,R)->
+(
+    if(numgens(R)!=numColumns(V))
+    then(
+          error("valRing: wrong number of columns in matrix");
+    );
+
+    I:=id_(ZZ^(numColumns(V))); -- identity matrix
+    V1:=I||V;
+
+    (options,gengen):=collectNmzOptions();
+
+    if(not gengen) -- return nothing
+    then(
+          runNormaliz(V1,numColumns(V),4);
+          return;
+    );
+    
+    return(intmat2mons(runNormaliz(V1,numColumns(V),4),R));        
+)
+
+valRingIdeal=method()
+valRingIdeal (Matrix,Ring):=(V,R)->
+(
+    nc:=numColumns(V);
+    if(numgens(R)!=nc-1)
+    then(
+         error("valRingIdeal: wrong number of columns in matrix");
+    );
+
+    I:=id_(ZZ^nc); -- identity matrix
+    V1:=I||V;
+    V1=mutableMatrix(V1);
+    
+    for i from 0 to numRows(V)-1
+    do(
+       V1_(i+nc,nc-1)=-V1_(i+nc,nc-1);
+    );
+    V1=matrix(V1);
+
+    (options,gengen):=collectNmzOptions();
+
+    if(not gengen) -- return nothing
+    then(
+          runNormaliz(V1,nc,4);
+          return;
+    );
+    
+    nmzData:=runNormaliz(V1,nc,4);
+
+    I1:=intmat2mons(nmzData,R,0);
+    I2:=intmat2mons(nmzData,R,1);
+    return({I1,I2});        
+)
 
 -------------------------------------------------------------
 beginDocumentation()
@@ -869,7 +814,7 @@ document {
     EXAMPLE lines ///
         getNmzExecPath()
         ///,
-     Caveat =>{"This is the value stored in the global variable. The function ", TO startNmz, " retrieves the path names written by ", TO writeNmzPaths(), " to the hard disk, so this can be a different path." },
+     Caveat =>{"This is the value stored in the global variable. The function ", TO startNmz, " retrieves the path names written by ", TO writeNmzPaths, " to the hard disk, so this can be a different path." },
      SeeAlso=>setNmzExecPath
      }
 
@@ -968,7 +913,7 @@ document {
           setNmzDataPath("d:/normaliz/example");
           getNmzDataPath()
           ///,
-     Caveat =>{"This is the value stored in the global variable. The function ", TO startNmz, " retrieves the path names written by ", TO writeNmzPaths(), " to the hard disk, so this can be a different path." },
+     Caveat =>{"This is the value stored in the global variable. The function ", TO startNmz, " retrieves the path names written by ", TO writeNmzPaths, " to the hard disk, so this can be a different path." },
      SeeAlso => setNmzDataPath
      }
 
@@ -1088,7 +1033,7 @@ document {
      EXAMPLE lines ///
           R=ZZ/37[x,y,t];
           I=ideal(x^3,x^2*y,y^3);
-          setHilbOption(true);
+          setNmzOption("hilb",true);
           intclMonIdeal(I);
           getNumInvs()
           ///,
@@ -1104,7 +1049,7 @@ document {
      EXAMPLE lines ///
           R=ZZ/37[x,y,t];
           I=ideal(x^3,x^2*y,y^3);
-          setHilbOption(true);
+          setNmzOption("hilb",true);
           intclMonIdeal(I);
           showNumInvs()
           ///,
@@ -1120,7 +1065,7 @@ document {
      EXAMPLE lines ///
           R=ZZ/37[x,y,t];
           I=ideal(x^3,x^2*y,y^3);
-          setHilbOption(true);
+          setNmzOption("hilb",true);
           intclMonIdeal(I);
           exportNumInvs()
           nmzHilbertBasisElements
@@ -1138,265 +1083,55 @@ document {
           },
      "If the ", TT "Print", " option is set to true, the function does not only create the variables, but also prints them to the standard output. The default is ", TT "false", ".",
      EXAMPLE lines ///
-         R=ZZ/37[x,y,t];
+          R=ZZ/37[x,y,t];
           I=ideal(x^3,x^2*y,y^3);
-          setHilbOption(true);
+          setNmzOption("hilb",true);
           intclMonIdeal(I);
           exportNumInvs()
           exportNumInvs(Print=> true)
+         
           ///,
      }
 
 document {
-     Key => {setCOption, (setCOption, Boolean)},
-     Headline => "sets the -c option",
-     Usage => "setCOption(bool)",
-     Inputs =>{ Boolean => "true=on, false=off"},
-     "This function sets/resets the ", TT "-c", " option. The default is ", TT "false", "=off. Use ", TO cOption, " to obtain the current setting.",
+     Key => {setNmzOption,(setNmzOption,String,Boolean)},
+     Headline => "set an option",
+     Usage => "setNmzOption(s,b)",
+     Inputs => {
+               String => "name of the option",
+               Boolean => "true switches the option on, false off"
+          },
+     {"The ", TT "Normaliz"," options are accessible via the following names: ", BR{},BR{},
+     "Run mode type:",BR{},BR{},
+     TT "-s",":   supp",BR{},
+     TT "-v",":   triang",BR{},
+     TT "-p",":   hvect",BR{},
+     TT "-n",":   normal",BR{},
+     TT "-h",":   hilb",BR{},
+     TT "-d",":   dual",BR{},BR{},
+     "Further options:",BR{},BR{},
+     TT "-c",":   control" ,BR{}, 
+     TT "-a",":   allf",BR{},
+     TT "-i",":   ignore",BR{},BR{},
+     },
+     {"Note that it makes no sense to activate more than one of the run mode options. The ", TT "-f", " option is always set. The default value of all options is ", TT "false", " except for ", TT"ignore","."},
      EXAMPLE lines ///
-          cOption()  
-          setCOption(true);  -- now it's on
-          cOption()
-          ///,
-     SeeAlso => {cOption}
+          setNmzOption("triang",true);
+          showNmzOptions()
+               ///,
+     SeeAlso => showNmzOptions
      }
 
 document {
-     Key => {cOption},
-     Headline => "setting of the -c option",
-     Usage => "cOption()",
-     Outputs => {Boolean => "true=on, false=off"},
-     "This function returns ", TT "true", " if the ", TT "-c", " option is set, and ", TT "false", " otherwise.",
+     Key => {showNmzOptions},
+     Headline => "prints the enabled options",
+     Usage => "showNmzOptions()",
+     "Prints the enabled options to the standard output. The ", TT "-f", " option is always set, but never printed.",
      EXAMPLE lines ///
-          cOption() 
-          setCOption(true);  -- now it's on
-          cOption()
+          setNmzOption("triang",true);
+          showNmzOptions()
           ///,
-     SeeAlso => {setCOption}
-     }
-
-document {
-     Key => {setHilbOption, (setHilbOption, Boolean)},
-     Headline => "sets the -h option",
-     Usage => "setHilbOption(bool)",
-     Inputs =>{ Boolean => "true=on, false=off"},
-     "This function sets/resets the ", TT "-h", " option. The default is ", TT "false", "=off. Use ", TO hilbOption, " to obtain the current setting. Note that it does not make sense to turn on more than one of the options ", TT "s,v,n,p,h,d", ".",
-     EXAMPLE lines ///
-          hilbOption()  
-          setHilbOption(true);  -- now it's on
-          hilbOption()
-          ///,
-     SeeAlso => {hilbOption}
-     }
-
-document {
-     Key => {hilbOption},
-     Headline => "setting of the -h option",
-     Usage => "hOption()",
-     Outputs => {Boolean => "true=on, false=off"},
-     "This function returns ", TT "true", " if the ", TT "-h", " option is set, and ", TT "false", " otherwise.",
-     EXAMPLE lines ///
-          hilbOption() 
-          setHilbOption(true);  -- now it's on
-          hilbOption()
-          ///,
-     SeeAlso => {setHilbOption}
-     }
-
-document {
-     Key => {setNOption, (setNOption, Boolean)},
-     Headline => "sets the -n option",
-     Usage => "setNOption(bool)",
-     Inputs =>{ Boolean => "true=on, false=off"},
-     "This function sets/resets the ", TT "-n", " option. The default is ", TT "false", "=off. Use ", TO nOption, " to obtain the current setting. Note that it does not make sense to turn on more than one of the options ", TT "s,v,n,p,h,d", "." ,
-     EXAMPLE lines ///
-          nOption()  
-          setNOption(true);  -- now it's on
-          nOption()
-          ///,
-     SeeAlso => {nOption}
-     }
-
-document {
-     Key => {nOption},
-     Headline => "setting of the -n option",
-     Usage => "nOption()",
-     Outputs => {Boolean => "true=on, false=off"},
-     "This function returns ", TT "true", " if the ", TT "-n", " option is set, and ", TT "false", " otherwise.",
-     EXAMPLE lines ///
-          nOption() 
-          setNOption(true);  -- now it's on
-          nOption()
-          ///,
-     SeeAlso => {setNOption}
-     }
-
-document {
-     Key => {setPOption, (setPOption, Boolean)},
-     Headline => "sets the -p option",
-     Usage => "setPOption(bool)",
-     Inputs =>{ Boolean => "true=on, false=off"},
-     "This function sets/resets the ", TT "-p", " option. The default is ", TT "false", "=off. Use ", TO pOption, " to obtain the current setting. Note that it does not make sense to turn on more than one of the options ", TT "s,v,n,p,h,d", ".",
-     EXAMPLE lines ///
-          pOption()  
-          setPOption(true);  -- now it's on
-          pOption()
-          ///,
-     SeeAlso => {pOption}
-     }
-
-document {
-     Key => {pOption},
-     Headline => "setting of the -p option",
-     Usage => "pOption()",
-     Outputs => {Boolean => "true=on, false=off"},
-     "This function returns ", TT "true", " if the ", TT "-p", " option is set, and ", TT "false", " otherwise.",
-     EXAMPLE lines ///
-          pOption() 
-          setPOption(true);  -- now it's on
-          pOption()
-          ///,
-     SeeAlso => {setPOption}
-     }
-
-document {
-     Key => {setSOption, (setSOption, Boolean)},
-     Headline => "sets the -s option",
-     Usage => "setSOption(bool)",
-     Inputs =>{ Boolean => "true=on, false=off"},
-     "This function sets/resets the ", TT "-s", " option. The default is ", TT "false", "=off. Use ", TO sOption, " to obtain the current setting. Note that it does not make sense to turn on more than one of the options ", TT "s,v,n,p,h,d", ".",
-     EXAMPLE lines ///
-          sOption()  
-          setSOption(true);  -- now it's on
-          sOption()
-          ///,
-     SeeAlso => {sOption}
-     }
-
-document {
-     Key => {sOption},
-     Headline => "setting of the -s option",
-     Usage => "sOption()",
-     Outputs => {Boolean => "true=on, false=off"},
-     "This function returns ", TT "true", " if the ", TT "-s", " option is set, and ", TT "false", " otherwise.",
-     EXAMPLE lines ///
-          sOption() 
-          setSOption(true);  -- now it's on
-          sOption()
-          ///,
-     SeeAlso => {setSOption}
-     }
-
-document {
-     Key => {setVolOption, (setVolOption, Boolean)},
-     Headline => "sets the -v option",
-     Usage => "setVolOption(bool)",
-     Inputs =>{ Boolean => "true=on, false=off"},
-     "This function sets/resets the ", TT "-v", " option. The default is ", TT "false", "=off. Use ", TO volOption, " to obtain the current setting. Note that it does not make sense to turn on more than one of the options ", TT "s,v,n,p,h,d", ".",
-     EXAMPLE lines ///
-          volOption()  
-          setVolOption(true);  -- now it's on
-          volOption()
-          ///,
-     SeeAlso => {volOption}
-     }
-
- document {
-     Key => {volOption},
-     Headline => "setting of the -v option",
-     Usage => "volOption()",
-     Outputs => {Boolean => "true=on, false=off"},
-     "This function returns ", TT "true", " if the ", TT "-v", " option is set, and ", TT "false", " otherwise." ,
-     EXAMPLE lines ///
-          volOption() 
-          setVolOption(true);  -- now it's on
-          volOption()
-          ///,
-     SeeAlso => {setVolOption}
-     }
-
-document {
-     Key => {setDOption, (setDOption, Boolean)},
-     Headline => "sets the -d option",
-     Usage => "setDOption(bool)",
-     Inputs =>{ Boolean => "true=on, false=off"},
-     "This function sets/resets the ", TT "-d", " option. The default is ", TT "false", "=off. Use ", TO dOption, " to obtain the current setting. Note that it does not make sense to turn on more than one of the options ", TT "s,v,n,p,h,d", ".",
-     EXAMPLE lines ///
-          dOption()  
-          setDOption(true);  -- now it's on
-          dOption()
-          ///,
-     SeeAlso => {dOption}
-     }
-
-document {
-     Key => {dOption},
-     Headline => "setting of the -d option",
-     Usage => "dOption()",
-     Outputs => {Boolean => "true=on, false=off"},
-     "This function returns ", TT "true", " if the ", TT "-d", " option is set, and ", TT "false", " otherwise.",
-     EXAMPLE lines ///
-          dOption() 
-          setDOption(true);  -- now it's on
-          dOption()
-          ///,
-     SeeAlso => {setDOption}
-     }
-
-document {
-     Key => {setIOption, (setIOption, Boolean)},
-     Headline => "sets the -i option",
-     Usage => "setIOption(bool)",
-     Inputs =>{ Boolean => "true=on, false=off"},
-     "This function sets/resets the ", TT "-i", " option. The default is ", TT "false", "=off. Use ", TO iOption, " to obtain the current setting. If this option is set, the setup file is ignored.",
-     EXAMPLE lines ///
-          iOption()  
-          setIOption(true);  -- now it's on
-          iOption()
-          ///,
-     SeeAlso => {iOption}
-     }
-
-document {
-     Key => {iOption},
-     Headline => "setting of the -i option",
-     Usage => "iOption()",
-     Outputs => {Boolean => "true=on, false=off"},
-     "This function returns ", TT "true", " if the ", TT "-i", " option is set, and ", TT "false", " otherwise.",
-     EXAMPLE lines ///
-          iOption() 
-          setIOption(true);  -- now it's on
-          iOption()
-          ///,
-     SeeAlso => {setIOption}
-     }
-
-document {
-     Key => {setAllfOption, (setAllfOption, Boolean)},
-     Headline => "sets the -a option",
-     Usage => "setAllfOption(bool)",
-     Inputs =>{ Boolean => "true=on, false=off"},
-     "This function sets/resets the ", TT "-a", " option. The default is ", TT "false", "=off. Use ", TO allfOption, " to obtain the current setting.",
-     EXAMPLE lines ///
-          allfOption()  
-          setAllfOption(true);  -- now it's on
-          allfOption()
-          ///,
-     SeeAlso => {allfOption}
-     }
-
-document {
-     Key => {allfOption},
-     Headline => "setting of the -a option",
-     Usage => "allfOption()",
-     Outputs => {Boolean => "true=on, false=off"},
-     "This function returns ", TT "true", " if the ", TT "-a", " option is set, and ", TT "false", " otherwise. Note that the ", TT "-a", " option is always set by default by the package. If ", TT "-a", " is set, it overrides the ", TT "-f", ".",
-     EXAMPLE lines ///
-          allfOption() 
-          setAllfOption(true);  -- now it's on
-          allfOption()
-          ///,
-     SeeAlso => {setAllfOption}
+     SeeAlso => setNmzOption
      }
 
 document {
@@ -1417,7 +1152,7 @@ document {
      }
 
 document {
-     Key => {intmat2mons, (intmat2mons, Matrix, Ring)},
+     Key => { intmat2mons, (intmat2mons, Matrix, Ring)},
      Headline => "monomials from a matrix",
      Usage => "intmat2mons(m,R)",
      Inputs => { Matrix => "a matrix, whose rows represent the exponent vectors",
@@ -1428,10 +1163,29 @@ document {
           R=ZZ/37[x,y,t];
           m=matrix({{3,0,0},{2,1,0},{0,3,0},{1,2,7}})
           I=intmat2mons(m,R)
-          J=ideal(x^3, x^2*y, y^3, x*y^2,x*y^2*t^7);
-          I==J
+          n=mons2intmat(I)
+          m==n
      ///,
      SeeAlso => {mons2intmat}
+     }
+
+document {
+     Key => { (intmat2mons, Matrix, Ring,ZZ)},
+     Headline => "monomials from a matrix",
+     Usage => "intmat2mons(m,R,d)",
+     Inputs => { Matrix => "a matrix, whose rows represent the exponent vectors",
+                 Ring => "the ring, whose elements the monomials shall be",
+                 ZZ => "takes only the rows with last entry d"},
+     Outputs => {
+                 Ideal => {"an ideal in ", TT "R", " generated by the monomials in ", TT "R", " whose exponent vectors are given by the rows of ", TT "m", "  whose last entry is ", TT"d","."}},
+    " This functions interprets the rows of the matrix ", TT "m", " as exponent vectors of monomials in ", TT "R", ". It returns the ideal generated by these monomials.",
+     EXAMPLE lines ///
+          R=ZZ/37[x,y,t];
+          m=matrix({{3,0,0},{2,1,0},{0,3,0},{1,2,7}})
+          I=intmat2mons(m,R)
+          J=intmat2mons(m,R,0)
+     ///,
+     SeeAlso => {mons2intmat, intmat2mons}
      }
 
 document {
@@ -1470,6 +1224,7 @@ document {
      Headline => "Ehrhart ring",
      Usage => "ehrhartRing(I)",
      Inputs => {Ideal => "the leading monomials of the elements of the ideal are considered as generators of a lattice polytope"},
+     Outputs => {List => " a list containing one or two ideals"}, 
      "The exponent vectors of the leading monomials of the elements of ", TT "I", " are considered as generators of a lattice polytope. The function returns a list of ideals:", BR{}, BR{}, EM "(i)"," If the last ring variable is not used by the monomials, it is treated as the auxiliary variable of the Ehrhart ring. The function returns two ideals, the first containing the monomials representing the lattice points of the polytope, the second containing the generators of the Ehrhart ring.", BR{},BR{}, EM "(ii)", " If the last ring variable is used by the monomials, the function returns only one ideal, namely the monomials representing the lattice points of the polytope.",
 
      EXAMPLE lines ///
@@ -1486,6 +1241,7 @@ document {
      Headline => "Rees algebra",
      Usage => "intclMonIdeal(I)",
      Inputs => {Ideal => "the leading monomials of the elements of the ideal are considered as generators of a monomial ideal whose Rees algebra is computed"},
+     Outputs => {List => " a list containing one or two ideals"},
      "The exponent vectors of the leading monomials of the elements of ", TT "I"," are considered as generators of a monomial ideal whose Rees algebra is computed. The function returns a list of ideals:", BR{},BR{}, EM "(i)", " If the last ring variable is not used by the monomials, it is treated as the auxiliary variable of the Rees algebra. The function returns two ideals, the first containing the monomials generating the integral closure of the monomial ideal, the second containing the generators of the Rees algebra. ", BR{},BR{},EM "(ii)", " If the last ring variable is used by the monomials, it returns only one ideal, namely the monomials generating the integral closure of the ideal.",
      EXAMPLE lines ///
           R=ZZ/37[x,y,t];
@@ -1496,15 +1252,68 @@ document {
      ///,
      }
 
+document {
+     Key => { torusInvariants, (torusInvariants, Matrix,Ring)},
+     Headline => "ring of invariants",
+     Usage => "torusInvariants(T,R)",
+     Inputs => {
+                Matrix=> {"matrix ", TEX "(a_{ij})", " of the action"},
+                Ring => " the ring on which the action takes place" 
+     },
+     Outputs => {
+                 Ideal => {"the list of monomials generating the ring of invariants ",TEX "R^T"}
+     },
+     {" Let ", TEX "T=(K^*)^r"," be the ", TEX "r","-dimensional torus acting on the polynomial ring ",TEX "R=K[X_1,\\ldots,X_n]"," diagonally. Such an action can be described as follows: there are integers ",TEX "a_{ij}, i=1,\\ldots,r, j=1,\\ldots,n",", such that ",TEX "(\\lambda_1,\\ldots,\\lambda_r)\\in T"," acts by the substitution ",BR{},BR{}, TEX "X_j\\mapsto \\lambda_1^{a_{1j}}*\\ldots*\\lambda_r^{a_{rj}}X_j,", "    ", TEX "j=1,\\ldots,n.", BR{},BR{},"In order to compute the ring of invariants ",TEX "R^T",", one must specify the matrix ", TEX "(a_{ij})."},
+     EXAMPLE lines ///
+          R=QQ[x,y,z,w];
+          T=matrix({{-1,-1,2,0},{1,1,-2,-1}});
+          torusInvariants(T,R)
+     ///,
+     Caveat => {"It is of course possible that ", TEX "R^T=K",". At present, ", TT "Normaliz cannot deal with the zero cone and will issue the (wrong) error message that the cone is not pointed."},
+     SeeAlso => {valRing, valRingIdeal}
+     }
+
+document {
+     Key => { valRing, (valRing,Matrix,Ring)},
+     Headline => "ring of valuations",
+     Usage => "valRing(v,r)",
+     Inputs => {
+                Matrix=> "values of the indeterminates",
+                Ring => " the basering" 
+},
+     Outputs => { 
+                 Ideal => {"the list of monomials generating the subalgebra of elements with valuation ",TEX "\\geq 0"}},
+     {"A discrete monomial valuation ", TEX "v"," on ", TEX "R=K[X_1,\\ldots,X_n]"," is determined by the values ", TEX "v(X_j)"," of the indeterminates. This function computes the subalgebra ", TEX "S=\\{f\\in R: v_i(f)\\geq 0, i=1,\\ldots,n\\}"," for several such valuations ", TEX "v_i, i=1,\\ldots,r",". The function needs the matrix ", TEX "V=(v_i(X_j))"," as its input."},
+     EXAMPLE lines ///
+         R=QQ[x,y,z,w];
+         V0=matrix({{0,1,2,3},{-1,1,2,1}});
+         valRing(V0,R)
+     ///,
+     Caveat => {"It is of course possible that ", TEX "S=K",". At present, ", TT "Normaliz cannot deal with the zero cone and will issue the (wrong) error message that the cone is not pointed."},
+     SeeAlso => {valRingIdeal, torusInvariants}
+     }
+
+document {
+     Key => { valRingIdeal, (valRingIdeal,Matrix,Ring)},
+     Headline => "valuation ideal",
+     Usage => "valRingIdeal(v,r)",
+     Inputs => {
+                Matrix=> {"values of the indeterminates, the last column contains the lower bounds ", TT "w_i"},
+                Ring => " the basering" 
+     },
+     Outputs => {
+                 List => "a list of two ideals"},
+     {"A discrete monomial valuation ", TEX "v"," on ", TEX "R=K[X_1,\\ldots,X_n]"," is determined by the values ", TEX "v(X_j)"," of the indeterminates. The function returns two ideals, both to be considered as lists of monomials. The first is the system of monomial generators of the subalgebra ", TEX "S=\\{f\\in R: v_i(f)\\geq 0, i=1,\\ldots,n\\}"," for several such valuations ", TEX "v_i, i=1,\\ldots,r",", the second the system of generators of the submodule ", TEX "M=\\{f\\in R: v_i(f)\\geq w_i, i=1,\\ldots,n\\}"," for integers ", TEX "w_1,\\ldots,w_r","."},
+     EXAMPLE lines ///
+           R=QQ[x,y,z,w]; 
+           V=matrix({{0,1,2,3,4},{-1,1,2,1,3}});
+           valRingIdeal(V,R)
+     ///,
+     Caveat => {"It is of course possible that ", TEX "S=K",". At present, ", TT "Normaliz cannot deal with the zero cone and will issue the (wrong) error message that the cone is not pointed."},
+     SeeAlso=> {valRing, torusInvariants}
+     }
 
 
 
-
-
-
-
-
-
-
-
+     
 

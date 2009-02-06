@@ -101,7 +101,6 @@ integralClosureHelper = (J, fractions, phi, counter, newVar, indexVar) -> (
      -- track of the number of new variables being added, counter
      -- keeps track of the depth of recursion.
      -- return:  a list consisting of maps and fractions.
-     << "helper" << endl;
      if counter == 0 then return (phi, fractions);
      S := target phi;
      I := ideal presentation target phi;
@@ -109,8 +108,6 @@ integralClosureHelper = (J, fractions, phi, counter, newVar, indexVar) -> (
      J1 := trim(ideal(0_S):J_0); 
      -- need to check if J_0 is really the element we-- want - low degree. 
      if J1 != ideal(0_S) then(
-	  << "found ZD: " << J_0 << " in " << describe ring J_0 << endl;
-	  --error "look at me";
 	  -- If J_0 is a ZD then we split the ring.
 	  -- need to try and clean up ideals as much as possible as we proceed.
 	  (S1, S1Map) := flattenRing(R/trim(substitute(J1, R) + I));
@@ -140,7 +137,6 @@ integralClosureHelper = (J, fractions, phi, counter, newVar, indexVar) -> (
 	       newI := minimalPresentation(newI1);
 	       S = ring newI;
 	       B2 := S/newI;
-	       --error "check out B2"; -- MES
 	       FF :=
 	       substitute(((newI1).cache.minimalPresentationMap).matrix, B2);
 	       F := map(B2,target newPhi, FF);
@@ -153,49 +149,40 @@ integralClosureHelper = (J, fractions, phi, counter, newVar, indexVar) -> (
 
 idealizer = method(Options=>{Variable => global w, Index => 0})
 idealizer (Ideal, Thing) := o -> (J, f) -> (
-     -- J is an ideal in a ring R
-     -- f is a nonzero divisor in J
-     -- computes a ring B2 = Hom(J,J) = (f*J:J)/f
-     -- returns a sequence (F,G,fractions), where
-     --   F : R --> B2 is the natural inclusion
-     --   G : B2 --> frac R, 
-     --   fractions: a list of the images of the new generators under G in frac R.
-     -- optional arguments:
-     --   o.Variable: base name for new variables added
-     --   o.Index: the first subscript to use for such variables
-     << "  idealizer" << endl;
+     -- 2 arguments: An ideal J in the non normal locus of a ring R/I,
+     -- f a non-zero divisor in R/I.
+     -- 2 Options: The new variable in use.  An index *****
+     -- Return: a sequence consisting of a ring map from the ring of J to
+     -- B/I, where B/I is isomorphic to Hom(J,J) = 1/f(f*J:J), and
+     -- list of the fractions that are added to the ring of J to form B/I.   
      R := ring J;
-     I := ideal presentation R;  -- NEED?
+     I := ideal presentation R;
      idJ := mingens(f*J : J);
      if ideal(idJ) == ideal(f) then (
-	  -- in this case Hom(J,J) = R.
-	  (map(R,R), map(frac R,R), {})) 
+	  (map(R,R), {})) -- in this case R is isomorphic to Hom(J,J).
      else(
-	  error "start stepping here";
      	  H := compress (idJ % f);
      	  fractions := apply(first entries H,i->i/f);
      	  Hf := H | matrix{{f}};
      	  -- Make the new polynomial ring.
      	  n := numgens source H;
      	  newdegs := degrees source H - toList(n:degree f);
-
-     	  degs := join(newdegs, (monoid R).Options.Degrees);
+     	  degs = join(newdegs, (monoid R).Options.Degrees);
      	  MO := prepend(GRevLex => n, (monoid R).Options.MonomialOrder);
           kk := coefficientRing R;
-     	  A := kk(monoid [o.Variable_(o.Index)..o.Variable_(o.Index+n-1), gens R,
-		    MonomialOrder=>MO, Degrees => degs]);
+	  --newVars := reverse apply(n, i -> o.Variable_(o.Index+i));
+	  -- o.Variable_(o.Index)..o.Variable_(o.Index+n-1)
+     	  A := (if any(degs, d -> d#0 <= 0) then (
+	       	    kk(monoid [o.Variable_(o.Index)..o.Variable_(o.Index+n-1), gens R,
+			      MonomialOrder=>MO])) -- removed MonomialSize => 16
+	       else(
+	       	    kk(monoid [o.Variable_(o.Index)..o.Variable_(o.Index+n-1), gens R,
+			      MonomialOrder=>MO, Degrees => degs]))-- removed MonomialSize => 16
+	       );	 
      	  IA := ideal ((map(A,ring I,(vars A)_{n..numgens R + n-1})) (generators I));
      	  B := A/IA;
-
-     	  -- A different way:
-	  -- This creates a ring with the variables having the specified degrees,
-	  --  and the old vars have their original degrees, in the same degree monoid.
-	  --  The monomial order used in gb's will be a product order.
-	  --B := R (monoid [o.Variable_(o.Index)..o.Variable_(o.Index+n-1), Degrees=>newdegs, Join=>false]);
-	  --B = (flattenRing B)_0; -- do we need this?
-	  --------------------	  
-     	  varsB := (vars B)_{0..n-1};  -- new vars
-     	  RtoB := map(B, R, (vars B)_{n..numgens R + n - 1}); -- natural inclusion
+     	  varsB := (vars B)_{0..n-1};
+     	  RtoB := map(B, R, (vars B)_{n..numgens R + n - 1});
      	  XX := varsB | matrix{{1_B}};
      	  -- Linear relations in the new variables
      	  lins := XX * RtoB syz Hf; 
@@ -205,9 +192,7 @@ idealizer (Ideal, Thing) := o -> (J, f) -> (
      	  tails = RtoB tails;
      	  quads := matrix(B, entries (symmetricPower(2,varsB) - XX * tails));
      	  B2 := (flattenRing(B/(trim (ideal lins + ideal quads))))_0;
-	  error "in idealizer..."; -- MES
      	  F := map(B2, R, (vars B2)_{n..numgens R + n - 1});
-	  << "  leaving idealizer, fractions = " << fractions << endl;
 	  (F, fractions)
 	  )
      )
@@ -220,7 +205,6 @@ nonNormalLocus Ring := (R) -> (
      -- 1 argument: a ring. it must be flattened. normally it will be
      -- a quotient ring. 
      -- Return: an ideal containing the non-normal locus of R.   
-     << "nonNormalLocus" << endl;
      local J;
      I := ideal presentation R;
      Jac := jacobian R;

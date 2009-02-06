@@ -11,3 +11,8 @@ F = matrix"xy+y2"
 M = matrix"c2y4"
 G = M // F
 assert(F * G == M)
+f = F_(0,0)
+m = M_(0,0)
+g = m // f
+assert(g == G_(0,0)) 
+assert(f * g == m)

@@ -241,7 +241,7 @@ flattenRing PolynomialRing := opts -> (cacheValue (symbol flattenRing => opts)) 
      if instance(resultTemplate,VisibleList) then apply(resultTemplate,x -> if x === null then Thing else x);
      A := coefficientRing R;
      Q := ultimate(ambient,R);
-     J := lift(ideal map(R^1,R^0), Q);
+     J := lift(ideal map(R^1,R^0,0), Q);
      M := monoid R;
      n2 := numgens M;
      if opts.CoefficientRing === A or opts.CoefficientRing === null and (isField A or A.?isBasic)

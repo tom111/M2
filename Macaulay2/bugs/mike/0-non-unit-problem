@@ -1,33 +1,49 @@
 -- -*- M2 -*-
 
--- this is for Mike to fix, verify that it happens
+Part 1
+
+huh???
+
+    i1 : (QQ[x]/x^3)[y]/y^3
+
+	 QQ[x]
+	 -----[y]
+	    3
+	   x
+    o1 = --------
+	     3
+	    y
+
+    o1 : QuotientRing
+
+    i2 : (1+x+y)^-1
+    stdio:2:8:(1):[0]: error: negative power of noninvertible element requested
+
+
+=============================================================================
+
+Part 2, partially, at least, a separate problem:
 
 loadPackage "Schubert2"
 pt = base n
-debuggingMode = true
-errorDepth = 0
-f = (e,n,d,m) -> (
-     V = OO_pt^m+2;
-     F = flagBundle({m-n,n+2},V);
-     (S,Q) = F.Bundles;
-     B = symmetricPower_e Q;
-     P = projectiveBundle dual B;
-     alarm 3;
-     G = symmetricPower_d Q - symmetricPower_(d-e) Q ** OO_P(-1);
-     );
-f(3,1,6,4)
-
-end
-
-Here's what I get:
+(e,n,d,m)=(3,1,6,4)
+V = OO_pt^m+2;
+F = flagBundle({m-n,n+2},V);
+(S,Q) = F.Bundles;
+B = symmetricPower_e Q;
+P = projectiveBundle dual B;
+R = intersectionRing P
+f = ch OO_P(1)
+alarm 3
+f^-1
 
 
-ii7 : f(3,1,6,4)
---error message bumped: a non unit was found in a ring declared to be a field
-../../m2/enginering.m2:357:68:(0):[8]: error: element is not invertible
-../../m2/enginering.m2:357:68:(0):[8]: --entering debugger (type help to see debugger commands)
-../../m2/enginering.m2:357:62-357:69: --source code:
-RingElement ^ ZZ := RingElement => (x,i) -> new ring x from (raw x)^i
+  three problems:
+     the alarm doesn't work
+     the error message doesn't come until we type control-C
+     the element is erroneously called noninvertible
 
-iii8 : 
+  here is the output
 
+    i12 : f^-1
+      C-c C-cstdio:12:2:(1):[0]: error: negative power of noninvertible element requested

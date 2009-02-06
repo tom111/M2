@@ -22,7 +22,7 @@ assert( gens gb ourpoints === matrix {{z^65-13*z^60-23*z^55+30*z^50-21*z^45+5*z^
 
 
 R = QQ[x,MonomialOrder => RevLex, Global => false]
-x^7							    -- monomial overflow
+x^7   -- used to overflow...
 assert( degree oo == {7} )
 
 R = QQ[x,MonomialSize => 8]

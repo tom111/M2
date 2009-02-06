@@ -172,13 +172,8 @@ idealizer (Ideal, Thing) := o -> (J, f) -> (
           kk := coefficientRing R;
 	  --newVars := reverse apply(n, i -> o.Variable_(o.Index+i));
 	  -- o.Variable_(o.Index)..o.Variable_(o.Index+n-1)
-     	  A := (if any(degs, d -> d#0 <= 0) then (
-	       	    kk(monoid [o.Variable_(o.Index)..o.Variable_(o.Index+n-1), gens R,
-			      MonomialOrder=>MO])) -- removed MonomialSize => 16
-	       else(
-	       	    kk(monoid [o.Variable_(o.Index)..o.Variable_(o.Index+n-1), gens R,
-			      MonomialOrder=>MO, Degrees => degs]))-- removed MonomialSize => 16
-	       );	 
+     	  A := kk(monoid [o.Variable_(o.Index)..o.Variable_(o.Index+n-1), gens R,
+		    MonomialOrder=>MO, Degrees => degs]);
      	  IA := ideal ((map(A,ring I,(vars A)_{n..numgens R + n-1})) (generators I));
      	  B := A/IA;
      	  varsB := (vars B)_{0..n-1};
@@ -1011,6 +1006,14 @@ assert(
 	     2*a^2*b^3*d^3*e^2-5*a*b*c^2*d^4*e^2+4*b^3*c^2*d^2*e^3-3*a*d^6*e^3+
 	     5*a^2*b*c*d^2*e^4-b^2*d^4*e^4-2*b*c^3*d*e^5-a^3*b*e^6+3*c*d^3*e^6-a*d*e^8)
 	)
+///
+
+TESTY; ///
+-- from paper by M. van Hoiej (1993).
+S = ZZ/32003[x,y]
+f2 = y^20 + y^13*x + x^4*y^5 + x^3*(x+1)^2
+R = S/f2
+R' = integralClosure R
 ///
 
 -- Test of ICfractions

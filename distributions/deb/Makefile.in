@@ -94,12 +94,12 @@ macaulay2/md5sums            : prepare; (cd tmp        && @FIND@ * -type f | xar
 macaulay2-common/md5sums     : prepare;	(cd tmp-common && @FIND@ * -type f | xargs md5sum) >$@
 ifneq (@LINTIAN@,)
 SUP = fgrep -v 
-check:
-	- @LINTIAN@ -I ../../$(PKG_DEB)
-	- @LINTIAN@ -I ../../$(PKG_COM_DEB)
+check: check1 check2
+check1:; @LINTIAN@ -I ../../$(PKG_DEB)
+check2:; @LINTIAN@ -I ../../$(PKG_COM_DEB)
 else
 check:
-	@echo "install 'lintian' for checking *.deb packages"
+	@echo "'lintian' not installed, cannot check *.deb packages" >&2; false
 endif
 tidy_before:
 	rm -rf .prepared tmp tmp-common

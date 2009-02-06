@@ -238,7 +238,7 @@ code primitive
 code toZZ
 code rotateMatrix
 code isRedundant
-code fourierMotzkin
+code fourierMotzkin'
 code(polarCone,Matrix,Matrix)
 code(polarCone,Matrix)
 H = transpose matrix{

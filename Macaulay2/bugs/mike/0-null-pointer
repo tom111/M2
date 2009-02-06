@@ -1,0 +1,13 @@
+---*- M2 -*-
+
+input "../../../Macaulay2/packages/Macaulay2Doc/test/terms.m2"
+
+end
+
+results in this:
+
+
+    ii5 : terms(ZZ,x)						    -- crashes!
+    M2: /home/dan/src/M2/1.2/BUILD/dan/../../Macaulay2/e/polyring.cpp:1515: ring_elem PolyRing::get_logical_coeff(const Ring*, const Nterm*&) const: Assertion `KR' failed.
+    Aborted
+

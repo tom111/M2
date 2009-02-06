@@ -1,5 +1,5 @@
 ---*- M2 -*-
-input "../../Macaulay2/packages/Macaulay2Doc/test/overflow.m2"
+input "../../../Macaulay2/packages/Macaulay2Doc/test/overflow.m2"
 
 results in this output
 

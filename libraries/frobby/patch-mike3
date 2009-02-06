@@ -1,12 +1,12 @@
-diff -ur --exclude=configure /Users/dan/src/M2/BUILD/dan/builds/mac/libraries/frobby/tmp/frobby_vmike3/Makefile frobby_vmike3/Makefile
---- /Users/dan/src/M2/BUILD/dan/builds/mac/libraries/frobby/tmp/frobby_vmike3/Makefile	2008-12-10 20:04:17.000000000 -0600
-+++ frobby_vmike3/Makefile	2009-01-26 15:54:38.000000000 -0600
+diff -ur --exclude=configure /home/dan/src/M2/1.2/BUILD/dan/builds/ubuntu32.debug/libraries/frobby/tmp/frobby_vmike3/Makefile frobby_vmike3/Makefile
+--- /home/dan/src/M2/1.2/BUILD/dan/builds/ubuntu32.debug/libraries/frobby/tmp/frobby_vmike3/Makefile	2008-12-10 20:04:17.000000000 -0600
++++ frobby_vmike3/Makefile	2009-02-05 22:05:11.000000000 -0600
 @@ -42,11 +42,14 @@
  endif
  
  ifndef ldflags
 -  ldflags = -lgmpxx -lgmp -L/sw/lib
-+  ldflags = $(LDFLAGS) -lgmpxx -lgmp -L/sw/lib
++  ldflags = $(LDFLAGS) -lgmpxx -lgmp
  endif
  
 -cflags = -Wall -ansi -pedantic -Wextra -Wno-uninitialized \
@@ -56,9 +56,9 @@ diff -ur --exclude=configure /Users/dan/src/M2/BUILD/dan/builds/mac/libraries/fr
  -include .depend
  
  clean: tidy
-diff -ur --exclude=configure /Users/dan/src/M2/BUILD/dan/builds/mac/libraries/frobby/tmp/frobby_vmike3/src/hash_map/hash_map frobby_vmike3/src/hash_map/hash_map
---- /Users/dan/src/M2/BUILD/dan/builds/mac/libraries/frobby/tmp/frobby_vmike3/src/hash_map/hash_map	2008-12-10 20:04:17.000000000 -0600
-+++ frobby_vmike3/src/hash_map/hash_map	2009-01-26 11:13:55.000000000 -0600
+diff -ur --exclude=configure /home/dan/src/M2/1.2/BUILD/dan/builds/ubuntu32.debug/libraries/frobby/tmp/frobby_vmike3/src/hash_map/hash_map frobby_vmike3/src/hash_map/hash_map
+--- /home/dan/src/M2/1.2/BUILD/dan/builds/ubuntu32.debug/libraries/frobby/tmp/frobby_vmike3/src/hash_map/hash_map	2008-12-10 20:04:17.000000000 -0600
++++ frobby_vmike3/src/hash_map/hash_map	2009-01-27 15:04:36.000000000 -0600
 @@ -292,10 +292,10 @@
      class hash_multimap
      {

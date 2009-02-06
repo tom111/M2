@@ -96,6 +96,10 @@ endif
 endif
 MKDIR_P = @INSTALL@ -d
 always:
+
+# pari tends to display plots during its tests, and we don't want that:
+export DISPLAY=
+
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR include/config.Makefile"
 # End:

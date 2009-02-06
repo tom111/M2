@@ -160,12 +160,11 @@ Graver22 = graver I22;
 generateAmonos(Graver22);
 #monos
 scan(0..9,i->print toString monos#i) 
-localCoherentEquations = (IA) -> (
+localCoherentEquations = (IA,w) -> (
      -- IA is the toric ideal of A living in a ring equipped
      -- with weight order w, if we are computing the local 
      -- equations about the initial ideal of IA w.r.t. w.
      R := ring IA;
-     w := (monoid R).Options.Weights;
      M := ideal leadTerm IA;
      S := first entries ((gens M) % IA);
      -- Make the universal family J in a new ring.
@@ -189,7 +188,7 @@ IA = toricIdeal A;
 Y = QQ[a..e, MonomialSize => 16,
             Degrees => transpose A, Weights => {9,3,5,0,0}];
 IA = substitute(IA,Y);
-JM = localCoherentEquations(IA)
+JM = localCoherentEquations(IA,{9,3,5,0,0})
 load "minPres.m2";
 G = removeRedundantVariables JM
 ideal gens gb(G JM)
@@ -207,7 +206,7 @@ Y = QQ[a..g, MonomialSize => 16,
            Degrees =>transpose A];
 IA = substitute(IA,Y);
 M = ideal leadTerm IA
-JM = localCoherentEquations(IA)
+JM = localCoherentEquations(IA,{0,0,276,220,0,0,215})
 G = removeRedundantVariables JM;
 toString ideal gens gb(G JM)
 K = ideal(z_32*z_42*z_44-z_37^2,z_32^4*z_35-z_42,

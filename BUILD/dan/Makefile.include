@@ -13,7 +13,7 @@ clean:banner; $(MAKE) -C builds/$(DIRECTORY) $@
 arch-chk:
 everything:banner; $(MAKE) -C builds/$(DIRECTORY) all RemakeAllDocumentation=true RemakePackages=true
 check-links:; $(MAKE) -C builds/$(DIRECTORY)/Macaulay2/html-check-links check
-check:; $(MAKE) -C builds/$(DIRECTORY) -k check big-check
+check:; $(MAKE) -C builds/$(DIRECTORY) -k check
 big-check:; $(MAKE) -C builds/$(DIRECTORY) -k big-check
 configure builds/$(DIRECTORY)/include/configuration:../../configure; mkdir -p builds/$(DIRECTORY) && (D=`pwd`; cd builds/$(DIRECTORY) && $$D/../../configure $(CONFIGOPTIONS))
 default: arch-chk all

@@ -1,6 +1,11 @@
 ---*- M2 -*-
 input "../../../Macaulay2/packages/Macaulay2Doc/test/overflow.m2"
 
+
+FIXED: Weight vectors that are now loner than the # vars 
+silently ignore the extra values. 2/6/09
+
+
 results in this output
 
     Macaulay 2, version 1.1.99

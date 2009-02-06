@@ -1,0 +1,14 @@
+
+i10 : QQ[x,y,MonomialOrder=>RevLex,Global=>false]
+
+o10 = QQ[x, y]
+
+o10 : PolynomialRing
+
+i11 : (1-x^2)/(1-x)
+
+      0
+o11 = -
+      0
+
+o11 : frac(QQ[x, y])

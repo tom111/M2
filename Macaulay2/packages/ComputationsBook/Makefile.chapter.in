@@ -18,10 +18,10 @@ book_patterns := $(chapter_srcdir)/../patterns
 chapter_patterns := $(chapter_srcdir)/patterns
 
 test.out.trim: test.out $(book_patterns) $(chapter_patterns)
-	<$< awk '{print $$0}' | sed -f $(book_patterns) -f $(chapter_patterns) >$@
+	<$< sed -f $(book_patterns) -f $(chapter_patterns) >$@
 
 test.out.expected.trim: test.out.expected $(book_patterns) $(chapter_patterns)
-	<$< awk '{print $$0}' | sed -f $(book_patterns) -f $(chapter_patterns) >$@
+	<$< sed -f $(book_patterns) -f $(chapter_patterns) >$@
 
 test.out: test.m2 always
 	@ set -xe ; \

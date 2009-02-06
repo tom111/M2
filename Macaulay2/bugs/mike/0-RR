@@ -1,0 +1,15 @@
+i1 : --/home/dan/src/M2/1.2/Macaulay2/packages/Macaulay2Doc/functions/clean-doc.m2:55: location of test code
+     
+     R = RR_100[x,y]
+
+o1 = R
+
+o1 : PolynomialRing
+
+i2 : F = x+.01*y^2
+-- SIGSEGV
+-- stack trace:
+level 0 -- return addr: 0x08064d80 -- frame: 0xbfffdd68
+level 1 -- return addr: 0x4001a400 -- frame: 0xbfffdd88
+level 2 -- return addr: 0x081d1662 -- frame: 0xbfffe0a8
+level 3 -- return addr: 0x081d8ca9 -- frame: 0xbfffe0d8

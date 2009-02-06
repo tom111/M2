@@ -464,6 +464,7 @@ runFile := (inf,inputhash,outf,tmpf,desc,pkg,announcechange,rundir,usermode) -> 
 	  removeFile tmpf;
 	  error "subprocess terminated abnormally";
 	  );
+     stderr << "M2: *** [check] Error " << r//256 << endl;
      hadExampleError = true;
      numExampleErrors = numExampleErrors + 1;
      return false;

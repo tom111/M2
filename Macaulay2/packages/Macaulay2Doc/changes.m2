@@ -237,9 +237,9 @@ document {
 			 init files on multiple machines, even though Macaulay 2 may be installed in various different
 			 locations."
 			 },
-		    LI {"A new division algorithm has been implemented in rings with inverses,
-			 where the monomials can involve negative exponents, and hence are not well-ordered.
-			 See ", TO "division in polynomial rings with inverses", "."
+		    LI {"A new division algorithm has been implemented in rings with monomials less than 1,
+			 e.g., where the monomials can involve negative exponents, and hence do not form a well-ordered set.
+			 See ", TO "division in polynomial rings with monomials less than 1", "."
 			 },
 		    LI {"A bug in ", TO "irreducibleCharacteristicSeries", ", upon with ", TO "minimalPrimes", "
 			 depends, was fixed.  Now the new ring supporting the characteristic series will

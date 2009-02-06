@@ -111,7 +111,7 @@ document {
      	       "Thus it is a good idea to assign a new ring to a variable for future reference."
 	       )
        	  },
-     SeeAlso => {"heft vectors", "division in polynomial rings with inverses"}
+     SeeAlso => {"heft vectors", "division in polynomial rings with monomials less than 1"}
      }
 
 document {

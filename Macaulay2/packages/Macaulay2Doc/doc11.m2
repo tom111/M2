@@ -533,7 +533,7 @@ document {
      }
 
 document {
-     Key => "division in polynomial rings with inverses",
+     Key => "division in polynomial rings with monomials less than 1",
      PARA {
 	  "Starting with version 1.2, a new division algorithm has been implemented in 
 	  rings with inverses, where the monomials can involve negative exponents, and hence

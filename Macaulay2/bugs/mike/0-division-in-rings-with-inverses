@@ -1,3 +1,9 @@
+I guess this got fixed by another bug fix....
+
+R = QQ[x,y, Inverses => true, MonomialOrder => Lex]
+quotientRemainder(x^100 - x^89, x^5 - 1)
+quotientRemainder(x^100 - y^89, x^5 - 1)
+
 In this example there is no weight vector, so our new algorithm in rawDivMod
 shouldn't fire at all, but it seems to do one subtraction step, anyway.  Is
 that right?  Should I document it?  (Dan)

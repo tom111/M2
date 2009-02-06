@@ -1,7 +1,8 @@
-Macaulay 2, version 1.1.99
-with packages: Classic, Core, Elimination, IntegralClosure, LLLBases, Parsing, PrimaryDecomposition, SchurRings, SimpleDoc, TangentCone
+R = QQ[n][x,Weights=>{ -1},Global=>false]/(x^6)
+(1+x)^-1
 
-i1 : R = QQ[n][x,Weights=>{ -1},Global=>false]/(x^6)
+end
+R = QQ[n][x,Weights=>{ -1},Global=>false]/(x^6)
 
 o1 = R
 

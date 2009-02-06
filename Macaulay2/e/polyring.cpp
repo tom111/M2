@@ -1048,7 +1048,7 @@ ring_elem PolyRing::remainderAndQuotient(const ring_elem f, const ring_elem g,
     }
   else
     {
-      if (M_->is_group())
+      if (M_->has_monomials_lt_one())
 	{
 	  Nterm *f1 = f;
 	  Nterm *g1 = g;
@@ -1401,6 +1401,14 @@ Nterm * PolyRing::powerseries_division_algorithm(Nterm *f, Nterm *g, Nterm *&quo
   ring_elem a = copy(f);
   Nterm *t = a;
   Nterm *b = g;
+
+  if (!M_->weight_value_exists())
+    {
+      // do NOTHING in this case...
+      quot = 0;
+      return t;
+    }
+
   Nterm divhead;
   Nterm remhead;
   Nterm *divt = &divhead;

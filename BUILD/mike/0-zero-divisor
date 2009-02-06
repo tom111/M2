@@ -1,0 +1,14 @@
+--*- M2 -*-
+
+input "../../Macaulay2/packages/Macaulay2Doc/test/content.m2"
+
+leads to this erroneous output:
+
+    ii36 : 
+	   --status: the next line detects a zero divisor, but it shouldn't
+	   --status: perhaps Mike can fix it
+	   x/(a+1)
+    ../../Macaulay2/packages/Macaulay2Doc/test/content.m2:46:2:(1):[4]: error: a non unit was found in a ring declared to be a field
+    ../../Macaulay2/packages/Macaulay2Doc/test/content.m2:46:2:(1):[4]: --entering debugger (type help to see debugger commands)
+    ../../Macaulay2/packages/Macaulay2Doc/test/content.m2:46:1-46:6: --source code:
+    x/(a+1)

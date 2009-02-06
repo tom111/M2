@@ -47,12 +47,9 @@ I = ideal"2ay+by6-cx2+cxy-2cy2,
 	  4a2-b2y10+bcx2y4-bcxy5+6bcy6-4c2x2+2c2xy-4c2y2"
 R = S/I
 F = matrix"xy+y2"
-use R
 M = matrix"c2y4"
-M // F
-F *  oo - M
-gens gb I
-transpose oo
+G = M // F
+assert(F * G == M)
 
 G =  gb(F, ChangeMatrix=>true)
 getChangeMatrix G

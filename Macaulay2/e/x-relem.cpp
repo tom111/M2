@@ -637,7 +637,8 @@ const RingElementOrNull *IM2_RingElement_power(const RingElement *a,
 					       M2_Integer n)
 {
      try {
-	  return a->power(n);
+       RingElement *z = a->power(n);
+       return error() ? NULL : z;
      }
      catch (exc::engine_error e) {
 	  ERROR(e.what());

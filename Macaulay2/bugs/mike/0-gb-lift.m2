@@ -1,3 +1,5 @@
+FIXED 2/6/09, test gb-matrix-lift.m2 created.
+
 R = QQ[x,y,z]/(2*x*z-1)
 I = ideal y
 M = matrix{{x*y}}

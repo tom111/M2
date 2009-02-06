@@ -307,6 +307,26 @@ M2_arrayint PolyRing::support(const ring_elem a) const
   return result;
 }
 
+int check_coeff_ring(const Ring *coeffR, const PolyRing *P)
+// returns the following:
+//  if coeffR is K_, then n_vars()
+//  if coeffR is a poly ring, then the difference in #vars
+//  otherwise returns -1.
+// If a negative number is returned, then an error is set.
+{
+  int nvars = P->n_vars();
+  if (coeffR != P->getCoefficients())
+    {
+      const PolynomialRing *P0 = coeffR->cast_to_PolynomialRing();
+      if (P0 == 0)
+	nvars = -1;
+      else
+	nvars -= P0->n_vars();
+    }
+  if (nvars < 0) ERROR("expected coefficient ring");
+  return nvars;
+}
+
 bool PolyRing::promote(const Ring *Rf, const ring_elem f, ring_elem &result) const
 {
   // case 1:  Rf = A[x]/J ---> A[x]/I  is one of the 'base_ring's of 'this'.
@@ -1499,6 +1519,10 @@ Nterm * PolyRing::powerseries_division_algorithm(Nterm *f, Nterm *g, Nterm *&quo
 ////////////////////////////////////
 
 ring_elem PolyRing::get_logical_coeff(const Ring *coeffR, const Nterm *&f) const
+// coeffR needs to be either:
+//  (a) the actual coeff ring K_ of this, or
+//  (b) one of the poly rings used to construct this, in the front end.
+// This function DOES NOT check this!
 // Given an Nterm f, return the coeff of its logical monomial, in the
 // polynomial ring coeffR.  f is modified, in that it is replaced by
 // the pointer to the first term of f not used (possibly 0).
@@ -1580,15 +1604,11 @@ int PolyRing::n_logical_terms(int nvars0, const ring_elem f) const
 ArrayPairOrNull PolyRing::list_form(const Ring *coeffR, const ring_elem f) const
 {
   // Either coeffR should be the actual coefficient ring (possible a "toField"ed ring)
-  // or a polynomial ring.  In the latter case, the last set of variables are part of
-  // the coefficients
-  int nvars0 = n_vars();
-  if (coeffR != K_)
-    {
-      const PolynomialRing *coeffR1 = coeffR->cast_to_PolynomialRing();
-      if (coeffR1 != 0)
-	nvars0 -= coeffR1->n_vars();
-    }
+  // or a polynomial ring.  If not, NULL is returned and an error given
+  // In the latter case, the last set of variables are part of
+  // the coefficients.
+  int nvars0 = check_coeff_ring(coeffR, this);
+  if (nvars0 < 0) return 0;
   int n = n_logical_terms(nvars0,f);
   Monomial_array *monoms = GETMEM(Monomial_array *, sizeofarray(monoms,n));
   RingElement_array *coeffs = GETMEM(RingElement_array *, sizeofarray(coeffs,n));
@@ -1666,13 +1686,16 @@ ring_elem PolyRing::make_logical_term(const Ring *coeffR, const ring_elem a, con
   const PolynomialRing *logicalK = coeffR->cast_to_PolynomialRing();
 
   int nvars0 = n_vars();
-  if (K_ == coeffR || logicalK == 0)
+  if (K_ == coeffR)
     {
       int *m = M_->make_one();
       M_->from_expvector(exp0,m);
       return make_flat_term(a,m);
     }
-  
+  if (logicalK == 0)
+    {
+      ERROR("expected actual coefficient ring");
+    }
   nvars0 -= logicalK->n_vars();
 
   Nterm head;
@@ -1764,13 +1787,8 @@ const int * PolyRing::lead_flat_monomial(const ring_elem f) const
 ring_elem PolyRing::get_coeff(const Ring *coeffR, const ring_elem f, const int *vp) const
   // note: vp is a varpower monomial.
 {
-  int nvars0 = n_vars();
-  if (coeffR != K_)
-    {
-      const PolynomialRing *coeffR1 = coeffR->cast_to_PolynomialRing();
-      if (coeffR1 != 0)
-	nvars0 -= coeffR1->n_vars();
-    }
+  int nvars0 = check_coeff_ring(coeffR, this);
+  if (nvars0 < 0) return from_int(0);
 
   int *exp = newarray_atomic(int, nvars0);
   int *exp2 = newarray_atomic(int, n_vars()); // FLAT number of variables

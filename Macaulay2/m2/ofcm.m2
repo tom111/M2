@@ -35,8 +35,8 @@ options GeneralOrderedMonoid := M -> M.Options
 degrees GeneralOrderedMonoid := M -> M.Options.Degrees
 raw GeneralOrderedMonoid := M -> M.RawMonoid
 
-rle = method()
-rle List := x -> apply(runLengthEncode x, y -> if instance(y,Holder) then hold rle y#0 else y)
+rle = method(Dispatch => Thing)
+rle VisibleList := x -> apply(runLengthEncode x, y -> if instance(y,Holder) then hold rle y#0 else y)
 rle Option := x -> x#0 => rle x#1
 rle Thing := identity
 

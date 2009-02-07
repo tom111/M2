@@ -1,10 +1,4 @@
 -- -*- M2-comint -*- {* hash: 1652140317 *}
---warning: both types of layout in use for user-installed packages
---current directory /home/dan/src/M2/1.2/BUILD/dan/builds/ubuntu64/
---prefix  directory /home/dan/src/M2/1.2/BUILD/dan/builds/ubuntu64/StagingArea/
-{(getProperty, List, String)  }
-{(getProperty, String, String)}
---loading configuration for package "gfanInterface" from file /home/dan/.Macaulay2/init-gfanInterface.m2
 
 i1 : R = QQ[symbol x, symbol y, symbol z]
 
@@ -19,7 +13,7 @@ o2 = ideal (x + y, y + z)
 o2 : Ideal of R
 
 i3 : universalGroebnerBasis(I)
-using temporary file /tmp/M2-19200-1
+using temporary file /tmp/M2-25515-1
 
 o3 = {x + y, x - z, y + z}
 

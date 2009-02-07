@@ -1,10 +1,4 @@
 -- -*- M2-comint -*- {* hash: -278167790 *}
---warning: both types of layout in use for user-installed packages
---current directory /home/dan/src/M2/1.2/BUILD/dan/builds/ubuntu64/
---prefix  directory /home/dan/src/M2/1.2/BUILD/dan/builds/ubuntu64/StagingArea/
-{(getProperty, List, String)  }
-{(getProperty, String, String)}
---loading configuration for package "gfanInterface" from file /home/dan/.Macaulay2/init-gfanInterface.m2
 
 i1 : R = QQ[symbol a..symbol f];
 
@@ -15,7 +9,7 @@ o2 = ideal(c*d - b*e + a*f)
 o2 : Ideal of R
 
 i3 : P = groebnerFan(I)
-using temporary file /tmp/M2-19212-1
+using temporary file /tmp/M2-25521-1
 
 o3 = PolymakeObject{...11...}
 

@@ -1,10 +1,4 @@
 -- -*- M2-comint -*- {* hash: -1910464184 *}
---warning: both types of layout in use for user-installed packages
---current directory /home/dan/src/M2/1.2/BUILD/dan/builds/ubuntu64/
---prefix  directory /home/dan/src/M2/1.2/BUILD/dan/builds/ubuntu64/StagingArea/
-{(getProperty, List, String)  }
-{(getProperty, String, String)}
---loading configuration for package "gfanInterface" from file /home/dan/.Macaulay2/init-gfanInterface.m2
 
 i1 : R = QQ[symbol a..symbol f];
 

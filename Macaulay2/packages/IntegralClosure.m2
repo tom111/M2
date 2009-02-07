@@ -101,9 +101,9 @@ integralClosure Ring := Ring => o -> (R) -> (
      -- information at the end.  This also makes it easier to keep
      -- track of ring flattenings and the recursion. 
      (S,phi) := flattenRing R;
-     G := map(frac R, frac S, substitute(phi vars S, frac R));
+     G := map(frac R, frac S, substitute(phi^-1 vars S, frac R));
      (newPhi,newG) := mikeIntegralClosureHelper(nonNormalLocus S, phi, G, o.Limit, o.Variable, 0);
-     R.icFractions = newG vars source newG;
+     R.icFractions = newG.matrix;
      R.icMap = newPhi;
      target newPhi
      )
@@ -111,7 +111,7 @@ integralClosure Ring := Ring => o -> (R) -> (
 findSmallGen = (J) -> (
      a := toList((numgens ring J):1);
      L := sort apply(J_*, f -> ((weightRange(a,f))_1, size f, f));
-     << "first choices are " << netList take(L,3) << endl;
+     --<< "first choices are " << netList take(L,3) << endl;
      L#0#2
      )
 
@@ -202,26 +202,25 @@ mikeIntegralClosureHelper = (J, phi, G, counter, newVar, indexVar) -> (
      --    (phi', G')
      --   Otherwise:
      --     Good question!
-     << "entering helper: " << phi << endl;
-     --error "look at me";
      if counter == 0 then return (phi, G);
      S := target phi;
      J0 := findSmallGen J;
      J1 := trim(ideal(0_S):J0); 
      if J1 != 0 then error "ring is not a domain";
-
-     -- If J0 is a NZD then we continue setting f = J0.
-     -- Compute Hom_S(J,J).
+     -- Compute Hom_S(J,J), using J0 as the common denominator.
      (newPhi, newG, fracs) := idealizer(J, J0, Variable => newVar, Index => indexVar);
-       -- newPhi : S --> T
-       -- G : T --> frac S
-       -- so: return (phi * newPhi, H)
-       -- where H : frac T --> frac R, is the composite G * newG
      T := target newPhi;
-     if T === S then return (newPhi*phi, G * newG);
-     -- what is the following n?
-     n := numgens T - numgens S; -- is this OK?  MES
-     mikeIntegralClosureHelper(radical (newPhi J), newPhi*phi, G * newG, counter-1, newVar, indexVar+n)
+     n := numgens T - numgens S;
+     if T === S then return (phi, G);
+     phi = newPhi*phi; -- phi : R --> T
+     G = G*newG; -- G : frac T --> frac R.     
+     -- Otherwise, let's clean up T, and modify the maps phi, G.
+     -- we get a ring U isom to T, with T --> U, U --> T.
+     U1 := minimalPresentation T;
+     i1 := T.minimalPresentationMap; -- T --> U1
+     i2 := T.minimalPresentationMapInv; -- U1 --> T
+     gt := map(frac T, frac U1, substitute(i2.matrix,frac T));
+     mikeIntegralClosureHelper(radical((i1*newPhi) J), i1*phi, G*gt, counter-1, newVar, indexVar+n)
      )
 
 idealizer = method(Options=>{Variable => global w, Index => 0})
@@ -363,7 +362,8 @@ icMap(Ring) := RingMap => R -> (
      -- Note:  This is a map where the target is finitely generated as
      -- a module over the source, so it can be used as the input to
      -- conductor and other methods that require this. 
-     if isNormal R then map(R,R) 
+     if R.?icMap then R.icMap
+     else if isNormal R then map(R,R) 
      else (S := integralClosure R;
 	  R.icMap)
      )
@@ -389,7 +389,8 @@ Y_1, Y_2, Y_3, Y_4, x, y}}, frac T))
 --------------------------------------------------------------------
 icFractions = method()
 icFractions(Ring) := Matrix => (R) -> (
-     if isNormal R then vars R
+     if R.?icFractions then R.icFractions
+     else if isNormal R then vars R
      else (
 	  if not R.?icFractions then integralClosure R;
      	  R.icFractions	  
@@ -531,7 +532,7 @@ document {
 	  },
      PARA{},
      "This function computes the jacobian of the ring which can be costly for 
-     larger rings.  Therefore it checks the less coslty S2 condition first and if 
+     larger rings.  Therefore it checks the less costly S2 condition first and if 
      true, then tests the R1 condition using the jacobian of ", TT "R", "."
      }	 
 
@@ -1006,7 +1007,7 @@ answer = ideal(b_1*x^2-y*z, x^6-b_1*y+x^3*z, -b_1^2+x^4*z+x*z^2)
 assert(ideal J == answer)
 use R
 assert(conductor(R.icMap) == ideal(x^2,y))
--- assert(icFractions R == substitute(matrix {{y*z/x^2, x, y, z}},frac R))
+assert(icFractions R == substitute(matrix {{y*z/x^2, x, y, z}},frac R))
 ///
 
 -- multigraded test
@@ -1101,12 +1102,12 @@ R' = integralClosure R
 
 -- Test of ICfractions
 --TEST 
---///
---S = QQ [(symbol Y)_1, (symbol Y)_2, (symbol Y)_3, (symbol Y)_4, symbol x, symbol y, Degrees => {{7, 1}, {5, 1}, {6, 1}, {6, 1}, {1, 0}, {1, 0}}, MonomialOrder => ProductOrder {4, 2}]
---J = ideal(Y_3*y-Y_2*x^2,Y_3*x-Y_4*y,Y_1*x^3-Y_2*y^5,Y_3^2-Y_2*Y_4*x,Y_1*Y_4-Y_2^2*y^3)
---T = S/J       
---assert(ICfractions T == substitute(matrix {{(Y_2*y^2)/x, (Y_1*x)/y, Y_1, Y_2, Y_3, Y_4, x, y}}, frac T))
---///
+///
+S = QQ [(symbol Y)_1, (symbol Y)_2, (symbol Y)_3, (symbol Y)_4, symbol x, symbol y, Degrees => {{7, 1}, {5, 1}, {6, 1}, {6, 1}, {1, 0}, {1, 0}}, MonomialOrder => ProductOrder {4, 2}]
+J = ideal(Y_3*y-Y_2*x^2,Y_3*x-Y_4*y,Y_1*x^3-Y_2*y^5,Y_3^2-Y_2*Y_4*x,Y_1*Y_4-Y_2^2*y^3)
+T = S/J       
+assert(icFractions T == substitute(matrix {{(Y_2*y^2)/x, (Y_1*x)/y, Y_1, Y_2, Y_3, Y_4, x, y}}, frac T))
+///
 
 -- Test of isNormal
 TEST ///
@@ -1121,13 +1122,9 @@ R = QQ[x,y,z]/ideal(x^6-z^6-y^2*z^4)
 J = integralClosure(R);
 F = R.icMap
 assert(conductor F == ideal((R_2)^3, (R_0)*(R_2)^2, (R_0)^3*(R_2), (R_0)^4))
----///
+///
 
-end 
-
----- Homogeneous Ex
-loadPackage"IntegralClosure"
-loadPackage"ParameterSchemes"
+TEST ///
 R = ZZ/101[x,y, z]
 I1 = ideal(x,y-z)
 I2 = ideal(x-3*z, y-5*z)
@@ -1140,6 +1137,13 @@ S = R/f
 V = integralClosure(S)
 ring(presentation V)
 
+///
+
+end 
+
+---- Homogeneous Ex
+loadPackage"IntegralClosure"
+loadPackage"ParameterSchemes"
 installPackage "IntegralClosure"
 
 -- Tests that Mike has added:
@@ -1187,13 +1191,6 @@ A = R/F
 JF = trim(ideal F + ideal jacobian matrix{{F}})
 codim JF
 radJF = radical(JF, Strategy=>Unmixed)
--- OK, radical JF doesn't work right now, so do this instead:
-jf1 = radical trim eliminate({x},JF)
-jf2 = radical trim eliminate({y},JF)
-jf3 = radical trim eliminate({z},JF)
-jf = trim(JF + jf1 + jf2 + jf3)
-NNL = trim radical jf
-radJF == NNL
 NNL = radJF
 NNL = substitute(NNL,A)
 (phi,fracs) = idealizer(NNL,NNL_0)

@@ -1,0 +1,4 @@
+In many places in the engine a routine is called, it returns an illegitimate
+value, and the caller interprets it as a particular type of error and returns
+an error message of its own, even if the reason for returning was due to an
+interrupt.  All the code should be audited.

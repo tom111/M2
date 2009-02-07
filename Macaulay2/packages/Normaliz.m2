@@ -15,7 +15,7 @@ export{setNmzExecPath, getNmzExecPath,
        setNmzDataPath, getNmzDataPath,
        setNmzFile,
        writeNmzPaths, 
-       startNmz, 
+       startNmz, getKeyword,
        rmNmzFiles,
        writeNmzData, readNmzData,
        getNumInvs, showNumInvs, exportNumInvs,
@@ -265,7 +265,7 @@ getNumber String :=s->
 -- if s contains no whitespace, the returned position is not in the string!
 getKeyword=(s,j)->
 (
-   l:=regex("[[:alnum:],-,_]+",j,s);
+   l:=regex("[[:alnum:]_-]+",j,s);
    if( instance(l,Nothing)) then error("getKeyword: no word found in the string."); 
    if(l#0#0!=j) then << "warning: getKeyword: no word at the beginning of the string.";
    return(replace("_"," ",substring(l#0,s)),l#0#0+l#0#1); 
@@ -1316,4 +1316,5 @@ document {
 
 
      
+
 

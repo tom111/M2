@@ -1,5 +1,4 @@
---status: this runs quickly out of memory on 32 bit machines but not on 64 bit machines
---status: perhaps Mike could look at it eventually
+--this has, in the past, run quickly out of memory on 32 bit machines but not on 64 bit machines
 d = 16
 k = QQ
 m = 3

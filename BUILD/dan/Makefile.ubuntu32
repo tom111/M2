@@ -2,6 +2,7 @@
 # BUILDOPTIONS += RemakeAllDocumentation=true
 # BUILDOPTIONS += RemakePackages=true
 # BUILDOPTIONS += RerunExamples=true
+## RerunExamples=true RemakePackages=true RemakeAllDocumentation=true
 # BUILDOPTIONS += IgnoreExampleErrors=true
 # BUILDOPTIONS += PACKAGES="Polyhedra"
 # BUILDOPTIONS += PACKAGES="Macaulay2Doc"

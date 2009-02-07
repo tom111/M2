@@ -1705,6 +1705,7 @@ ring_elem PolyRing::make_logical_term(const Ring *coeffR, const ring_elem a, con
   if (logicalK == 0)
     {
       ERROR("expected actual coefficient ring");
+      return from_int(0);
     }
   nvars0 -= logicalK->n_vars();
 

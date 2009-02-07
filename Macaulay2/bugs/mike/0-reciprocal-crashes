@@ -1,3 +1,5 @@
+FIXED.  An error is now generated.
+
 R = QQ[n][x,Weights=>{ -1},Global=>false]/(x^6)
 (1+x)^-1
 

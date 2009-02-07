@@ -7,7 +7,7 @@ i2 : I = ideal(a+b,b+c);
 o2 : Ideal of R
 
 i3 : gfan(I)
-using temporary file /tmp/M2-25526-1
+using temporary file /tmp/M2-83087-1
 
 o3 = ({{b, a}, {c, a}, {c, b}}, {{b + c, a - c}, {b + c, a + b}, {- a + c, a
      ------------------------------------------------------------------------
@@ -16,7 +16,7 @@ o3 = ({{b, a}, {c, a}, {c, b}}, {{b + c, a - c}, {b + c, a + b}, {- a + c, a
 o3 : Sequence
 
 i4 : gfan(I, Symmetries => {(c,b,a)})
-using temporary file /tmp/M2-25526-2
+using temporary file /tmp/M2-83087-2
 
 o4 = ({{b, a}, {c, a}}, {{b + c, a - c}, {b + c, a + b}})
 
@@ -35,12 +35,12 @@ o6 = ideal (a + b + c + d, a*b + b*c + a*d + c*d, a*b*c + a*b*d + a*c*d +
 o6 : Ideal of R
 
 i7 : #universalGroebnerBasis(I)
-using temporary file /tmp/M2-25526-3
+using temporary file /tmp/M2-83087-3
 
 o7 = 75
 
 i8 : #universalGroebnerBasis(I, Symmetries => {(b,c,d,a,e)})
-using temporary file /tmp/M2-25526-4
+using temporary file /tmp/M2-83087-4
 
 o8 = 27
 

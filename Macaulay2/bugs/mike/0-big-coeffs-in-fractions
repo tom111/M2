@@ -1,3 +1,17 @@
+
+R = frac(QQ[x]/(x^5-2)[y])
+F = (x/(y-2) + 1 + x*y)
+G = F^2*F
+
+f = numerator F^3
+g = denominator F^3
+f/g
+f^3
+g^3
+(f^3) // (g^3)
+S = frac(QQ[x,y]/(x^5-2))
+syz matrix{{denominator G, numerator G}}
+
 i16 : use frac(QQ[x]/(x^5-2)[y])
 
           //QQ [x]\   \

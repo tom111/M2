@@ -9,7 +9,7 @@ o2 = ideal(c*d - b*e + a*f)
 o2 : Ideal of R
 
 i3 : P = groebnerFan(I)
-using temporary file /tmp/M2-25521-1
+using temporary file /tmp/M2-83082-1
 
 o3 = PolymakeObject{...11...}
 

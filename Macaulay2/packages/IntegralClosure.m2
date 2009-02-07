@@ -92,7 +92,7 @@ integralClosure Ring := Ring => o -> (R) -> (
 findSmallGen = (J) -> (
      a := toList((numgens ring J):1);
      L := sort apply(J_*, f -> ((weightRange(a,f))_1, size f, f));
-     << "choices are " << netList L << endl;
+     << "first choices are " << netList take(L,3) << endl;
      L#0#2
      )
 
@@ -1251,12 +1251,20 @@ ideal V == ideal(a_5*a_9-a_6*a_10,a_4*a_8-a_0*a_9,a_1*a_4-a_6*a_10,a_0*a_4-a_1*a
 ///
 restart
 loadPackage"IntegralClosure"
-R=ZZ/2[x,y,Weights=>{{8,9},{0,1}}]
+S=ZZ/2[x,y,Weights=>{{8,9},{0,1}}]
 I=ideal(y^8+y^2*x^3+x^9) -- eliminates x and y at some point. 
-R=ZZ/2[x,y,Weights=>{{31,12},{0,1}}]
+R = S/I
+R' = integralClosure R
+ideal R'
+icFractions R
+
+S=ZZ/2[x,y,Weights=>{{31,12},{0,1}}]
 I=ideal"y12+y11+y10x2+y8x9+x31" -- really long
-S=integralClosure(R/I)
-transpose gens ideal S
+R = S/I
+R' = integralClosure R
+ideal R'
+icFractions R
+
 
 M = flattenRing (R/I)
 J = nonNormalLocus M_0

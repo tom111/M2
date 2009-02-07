@@ -43,8 +43,8 @@ o6 = ideal (b*c - a*d, c  - b*d , a*c  - b d, b  - a c)
 o6 : Ideal of R
 
 i7 : time (inLs,Ls) = gfan I
-using temporary file /tmp/M2-25805-1
-     -- used 0.004001 seconds
+using temporary file /tmp/M2-83125-1
+     -- used 0.002355 seconds
 
            2          2   2      3          2   2      3          2   2  
 o7 = ({{b*d , a*d, a*c , a c}, {c , a*d, a*c , a c}, {c , b*c, a*c , a c,

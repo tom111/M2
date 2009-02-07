@@ -121,12 +121,12 @@ Monoid::Monoid(MonomialOrdering *mo,
       case MO_LEX:
       case MO_LEX2:
       case MO_LEX4:
-      case MO_REVLEX:
-      case MO_LAURENT:
-      case MO_LAURENT_REVLEX:
       case MO_NC_LEX: 
 	get_out = true;
 	break;
+      case MO_REVLEX:
+      case MO_LAURENT:
+      case MO_LAURENT_REVLEX:
       case MO_GREVLEX:
       case MO_GREVLEX2:
       case MO_GREVLEX4:

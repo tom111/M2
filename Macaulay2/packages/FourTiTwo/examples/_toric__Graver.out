@@ -21,8 +21,8 @@ For details, see the file COPYING.
 Final basis has 1 inhomogeneous, 10 homogeneous and 0 free elements.
 Writing 5 vectors to graver file, with respect to symmetry.
 
-4ti2 Total Time: 0.00 secs
-using temporary file name /tmp/M2-24522-3
+4ti2 Total Time: 0.01 secs
+using temporary file name /tmp/M2-82936-1
 
 o2 = | 1 -2 1  0 |
      | 2 -3 0  1 |
@@ -52,8 +52,8 @@ For details, see the file COPYING.
 Final basis has 1 inhomogeneous, 10 homogeneous and 0 free elements.
 Writing 5 vectors to graver file, with respect to symmetry.
 
-4ti2 Total Time: 0.00 secs
-using temporary file name /tmp/M2-24522-4
+4ti2 Total Time: 0.01 secs
+using temporary file name /tmp/M2-82936-2
 
                2           3    2                   2           3      2
 o4 = ideal (- b  + a*c, - b  + a d, - b*c + a*d, - c  + b*d, - c  + a*d )

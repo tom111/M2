@@ -415,6 +415,7 @@ AC_SUBST(PACKAGES, dnl oldest first:
   Polymake
   gfanInterface
   PieriMaps
+  Normaliz
 ")
 
 # convert the newlines in the list above to spaces

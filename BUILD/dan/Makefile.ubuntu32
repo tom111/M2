@@ -9,7 +9,6 @@
 # BUILDOPTIONS += -s
 # INSTALLOPTIONS += -s
 # CONFIGOPTIONS += --enable-tarfile
-CONFIGOPTIONS += --enable-common-staging-area
 
 # i386 must be architecture for debian based systems
 # we should automate this deeper

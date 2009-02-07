@@ -11,8 +11,6 @@ CONFIGOPTIONS += --build=i486-pc-linux-gnu
 # I want gmp 4.2.1 instead of 4.1.2 because the random number generator has changed:
 CONFIGOPTIONS += --enable-build-libraries=gmp
 
-CONFIGOPTIONS += --enable-common-staging-area
-
 DEBUG =
 unexport DEBUG
 ifeq ($(DEBUG),yes)

@@ -1,11 +1,12 @@
 newPackage(
            "Normaliz",
            Version=>"0.1",
-           Date=>"January 20, 2009",
+           Date=>"February 7, 2009",
            Authors=>{{Name=> "G. Kaempf",
                     Email=>"gkaempf@mathematik.uni-osnabrueck.de"}},
            Headline=>"a package to use Normaliz in Macaulay 2",
 	   AuxiliaryFiles => true,
+	   CacheExampleOutput => true,
            DebuggingMode => false
            )
 

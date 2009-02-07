@@ -166,8 +166,12 @@ ring_elem PolyRingQuotient::invert(const ring_elem f) const
       return u1->get_value();
       
     }
-  else
+  else if (M_->getNonTermOrderVariables()->len ==  0)
     return ann(from_int(1),f);
+  else {
+    // An error message is generated higher up
+    return from_int(0);
+  }
 }
 
 ring_elem PolyRingQuotient::divide(const ring_elem f, const ring_elem g) const

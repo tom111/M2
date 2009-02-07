@@ -345,12 +345,15 @@ bool PolyRing::promote(const Ring *Rf, const ring_elem f, ring_elem &result) con
       const PolynomialRing *Rf1 = Rf->cast_to_PolynomialRing();
       if (Rf1 != 0)
 	nvars0 -= Rf1->n_vars();
+      else
+	return false;
       if (Rf1 && nvars0 == 0)
 	{
 	  result = copy(f);
 	  return true;
 	}
     }
+
   int *exp = newarray_atomic_clear(int,nvars0);
   result = make_logical_term(Rf,f,exp);
   return true;
@@ -363,16 +366,23 @@ bool PolyRing::lift(const Ring *Rg, const ring_elem f, ring_elem &result) const
 
   // We assume that Rg is one of the coefficient rings of 'this'
 
-  const PolynomialRing *Rg1 = Rg->cast_to_PolynomialRing();
   Nterm *t = f;
   if (t == 0)
     {
       result = Rg->zero();
       return true;
     }
+
   int nvars0 = n_vars();
-  if (Rg1 != 0 && Rg1 != K_)
-    nvars0 -= Rg1->n_vars();
+  if (Rg != K_)
+    {
+      const PolynomialRing *Rg1 = Rg->cast_to_PolynomialRing();
+      if (Rg1 != 0)
+	nvars0 -= Rg1->n_vars();
+      else
+	return false;
+    }
+
   int *exp = newarray_atomic(int,nvars0);
   lead_logical_exponents(nvars0,f,exp);
   if (!ntuple::is_one(nvars0,exp))

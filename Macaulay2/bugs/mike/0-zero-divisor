@@ -1,5 +1,7 @@
 --*- M2 -*-
 
+FIXED, in the sense that fraction fields over fraction fields are now delcared: not implemented.
+
 input "../../../Macaulay2/packages/Macaulay2Doc/test/content.m2"
 
 leads to this erroneous output:

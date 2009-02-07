@@ -1,3 +1,5 @@
+Sort of fixed: now delcared "not implemented" 2/6/09
+
 
 i1 : kk = frac(ZZ[a,b])
 

@@ -236,6 +236,11 @@ const RingOrNull *IM2_Ring_frac(const Ring *R)
 	      ERROR("cannot make fraction field over approximate field base");
 	      return 0;
 	    }
+	  if (P->getCoefficients()->cast_to_FractionField() != 0)
+	    {
+	      ERROR("fraction fields over other fraction fields not yet implemented");
+	      return 0;
+	    }
 	  return FractionField::create(P);
      }
      catch (exc::engine_error e) {

@@ -89,6 +89,12 @@ integralClosure Ring := Ring => o -> (R) -> (
 	  )
      )
     
+findSmallGen = (J) -> (
+     a := toList((numgens ring J):1);
+     L := sort apply(J_*, f -> ((weightRange(a,f))_1, size f, f));
+     << "choices are " << netList L << endl;
+     L#0#2
+     )
 
 integralClosureHelper = (J, fractions, phi, counter, newVar, indexVar) -> (
      -- recursive helper function designed to build the integral
@@ -126,17 +132,20 @@ integralClosureHelper = (J, fractions, phi, counter, newVar, indexVar) -> (
 	  -- If J_0 is a NZD then we continue setting f = J_0.
 	  -- Compute Hom_R(J,J), with R = S/I.
 	  -- From now on, we work in this quotient:
-	  (newPhi, fracs) := idealizer(J, J_0, Variable => newVar, Index => indexVar);  
+	  J0 := findSmallGen J;
+	  (newPhi, G, fracs) := idealizer(J, J0, Variable => newVar, Index => indexVar);  
      	  --error "check targ";
 	  targ := target newPhi;
 	  if targ === S then (
 	       return {newPhi*phi, join(fracs,fractions)})
 	  else (
+
 	       newI1 := trim ideal presentation targ;
 	       newJ1 := newPhi J;
 	       newI := minimalPresentation(newI1);
 	       S = ring newI;
 	       B2 := S/newI;
+
 	       FF :=
 	       substitute(((newI1).cache.minimalPresentationMap).matrix, B2);
 	       F := map(B2,target newPhi, FF);
@@ -148,22 +157,27 @@ integralClosureHelper = (J, fractions, phi, counter, newVar, indexVar) -> (
 
 
 idealizer = method(Options=>{Variable => global w, Index => 0})
-idealizer (Ideal, Thing) := o -> (J, f) -> (
-     -- 2 arguments: An ideal J in the non normal locus of a ring R/I,
-     -- f a non-zero divisor in R/I.
-     -- 2 Options: The new variable in use.  An index *****
-     -- Return: a sequence consisting of a ring map from the ring of J to
-     -- B/I, where B/I is isomorphic to Hom(J,J) = 1/f(f*J:J), and
-     -- list of the fractions that are added to the ring of J to form B/I.   
+idealizer (Ideal, RingElement) := o -> (J, f) -> (
+     -- J is an ideal in a ring R
+     -- f is a nonzero divisor in J
+     -- computes a ring B2 = Hom(J,J) = (f*J:J)/f
+     -- returns a sequence (F,G,fractions), where [FOR NOW: doesn't return G!]
+     --   F : R --> B2 is the natural inclusion
+     --   G : B2 --> frac R, 
+     --   fractions: a list of the images of the new generators under G in frac R.
+     -- optional arguments:
+     --   o.Variable: base name for new variables added
+     --   o.Index: the first subscript to use for such variables
      R := ring J;
      I := ideal presentation R;
      idJ := mingens(f*J : J);
      if ideal(idJ) == ideal(f) then (
-	  (map(R,R), {})) -- in this case R is isomorphic to Hom(J,J).
+	  (id_R, map(frac R, R, vars frac R), {})) -- in this case R is isomorphic to Hom(J,J).
      else(
      	  H := compress (idJ % f);
      	  fractions := apply(first entries H,i->i/f);
      	  Hf := H | matrix{{f}};
+
      	  -- Make the new polynomial ring.
      	  n := numgens source H;
      	  newdegs := degrees source H - toList(n:degree f);
@@ -178,6 +192,7 @@ idealizer (Ideal, Thing) := o -> (J, f) -> (
      	  B := A/IA;
      	  varsB := (vars B)_{0..n-1};
      	  RtoB := map(B, R, (vars B)_{n..numgens R + n - 1});
+
      	  XX := varsB | matrix{{1_B}};
      	  -- Linear relations in the new variables
      	  lins := XX * RtoB syz Hf; 
@@ -188,7 +203,8 @@ idealizer (Ideal, Thing) := o -> (J, f) -> (
      	  quads := matrix(B, entries (symmetricPower(2,varsB) - XX * tails));
      	  B2 := (flattenRing(B/(trim (ideal lins + ideal quads))))_0;
      	  F := map(B2, R, (vars B2)_{n..numgens R + n - 1});
-	  (F, fractions)
+	  G := map(frac R, B2, matrix{fractions} | vars frac R);
+	  (F, G, fractions)
 	  )
      )
 
@@ -550,11 +566,11 @@ document {
      }
 
 document {
-     Key => {idealizer, (idealizer, Ideal, Thing)},
+     Key => {idealizer, (idealizer, Ideal, RingElement)},
      Headline => "Compute Hom(I,I) as quotient ring",
      Usage => "idealizer(I, f)",
      Inputs => {"I" => {ofClass Ideal},
-	  "f" => {{ofClass Thing}, " that is a non-zero divisor in the
+	  "f" => {{ofClass RingElement}, " that is a non-zero divisor in the
 	  ring of ", TT "I"},
 	  Variable => {" an unassigned symbol"},
 	  Index => {" an integer"}},
@@ -918,12 +934,11 @@ TEST ///
 R = ZZ/101[symbol x..symbol z,Degrees=>{2,5,6}]/(z*y^2-x^5*z-x^8)
 time J = integralClosure (R,Variable => symbol b) 
 use ring ideal J
-oldIdeal = ideal(b_1*x^2-y*z, x^6-b_1*y+x^3*z, -b_1^2+x^4*z+x*z^2)
-newIdeal = substitute(oldIdeal, b_1 => b_1/42 )
-assert(ideal J == newIdeal)
+answer = ideal(b_1*x^2-y*z, x^6-b_1*y+x^3*z, -b_1^2+x^4*z+x*z^2)
+assert(ideal J == answer)
 use R
 assert(conductor(R.icMap) == ideal(x^2,y))
--- assert(ICfractions R == substitute(matrix {{y*z/x^2, x, y, z}},frac R))
+ assert(ICfractions R == substitute(matrix {{y*z/x^2, x, y, z}},frac R))
 --assert(ICfractions R == substitute(matrix {{42 * y*z/x^2, x, y, z}},frac R))
 ///
 
@@ -940,6 +955,7 @@ TEST ///
 R = ZZ/101[symbol x..symbol z,Degrees=>{{4,2},{10,5},{12,6}}]/(z*y^2-x^5*z-x^8)
 time J = integralClosure (R,Variable=>symbol a) 
 use ring ideal J
+-- this one is not correct:  I think ours is correct
 assert(ideal J == ideal(a_1*y-42*x^6-42*x^3*z,a_1^2-47*x^4*z-47*x*z^2,-12*a_1*x^2-z*y,-12*a_1*x*y-x^7-x^4
       *z,43*a_1^2*x^2-x^6*z-x^3*z^2,-x^8-x^5*z+z*y^2))
 use R
@@ -1009,7 +1025,7 @@ assert(
 ///
 
 TESTY; ///
--- from paper by M. van Hoiej (1993).
+-- from paper by M. van Hoiej (1993). -- this one is too big for now...
 S = ZZ/32003[x,y]
 f2 = y^20 + y^13*x + x^4*y^5 + x^3*(x+1)^2
 R = S/f2

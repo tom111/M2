@@ -23,7 +23,7 @@ ARGS := --silent -q --stop --no-loaddata --no-setup -e 'srcdir = "@srcdir@/"'
 
 %.okay : %.m2
 	@ echo testing $<
-	@ ulimit -t 20 2>/dev/null; env @pre_exec_prefix@/bin/M2@EXE@ $(ARGS) $< -e 'exit 0'
+	@ ulimit -s 8192 -v 200000 ; ulimit -t 20 2>/dev/null; env @pre_exec_prefix@/bin/M2@EXE@ $(ARGS) $< -e 'exit 0'
 	@ touch $@
 
 clean::	; rm -f *.okay

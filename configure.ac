@@ -627,10 +627,11 @@ fi
 AC_SUBST(ULIMIT_T,yes)
 AC_SUBST(ULIMIT_M,yes)
 AC_SUBST(ULIMIT_V,yes)
+AC_SUBST(ULIMIT_S,yes)
 ( ulimit -t 2000 2>/dev/null) || ULIMIT_T=no
 ( ulimit -m 2000 2>/dev/null) || ULIMIT_M=no
 ( ulimit -v 2000 2>/dev/null) || ULIMIT_V=no
-
+( ulimit -s 2000 2>/dev/null) || ULIMIT_S=no
 
 if test $BUILD_gmp = yes
 then BUILD_mpfr=yes

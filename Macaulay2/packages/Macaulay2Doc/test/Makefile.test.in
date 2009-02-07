@@ -13,6 +13,8 @@ TLIMIT ?= 60
 MLIMIT ?= 300000
 VLIMIT ?= 300000
 endif
+# make the stack limit always the same as it would be under MacOS
+SLIMIT ?= 8192
 
 LIMIT :=
 ifeq (@ULIMIT_T@,yes)
@@ -23,6 +25,9 @@ LIMIT += ulimit -m $(MLIMIT) ;
 endif
 ifeq (@ULIMIT_V@,yes)
 LIMIT += ulimit -v $(VLIMIT) ;
+endif
+ifeq (@ULIMIT_S@,yes)
+LIMIT += ulimit -s $(SLIMIT) ;
 endif
 
 TESTFILES := $(wildcard $(SRCDIR)/*.m2)

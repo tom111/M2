@@ -1,2 +1,2 @@
-stat:; svn stat
-update:; svn ci -m 'update/add bug/feature reports'
+stat:; svn stat ..
+update:; svn ci -m 'update/add bug/feature reports' ..

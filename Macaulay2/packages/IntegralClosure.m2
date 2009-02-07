@@ -88,6 +88,25 @@ integralClosure Ring := Ring => o -> (R) -> (
 	  apply(RIdeal, i -> (ring i)/i)
 	  )
      )
+
+-- version that MES has just provided
+integralClosure Ring := Ring => o -> (R) -> (
+     -- 1 argument: Quotient ring. 
+     -- 3 options: the variable name for new variables, a limit on the
+     -- number of times to run the recurions and the choice to run
+     -- Singh and Swansons characteristic p algorithm. 
+     -- Return: The quotient ring that is the integral closure of R or
+     -- a set of rings whose direct sum is the integral closure of R.
+     -- Method:  We work primarily with maps to ensure access to key
+     -- information at the end.  This also makes it easier to keep
+     -- track of ring flattenings and the recursion. 
+     (S,phi) := flattenRing R;
+     G := map(frac R, frac S, substitute(phi vars S, frac R));
+     (newPhi,newG) := mikeIntegralClosureHelper(nonNormalLocus S, phi, G, o.Limit, o.Variable, 0);
+     R.icFractions = newG vars source newG;
+     R.icMap = newPhi;
+     target newPhi
+     )
     
 findSmallGen = (J) -> (
      a := toList((numgens ring J):1);
@@ -96,25 +115,33 @@ findSmallGen = (J) -> (
      L#0#2
      )
 
-integralClosureHelper = (J, fractions, phi, counter, newVar, indexVar) -> (
+integralClosureHelper = (J, fractions, phi, G, counter, newVar, indexVar) -> (
      -- recursive helper function designed to build the integral
      -- closure of R = S/I.
-     -- 6 arguments: J is in the non normal locus of the target of
-     -- phi, is the composition of the relevent maps, fractions is a
-     -- list of the fractions being added, newVar is the letter used
-     -- for the new variables and indexVar keeps track of the current
-     -- index to be used for the new variables. 
-     -- track of the number of new variables being added, counter
-     -- keeps track of the depth of recursion.
-     -- return:  a list consisting of maps and fractions.
+     --
+     -- phi : R=S/I --> T, where R is the original ring whose integral closure we seek
+     --   and T is the current approximation to the integral closure
+     -- G : frac T --> frac R, is the representation as fractions of R.
+     -- J: an ideal in R s.t. V(J) is contained in the non-normal locus
+     -- counter: used to do partial computation: number of loops left (possibly Infinity)
+     -- newVar: a symbol which we use for new variables
+     -- indexVar: the next index to use for newVar.
+     -- Return value:
+     --   In the domain case:
+     --    (phi', G')
+     --   Otherwise:
+     --     Good question!
      if counter == 0 then return (phi, fractions);
+
      S := target phi;
      I := ideal presentation target phi;
      R := ring I;
-     J1 := trim(ideal(0_S):J_0); 
+     
+     J0 := findSmallGen J;
+     J1 := trim(ideal(0_S):J0); 
      -- need to check if J_0 is really the element we-- want - low degree. 
      if J1 != ideal(0_S) then(
-	  -- If J_0 is a ZD then we split the ring.
+	  -- If J0 is a ZD then we split the ring.
 	  -- need to try and clean up ideals as much as possible as we proceed.
 	  (S1, S1Map) := flattenRing(R/trim(substitute(J1, R) + I));
 	  (S2, S2Map) := flattenRing(R/trim(substitute(ideal(0_S):J1, R) + I));
@@ -129,11 +156,14 @@ integralClosureHelper = (J, fractions, phi, counter, newVar, indexVar) -> (
 	  return L
 	  )	
      else(
-	  -- If J_0 is a NZD then we continue setting f = J_0.
+	  -- If J0 is a NZD then we continue setting f = J0.
 	  -- Compute Hom_R(J,J), with R = S/I.
 	  -- From now on, we work in this quotient:
-	  J0 := findSmallGen J;
-	  (newPhi, G, fracs) := idealizer(J, J0, Variable => newVar, Index => indexVar);  
+	  (newPhi, newG, fracs) := idealizer(J, J0, Variable => newVar, Index => indexVar);
+	    -- newPhi : T --> T1
+	    -- G : T1 --> frac T
+	    -- so: return (phi * newPhi, H)
+	    -- where H : T1 --> frac R, is the composite G * newG
      	  --error "check targ";
 	  targ := target newPhi;
 	  if targ === S then (
@@ -150,11 +180,49 @@ integralClosureHelper = (J, fractions, phi, counter, newVar, indexVar) -> (
 	       substitute(((newI1).cache.minimalPresentationMap).matrix, B2);
 	       F := map(B2,target newPhi, FF);
 	       --error("check Maps");
-	       return integralClosureHelper(radical(F newJ1), join(fracs,fractions), F*newPhi*phi, counter-1,newVar,indexVar + # gens targ - # gens source newPhi )  
+	       return integralClosureHelper(radical(F newJ1), join(fracs,fractions), F*newPhi*phi, 
+		    counter-1,newVar,indexVar + # gens targ - # gens source newPhi )  
      	       );
      	  );
      )
 
+mikeIntegralClosureHelper = (J, phi, G, counter, newVar, indexVar) -> (
+     -- recursive helper function designed to build the integral
+     -- closure of R
+     --
+     -- phi : R --> S, where R is the original ring whose integral closure we seek
+     --   and S is the current approximation to the integral closure
+     -- G : frac S --> frac R, is the representation as fractions of R.
+     -- J: an ideal in S s.t. V(J) is contained in the non-normal locus
+     -- counter: used to do partial computation: number of loops left (possibly Infinity)
+     -- newVar: a symbol which we use for new variables
+     -- indexVar: the next index to use for newVar.
+     -- Return value:
+     --   In the domain case:
+     --    (phi', G')
+     --   Otherwise:
+     --     Good question!
+     << "entering helper: " << phi << endl;
+     --error "look at me";
+     if counter == 0 then return (phi, G);
+     S := target phi;
+     J0 := findSmallGen J;
+     J1 := trim(ideal(0_S):J0); 
+     if J1 != 0 then error "ring is not a domain";
+
+     -- If J0 is a NZD then we continue setting f = J0.
+     -- Compute Hom_S(J,J).
+     (newPhi, newG, fracs) := idealizer(J, J0, Variable => newVar, Index => indexVar);
+       -- newPhi : S --> T
+       -- G : T --> frac S
+       -- so: return (phi * newPhi, H)
+       -- where H : frac T --> frac R, is the composite G * newG
+     T := target newPhi;
+     if T === S then return (newPhi*phi, G * newG);
+     -- what is the following n?
+     n := numgens T - numgens S; -- is this OK?  MES
+     mikeIntegralClosureHelper(radical (newPhi J), newPhi*phi, G * newG, counter-1, newVar, indexVar+n)
+     )
 
 idealizer = method(Options=>{Variable => global w, Index => 0})
 idealizer (Ideal, RingElement) := o -> (J, f) -> (
@@ -172,7 +240,7 @@ idealizer (Ideal, RingElement) := o -> (J, f) -> (
      I := ideal presentation R;
      idJ := mingens(f*J : J);
      if ideal(idJ) == ideal(f) then (
-	  (id_R, map(frac R, R, vars frac R), {})) -- in this case R is isomorphic to Hom(J,J).
+	  (id_R, map(frac R, frac R, vars frac R), {})) -- in this case R is isomorphic to Hom(J,J).
      else(
      	  H := compress (idJ % f);
      	  fractions := apply(first entries H,i->i/f);
@@ -203,7 +271,7 @@ idealizer (Ideal, RingElement) := o -> (J, f) -> (
      	  quads := matrix(B, entries (symmetricPower(2,varsB) - XX * tails));
      	  B2 := (flattenRing(B/(trim (ideal lins + ideal quads))))_0;
      	  F := map(B2, R, (vars B2)_{n..numgens R + n - 1});
-	  G := map(frac R, B2, matrix{fractions} | vars frac R);
+	  G := map(frac R, frac B2, matrix{fractions} | vars frac R);
 	  (F, G, fractions)
 	  )
      )
@@ -938,8 +1006,7 @@ answer = ideal(b_1*x^2-y*z, x^6-b_1*y+x^3*z, -b_1^2+x^4*z+x*z^2)
 assert(ideal J == answer)
 use R
 assert(conductor(R.icMap) == ideal(x^2,y))
- assert(ICfractions R == substitute(matrix {{y*z/x^2, x, y, z}},frac R))
---assert(ICfractions R == substitute(matrix {{42 * y*z/x^2, x, y, z}},frac R))
+-- assert(icFractions R == substitute(matrix {{y*z/x^2, x, y, z}},frac R))
 ///
 
 -- multigraded test

@@ -85,12 +85,12 @@ htmlFilename DocumentTag := tag -> (
      pkgtitle := DocumentTag.Title tag;
      replace("PKG",pkgtitle,installationLayout#"packagehtml") | if fkey === pkgtitle then topFileName else toFilename fkey|".html" )
 htmlFilename FinalDocumentTag := tag -> (
-     -- this one is used for creating links to the file, hence "Layout#1", since the bifurcation of the layout
+     -- this one is used for creating links to the file, hence "currentLayout", since the bifurcation of the layout
      -- into common and exec halves is not retained in the final installation; it's just a convenience while assembling
      -- the distribution, so common files can be shared among build trees
      fkey := FinalDocumentTag.FormattedKey tag;
      pkgtitle := FinalDocumentTag.Title tag;
-     replace("PKG",pkgtitle,Layout#1#"packagehtml") | if fkey === pkgtitle then topFileName else toFilename fkey|".html" )
+     replace("PKG",pkgtitle,currentLayout#"packagehtml") | if fkey === pkgtitle then topFileName else toFilename fkey|".html" )
 
 html IMG  := x -> (
      (o,cn) := override(IMG.Options,toSequence x);

@@ -85,12 +85,12 @@ htmlFilename DocumentTag := tag -> (
      pkgtitle := DocumentTag.Title tag;
      replace("PKG",pkgtitle,installationLayout#"packagehtml") | if fkey === pkgtitle then topFileName else toFilename fkey|".html" )
 htmlFilename FinalDocumentTag := tag -> (
-     -- this one is used for creating links to the file, hence "Layout", since the bifurcation of the layout
+     -- this one is used for creating links to the file, hence "Layout#1", since the bifurcation of the layout
      -- into common and exec halves is not retained in the final installation; it's just a convenience while assembling
      -- the distribution, so common files can be shared among build trees
      fkey := FinalDocumentTag.FormattedKey tag;
      pkgtitle := FinalDocumentTag.Title tag;
-     replace("PKG",pkgtitle,currentLayout#"packagehtml") | if fkey === pkgtitle then topFileName else toFilename fkey|".html" )
+     replace("PKG",pkgtitle,Layout#1#"packagehtml") | if fkey === pkgtitle then topFileName else toFilename fkey|".html" )
 
 html IMG  := x -> (
      (o,cn) := override(IMG.Options,toSequence x);
@@ -1202,13 +1202,9 @@ viewHelp = key -> (
 	  show new URL from { fix (applicationDirectory() | "index.html") }
 	  }
      else (
-     	  prefixes := nonnull {
-	       if not member("-q",commandLine) then applicationDirectory()|"local/",
-	       prefixDirectory
-	       };
 	  fn := htmlFilename toFinalDocumentTag getPrimary makeDocumentTag key;
 	  p := null;
-	  scan(prefixes, dir -> if fileExists (dir|fn) then (p = dir|fn;break));
+	  scan(prefixPath, dir -> if fileExists (dir|fn) then (p = dir|fn;break));
 	  if p === null then error("html file not found: ",fn)
 	  else show new URL from { fix p }
 	  );

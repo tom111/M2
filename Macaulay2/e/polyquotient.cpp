@@ -217,6 +217,11 @@ GBComputation * PolyRingQuotient::make_gb(const ring_elem g) const
 
 ring_elem PolyRingQuotient::remainder(const ring_elem f, const ring_elem g) const
 {
+  if (K_->get_precision() > 0)
+    {
+      ERROR("polynomial division not yet implemented for RR or CC coefficients");
+      return from_int(0);
+    }
   MatrixConstructor matf(make_FreeModule(1),1);
   matf.set_entry(0,0,f);
   const Matrix *mf = matf.to_matrix();
@@ -234,6 +239,11 @@ ring_elem PolyRingQuotient::remainder(const ring_elem f, const ring_elem g) cons
 
 ring_elem PolyRingQuotient::quotient(const ring_elem f, const ring_elem g) const
 {
+  if (K_->get_precision() > 0)
+    {
+      ERROR("polynomial division not yet implemented for RR or CC coefficients");
+      return from_int(0);
+    }
   MatrixConstructor matf(make_FreeModule(1),1);
   matf.set_entry(0,0,f);
   Matrix *mf = matf.to_matrix();
@@ -254,6 +264,12 @@ ring_elem PolyRingQuotient::quotient(const ring_elem f, const ring_elem g) const
 ring_elem PolyRingQuotient::remainderAndQuotient(const ring_elem f, const ring_elem g, 
 						 ring_elem &quot) const
 {
+  if (K_->get_precision() > 0)
+    {
+      ERROR("polynomial division not yet implemented for RR or CC coefficients");
+      quot = from_int(0);
+      return from_int(0);
+    }
   MatrixConstructor matf(make_FreeModule(1),1);
   matf.set_entry(0,0,f);
   Matrix *mf = matf.to_matrix();

@@ -1,5 +1,5 @@
 --*- M2 -*-
 R = CC[]
-117.3734_R // .3048_R -- produces a polynomial with two terms
-117._R // .304_R -- goes into an infinite loop and runs out of memory
+try (117.3734_R // .3048_R) -- used to produce a polynomial with two terms, now "not implemented"
+try (117._R // .304_R) -- used to go into an infinite loop and run out of memory, now "not implemented"
  

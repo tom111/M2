@@ -1,3 +1,6 @@
+FIXED.
+
+
 i1 : --/home/dan/src/M2/1.2/Macaulay2/packages/Macaulay2Doc/functions/clean-doc.m2:55: location of test code
      
      R = RR_100[x,y]

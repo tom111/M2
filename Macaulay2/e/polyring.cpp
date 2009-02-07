@@ -1069,6 +1069,12 @@ ring_elem PolyRing::quotient(const ring_elem f, const ring_elem g) const
 ring_elem PolyRing::remainderAndQuotient(const ring_elem f, const ring_elem g, 
 					       ring_elem &quot) const
 {
+  if (K_->get_precision() > 0)
+    {
+      ERROR("polynomial division not yet implemented for RR or CC coefficients");
+      quot = from_int(0);
+      return from_int(0);
+    }
   Nterm *q, *r;
   ring_elem rem;
   if (is_zero(g))

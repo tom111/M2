@@ -1,5 +1,11 @@
 -- -*- M2 -*-
 
+R = QQ[x]
+time (1-x^195)^5//(1-x)//(1-x);
+use degreesRing 1
+time (1-T^195)^5//(1-T)//(1-T);
+
+
 division seems to be slower now than in version 1.1, whether we have inverses or not:
 
 + M2-1.1 --no-readline --print-width 157

@@ -1,5 +1,8 @@
 -- -*- M2 -*-
 
+(QQ[x]/x^3)[y]/y^3
+(1+x+y)^-1
+
 Part 1
 
 huh???
@@ -47,3 +50,4 @@ f^-1
 
     i12 : f^-1
       C-c C-cstdio:12:2:(1):[0]: error: negative power of noninvertible element requested
+

@@ -1,3 +1,4 @@
+FIXED, by not allowing fraction fields over non-global monomial orders
 
 i10 : QQ[x,y,MonomialOrder=>RevLex,Global=>false]
 

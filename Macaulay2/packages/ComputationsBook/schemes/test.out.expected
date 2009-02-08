@@ -104,7 +104,7 @@ i22 : singularities = ideal(partials) + ideal(F);
 o22 : Ideal of S
 
 i23 : elimDiscr = time ideal selectInSubring(1,gens gb singularities);
-     -- used 24.4655 seconds
+     -- used 18.3771 seconds
 
 o23 : Ideal of S
 
@@ -224,7 +224,7 @@ i47 : I = ideal(x^5+y^3+z^3, x^3+y^5+z^3, x^3+y^3+z^5);
 
 o47 : Ideal of S
 
-i48 : multiplicity = degree(I : saturate(I))
+i48 : degree(I : saturate(I))
 
 o48 = 27
 

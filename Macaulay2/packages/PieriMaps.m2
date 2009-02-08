@@ -2,7 +2,7 @@
 newPackage(
     	  "PieriMaps",
    	  Version => "0.5.0",
-	  Date => "May 17, 2008",
+	  Date => "July 2, 2008",
 	  Authors => {{
 		    Name => "Steven V Sam",
 		    Email => "ssam@mit.edu",

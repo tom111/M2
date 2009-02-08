@@ -1,7 +1,7 @@
 newPackage(
 	"IntegralClosure",
     	Version => "0.9", 
-    	Date => "January 24, 2009",
+    	Date => "February 8, 2009",
     	Authors => {
 	     {Name => "Amelia Taylor",
 	     HomePage => "http://faculty1.coloradocollege.edu/~ataylor/",

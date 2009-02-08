@@ -1,9 +1,13 @@
 -- -*- coding: utf-8 -*-
 newPackage(
      "PrimaryDecomposition",
+     Version => "1.0",
+     Date => "July 1, 2008",
      AuxiliaryFiles => true,
+     Authors => {{Name => "Michael E. Stillman", Email => "mike@math.cornell.edu"}},
      Headline => "functions for primary decomposition (pre-loaded)"
      )
+
 export {
      primaryDecomposition,
      irreducibleDecomposition,

@@ -3,7 +3,11 @@ newPackage(
      	  Version => "0.1",
 	  Date => "March 5, 2008",
 	  Authors => {
-	       {Name => "Michael E. Stillman", Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/People/Faculty/stillman.html"}
+	       {Name => "Michael E. Stillman", 
+		    Email => "mike@math.cornell.edu", 
+		    HomePage => "http://www.math.cornell.edu/~mike"},
+	       {Name => "Anton Leykin"},
+	       {Name => "Mauricio Velasco"}
 	       },
 	  Headline => "computations of Schur modules and maps between them",
 	  DebuggingMode => false,

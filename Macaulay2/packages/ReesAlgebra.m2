@@ -1,20 +1,3 @@
--- MES: todo
---  multiplicity: use newRing?
---  there is a comment that distinguished and mult still do not work.  Examples of this?
---  distinguishedAndMult looks like a work in progress
---  doc:
---    reesIdeal in its various forms
---    [reesIdeal,Variable]
---    reesAlgebra
---    [reesAlgebra,Variable]
---    isLinearType
---    normalCone, [normalCone,Variable]
---    associatedGradedRing, Variable
---    specialFiberIdeal, Variable
---    analyticSpread
---    distinguished
---    distinguishedAndMult
-
 --------------------------------------------------------------------------
 -- PURPOSE : Compute the rees algebra of a module as it is defined in the 
 --           paper "What is the Rees algebra of a module?" by Craig Huneke, 
@@ -29,7 +12,7 @@
 -- PROGRAMMERs : Rees algebra code written by David Eisenbud and
 --               Amelia Taylor with some assistance from Sorin Popescu. 
 -- UPDATE HISTORY : created 27 October 2006 
--- 	     	    updated 29 June 2008
+-- 	     	    updated 29 June 2008, and later
 --
 -- Missing documentation and most examples are now at the end of the file
 -- waiting to be included in the documentation -- more fixes to come
@@ -37,7 +20,7 @@
 newPackage(
 	"ReesAlgebra",
     	Version => "1.0", 
-    	Date => "June 29, 2008",
+    	Date => "February 8, 2009",
     	Authors => {{
 		  Name => "David Eisenbud",
 		  Email => "de@msri.org"},
@@ -45,7 +28,8 @@ newPackage(
 	     HomePage => "http://faculty1.coloradocollege.edu/~ataylor/",
    	     Email => "amelia.taylor@coloradocollege.edu"},
              {Name => "Sorin Popescu",
-	      Email => "sorin@math.sunysb.edu"}},  
+	      Email => "sorin@math.sunysb.edu"},
+	 {Name => "Michael E. Stillman", Email => "mike@math.cornell.edu"}},  
     	Headline => "Rees algebras",
     	DebuggingMode => true
     	)

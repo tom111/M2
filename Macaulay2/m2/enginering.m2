@@ -228,12 +228,12 @@ coefficientRing FractionField := F -> coefficientRing last F.baseRings
 
 isHomogeneous FractionField := (F) -> isHomogeneous last F.baseRings
 
-factoryAlmostGood = R -> ( -- we're ignoring quotient rings here, even though gcd and factoring may not actually work in them
-     R = ultimate(coefficientRing, R);
-     R === QQ or
-     R === ZZ or
-     instance(R,QuotientRing) and ambient R === ZZ and isPrime char R or
-     instance(R,GaloisField))
+factoryAlmostGood = R -> (
+     k := coefficientRing R;
+     k === QQ or
+     k === ZZ or
+     instance(k,QuotientRing) and ambient k === ZZ and isPrime char k or
+     instance(k,GaloisField))
 factoryGood = R -> factoryAlmostGood R and not (options R).Inverses
 
 frac EngineRing := R -> if isField R then R else if R.?frac then R.frac else (

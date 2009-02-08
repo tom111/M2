@@ -44,6 +44,8 @@ arch-chk:
 
 # and that really comes to just 3.49GB, of which 2.34GB is used.
 
+# add yourself to the "wheel" group or su won't work
+
 # use pkg_add -r to install the following packages:
 # 
 # required to build:

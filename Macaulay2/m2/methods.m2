@@ -56,7 +56,10 @@ BinaryNoOptions := (outputs) -> (
      args -> (
 	  -- Common code for every associative method without options
 	  if #args === 2 then binaryLookup args
-	  else if #args >= 3 then self prepend(self(args#0,args#1),drop(args,2))
+	  else if #args >= 3 then (
+	       r := self(args#0,args#1);
+	       for i from 2 to #args-1 do r = self(r,args#i);
+	       r)
 	  else if #args === 1 then args#0
 	  else if #args === 0 then (
 	       f := lookup (1 : methodFunction);

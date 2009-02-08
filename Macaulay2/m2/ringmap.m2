@@ -154,7 +154,7 @@ RingMap Matrix := Matrix => (p,m) -> (
      then error "expected source of ring map to be the same as ring of matrix";
      F := p target m;
      E := p source m;
-     map(F,E,map(S,rawRingMapEval(raw p, raw F, raw m)), Degree => p.cache.DegreeMap degree m))
+     map(F,E,map(S,rawRingMapEval(raw p, raw cover F, raw m)), Degree => p.cache.DegreeMap degree m))
 
 RingMap Vector := Vector => (p,m) -> (
      f := p new Matrix from m;

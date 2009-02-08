@@ -11,7 +11,7 @@ newPackage(
     	)
  --
  -- Needs updating in the comments and the documentation.  Needs Irena
--- code added in as an option as well as needs ICfractions to be up
+-- code added in as an option as well as needs icFractions to be up
 -- and running again.  Also needs updating the tests.  Are there
 -- others where we know the answer in advance?  What about how this
 -- program interacts with minPressy?  
@@ -367,9 +367,9 @@ T = S/J
 J = integralClosure T
 KF = frac(ring ideal J)
 M1 = first entries substitute(vars T, KF)
-M2 = apply(T.ICfractions, i -> matrix{{i}})
+M2 = apply(T.icFractions, i -> matrix{{i}})
 
-assert(ICfractions T == substitute(matrix {{(Y_2*y^2)/x, (Y_1*x)/y,
+assert(icFractions T == substitute(matrix {{(Y_2*y^2)/x, (Y_1*x)/y,
 Y_1, Y_2, Y_3, Y_4, x, y}}, frac T))
 ///
 
@@ -460,7 +460,7 @@ icPIdeal (RingElement, RingElement, ZZ) := Ideal => (a, D, N) -> (
 
 --------------------------------------------------------------------
 --- integralClosure, idealizer, nonNormalLocus, Index,
---- isNormal, conductor, ICfractions, ICmap, icFracP, conductorElement,
+--- isNormal, conductor, icFractions, icMap, icFracP, conductorElement,
 --- reportSteps, icPIdeal, minPressy
 
 beginDocumentation()
@@ -477,10 +477,10 @@ document {
      --            ICFractions
      --            ICMap
      -- The fractions that generate the integral closure over R/I are obtained 
-     -- by the command ICfractions(R/I).  
+     -- by the command icFractions(R/I).  
      -- Included is a command conductor that computes the conductor of S into R
      -- where S is the image of a ring map from R to S where S is finite over
-     -- R.  ICmap constructs this map (the natural map R/I->R_j/I_j) for R 
+     -- R.  icMap constructs this map (the natural map R/I->R_j/I_j) for R 
      -- into its integral closure and applying conductor to this map 
      -- yeilds the conductor of the integral closure into R.
 
@@ -497,7 +497,7 @@ document {
 	  the algorithm of Anurag Singh and Irena Swanson given in
 	  arXiv:0901.0871 for rings in positive characteristic p.
 	  The fractions that generate the integral closure over R are obtained 
-     	  with the command ", TT "ICfractions R", " if you use De
+     	  with the command ", TT "icFractions R", " if you use De
 	  Jong's algorithm via ", TT "integralClosure R", " and the output of
 	  Singh and Swanson's algorithm is already these
 	  fractions."
@@ -548,13 +548,13 @@ document {
      the integral closure.  Unfortunately, all of the added features 
      currently only work on affine domains.
      The map and the corresponding fractions are obtained as 
-     a matrix using the function ", TO "ICfractions", " where R is 
+     a matrix using the function ", TO "icFractions", " where R is 
      an affine domain.  This function can be run without first 
      using ", TO "integralClosure", ".  The natural map from ", TT "R", " into 
-     its integral closure is obtained using the function ", TO "ICmap", " and 
+     its integral closure is obtained using the function ", TO "icMap", " and 
      the conductor of the integral closure of R into R is found 
-     using ", TT "conductor (ICmap R)", ".  Note that 
-     both ", TO "ICfractions", " and ", TO "ICmap", " take the input 
+     using ", TT "conductor (icMap R)", ".  Note that 
+     both ", TO "icFractions", " and ", TO "icMap", " take the input 
      ring ", TT "R", " as input rather than the output 
      of ", TO "integralClosure", ".  In this way you can use these 
      functions without running ", TO "integralClosure", ".  The 
@@ -599,10 +599,10 @@ document {
      a matrix using the function where R is 
      an affine domain.  This function can be run without first 
      using ", TO "integralClosure", ".  The natural map from ", TT "R", " into 
-     its integral closure is obtained using the function ", TO "ICmap", " and 
+     its integral closure is obtained using the function ", TO "icMap", " and 
      the conductor of the integral closure of R into R is found 
-     using ", TT "conductor (ICmap R)", ".  Note that 
-     both ", TO "ICfractions", " and ", TT "ICmap", " take the input 
+     using ", TT "conductor (icMap R)", ".  Note that 
+     both ", TO "icFractions", " and ", TT "icMap", " take the input 
      ring ", TT "R", " as input rather than the output 
      of ", TO "integralClosure", ".  In this way you can use these 
      functions without running ", TT "integralClosure", ".",
@@ -709,7 +709,7 @@ document {
      PARA{},
      "If the user has already run the computation ", TT "integralClosure R", 
      " then this map can also be obtained by typing ",
-     TT "R.ICmap", ".",
+     TT "R.icMap", ".",
      EXAMPLE { 
 	  "integralClosure S;",
 	  "S.icMap"},
@@ -759,7 +759,7 @@ document {
      	  }
 
 --document {
---     Key => [ICfractions,Strategy],
+--     Key => [icFractions,Strategy],
 --     Headline=> "Allows the user to obtain all of the fractions considered in the 
 --     process of building the integral closure",
 --     }
@@ -994,8 +994,8 @@ answer = ideal(b_1*x^2-y*z, x^6-b_1*y+x^3*z, -b_1^2+x^4*z+x*z^2)
 assert(ideal J == answer)
 use R
 assert(conductor(R.icMap) == ideal(x^2,y))
---assert(ICfractions R == substitute(matrix {{y*z/x^2, x, y, z}},frac R))
---assert(ICfractions R == substitute(matrix {{42 * y*z/x^2, x, y, z}},frac R))
+--assert(icFractions R == substitute(matrix {{y*z/x^2, x, y, z}},frac R))
+--assert(icFractions R == substitute(matrix {{42 * y*z/x^2, x, y, z}},frac R))
 ///
 
 -- multigraded test
@@ -1103,13 +1103,13 @@ newanswer = ideal(
 assert(ideal V == newanswer)   
 ///
 
--- Test of ICfractions
+-- Test of icFractions
 --TEST 
 --///
 --S = QQ [(symbol Y)_1, (symbol Y)_2, (symbol Y)_3, (symbol Y)_4, symbol x, symbol y, Degrees => {{7, 1}, {5, 1}, {6, 1}, {6, 1}, {1, 0}, {1, 0}}, MonomialOrder => ProductOrder {4, 2}]
 --J = ideal(Y_3*y-Y_2*x^2,Y_3*x-Y_4*y,Y_1*x^3-Y_2*y^5,Y_3^2-Y_2*Y_4*x,Y_1*Y_4-Y_2^2*y^3)
 --T = S/J       
---assert(ICfractions T == substitute(matrix {{(Y_2*y^2)/x, (Y_1*x)/y, Y_1, Y_2, Y_3, Y_4, x, y}}, frac T))
+--assert(icFractions T == substitute(matrix {{(Y_2*y^2)/x, (Y_1*x)/y, Y_1, Y_2, Y_3, Y_4, x, y}}, frac T))
 --///
 
 -- Test of isNormal
@@ -1119,7 +1119,7 @@ assert(isNormal(S) == false)
 assert(isNormal(integralClosure(S)) == true)
 ///
 
--- Test of ICmap and conductor
+-- Test of icMap and conductor
 TEST ///
 R = QQ[x,y,z]/ideal(x^6-z^6-y^2*z^4)
 J = integralClosure(R);
@@ -1233,7 +1233,7 @@ leadTerm gens gb I
 
 R = ZZ/101[x,y,z]/(z*y^2-x^5*z-x^8)
 J = integralClosure(R)
-R.ICfractions
+R.icFractions
 describe J
 
 

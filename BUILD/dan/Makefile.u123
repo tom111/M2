@@ -1,9 +1,8 @@
 #-*- Makefile -*-
-#BUILDOPTIONS += RemakeAllDocumentation=true RemakePackages=true
+BUILDOPTIONS += RerunExamples=true
+BUILDOPTIONS += RemakeAllDocumentation=true RemakePackages=true IgnoreExampleErrors=true
 #BUILDOPTIONS += -s
 #INSTALLOPTIONS += -s
-
-# CONFIGOPTIONS += --enable-tarfile
 CONFIGOPTIONS += --enable-rpm
 PRE = $(HOME)/local.Linux/encap
 CONFIGOPTIONS += --build=i486-pc-linux-gnu

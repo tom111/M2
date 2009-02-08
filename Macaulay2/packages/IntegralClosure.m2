@@ -61,6 +61,27 @@ needsPackage "Elimination"
 integralClosure = method(Options=>{
 	  Variable => global w,
 	  Limit => infinity})
+
+
+-- version that MES has just provided, not in use in 1.2 yet
+integralClosure Ring := Ring => o -> (R) -> (
+     -- 1 argument: Quotient ring. 
+     -- 3 options: the variable name for new variables, a limit on the
+     -- number of times to run the recurions and the choice to run
+     -- Singh and Swansons characteristic p algorithm. 
+     -- Return: The quotient ring that is the integral closure of R or
+     -- a set of rings whose direct sum is the integral closure of R.
+     -- Method:  We work primarily with maps to ensure access to key
+     -- information at the end.  This also makes it easier to keep
+     -- track of ring flattenings and the recursion. 
+     (S,phi) := flattenRing R;
+     G := map(frac R, frac S, substitute(phi^-1 vars S, frac R));
+     (newPhi,newG) := mikeIntegralClosureHelper(nonNormalLocus S, phi, G, o.Limit, o.Variable, 0);
+     R.icFractions = newG.matrix;
+     R.icMap = newPhi;
+     target newPhi
+     )
+
 integralClosure Ring := Ring => o -> (R) -> (
      -- 1 argument: Quotient ring. 
      -- 3 options: the variable name for new variables, a limit on the
@@ -89,103 +110,7 @@ integralClosure Ring := Ring => o -> (R) -> (
 	  )
      )
 
--- version that MES has just provided
-integralClosure Ring := Ring => o -> (R) -> (
-     -- 1 argument: Quotient ring. 
-     -- 3 options: the variable name for new variables, a limit on the
-     -- number of times to run the recurions and the choice to run
-     -- Singh and Swansons characteristic p algorithm. 
-     -- Return: The quotient ring that is the integral closure of R or
-     -- a set of rings whose direct sum is the integral closure of R.
-     -- Method:  We work primarily with maps to ensure access to key
-     -- information at the end.  This also makes it easier to keep
-     -- track of ring flattenings and the recursion. 
-     (S,phi) := flattenRing R;
-     G := map(frac R, frac S, substitute(phi^-1 vars S, frac R));
-     (newPhi,newG) := mikeIntegralClosureHelper(nonNormalLocus S, phi, G, o.Limit, o.Variable, 0);
-     R.icFractions = newG.matrix;
-     R.icMap = newPhi;
-     target newPhi
-     )
-    
-findSmallGen = (J) -> (
-     a := toList((numgens ring J):1);
-     L := sort apply(J_*, f -> ((weightRange(a,f))_1, size f, f));
-     --<< "first choices are " << netList take(L,3) << endl;
-     L#0#2
-     )
-
-integralClosureHelper = (J, fractions, phi, G, counter, newVar, indexVar) -> (
-     -- recursive helper function designed to build the integral
-     -- closure of R = S/I.
-     --
-     -- phi : R=S/I --> T, where R is the original ring whose integral closure we seek
-     --   and T is the current approximation to the integral closure
-     -- G : frac T --> frac R, is the representation as fractions of R.
-     -- J: an ideal in R s.t. V(J) is contained in the non-normal locus
-     -- counter: used to do partial computation: number of loops left (possibly Infinity)
-     -- newVar: a symbol which we use for new variables
-     -- indexVar: the next index to use for newVar.
-     -- Return value:
-     --   In the domain case:
-     --    (phi', G')
-     --   Otherwise:
-     --     Good question!
-     if counter == 0 then return (phi, fractions);
-
-     S := target phi;
-     I := ideal presentation target phi;
-     R := ring I;
-     
-     J0 := findSmallGen J;
-     J1 := trim(ideal(0_S):J0); 
-     -- need to check if J_0 is really the element we-- want - low degree. 
-     if J1 != ideal(0_S) then(
-	  -- If J0 is a ZD then we split the ring.
-	  -- need to try and clean up ideals as much as possible as we proceed.
-	  (S1, S1Map) := flattenRing(R/trim(substitute(J1, R) + I));
-	  (S2, S2Map) := flattenRing(R/trim(substitute(ideal(0_S):J1, R) + I));
-	  L := join(integralClosureHelper(nonNormalLocus (minimalPresentation S1), 
-	       	    fractions,
-		    (S1.minimalPresentationMap)*(S1Map)*map(source S1Map, S)*phi, 
-		    counter-1, newVar, indexVar),
-	       integralClosureHelper(nonNormalLocus (minimalPresentation S2), 
-			 fractions, 
-			 (S2.minimalPresentationMap)*(S2Map)*map(source S2Map, S)*phi, 
-			 counter-1, newVar, indexVar));
-	  return L
-	  )	
-     else(
-	  -- If J0 is a NZD then we continue setting f = J0.
-	  -- Compute Hom_R(J,J), with R = S/I.
-	  -- From now on, we work in this quotient:
-	  (newPhi, newG, fracs) := idealizer(J, J0, Variable => newVar, Index => indexVar);
-	    -- newPhi : T --> T1
-	    -- G : T1 --> frac T
-	    -- so: return (phi * newPhi, H)
-	    -- where H : T1 --> frac R, is the composite G * newG
-     	  --error "check targ";
-	  targ := target newPhi;
-	  if targ === S then (
-	       return {newPhi*phi, join(fracs,fractions)})
-	  else (
-
-	       newI1 := trim ideal presentation targ;
-	       newJ1 := newPhi J;
-	       newI := minimalPresentation(newI1);
-	       S = ring newI;
-	       B2 := S/newI;
-
-	       FF :=
-	       substitute(((newI1).cache.minimalPresentationMap).matrix, B2);
-	       F := map(B2,target newPhi, FF);
-	       --error("check Maps");
-	       return integralClosureHelper(radical(F newJ1), join(fracs,fractions), F*newPhi*phi, 
-		    counter-1,newVar,indexVar + # gens targ - # gens source newPhi )  
-     	       );
-     	  );
-     )
-
+-- Not in use in 1.2 yet
 mikeIntegralClosureHelper = (J, phi, G, counter, newVar, indexVar) -> (
      -- recursive helper function designed to build the integral
      -- closure of R
@@ -223,15 +148,80 @@ mikeIntegralClosureHelper = (J, phi, G, counter, newVar, indexVar) -> (
      mikeIntegralClosureHelper(radical((i1*newPhi) J), i1*phi, G*gt, counter-1, newVar, indexVar+n)
      )
 
+findSmallGen = (J) -> (
+     a := toList((numgens ring J):1);
+     L := sort apply(J_*, f -> ((weightRange(a,f))_1, size f, f));
+     --<< "first choices are " << netList take(L,3) << endl;
+     L#0#2
+     )
+
+integralClosureHelper = (J, fractions, phi, counter, newVar, indexVar) -> (
+     -- recursive helper function designed to build the integral
+     -- closure of R = S/I.
+     -- 6 arguments: J is in the non normal locus of the target of
+     -- phi, is the composition of the relevent maps, fractions is a
+     -- list of the fractions being added, newVar is the letter used
+     -- for the new variables and indexVar keeps track of the current
+     -- index to be used for the new variables. 
+     -- track of the number of new variables being added, counter
+     -- keeps track of the depth of recursion.
+     -- return:  a list consisting of maps and fractions.
+     if counter == 0 then return (phi, fractions);
+     S := target phi;
+     I := ideal presentation target phi;
+     R := ring I;
+
+     J0 := findSmallGen J;
+     J1 := trim(ideal(0_S):J0); 
+     -- need to check if J0 is really the element we-- want - low degree. 
+     if J1 != ideal(0_S) then(
+	  -- If J0 is a ZD then we split the ring.
+	  -- need to try and clean up ideals as much as possible as we proceed.
+	  (S1, S1Map) := flattenRing(R/trim(substitute(J1, R) + I));
+	  (S2, S2Map) := flattenRing(R/trim(substitute(ideal(0_S):J1, R) + I));
+	  L := join(integralClosureHelper(nonNormalLocus (minimalPresentation S1), 
+	       	    fractions,
+		    (S1.minimalPresentationMap)*(S1Map)*map(source S1Map, S)*phi, 
+		    counter-1, newVar, indexVar),
+	       integralClosureHelper(nonNormalLocus (minimalPresentation S2), 
+			 fractions, 
+			 (S2.minimalPresentationMap)*(S2Map)*map(source S2Map, S)*phi, 
+			 counter-1, newVar, indexVar));
+	  return L
+	  )	
+     else(
+	  -- If J0 is a NZD then we continue setting f = J0.
+	  -- Compute Hom_R(J,J), with R = S/I.
+	  -- From now on, we work in this quotient:
+	  (newPhi, fracs) := idealizer(J, J0, Variable => newVar, Index => indexVar);  
+     	  --error "check targ";
+	  targ := target newPhi;
+	  if targ === S then (
+	       return {newPhi*phi, join(fracs,fractions)})
+	  else (
+	       newI1 := trim ideal presentation targ;
+	       newJ1 := newPhi J;
+	       newI := minimalPresentation(newI1);
+	       S = ring newI;
+	       B2 := S/newI;
+	       FF :=
+	       substitute(((newI1).cache.minimalPresentationMap).matrix, B2);
+	       F := map(B2,target newPhi, FF);
+	       --error("check Maps");
+	       return integralClosureHelper(radical(F newJ1), join(fracs,fractions), F*newPhi*phi, counter-1,newVar,indexVar + # gens targ - # gens source newPhi )  
+     	       );
+     	  );
+     )
+
+
 idealizer = method(Options=>{Variable => global w, Index => 0})
 idealizer (Ideal, RingElement) := o -> (J, f) -> (
      -- J is an ideal in a ring R
      -- f is a nonzero divisor in J
      -- computes a ring B2 = Hom(J,J) = (f*J:J)/f
-     -- returns a sequence (F,G,fractions), where [FOR NOW: doesn't return G!]
+     -- returns a sequence (F,fractions), where 
      --   F : R --> B2 is the natural inclusion
-     --   G : B2 --> frac R, 
-     --   fractions: a list of the images of the new generators under G in frac R.
+     --   fractions: a list of the images of the new generators in frac R.
      -- optional arguments:
      --   o.Variable: base name for new variables added
      --   o.Index: the first subscript to use for such variables
@@ -239,12 +229,11 @@ idealizer (Ideal, RingElement) := o -> (J, f) -> (
      I := ideal presentation R;
      idJ := mingens(f*J : J);
      if ideal(idJ) == ideal(f) then (
-	  (id_R, map(frac R, frac R, vars frac R), {})) -- in this case R is isomorphic to Hom(J,J).
+	  (id_R, {})) -- in this case R is isomorphic to Hom(J,J).
      else(
      	  H := compress (idJ % f);
      	  fractions := apply(first entries H,i->i/f);
      	  Hf := H | matrix{{f}};
-
      	  -- Make the new polynomial ring.
      	  n := numgens source H;
      	  newdegs := degrees source H - toList(n:degree f);
@@ -259,7 +248,6 @@ idealizer (Ideal, RingElement) := o -> (J, f) -> (
      	  B := A/IA;
      	  varsB := (vars B)_{0..n-1};
      	  RtoB := map(B, R, (vars B)_{n..numgens R + n - 1});
-
      	  XX := varsB | matrix{{1_B}};
      	  -- Linear relations in the new variables
      	  lins := XX * RtoB syz Hf; 
@@ -270,8 +258,7 @@ idealizer (Ideal, RingElement) := o -> (J, f) -> (
      	  quads := matrix(B, entries (symmetricPower(2,varsB) - XX * tails));
      	  B2 := (flattenRing(B/(trim (ideal lins + ideal quads))))_0;
      	  F := map(B2, R, (vars B2)_{n..numgens R + n - 1});
-	  G := map(frac R, frac B2, matrix{fractions} | vars frac R);
-	  (F, G, fractions)
+	  (F, fractions)
 	  )
      )
 
@@ -363,7 +350,7 @@ icMap(Ring) := RingMap => R -> (
      -- a module over the source, so it can be used as the input to
      -- conductor and other methods that require this. 
      if R.?icMap then R.icMap
-     else if isNormal R then map(R,R) 
+     else if isNormal R then id_R
      else (S := integralClosure R;
 	  R.icMap)
      )
@@ -1007,7 +994,8 @@ answer = ideal(b_1*x^2-y*z, x^6-b_1*y+x^3*z, -b_1^2+x^4*z+x*z^2)
 assert(ideal J == answer)
 use R
 assert(conductor(R.icMap) == ideal(x^2,y))
-assert(icFractions R == substitute(matrix {{y*z/x^2, x, y, z}},frac R))
+--assert(ICfractions R == substitute(matrix {{y*z/x^2, x, y, z}},frac R))
+--assert(ICfractions R == substitute(matrix {{42 * y*z/x^2, x, y, z}},frac R))
 ///
 
 -- multigraded test
@@ -1023,9 +1011,11 @@ TEST ///
 R = ZZ/101[symbol x..symbol z,Degrees=>{{4,2},{10,5},{12,6}}]/(z*y^2-x^5*z-x^8)
 time J = integralClosure (R,Variable=>symbol a) 
 use ring ideal J
--- this one is not correct:  I think ours is correct
-assert(ideal J == ideal(a_1*y-42*x^6-42*x^3*z,a_1^2-47*x^4*z-47*x*z^2,-12*a_1*x^2-z*y,-12*a_1*x*y-x^7-x^4
-      *z,43*a_1^2*x^2-x^6*z-x^3*z^2,-x^8-x^5*z+z*y^2))
+assert(ideal J == ideal(a_1*x^2-y*z,a_1*y-x^6-x^3*z,a_1^2-x^4*z-x*z^2)
+
+-- This was the old answer, before changing choice of J0
+--assert(ideal J == ideal(a_1*y-42*x^6-42*x^3*z,a_1^2-47*x^4*z-47*x*z^2,-12*a_1*x^2-z*y,-12*a_1*x*y-x^7-x^4
+--      *z,43*a_1^2*x^2-x^6*z-x^3*z^2,-x^8-x^5*z+z*y^2))
 use R
 assert(conductor(R.icMap) == ideal(x^2,y))
 ///
@@ -1037,8 +1027,10 @@ I=ideal(a*(b-c),c*(b-d),b*(c-d))
 R=S/I                              
 time V = integralClosure R
 assert(#V == 2)
+icMap R
+-- assert false-- added: MES
+-- the second ring is not a domain.  Anyway, the fractions are messed up here.
 ///
---is it possible to do a second assert to test the pieces?  
 
 --Craig's example as a test
 TEST ///
@@ -1069,9 +1061,8 @@ I = ideal(a^2*b*c^2+b^2*c*d^2+a^2*d^2*e+a*b^2*e^2+c^2*d*e^2,a*b^3*c+b*c^3*d+a^3*
 S = R/I
 time V = integralClosure (S, Variable => X)
 use ring ideal V
-assert(
-     ideal V == 
-       ideal(a^2*b*c^2+b^2*c*d^2+a^2*d^2*e+a*b^2*e^2+c^2*d*e^2,
+
+oldanswer = ideal(a^2*b*c^2+b^2*c*d^2+a^2*d^2*e+a*b^2*e^2+c^2*d*e^2,
 	   a*b^3*c+b*c^3*d+a^3*b*e+c*d^3*e+a*d*e^3,
 	   a^5+b^5+c^5+d^5-5*a*b*c*d*e+e^5,
 	   a*b*c^4-b^4*c*d-X_0*e-a^2*b^2*d*e+a*c^2*d^2*e+b^2*c^2*e^2-b*d^2*e^3,
@@ -1090,24 +1081,37 @@ assert(
 	     2*a^2*b^3*d^3*e^2-5*a*b*c^2*d^4*e^2+4*b^3*c^2*d^2*e^3-3*a*d^6*e^3+
 	     5*a^2*b*c*d^2*e^4-b^2*d^4*e^4-2*b*c^3*d*e^5-a^3*b*e^6+3*c*d^3*e^6-a*d*e^8)
 	)
-///
 
-TESTY; ///
--- from paper by M. van Hoiej (1993). -- this one is too big for now...
-S = ZZ/32003[x,y]
-f2 = y^20 + y^13*x + x^4*y^5 + x^3*(x+1)^2
-R = S/f2
-R' = integralClosure R
+-- We need to check the correctness of this example!
+newanswer = ideal(
+  a^2*b*c^2+b^2*c*d^2+a^2*d^2*e+a*b^2*e^2+c^2*d*e^2,
+    a*b^3*c+b*c^3*d+a^3*b*e+c*d^3*e+a*d*e^3,
+    a^5+b^5+c^5+d^5-5*a*b*c*d*e+e^5,
+    X_1*e-a^3*b^2*c+b*c^2*d^3,
+    X_1*d+a*b^2*c^3-b^5*d-d^6+3*a*b*c*d^2*e-a^2*b*e^3-d*e^5,
+    X_1*c-c*d^5+a^2*b^3*e+a*b*c^2*d*e-a*d^3*e^2,
+    X_1*b-b^6-b*c^5-b*d^5+4*a*b^2*c*d*e-c^3*d^2*e+a^3*d*e^2-b*e^5,
+    X_1*a-a*b^5-b^3*c^2*d-a*d^5+2*a^2*b*c*d*e+c*d^2*e^3,
+    X_0*e-a*b*c^4+b^4*c*d,
+    X_0*d+a^4*b*c-a^2*b^2*d^2+a*c^2*d^3-a*b^4*e-b^2*c^2*d*e+a^2*c*d*e^2,
+    X_0*c-2*a^2*b^2*c*d+a*c^3*d^2-a^4*d*e+b*c*d^2*e^2+a*b*e^4,
+    X_0*b-a^2*b^3*d+2*a*b*c^2*d^2+a*d^4*e-a^2*b*c*e^2-c*d*e^4,
+    X_0*a-a^3*b^2*d+a^2*c^2*d^2-b*c*d^4+a*b^2*c^2*e+c^4*d*e-a*b*d^2*e^2,
+    X_1^2-b^10-b^5*c^5+2*a*b^2*c^3*d^4-2*b^5*d^5-d^10-5*b^4*c^3*d^2*e+6*a*b*c*d^6*e-6*a^3*b^4*d*e^2-4*b^3*c*d^4*e^2+2*a^2*b*d^4*e^3-4*a*b^3*d^2*e^4+b*c^2*d^3*e^4-b^5*e^5-d^5*e^5,
+    X_0*X_1-a^2*b^7*d+b^3*c^4*d^3+a^4*b*c*d^4-a^2*b^2*d^6+a*c^2*d^7+4*b^2*c^2*d^5*e+b^6*d^2*e^2+b*c^5*d^2*e^2+3*a^2*c*d^5*e^2+b*d^7*e^2+a^4*b^3*e^3+4*c^3*d^4*e^3-2*a^3*d^3*e^4+b*d^2*e^7,
+    X_0^2-a^4*b^4*d^2-a^2*c^4*d^4+7*b*c^3*d^6-2*b^5*c*d^3*e-2*c^6*d^3*e+2*a^3*b*d^5*e+5*c*d^8*e+a^3*c^3*d^2*e^2-6*a^2*b^3*d^3*e^2-a*b*c^2*d^4*e^2-2*a*b^5*d*e^3-2*b^3*c^2*d^2*e^3+5*a*d^6*e^3-a^2*b*c*d^2*e^4+a^3*b*e^6+c*d^3*e^6+a*d*e^8)   
+
+assert(ideal V == newanswer)   
 ///
 
 -- Test of ICfractions
 --TEST 
-///
-S = QQ [(symbol Y)_1, (symbol Y)_2, (symbol Y)_3, (symbol Y)_4, symbol x, symbol y, Degrees => {{7, 1}, {5, 1}, {6, 1}, {6, 1}, {1, 0}, {1, 0}}, MonomialOrder => ProductOrder {4, 2}]
-J = ideal(Y_3*y-Y_2*x^2,Y_3*x-Y_4*y,Y_1*x^3-Y_2*y^5,Y_3^2-Y_2*Y_4*x,Y_1*Y_4-Y_2^2*y^3)
-T = S/J       
-assert(icFractions T == substitute(matrix {{(Y_2*y^2)/x, (Y_1*x)/y, Y_1, Y_2, Y_3, Y_4, x, y}}, frac T))
-///
+--///
+--S = QQ [(symbol Y)_1, (symbol Y)_2, (symbol Y)_3, (symbol Y)_4, symbol x, symbol y, Degrees => {{7, 1}, {5, 1}, {6, 1}, {6, 1}, {1, 0}, {1, 0}}, MonomialOrder => ProductOrder {4, 2}]
+--J = ideal(Y_3*y-Y_2*x^2,Y_3*x-Y_4*y,Y_1*x^3-Y_2*y^5,Y_3^2-Y_2*Y_4*x,Y_1*Y_4-Y_2^2*y^3)
+--T = S/J       
+--assert(ICfractions T == substitute(matrix {{(Y_2*y^2)/x, (Y_1*x)/y, Y_1, Y_2, Y_3, Y_4, x, y}}, frac T))
+--///
 
 -- Test of isNormal
 TEST ///
@@ -1124,7 +1128,11 @@ F = R.icMap
 assert(conductor F == ideal((R_2)^3, (R_0)*(R_2)^2, (R_0)^3*(R_2), (R_0)^4))
 ///
 
-TEST ///
+end 
+
+---- Homogeneous Ex
+loadPackage"IntegralClosure"
+loadPackage"ParameterSchemes"
 R = ZZ/101[x,y, z]
 I1 = ideal(x,y-z)
 I2 = ideal(x-3*z, y-5*z)
@@ -1137,13 +1145,6 @@ S = R/f
 V = integralClosure(S)
 ring(presentation V)
 
-///
-
-end 
-
----- Homogeneous Ex
-loadPackage"IntegralClosure"
-loadPackage"ParameterSchemes"
 installPackage "IntegralClosure"
 
 -- Tests that Mike has added:
@@ -1315,20 +1316,12 @@ ideal V == ideal(a_5*a_9-a_6*a_10,a_4*a_8-a_0*a_9,a_1*a_4-a_6*a_10,a_0*a_4-a_1*a
 ///
 restart
 loadPackage"IntegralClosure"
-S=ZZ/2[x,y,Weights=>{{8,9},{0,1}}]
+R=ZZ/2[x,y,Weights=>{{8,9},{0,1}}]
 I=ideal(y^8+y^2*x^3+x^9) -- eliminates x and y at some point. 
-R = S/I
-R' = integralClosure R
-ideal R'
-icFractions R
-
-S=ZZ/2[x,y,Weights=>{{31,12},{0,1}}]
+R=ZZ/2[x,y,Weights=>{{31,12},{0,1}}]
 I=ideal"y12+y11+y10x2+y8x9+x31" -- really long
-R = S/I
-R' = integralClosure R
-ideal R'
-icFractions R
-
+S=integralClosure(R/I)
+transpose gens ideal S
 
 M = flattenRing (R/I)
 J = nonNormalLocus M_0

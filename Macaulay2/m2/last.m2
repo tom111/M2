@@ -16,6 +16,9 @@ Net.Wrap = x -> if height x + depth x <= 3 then wr("-",x) else x
 Number.Wrap = x -> wr("",x)
 QQ.Wrap = x -> wr("=",x)
 
+ignoreP := set { "Core", "Classic", "Parsing", "SimpleDoc" }
+mentionQ := p -> not ignoreP#?(toString p)
+
 addStartFunction( 
      () -> (
 	  if class value getGlobalSymbol "User" =!= Package then (
@@ -25,7 +28,7 @@ addStartFunction(
 	  if not nobanner then (
 	       if topLevelMode === TeXmacs then stderr << TeXmacsBegin << "verbatim:";
 	       hd := "with packages: ";
-	       stderr << hd << wrap(printWidth-#hd, concatenate between_", " sort apply(loadedPackages,toString)) << endl;
+	       stderr << hd << wrap(printWidth-#hd, concatenate between_", " sort apply(select(loadedPackages,mentionQ),toString)) << endl;
 	       if topLevelMode === TeXmacs then stderr << TeXmacsEnd << flush;
 	       )
 	  )

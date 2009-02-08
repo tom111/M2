@@ -1013,7 +1013,7 @@ doc ///
   SeeAlso
     reesAlgebra
     normalCone
-    tangentCone
+    "tangentCone"
 ///
 
 

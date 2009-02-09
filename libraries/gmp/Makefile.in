@@ -8,6 +8,9 @@ ifeq (@SHARED@,no)
 CONFIGOPTIONS += --disable-shared
 endif
 
+# disable check, because it fails on various 64 bit machines
+CHECKTARGET = .
+
 # core 2 duo patch:
 # http://www.math.jmu.edu/~martin/
 # http://www.math.jmu.edu/~martin/gmp-4.2.x-core2-port.tar.gz

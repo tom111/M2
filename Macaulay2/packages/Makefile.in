@@ -37,7 +37,9 @@ STOP = --stop --silent
 $(foreach i,\
 	$(sort $(PACKAGES) $(DEVEL)),\
 	$(eval check::; \
-		@pre_bindir@/M2@EXE@ -q $(STOP) -e "needsPackage(\"$i\",LoadDocumentation=>true); check($i,UserMode=>false); exit 0"))
+		if ! grep "CacheExampleOutput => true" @srcdir@/$i.m2 >/dev/null ;\
+		then @pre_bindir@/M2@EXE@ -q $(STOP) -e "needsPackage(\"$i\",LoadDocumentation=>true); check($i,UserMode=>false); exit 0" ;\
+		fi ))
 info-dir: @pre_infodir@ @pre_infodir@/dir
 @pre_infodir@:; $(MKDIR_P) $@
 @pre_infodir@/dir:; @INSTALL_DATA@ @top_srcdir@/files/info-dir-template $@

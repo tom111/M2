@@ -40,7 +40,7 @@ PAT := 'internal error|:[0-9][0-9]*:[0-9][0-9]*:\([0-9][0-9]*\):|^GC|^0x|^out of
 FILTER := egrep -a $(PAT)
 
 check:: $(RESULTS)
-$(RESULTS) : @pre_exec_prefix@/bin/M2@EXE@
+$(RESULTS) : @pre_exec_prefix@/bin/M2@EXE@ always
 
 ARGS := --silent --stop -q -e 'path=join(path,{"$(SRCDIR)/","$(SRCDIR)/$(DOTS)/packages/"})'
 ARGS += --no-debug --print-width 140

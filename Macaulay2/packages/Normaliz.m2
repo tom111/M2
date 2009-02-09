@@ -2,7 +2,7 @@
 
 newPackage(
            "Normaliz",
-           Version=>"0.1",
+           Version=>"0.1.1",
            Date=>"February 7, 2009",
            Authors=>{{Name=> "G. Kämpf",
                     Email=>"gkaempf@mathematik.uni-osnabrueck.de"}},
@@ -18,7 +18,7 @@ export{setNmzExecPath, getNmzExecPath,
        setNmzDataPath, getNmzDataPath,
        setNmzFile,
        writeNmzPaths, 
-       startNmz, getKeyword,
+       startNmz, 
        rmNmzFiles,
        writeNmzData, readNmzData,
        getNumInvs, showNumInvs, exportNumInvs,
@@ -258,7 +258,7 @@ rmNmzFiles=()->
 getNumber=method(TypicalValue=>(String,String))
 getNumber String :=s->
 (
-    l:=regex("[0-9,-]+",s);
+    l:=regex("[0-9-]+",s);
     if( instance(l,Nothing)) then error("getNumber: no number found in the string.");
     if(l#0#0!=0) then error("getNumber: string must begin with a number");
     return(substring(l#0,s),substring(l#0#0+l#0#1,s));
@@ -357,25 +357,12 @@ readNmzData(String):=(nmzSuffix)->
     t:="";
     while(i<#s)
     do( 
-       gen={};
-       j:=0;
-       while(j+1<#(s#i))
-       do(
-          t=toString(s#i#j);
-          j=j+1;
-          while(j<#(s#i) and (not toString(s#i#j)==" "))
-          do(
-             t=t|s#i#j;
-             j=j+1;
-           );
-        
-        gen=append(gen,value t);
-        );
-     nmzGen=append(nmzGen,gen);
-     i=i+1;
-     );
-
-     return(matrix(nmzGen));
+      t = select("[0-9-]+",s#i);
+      gen:=apply(t,value);
+      nmzGen=append(nmzGen,gen);
+      i=i+1;
+    );
+    return(matrix(nmzGen));
 );
 
 -------------------------------------------------------------
@@ -400,32 +387,28 @@ getNumInvs=()->
     do(
        key="";
        
-       if(substring(0,7,s#i)=="integer")
+       if(match("^integer", s#i))
        then( 
             (key,j)=getKeyword(s#i,8); 
              inv=(getNumber(substring(j+3,s#i)))#0;
        )
-      else( if(substring(0,7,s#i)=="boolean")
+      else( if(match("^boolean",s#i))
             then(
                  (key,j)=getKeyword(s#i,8);
                   if(s#i#(j+3)=="t")
                   then( inv="true";)
                   else( inv="false";);
             )
-            else (if(substring(0,6,s#i)=="vector")
+            else (if(match("^vector",s#i))
                   then(
                        (len,str):=getNumber(substring(7,s#i)); 
                        (key,j)=getKeyword(str,1);
                        inv={}; 
-                       en:="";
-                       str=substring(j+10+#len,s#i);
-                       while(not str=="")
-                       do(
-                          (en,str)=getNumber(str);
-                          inv=append(inv,en);
-                          str=substring(1,str);
-                       );
-                       inv=toSequence(inv);
+                    --   en:="";
+                       --str=substring(j+10+#len,s#i);
+                        t:= replace(".* = ","",s#i);
+                        u:= select("[0-9-]+",t);
+                        inv=toSequence(apply(u,value));
                   );
            );
       );
@@ -1319,5 +1302,4 @@ document {
 
 
      
-
 

@@ -4,8 +4,8 @@
 # s//\n/
 
 # wipe out execution timing results
-s/-- used [0-9.][0-9.]* seconds/-- used XXX seconds/g
-s/-- [0-9.][0-9.]* seconds/-- XXX seconds/g
+s/-- used [0-9.][0-9.e-]* seconds/-- used XXX seconds/g
+s/-- [0-9.][0-9.e-]* seconds/-- XXX seconds/g
 
 # Wipe out source code line numbers, which may change.  The format used by "code" may also change.
 # Also wipe out the initial part of the path to the file,

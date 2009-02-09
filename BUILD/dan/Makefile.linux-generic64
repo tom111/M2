@@ -1,13 +1,11 @@
 # -*- Makefile -*-
-DIRECTORY ?= linux32
-CONFIGOPTIONS += --build=i486-pc-linux-gnu
+DIRECTORY = linux64
 CONFIGOPTIONS += --enable-tarfile
 CONFIGOPTIONS += --enable-static
 CONFIGOPTIONS += --enable-build-libraries=gmp
 CONFIGOPTIONS += --disable-pthreads
 CONFIGOPTIONS += --with-issue=Generic
 include Makefile.include
-default:check
 # Local Variables:
-# compile-command: "time make -f Makefile.linux-generic32 "
+# compile-command: "time make -f Makefile.linux-generic64 "
 # End:

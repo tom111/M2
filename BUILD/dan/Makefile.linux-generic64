@@ -1,11 +1,12 @@
 # -*- Makefile -*-
-DIRECTORY = linux64
+DIRECTORY ?= linux64
 CONFIGOPTIONS += --enable-tarfile
 CONFIGOPTIONS += --enable-static
 CONFIGOPTIONS += --enable-build-libraries=gmp
 CONFIGOPTIONS += --disable-pthreads
 CONFIGOPTIONS += --with-issue=Generic
 include Makefile.include
+arch-chk:; [ `uname -m` = x86_64 ]
 # Local Variables:
 # compile-command: "time make -f Makefile.linux-generic64 "
 # End:

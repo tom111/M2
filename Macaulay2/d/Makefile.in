@@ -336,9 +336,7 @@ M2_LIBRARIES += -lstdc++
 # Note: static version is here:
 #  /usr/lib/gcc/x86_64-linux-gnu/4.3.2/libgfortran.a
 #  /usr/lib/gcc/x86_64-linux-gnu/4.3.2/libgfortranbegin.a
-M2_LIBRARIES += @FCLIBS_FLAGS@ $(TOSTATIC) @FCLIBS_STATIC@ $(MAYBESTATIC) @FCLIBS_DYNAMIC@
-
-M2_LIBRARIES += $(UNSTATIC) @LIBS_DYNAMIC@
+M2_LIBRARIES += @FCLIBS_FLAGS@ $(TOSTATIC) @FCLIBS_STATIC@ $(UNSTATIC) @FCLIBS_DYNAMIC@ @LIBS_DYNAMIC@
 
 ifeq (@MYSQL@,yes)
 M2_LIBRARIES += -L/usr/lib/mysql -lmysqlclient

@@ -5,8 +5,9 @@
 DOTS ?= ../../..
 ifeq "@DEBUG@" "no"
 TLIMIT ?= 40
-MLIMIT ?= 150000
-VLIMIT ?= 150000
+# one test doesn't work with only 150MB RAM, ext-total.m2, on a 64 bit intel machine:
+MLIMIT ?= 235000
+VLIMIT ?= 235000
 else
 # give the debug version more time and space
 TLIMIT ?= 60

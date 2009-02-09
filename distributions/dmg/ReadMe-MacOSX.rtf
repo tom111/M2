@@ -43,19 +43,16 @@ You can find this information by choosing "About this Mac" under the Apple menu.
 \b Step 2. Important step for 10.5 users!!!
 \b0 \
 \
-If you are running MacOS 10.4, disregard this step.  If you are running MacOS 10.5, first close the disk image, if Safari or Firefox opened it for you.  Then open Terminal, and type the following into a terminal window:\
+If you are running MacOS 10.4, disregard this step.  If you are running MacOS 10.5, first unmount the disk image, if Safari or Firefox mounted it for you.  \
+\
+Start the Terminal application (located in the Utilities folder in the Application folder).  In the Terminal window, type:\
 \
 (Assuming that you have placed the .dmg file on your desktop):\
 \
 	cd ~/Desktop\
+	xattr -d com.apple.quarantine Macaulay2*.dmg\
 \
-(Depending on which file you downloaded):\
-\
-	xattr -d com.apple.quarantine Macaulay2-1.2-i386-MacOS-10.4.dmg\
-or\
-	xattr -d com.apple.quarantine Macaulay2-1.2-x86_64-MacOS-10.5.dmg\
-\
-\
+(If the system responds "No such xattr: com.apple.quarantine", then the file had not been quarantined, and everything should be fine.)\
 \
 
 \b Step 3. Unpack the disk image\
@@ -90,7 +87,7 @@ Step 5. Try M2 in a terminal window\
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\ql\qnatural\pardirnatural
 
 \b0 \cf0 \
-In a Terminal window, type 'M2' (without the quotes).  If Macaulay2 has been installed properly, and your .profile file has been correctly modified, then you should see a prompt such as this:\
+In a Terminal window, type 'M2' (without the quotes).  If Macaulay2 has been installed properly, and your .profile startup file has been correctly modified, then you should see a prompt such as this:\
 \
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
 

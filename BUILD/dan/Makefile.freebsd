@@ -1,4 +1,8 @@
 #-*- Makefile -*-
+
+# to do: record an origin in the package for package deletion time:
+#     pkg_add: package Macaulay2-1.1.99 has no origin recorded
+
 DIRECTORY = freebsd
 include Makefile.include
 CONFIGOPTIONS += --prefix=/usr/local
@@ -81,6 +85,9 @@ arch-chk:
 #   Hostname localhost
 #   Port 2222
 
+# test like this as root:
+#    pkg_add Macaulay2-1.2-i386-FreeBSD-7.1-RELEASE.tbz 
+#    /usr/local/bin/M2 -q
 
 # Local Variables:
 # compile-command: "time gmake -f Makefile.freebsd "

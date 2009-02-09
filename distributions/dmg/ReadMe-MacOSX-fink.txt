@@ -54,7 +54,10 @@ newer versions of Macaulay 2.
    with Macaulay2.
    
         cd /sw/bin
-	./M2 -e 'setup();exit 0' 
+	./M2
+	  setupEmacs()  -- and answer the questions.  
+                        -- Answering "y" to all is usually fine
+          exit
 
    If you are running emacs, you will need to exit and restart it before 
    these changes take effect.
@@ -68,8 +71,8 @@ Macaulay2 has been installed properly, then you should see a prompt
 such as this:
 
 	% M2
-	Macaulay 2, version 1.1
-	with packages: Classic, Core, Elimination, IntegralClosure, 
+	Macaulay 2, version 1.2
+	with packages: Classic, Core, Elimination,
                        LLLBases, Parsing, PrimaryDecomposition, 
                        SchurRings, TangentCone
 	i1 : 
@@ -109,7 +112,7 @@ called "Library/Application Support/Macaulay2".
 The application directory contains several useful files and
 directories:
 
-	init.m2		This file is run every time you start Macaulay2
+	init.m2	This file is run every time you start Macaulay2
 	code/		This directory is on your Macaulay2 path, 
 			so any .m2 files you put here are easy 
 			to load in Macaulay2.
@@ -117,16 +120,7 @@ directories:
 			documentation. It includes the Macaulay2 html
 			distribution, together with any html files from
 			installed Macaulay2 packages.
-        encap/	   	A directory containing one subdirectory for
-	     	        each installed package.  The subdirectory
-			houses the files for that package.
-        local/	   	A directory tree containing symbolic links
-	     	        to the files of each installed package.
-	local/info/	A directory with links to the info files
-	     	        for each installed package.  You may wish
-			to add this directory to the list of
-			directories in your environment variable
-			INFOPATH.
+	local/		A directory tree containing installed packages.
 
 After creating this directory, Macaulay2 never modifies init.m2 or the
 code directory.  The page index.html is rewritten each time M2 is

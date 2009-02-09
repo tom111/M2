@@ -6,6 +6,11 @@ CONFIGOPTIONS += --enable-static
 CONFIGOPTIONS += --enable-build-libraries=gmp
 CONFIGOPTIONS += --disable-pthreads
 CONFIGOPTIONS += --with-issue=Generic
+
+# for some strange reason liblapack and libblas, in static form under ubuntu32, are incompatible, 
+# (multiple definition of `xerbla_') so we compile lapack:
+CONFIGOPTIONS == --enable-build-libraries=lapack
+
 include Makefile.include
 default:check
 # Local Variables:

@@ -6,6 +6,7 @@ CONFIGOPTIONS += --enable-build-libraries=gmp
 CONFIGOPTIONS += --disable-pthreads
 CONFIGOPTIONS += --with-issue=Generic
 include Makefile.include
+default: check
 arch-chk:; [ `uname -m` = x86_64 ]
 # Local Variables:
 # compile-command: "time make -f Makefile.linux-generic64 "

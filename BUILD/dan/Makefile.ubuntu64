@@ -1,8 +1,5 @@
 #-*- Makefile -*-
-# BUILDOPTIONS += RemakeAllDocumentation=true RemakePackages=true
-# BUILDOPTIONS += RerunExamples=true IgnoreExampleErrors=true
 CONFIGOPTIONS += --enable-deb
-# CONFIGOPTIONS += --enable-build-libraries=lapack
 INSTALLOPTIONS += prefix=$(HOME)/local/encap
 DIRECTORY = ubuntu64
 include Makefile.include

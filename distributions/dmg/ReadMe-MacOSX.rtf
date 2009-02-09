@@ -17,32 +17,65 @@ Welcome to Macaulay2!\
 \
 This file tells how to get Macaulay2 installed and running on your MacOS X 10.4 or 10.5 system, for either power pc, or intel macs.  If you have any difficulty with these instructions, please email us.\
 \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\ql\qnatural\pardirnatural
 
-\b Step 1.  Download and unpack Macaulay2.
+\b \cf0 Step 1.  Download Macaulay2.
 \b0 \
 \
 In your browser, download one of the files\
 \
-	http://www.math.uiuc.edu/Macaulay2/Downloads/MacOSX/Macaulay2-1.1.99-x86_64-MacOS-10.5.dmg\
-	http://www.math.uiuc.edu/Macaulay2/Downloads/MacOSX/Macaulay2-1.1.99-i386-MacOS-10.5.dmg\
-	http://www.math.uiuc.edu/Macaulay2/Downloads/MacOSX/Macaulay2-1.1.99-i386-MacOS-10.4.dmg\
-	http://www.math.uiuc.edu/Macaulay2/Downloads/MacOSX/Macaulay2-1.1.99-powerpc-MacOS-10.4.dmg\
+	http://www.math.uiuc.edu/Macaulay2/Downloads/MacOSX/Macaulay2-1.2-x86_64-MacOS-10.5.dmg\
+	http://www.math.uiuc.edu/Macaulay2/Downloads/MacOSX/Macaulay2-1.2-i386-MacOS-10.5.dmg\
+	http://www.math.uiuc.edu/Macaulay2/Downloads/MacOSX/Macaulay2-1.2-i386-MacOS-10.4.dmg\
+	http://www.math.uiuc.edu/Macaulay2/Downloads/MacOSX/Macaulay2-1.2-powerpc-MacOS-10.4.dmg\
 \
-If there is a later version, use that instead. Mount this disk image by double-clicking on it, and drag the Macaulay2 folder in this mounted disk to somewhere on your disk. One possible location is your Applications folder (your system Applications folder, at top level on your main disk).  There are versions for MacOS 10.4 (Tiger) and MacOS 10.5 (Leopard), running on intel (i386, Intel Core Duo), 64 bit intel (x86_64, Intel Core 2 Duo), or PowerPC (ppc, either G4 or G5 processors).  The versions for 10.4 should run on 10.5, but the versions for 10.5 do 
+If there is a later version, use that instead. \
+\
+You need to know \
+	(a) if you are running MacOS 10.4 or 10.5,\
+	(b) if you want powerpc, i386 (Intel Core Duo), or x86_64 (Intel Core 2 Duo).\
+\
+You can find this information by choosing "About this Mac" under the Apple menu.  The versions for 10.4 should run on 10.5, but the versions for 10.5 do 
 \b not
 \b0  work on 10.4!\
 \
 
-\b Step 2. Installation
+\b Step 2. Important step for 10.5 users!!!
+\b0 \
+\
+If you are running MacOS 10.4, disregard this step.  If you are running MacOS 10.5, first close the disk image, if Safari or Firefox opened it for you.  Then open Terminal, and type the following into a terminal window:\
+\
+(Assuming that you have placed the .dmg file on your desktop):\
+\
+	cd ~/Desktop\
+\
+(Depending on which file you downloaded):\
+\
+	xattr -d com.apple.quarantine Macaulay2-1.2-i386-MacOS-10.4.dmg\
+or\
+	xattr -d com.apple.quarantine Macaulay2-1.2-x86_64-MacOS-10.5.dmg\
+\
+\
+\
+
+\b Step 3. Unpack the disk image\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\ql\qnatural\pardirnatural
+
+\b0 \cf0 \
+Mount this disk image by double-clicking on it, and drag the Macaulay2 folder in this mounted disk to somewhere on your disk. One possible location is your Applications folder (your system Applications folder, at top level on your main disk).   \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\ql\qnatural\pardirnatural
+
+\b \cf0 \
+Step 4. Installation
 \b0 \
 \
 Arrange for Macaulay 2 to set up your .emacs files and your command shell init files so that M2 will be on the path.  \
 \
 The easiest way to set up these files is to do the following in a Terminal window (the Terminal application is found in the Utilities folder inside the Applications folder.  You might want to drag this application to your dock too).\
 \
-First change to the Macaulay2 folder (here we suppose that it is in your Applications folder (directory)), and then run the 'setup' routine in Macaulay2:\
+First change to the Macaulay2 folder (here we suppose that it is in your Applications folder), and then run the 'setup' routine in Macaulay2:\
 \
-	cd /Applications/Macaulay2-1.1.99\
+	cd /Applications/Macaulay2-1.2\
 	cd bin\
 	./M2\
 	  setup()  -- this line and the next are typed inside of Macaulay2: answer the prompts which follow.\
@@ -53,16 +86,17 @@ After you log out and in again, your PATH will have Macaulay2's bin directory on
 This allows you to run Macaulay2 by typing 'M2' (without the quotes) at a terminal command line, to access the info and man pages, and to use the Macaulay2 emacs interface.\
 
 \b \
-Step 3. Try M2 in a terminal window\
+Step 5. Try M2 in a terminal window\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\ql\qnatural\pardirnatural
 
-\b0 \
+\b0 \cf0 \
 In a Terminal window, type 'M2' (without the quotes).  If Macaulay2 has been installed properly, and your .profile file has been correctly modified, then you should see a prompt such as this:\
 \
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
 
 \f1\fs18 \cf0 	indigo% M2\
-	Macaulay 2, version 1.1.99\
-	with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings, TangentCone\
+	Macaulay 2, version 1.2\
+	with packages: Classic, Elimination, LLLBases, PrimaryDecomposition, SchurRings, TangentCone...\
 	i1 : \
 \
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\ql\qnatural\pardirnatural
@@ -99,10 +133,12 @@ This starts your default web browser (if it is not already running), and then op
 	exit\
 
 \f0\fs24 \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\ql\qnatural\pardirnatural
 
-\b The Macaulay2 application directory (folder)\
+\b \cf0 The Macaulay2 application directory (folder)\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\ql\qnatural\pardirnatural
 
-\b0 \
+\b0 \cf0 \
 If this is the first time that you have run a recent version of Macaulay2 from your user account, Macaulay2 creates an "application folder" in your home:\
 \
 	Library/Application Support/Macaulay2\
@@ -118,25 +154,17 @@ directories:\
 			documentation. It includes the Macaulay2 html\
 			distribution, together with any html files from\
 			installed Macaulay2 packages.\
-	encap/	A directory containing one subdirectory for\
-			each installed package.  The subdirectory\
-			houses the files for that package.\
-	local/		A directory tree containing symbolic links\
-			to the files of each installed package.\
-	local/info/	A directory with links to the info files\
-			for each installed package.  You may wish\
-			to add this directory to the list of\
-			directories in your environment variable\
-			INFOPATH.\
+	local/		A directory tree containing installed packages.\
 \
 After creating this directory, Macaulay2 
 \b never
 \b0  modifies init.m2 or the code directory.  The page index.html is rewritten each time M2 is started.\
 \
-The directories "encap" and "local" are used by Macaulay2 to manage installed packages: you should mostly ignore these directories.  If you are upgrading from previous versions of Macaulay2, you may wish to delete the folders: encap, and local.\
+The directory  "local" is used by Macaulay2 to manage installed packages: you should mostly ignore this directory.  If you are upgrading from previous versions of Macaulay2, you may wish to delete the folder: local.\
 \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\ql\qnatural\pardirnatural
 
-\b Step 4. Enjoy!
+\b \cf0 Step 6. Enjoy!
 \b0 \
 \
 You should now be up and running.  From the bookmarked web page, choose 'Macaulay2', and then 'getting started', for a first Macaulay2 session, as well as how to use the Macaulay2 emacs interface.\
@@ -147,7 +175,7 @@ If you have any questions, or problems, please contact one of us, or post a mess
 You may need to join the group in order to post messages, but this is easy: click on 'Join this group' found on the right-hand side of the page.\
 \
 
-\b Step 5.  Some suggestions to streamline your Macintosh for use with Macaulay2.
+\b Step 7.  Some suggestions to streamline your Macintosh for use with Macaulay2.
 \b0 \
 \
 There are at least three ways to run emacs on the mac: using Aquamacs (the recommended way), in a terminal window,  and under the X11 window system.\
@@ -158,17 +186,19 @@ In System Preferences, change the keys for dashboard and expose, so that the fun
 \
 
 \b Aquamacs (recommended)\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\ql\qnatural\pardirnatural
 
-\b0 \
+\b0 \cf0 \
 Aquamacs is a MacOSX implementation of emacs, which is designed to play well with other applications and MacOSX concepts: drag and drop, cut and paste all work.  Download the latest version of Aquamacs at http://aquamacs.org/Aquamacs.  It is quite nice to use these days.  After downloading it and moving it to your Applications folder, it is ready to run Macaulay2.\
 \
-I like smaller fonts, personally.  Changing the fonts is fairly self explanatory: Under the menu item "Options", choose "Appearance", and then set the font to a fixed-width font.  The choose "Save Options" under the "Options" menu.\
+I like smaller fonts, personally.  Changing the fonts is fairly self explanatory: Under the menu item "Options", choose "Appearance", and then set the font to a fixed-width font.  Then choose "Save Options" under the "Options" menu.\
 \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\ql\qnatural\pardirnatural
 
-\b Emacs in a terminal window.
+\b \cf0 Emacs in a terminal window.
 \b0 \
 \
-The version of emacs which comes with MacOSX only runs inside a terminal window.  The function keys generally work correctly, but you must know many of the emacs keystrokes, since the mouse button does not work in this version of emacs. \
+The version of emacs which comes with MacOSX only runs inside a terminal window.  The function keys generally work correctly, but you must know many of the emacs keystrokes, since the mouse button is not enabled in this version of emacs. \
 \
 It is suggested that you change your "option key" to a "meta key":  Under Tiger, in Terminal, open the Window Preferences menu item under the "Terminal" menu, choose "Keyboard", and click the box to use the option key as a meta key, and then click: "Use settings as defaults".  Under Leopard, the directions are similar.\
 \

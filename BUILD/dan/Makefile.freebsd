@@ -11,7 +11,7 @@ CONFIGOPTIONS += LDFLAGS="-L/usr/local/lib"
 # is used with one of our other ports that has --mandir at the default value:
 CONFIGOPTIONS += --disable-common-staging-area --mandir='$${prefix}/man'
 
-default: install
+default: install check
 INSTALLOPTIONS += prefix=/usr/local/encap
 
 pre-install:;	rm -rf /usr/local/encap/Macaulay2-$(PACKAGE_VERSION)

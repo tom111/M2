@@ -179,7 +179,7 @@ links := tag -> (
 	  if SRC#?tag then (
      	       LINK { 
 		    "href" => concatenate("file://",externalPath, toAbsolutePath SRC#tag#0), 
-		    "rel" => concatenate("Source (see text above line ", toString SRC#tag#1, ")"),
+		    "rel" => concatenate("Source: see text above line ", toString SRC#tag#1),
 		    "type" => "text/plain" } ) ) )
 
 BUTTON := (s,alt) -> (
@@ -191,7 +191,7 @@ BUTTON := (s,alt) -> (
 html HTML := t -> concatenate(
 ///<?xml version="1.0" encoding="utf-8" ?>  <!-- for emacs: -*- coding: utf-8 -*- -->
 <!-- Apache may like this line in the file .htaccess: AddCharset utf-8 .html -->
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1 plus MathML 2.0 plus SVG 1.1//EN"	 "http://www.w3.org/Math/DTD/mathml2/xhtml-math11-f.dtd" >
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1 plus MathML 2.0 plus SVG 1.1//EN"	 "http://www.w3.org/2002/04/xhtml-math-svg/xhtml-math-svg-flat.dtd" >
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 ///,
      apply(t,html), 

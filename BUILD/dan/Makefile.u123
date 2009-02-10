@@ -1,6 +1,7 @@
 #-*- Makefile -*-
-BUILDOPTIONS += RerunExamples=true
-BUILDOPTIONS += RemakeAllDocumentation=true RemakePackages=true IgnoreExampleErrors=true
+# BUILDOPTIONS += RerunExamples=true
+BUILDOPTIONS += RemakeAllDocumentation=true RemakePackages=true 
+#BUILDOPTIONS += IgnoreExampleErrors=true
 #BUILDOPTIONS += -s
 #INSTALLOPTIONS += -s
 CONFIGOPTIONS += --enable-rpm

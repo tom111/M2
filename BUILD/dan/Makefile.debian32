@@ -4,7 +4,7 @@ INSTALLOPTIONS += prefix=/usr/local/encap
 CONFIGOPTIONS += --enable-deb
 DIRECTORY = debian32
 include Makefile.include
-default: install
+default: install check
 pre-install:; rm -rf /usr/local/encap/Macaulay2-$(PACKAGE_VERSION)
 arch-chk:; [ `hostname` = debian32 ]
 
@@ -38,6 +38,11 @@ arch-chk:; [ `hostname` = debian32 ]
 #   Host debian32
 #     Hostname localhost
 #     Port 2224
+
+# test *.deb files this way;
+#   dpkg --install Macaulay2-1.2-common.deb 
+#   dpkg --install Macaulay2-1.2-i386-Linux-Debian-4.0.deb 
+#   /usr/bin/M2
 
 # Local Variables:
 # compile-command: "time make -f Makefile.debian32 "

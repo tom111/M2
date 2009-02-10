@@ -95,8 +95,8 @@ Step 5. Try M2 in a terminal window
 
 	indigo% M2
 	Macaulay 2, version 1.2
-	with packages: Elimination, LLLBases, PrimaryDecomposition,
-	  SchurRings, TangentCone...
+	with packages: Elimination, IntegralClosure, LLLBases, 
+           PrimaryDecomposition, ReesAlgebra, SchurRings, TangentCone
 	i1 : 
 
   At this point you should try something simple in Macaulay2, such as
@@ -184,9 +184,9 @@ Step 7.  Some suggestions to streamline your Macintosh for use with Macaulay2.
     Aquamacs is a MacOSX implementation of emacs, which is designed to
     play well with other applications and MacOSX concepts: drag and
     drop, cut and paste all work.  Download the latest version of
-    Aquamacs at http://aquamacs.org/Aquamacs.  It is quite nice to use
-    these days.  After downloading it and moving it to your Applications
-    folder, it is ready to run Macaulay2.
+    Aquamacs at http://aquamacs.org/download.shtml.  It is quite nice to
+    use these days.  After downloading it and moving it to your
+    Applications folder, it is ready to run Macaulay2.
 
     I like smaller fonts, personally.  Changing the fonts is fairly self
     explanatory: Under the menu item "Options", choose "Appearance", and

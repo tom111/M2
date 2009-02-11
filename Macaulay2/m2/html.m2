@@ -1,6 +1,10 @@
 -- -*- fill-column: 107 -*-
 --		Copyright 1993-2002 by Daniel R. Grayson
 
+fixtitle = method()
+fixtitle Nothing := identity
+fixtitle String := s -> replace("\"","_quote_",s)
+
 Macaulay2HomePage := () -> "http://www.math.uiuc.edu/Macaulay2/index-" | version#"VERSION" | ".html"
 
 -----------------------------------------------------------------------------
@@ -120,7 +124,7 @@ html TO   := x -> (
 	  warning "missing documentation";
 	  concatenate( "<tt>", r, "</tt>", if x#?1 then x#1, " (missing documentation<!-- tag: ",toString DocumentTag.Key tag," -->)")
 	  )
-     else concatenate( "<a href=\"", toURL htmlFilename toFinalDocumentTag getPrimary x#0, "\" title=\"", headline x#0, "\">", r, "</a>", if x#?1 then x#1))
+     else concatenate( "<a href=\"", toURL htmlFilename toFinalDocumentTag getPrimary x#0, "\" title=\"", fixtitle headline x#0, "\">", r, "</a>", if x#?1 then x#1))
 html TO2  := x -> (
      tag := x#0;
      headline tag;		   -- this is a kludge, just to generate error messages about missing links 
@@ -153,8 +157,8 @@ BACKWARD  := tag -> if PREV#?tag then BACKWARD0 PREV#tag else if UP#?tag then UP
 forward  := tag -> ( f := FORWARD  tag; ( if f =!= null then HREF { htmlFilename f, forwardButton } else forwardButton , " | "))
 backward := tag -> ( b := BACKWARD tag; ( if b =!= null then HREF { htmlFilename b, backwardButton} else backwardButton, " | "))
 
-linkTitle := s -> concatenate( " title=\"", s, "\"" )
-linkTitleTag := tag -> "title" => concatenate(DocumentTag.FormattedKey tag, commentize headline tag)
+linkTitle := s -> concatenate( " title=\"", fixtitle s, "\"" )
+linkTitleTag := tag -> "title" => fixtitle concatenate(DocumentTag.FormattedKey tag, commentize headline tag)
 links := tag -> (
      f := FORWARD tag;
      b := BACKWARD tag;

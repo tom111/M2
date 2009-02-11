@@ -40,6 +40,7 @@ gc_test : gc_test.c
 # but it makes more sense to let it test the same way we link with it
 # gc_test : -lgc
 # .LIBPATTERNS = lib%.a
+gc_test: always
 
 gc_tested: gc_test; ./$< && touch $@
 # Local Variables:

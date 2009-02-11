@@ -28,7 +28,7 @@ ARGS := --silent -q --stop --no-loaddata --no-setup -e 'srcdir = "@srcdir@/"'
 
 clean::	; rm -f *.okay
 LOADLIBES += @GC_LIBS@
-testgc: always
+testgc:
 check-gc: testgc.okay
 testgc.okay : testgc ; ./testgc && touch $@
 clean::; rm -f testgc

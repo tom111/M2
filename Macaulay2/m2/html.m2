@@ -3,7 +3,7 @@
 
 fixtitle = method()
 fixtitle Nothing := identity
-fixtitle String := s -> replace("\"","_quote_",s)
+fixtitle String := s -> replace("\"","&quot;",s)
 
 Macaulay2HomePage := () -> "http://www.math.uiuc.edu/Macaulay2/index-" | version#"VERSION" | ".html"
 

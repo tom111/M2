@@ -137,6 +137,7 @@ case $OS-$REL in
   Darwin-7.*) REL=10.3 ; OS=MacOS ;;
   Darwin-8.*) REL=10.4 ; OS=MacOS ;;
   Darwin-9.*) REL=10.5 ; OS=MacOS ;;
+  Darwin-10.*) REL=10.6 ; OS=MacOS ;;
   Darwin-*) echo "Darwin release number translation needed in configure.ac" >&2 ; exit 1
 esac
 

@@ -63,7 +63,7 @@ config-chk:
 .configured-$(VERSION) : .patched-$(VERSION)    ; @ set -x ; ( cd $(BUILDDIR) && $(CONFIGURECMD) ) && touch $@
 ifneq ($(PATCHFILE),)
 .patched-$(VERSION) : $(PATCHFILE)
-PATCHCMD = cd $(UNTARDIR) && patch -p0 <$(PATCHFILE)
+PATCHCMD = cd $(UNTARDIR) && patch -p0 $(PATCHOPTIONS) <$(PATCHFILE)
 else
 PATCHCMD = :
 endif

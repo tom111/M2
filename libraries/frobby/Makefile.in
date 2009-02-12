@@ -14,6 +14,10 @@ BUILDOPTIONS = GMP_INC_DIR=$(LIBRARIESDIR)/include \
 	LDFLAGS="$(LDFLAGS)" \
 	CPPFLAGS="$(CPPFLAGS)"
 CHECKOPTIONS = $(BUILDOPTIONS)
+
+# this ought to prevent trouble with carriage returns
+PATCHOPTIONS = --ignore-whitespace
+
 ifeq (@DEBUG@,yes)
 BUILDOPTIONS += MODE=debug
 endif

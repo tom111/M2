@@ -21,7 +21,7 @@ newer versions of Macaulay 2.
 ---------------------------------------
 
     You should first install the Fink system
-    <http://fink.sourceforge.net>.  Follow the instructions at the Fink
+    <http://www.finkproject.org>.  Follow the instructions at the Fink
     website to install Fink itself. You can choose the binary
     installation method, or the source
     installation method (which will download the source files and compile
@@ -72,9 +72,8 @@ such as this:
 
 	% M2
 	Macaulay 2, version 1.2
-	with packages: Classic, Core, Elimination,
-                       LLLBases, Parsing, PrimaryDecomposition, 
-                       SchurRings, TangentCone
+	with packages: Elimination, IntegralClosure, LLLBases, 
+          PrimaryDecomposition, ReesAlgebra, SchurRings, TangentCone
 	i1 : 
 
 At this point you should try something simple in Macaulay2, such as

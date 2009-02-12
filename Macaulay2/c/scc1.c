@@ -154,6 +154,7 @@ extern void fatalarrayindex();\n\
 extern void fatalarraylen();\n\
 extern void destroy();\n\
 extern void outofmem();\n\
+extern void outofmem2(size_t);\n\
 extern int do_memstats;\n\
 extern int numchunks[2];\n\
 extern int numbytes[2];\n\

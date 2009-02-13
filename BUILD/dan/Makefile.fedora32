@@ -1,0 +1,21 @@
+#-*- Makefile -*-
+DIRECTORY = fedora10
+include Makefile.include
+default: install check
+
+
+# ftp://ftp.uci.edu/mirrors/fedora/linux/releases/10/Fedora/i386/iso/Fedora-10-i386-netinst.iso
+# install a minimal system over the network with development tools and software libraries
+
+# install packages:
+# 	yum install emacs
+
+# VirtualBox settings:
+#  VBoxManage setextradata "fedora 10" VBoxInternal/Devices/pcnet/0/LUN#0/Config/guestssh/Protocol  TCP
+#  VBoxManage setextradata "fedora 10" VBoxInternal/Devices/pcnet/0/LUN#0/Config/guestssh/GuestPort 22
+#  VBoxManage setextradata "fedora 10" VBoxInternal/Devices/pcnet/0/LUN#0/Config/guestssh/HostPort  2225
+
+# .ssh/config settings:
+# Host fedora10
+#   Hostname localhost
+#   Port 2225

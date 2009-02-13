@@ -23,6 +23,8 @@ BUILDOPTIONS += MODE=debug
 endif
 CONFIGURECMD = :
 INSTALLCMD = \
+	$(MKDIR_P) $(LIBRARIESDIR)/lib && \
+	$(MKDIR_P) $(LIBRARIESDIR)/include && \
 	cp bin/libfrobby.a $(LIBRARIESDIR)/lib/libfrobby.a && \
 	cp src/frobby.h $(LIBRARIESDIR)/include/frobby.h && \
 	cp src/stdinc.h $(LIBRARIESDIR)/include/stdinc.h

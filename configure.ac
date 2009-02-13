@@ -1009,9 +1009,11 @@ do case $i in
 	#    socket: dynamic loading of libraries is used to determine the current way to look up an IP number
 	#  libgcc_s: comes only in dynamic form
 	-lncurses | -lsocket  | -lgcc_s* ) LIBS_DYNAMIC="$LIBS_DYNAMIC $i" ;;
-	# we must link statically with some libraries:
-	#   libpari: provides no version number at run time, and we must ensure it is configured based on gmp
-	-lpari ) LIBS_STATIC="$LIBS_STATIC $i" ;;
+	# but on some systems, libpari is provided only dynamically (fedora), so we link dynamically
+	# and later we'll figure out a run-time test for whether pari is based on gmp
+	# # we must link statically with some libraries:
+	# #   libpari: provides no version number at run time, and we must ensure it is configured based on gmp
+	# -lpari ) LIBS_STATIC="$LIBS_STATIC $i" ;;
 	*) LIBS_STATIC_OR_DYNAMIC="$LIBS_STATIC_OR_DYNAMIC $i" ;;
    esac
 done

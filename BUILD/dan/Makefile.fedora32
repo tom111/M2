@@ -1,5 +1,7 @@
 #-*- Makefile -*-
-DIRECTORY = fedora10
+DIRECTORY = fedora32
+CONFIGOPTIONS += --build=i386-pc-linux-gnu
+CONFIGOPTIONS += --enable-rpm
 include Makefile.include
 default: install check
 
@@ -9,6 +11,21 @@ default: install check
 
 # install packages:
 # 	yum install emacs
+# search for packages
+#	yum list emacs
+#	yum provides /usr/include/gc/gc.h
+
+# install these:
+
+# 	fakeroot
+# 	pari-devel
+#	gc-devel
+#	ntl-devel
+#	lapack-devel
+#	mpfr-devel
+#	factory-devel
+#	libfac-devel
+
 
 # VirtualBox settings:
 #  VBoxManage setextradata "fedora 10" VBoxInternal/Devices/pcnet/0/LUN#0/Config/guestssh/Protocol  TCP
@@ -19,3 +36,7 @@ default: install check
 # Host fedora10
 #   Hostname localhost
 #   Port 2225
+
+# Local Variables:
+# compile-command: "time make -f Makefile.fedora32 "
+# End:

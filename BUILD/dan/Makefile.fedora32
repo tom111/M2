@@ -2,6 +2,12 @@
 DIRECTORY = fedora32
 CONFIGOPTIONS += --build=i386-pc-linux-gnu
 CONFIGOPTIONS += --enable-rpm
+
+# fedora 10 has factory 3.0.4 and libfac 3.0.4, but we want 3.1.0, or else some tests fail
+CONFIGOPTIONS += --enable-build-libraries="factory libfac"
+
+INSTALLOPTIONS += prefix=$(HOME)/local/encap
+
 include Makefile.include
 default: install check
 

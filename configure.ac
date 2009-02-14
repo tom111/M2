@@ -818,8 +818,8 @@ do AC_LANG(C++)
 	   extern const char * libfac_version;
 	   int main () {
 		FILE *msg = fdopen(]]AS_MESSAGE_FD[[,"w");
-		static int factoryV[3], fV[3] = {3,0,3}, fOK;
-		static int  libfacV[3], lV[3] = {3,0,1}, lOK;
+		static int factoryV[3], fV[3] = {3,1,0}, fOK;
+		static int  libfacV[3], lV[3] = {3,1,0}, lOK;
 		sscanf(FACTORYVERSION,"%d.%d.%d", &factoryV[0], &factoryV[1], &factoryV[2]);
 		sscanf(libfac_version,"%d.%d.%d", &libfacV[0], &libfacV[1], &libfacV[2]);
 		fOK = factoryV[0] > fV[0] ||

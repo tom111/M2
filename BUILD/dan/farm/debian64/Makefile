@@ -4,15 +4,16 @@ MACHINE = $(notdir $(DIR))
 ISO = debian-40r7-amd64-businesscard.iso
 
 all: $(ISO) disk $(MACHINE) settings 
-start:; VBoxManage startvm $(MACHINE)
+start:; VBoxManage -nologo startvm $(MACHINE)
 $(ISO):
 	wget http://cdimage.debian.org/debian-cd/4.0_r7/amd64/iso-cd/$(ISO)
 disk:
-	VBoxManage createvdi -filename $(DIR)/disk -size 5120
+	VBoxManage createhd -filename $(DIR)/disk -size 5120 -register
 $(MACHINE):
+	rm -f machine.xml
 	VBoxManage createvm -name $(MACHINE) -settingsfile $(DIR)/machine.xml
-	VBoxManage modifyvm debian64 -hda $(DIR)/disk
 	VBoxManage registervm $(DIR)/machine.xml
+	VBoxManage modifyvm debian64 -hda $(DIR)/disk
 always:
 settings: always
 	VBoxManage modifyvm debian64 \
@@ -21,9 +22,11 @@ settings: always
 		-hwvirtex on \
 		-ioapic on \
 		-memory 1024 \
+		-nic1 nat \
 		-dvd $(DIR)/$(ISO)
 	VBoxManage setextradata $(MACHINE) VBoxInternal/Devices/pcnet/0/LUN#0/Config/guestssh/Protocol  TCP
 	VBoxManage setextradata $(MACHINE) VBoxInternal/Devices/pcnet/0/LUN#0/Config/guestssh/GuestPort 22
 	VBoxManage setextradata $(MACHINE) VBoxInternal/Devices/pcnet/0/LUN#0/Config/guestssh/HostPort  $(PORT)
-clean:; rm -rf disk machine.xml
+clean:; rm -rf machine.xml
+veryclean:; rm -rf disk
 show:; VBoxManage showvminfo debian64

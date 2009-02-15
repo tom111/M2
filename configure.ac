@@ -603,7 +603,8 @@ then AC_LANG(C)
      AC_SEARCH_LIBS(__gmpz_init,gmp,,BUILD_gmp=yes)
      AC_CHECK_HEADER(gmp.h,,BUILD_gmp=yes)
      if test $BUILD_gmp = no
-     then AC_MSG_CHECKING([whether gmp library is recent enough]) dnl version 4.1.4 of gmp has a random number generator different from 4.2.1's
+     then AC_MSG_CHECKING([whether gmp library is recent enough])
+          # version 4.1.4 of gmp has a random number generator different from 4.2.1's
 	  AC_RUN_IFELSE( [[
 	  #include <gmp.h>
 	  #include <stdio.h>

@@ -111,6 +111,7 @@ then ISSUE_FLAVOR=[`</etc/issue head -1 | sed 's/^\([A-Za-z ]*\).*/\1/' | sed 's
 	 "Fedora"*) ISSUE_FLAVOR=Fedora ;;
 	 "RedHatEnterprise"*) ISSUE_FLAVOR=RedHatEnterprise ;;
 	 "RedHat"*) ISSUE_FLAVOR=RedHat ;;
+	 "Scientific"*) ISSUE_FLAVOR="ScientificLinux" ;;
 	 "Debian"*) ISSUE_FLAVOR=Debian ;;  # Debian GNU/Linux 4.0 \n \l
 	 "") ISSUE_FLAVOR=unknown ;;
      esac

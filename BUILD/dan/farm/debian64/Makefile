@@ -19,6 +19,7 @@ settings: always
 		-boot1 dvd \
 		-boot2 disk \
 		-hwvirtex on \
+		-ioapic on \
 		-memory 1024 \
 		-dvd $(DIR)/$(ISO)
 	VBoxManage setextradata $(MACHINE) VBoxInternal/Devices/pcnet/0/LUN#0/Config/guestssh/Protocol  TCP

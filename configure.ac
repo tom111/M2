@@ -602,6 +602,26 @@ if test $BUILD_gmp = no
 then AC_LANG(C)
      AC_SEARCH_LIBS(__gmpz_init,gmp,,BUILD_gmp=yes)
      AC_CHECK_HEADER(gmp.h,,BUILD_gmp=yes)
+     if test $BUILD_gmp = no
+     then AC_MSG_CHECKING([whether gmp library is recent enough]) dnl version 4.1.4 of gmp has a random number generator different from 4.2.1's
+	  AC_RUN_IFELSE( [[
+	  #include <gmp.h>
+	  #include <stdio.h>
+	  int main() {
+	    int A=4,B=2,a=0,b=0,c=0,r=sscanf(__gmp_version,"%d.%d.%d",&a,&b,&c), t;
+	    if (r < 2) {
+	      fprintf(stderr,"failed to parse gmp version number: %s\n", __gmp_version);
+	      return 1;
+	    }
+	    t = a>A || a==A && b>=B;
+	    printf("(gmp version %s %s %d.%d) ",__gmp_version, t ? ">=" : "<", A, B);
+	    return !t;
+	  }
+	  ]],
+	  [ AC_MSG_RESULT(yes) ],
+	  [ AC_MSG_RESULT(no); BUILD_gmp=yes ],
+	  [ AC_MSG_RESULT([cross-compiling, test not possible]) ])
+     fi
 fi
 dnl frobby uses gmpxx
 if test $BUILD_gmp = yes

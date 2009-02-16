@@ -1,5 +1,5 @@
 # -*- Makefile -*-
-# sudo apt-get install openssh-server subversion emacs make autoconf xbase-clients gcc libc6-dev g++ bison lapack3-dev libgdbm-dev libgc-dev libgmp3-dev libpari-dev libreadline5-dev
+# sudo apt-get install openssh-server subversion emacs make autoconf xbase-clients gcc libc6-dev g++ bison lapack3-dev libgdbm-dev libgc-dev libgmp3-dev libpari-dev libreadline5-dev flex
 CONFIGOPTIONS += --enable-deb
 DIRECTORY = debian64
 include Makefile.include

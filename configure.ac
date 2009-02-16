@@ -883,6 +883,10 @@ then AC_MSG_CHECKING([whether the vecLib framework is available])
 	     FORTRANUSED=yes
 	     if test $BUILD_lapack = no
 	     then AC_LANG(Fortran)
+	     	  if test "$FC" = ""
+		  then AC_MSG_ERROR(no fortran compiler found)
+		  else AC_MSG_NOTICE(using fortran compiler $FC)
+		  fi
 		  AC_SEARCH_LIBS(sgemv,blas f77blas,,BUILD_lapack=yes)
 		  AC_SEARCH_LIBS(dgetrf,lapack,,BUILD_lapack=yes)
 	     fi

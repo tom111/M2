@@ -1,16 +1,6 @@
 # -*- Makefile -*-
-
-# BUILDOPTIONS += IgnoreExampleErrors=true
-# BUILDOPTIONS += RemakeAllDocumentation=true RemakePackages=true
-# BUILDOPTIONS += RerunExamples=true
-# PACKAGES = Macaulay2Doc
-# BUILDOPTIONS += -s
-# INSTALLOPTIONS += -s
-# CONFIGOPTIONS += --enable-tarfile
-
 CONFIGOPTIONS += LDFLAGS=-static-libgcc
 CONFIGOPTIONS += --enable-build-libraries=gmp
-
 DEBUG = 
 unexport DEBUG
 PROFILE =
@@ -26,7 +16,6 @@ CONFIGOPTIONS += --enable-profile --disable-pthreads
 DIRECTORY := mac.profile $(shell echo PROFILE = $(PROFILE) >&2 )
 else
 INSTALLOPTIONS += prefix=$(HOME)/local/encap
-# PREFIX = /usr/local
 
 # gc crashes if we enable pthreads, in testgc and in html-check-links
 # (under Mac OS 10.4 on power pc):
@@ -37,7 +26,7 @@ DIRECTORY = mac
 endif
 endif
 include Makefile.include
-default: install
+default: install check
 pre-install:;	rm -rf /usr/local/encap/Macaulay2-$(PACKAGE_VERSION)
 # Local Variables:
 # compile-command: "time make -f Makefile.mac "

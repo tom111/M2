@@ -9,7 +9,7 @@ check-make:; @ echo "$(.FEATURES)" | grep order-only >/dev/null || (echo error: 
 configured:include/configuration
 include/configuration: config.status; ./config.status
 check:configured check-in-Macaulay2
-check:; : " +++ all Macaulay2 tests succeeded"
+check:; : +++ all Macaulay2 tests succeeded +++
 big-check:configured big-check-in-Macaulay2
 big-check-in-Macaulay2:; $(MAKE) -C Macaulay2 -k big-check
 check-machine:; @[ "@UNAME_INFO@" = "` @UNAME_INFO_COMMAND@ `" ] || (echo "error: reconfiguration required (uname output seems different)" >&2; false)

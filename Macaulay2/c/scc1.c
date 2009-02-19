@@ -183,6 +183,7 @@ int main(int argc, char **argv){
      char *p;
      struct test {char a;double b;};
      i = assert(0 == GRAIN % (sizeof(struct test) - sizeof(double)));
+     GC_INIT();
 #include "gc_fixes.h"
      progname = BaseName(argv[0]);
      yyinit();

@@ -7,19 +7,21 @@ PROFILE =
 unexport PROFILE
 ifeq ($(DEBUG),yes)
 INSTALLOPTIONS += prefix=/none
-CONFIGOPTIONS += --enable-debug --disable-pthreads
+CONFIGOPTIONS += --enable-debug
+# CONFIGOPTIONS += --disable-pthreads
 DIRECTORY = mac.debug
 else
 ifeq ($(PROFILE),yes)
 INSTALLOPTIONS += prefix=/none
-CONFIGOPTIONS += --enable-profile --disable-pthreads
+CONFIGOPTIONS += --enable-profile
+# CONFIGOPTIONS += --disable-pthreads
 DIRECTORY := mac.profile $(shell echo PROFILE = $(PROFILE) >&2 )
 else
 INSTALLOPTIONS += prefix=$(HOME)/local/encap
 
 # gc crashes if we enable pthreads, in testgc and in html-check-links
 # (under Mac OS 10.4 on power pc):
-CONFIGOPTIONS += --disable-pthreads
+# CONFIGOPTIONS += --disable-pthreads
 
 CONFIGOPTIONS += --enable-dmg
 DIRECTORY = mac

@@ -1,0 +1,2 @@
+have the configure script check for the presence of the time command, and
+complain if it's not there, as under gentoo

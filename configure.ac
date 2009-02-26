@@ -101,6 +101,8 @@ dnl fi
 AC_SUBST(NODENAME,"`uname -n`")
 AC_DEFINE_UNQUOTED(NODENAME,"$NODENAME",hostname used for compilation)
 
+AC_SUBST(OS,"`  uname -s | sed s=/=-=g  `")
+AC_SUBST(REL,"`  uname -r | sed -e s=/=-=g -e 's= =+=' -e 's=[()]==g'  `")
 AC_SUBST(ISSUE) # no initial value
 AC_ARG_WITH(issue, AS_HELP_STRING([--with-issue=...,specify the OS issue (e.g., Ubuntu-7.10)]),ISSUE=$withval)
 if test -f /etc/issue -a ! "$ISSUE"
@@ -113,16 +115,22 @@ then ISSUE_FLAVOR=[`</etc/issue head -1 | sed 's/^\([A-Za-z ]*\).*/\1/' | sed 's
 	 "RedHat"*) ISSUE_FLAVOR=RedHat ;;
 	 "Scientific"*) ISSUE_FLAVOR="ScientificLinux" ;;
 	 "Debian"*) ISSUE_FLAVOR=Debian ;;  # Debian GNU/Linux 4.0 \n \l
-	 "") ISSUE_FLAVOR=unknown ;;
+	 "") 
+	     case "$REL" in
+	     	  *gentoo*) ISSUE_FLAVOR=Gentoo ;;
+		  *)       ISSUE_FLAVOR=unknown ;;
+	     esac
+	     ;;
      esac
      case $ISSUE_RELEASE in
-	 "") ISSUE_RELEASE=unknown ;;
+	 "") ISSUE_RELEASE=unknown 
+	     ISSUE=$ISSUE_FLAVOR
+	     ;;
+	 *)  ISSUE=$ISSUE_FLAVOR-$ISSUE_RELEASE
+	     ;;
      esac
-     ISSUE=$ISSUE_FLAVOR-$ISSUE_RELEASE
 fi
 
-AC_SUBST(OS,"`  uname -s | sed s=/=-=g  `")
-AC_SUBST(REL,"`  uname -r | sed -e s=/=-=g -e 's= =+=' -e 's=[()]==g'  `")
 AC_SUBST(UNAME_INFO_COMMAND," uname -pmso 2>/dev/null || uname -pms ")
 AC_SUBST(UNAME_INFO,"` eval $UNAME_INFO_COMMAND `")
 dnl interesting behavior: $A expansion happens after statement separation!

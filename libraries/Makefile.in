@@ -15,6 +15,16 @@ $(foreach d,@LIBLIST@ @PROGLIST@,				\
 	$(foreach t, distclean clean,		\
 		$(eval $t: $t-in-$d)		\
 		$(eval .PHONY: $t $t-in-$d)))
+
+all:install-programs
+install-programs:
+	: installing programs in @pre_programsdir@
+	if [ -d final/bin ] ; \
+	then rm -rf @pre_programsdir@ ; \
+	     @INSTALL@ -d @pre_programsdir@ ; \
+	     @TAR@ cf - -C final/bin . | @TAR@ xfv - -C @pre_programsdir@ ; \
+	fi
+
 ifeq (@SHARED@,yes)
 all:install-shared
 install-shared:

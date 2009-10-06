@@ -49,6 +49,7 @@ export {
 
 path'4ti2 = (options FourTiTwo).Configuration#"path"
 -- NOTE: the absolute path should be put into the .init file for 4ti2 inside the .Macaulay2 directory.
+if path'4ti2 == "" then path'4ti2 = prefixDirectory | currentLayout#"programs"
 
 -- the following command is necessary to be run under windows-cygwin:
 -- externalPath = value Core#"private dictionary"#"externalPath"

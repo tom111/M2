@@ -40,7 +40,7 @@ document {
 	  TO "NTL library",
 	  "programs",
 	  TO "4ti2"
-     
+     	  }
      }
 
 document {
@@ -187,13 +187,6 @@ document {
      problems on linear spaces, and is distributed under the terms of the GNU General Public License (GPL), version 2 or later.
      It is available at ", HREF "http://www.4ti2.de/", "."
      }
-
-provides
-     routines for arbitrary precision integer and floating point arithmetic,
-     and is distributed under the terms of the GNU Lesser General Public License (LGPL), version 2.1 or later.
-     It's available at ", HREF "http://www.mpir.org/", "."
-     }
-
 
 -- document {
 --      Key => "GNU MP",

@@ -19,7 +19,7 @@ recompile:
 M2_LDFLAGS  =
 
 ifeq (@OS@ @SHARED@,Linux yes)
-ifneq (@LIBRARIES@,)
+ifneq (@BUILDLIST@,)
 M2_LDFLAGS += -Wl,-rpath,@librariesdir@/lib
 all: obj-info
 obj-info: @pre_bindir@/M2@EXE@

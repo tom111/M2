@@ -3,15 +3,15 @@ include ../include/config.Makefile
 BUILT_TARGETS = untar fetch all check reconfigure
 ALL_TARGETS = $(BUILT_TARGETS) clean distclean
 $(ALL_TARGETS): Makefile.library
-$(foreach d,@LIBLIST@ libtool M2,			\
+$(foreach d,@LIBLIST@ @PROGLIST@ libtool M2,			\
 	$(foreach t, $(ALL_TARGETS),			\
 		$(eval $t-in-$d:; $$(MAKE) -C $d $t)	\
 		$(eval .PHONY: $t $t-in-$d)))
-$(foreach d,@LIBRARIES@,			\
+$(foreach d,@BUILDLIST@,			\
 	$(foreach t, $(BUILT_TARGETS),		\
 		$(eval $t: $t-in-$d)		\
 		$(eval .PHONY: $t $t-in-$d)))
-$(foreach d,@LIBLIST@,				\
+$(foreach d,@LIBLIST@ @PROGLIST@,				\
 	$(foreach t, distclean clean,		\
 		$(eval $t: $t-in-$d)		\
 		$(eval .PHONY: $t $t-in-$d)))

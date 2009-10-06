@@ -23,9 +23,11 @@ document {
 	  2, as published by the Free Software Foundation, and as contained in the file ", TO "COPYING", " accompanying the program."
 	  },
      PARA {
-      	  "The following free libraries have been compiled into (or linked with) Macaulay 2."
+      	  "Some free libraries have been compiled into (or linked with) Macaulay2, and some free programs, or packages
+	  of programs, have been compiled and distributed with Macaulay2:"
 	  },
      Subnodes => {
+	  "libraries",
 	  TO "Singular-Factory",
 	  TO "Singular-Libfac",
 	  TO "frobby",
@@ -35,8 +37,10 @@ document {
 	  TO "GC garbage collector",
 	  TO "LAPACK",
 	  TO "BLAS",
-	  TO "NTL library"
-	  }
+	  TO "NTL library",
+	  "programs",
+	  TO "4ti2"
+     
      }
 
 document {
@@ -175,6 +179,21 @@ document {
      and is distributed under the terms of the GNU Lesser General Public License (LGPL), version 2.1 or later.
      It's available at ", HREF "http://www.mpir.org/", "."
      }
+
+
+document {
+     Key => "4ti2",
+     "The package of programs ", TT "4ti2", " is dedicated to algebraic, geometric and combinatorial
+     problems on linear spaces, and is distributed under the terms of the GNU General Public License (GPL), version 2 or later.
+     It is available at ", HREF "http://www.4ti2.de/", "."
+     }
+
+provides
+     routines for arbitrary precision integer and floating point arithmetic,
+     and is distributed under the terms of the GNU Lesser General Public License (LGPL), version 2.1 or later.
+     It's available at ", HREF "http://www.mpir.org/", "."
+     }
+
 
 -- document {
 --      Key => "GNU MP",

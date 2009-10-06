@@ -602,14 +602,19 @@ AC_SUBST(BUILTLIBS,)
 #    lapack includes blas, makes both libblas and liblapack
 #    mpfr needs gmp
 #    mpir is a plug-in replacement for gmp
-AC_SUBST(LIBLIST, "gc    gdbm    mpir    mpfr    pari    readline    ntl    factory        libfac         lapack    frobby    ")
-AC_SUBST(LIBFILES,"libgc libgdbm libmpir libmpfr libpari libreadline libntl libcf libcfmem libfac libblas liblapack libfrobby ")
+#    4ti2 needs glpk
+AC_SUBST(PROGLIST, "4ti2")
+AC_SUBST(LIBLIST, "gc    gdbm    mpir    mpfr    pari    readline    ntl    factory        libfac         lapack    frobby    scscp	glpk")
+AC_SUBST(LIBFILES,"libgc libgdbm libmpir libmpfr libpari libreadline libntl libcf libcfmem libfac libblas liblapack libfrobby libscscp")
 for i in $LIBLIST
 do eval BUILD_$i=no
 done
+for i in $PROGLIST
+do eval BUILD_$i=yes
+done
 
 LIBLIST=" $LIBLIST "
-AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,list of libraries to build from downloaded source code (e.g., gc gdbm gmp mpir mpfr readline pari ntl factory libfac lapack frobby scscp)),
+AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,list of libraries to build from downloaded source code (e.g., gc gdbm mpir mpfr readline pari ntl factory libfac lapack frobby scscp)),
     [for i in $enableval
     do case $LIBLIST in
 	    *" $i "*) eval BUILD_$i=yes ;;
@@ -734,6 +739,12 @@ then if test $BUILD_frobby = no
      test $BUILD_frobby = yes && BUILTLIBS="-lfrobby $BUILTLIBS"
 fi
 
+if test $BUILD_glpk = no
+then AC_LANG(C)
+     AC_CHECK_HEADER(glpk.h,LIBS="-lglpk $LIBS",BUILD_glpk=yes)
+fi
+test $BUILD_glpk = yes && BUILTLIBS="-lglpk $BUILTLIBS"
+
 AC_SUBST(ULIMIT_T,yes)
 AC_SUBST(ULIMIT_M,yes)
 AC_SUBST(ULIMIT_V,yes)
@@ -853,7 +864,7 @@ then AC_LANG(C++)
      fi
 
      if test $BUILD_ntl = no
-     then AC_MSG_CHECKING([whether ntl library is compiled with gmp, using NTL/config.h])
+     then AC_MSG_CHECKING([whether ntl library is compiled with gmp (or mpir), using NTL/config.h])
 	  AC_RUN_IFELSE([[
 		  #include <NTL/config.h>
 		  main () {
@@ -1027,10 +1038,10 @@ AC_RUN_IFELSE([
     AC_MSG_RESULT([yes (cross-compiling, not tested)]))
 AC_DEFINE_UNQUOTED(GETADDRINFO_WORKS,$GETADDRINFO_WORKS,[whether getaddrinfo can handle numeric service (port) numbers])
 
-AC_SUBST(LIBRARIES,)
-for i in $LIBLIST
+AC_SUBST(BUILDLIST,)
+for i in $LIBLIST $PROGLIST
 do eval t=\$BUILD_$i
-   test "$t" = yes && LIBRARIES="$LIBRARIES $i"
+   test "$t" = yes && BUILDLIST="$BUILDLIST $i"
 done
 
 TESTFLAG=-Wno-strict-aliasing
@@ -1131,7 +1142,7 @@ do case $i in
    esac
 done
 
-AC_MSG_NOTICE([using LIBRARIES    = $LIBRARIES (libraries to be built from downloaded sources)])
+AC_MSG_NOTICE([using BUILDLIST    = $BUILDLIST (libraries and programs to be built from downloaded sources)])
 AC_MSG_NOTICE([using BUILTLIBS    = $BUILTLIBS])
 AC_MSG_NOTICE([using SINGULARLIBS = $SINGULARLIBS])
 AC_MSG_NOTICE([using LIBS_STATIC  = $LIBS_STATIC])
@@ -1140,7 +1151,7 @@ AC_MSG_NOTICE([using LIBS_DYNAMIC = $LIBS_DYNAMIC])
 
 BUILDING=yes
 AC_ARG_ENABLE(building, AS_HELP_STRING(--disable-building,disable automatic building of libraries), BUILDING=$enableval)
-if test "$BUILDING" = no -a "$LIBRARIES"
+if test "$BUILDING" = no -a "$BUILDLIST"
 then AC_MSG_ERROR([automatic building of libraries disabled, but some must be built])
 fi
 

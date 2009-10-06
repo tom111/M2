@@ -699,7 +699,7 @@ storeInHashTable(x,Expr("dumpdata"),Expr(if DUMPDATA then True else False));
 storeInHashTable(x,Expr("gc version"),Expr(GCVERSION));
 storeInHashTable(x,Expr("mysql version"),Expr(MysqlVERSION));
 storeInHashTable(x,Expr("python version"),Expr(PYTHONVERSION));
--- storeInHashTable(x,Expr("gmp version"),Expr(GMPVERSION));
+storeInHashTable(x,Expr("gmp version"),Expr(GMPVERSION));
 storeInHashTable(x,Expr("mpir version"),Expr(MPIRVERSION));
 storeInHashTable(x,Expr("ntl version"),Expr(NTLVERSION));
 storeInHashTable(x,Expr("libfac version"),Expr(LIBFACVERSION));

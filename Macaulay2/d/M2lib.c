@@ -721,7 +721,7 @@ char **argv;
 	       }
 	  actors5_GCVERSION = tostring(buf);
 	  }
-     actors5_GMPVERSION = tostring(__gmp_version);
+     actors5_GMPVERSION = tostring(/* __gmp_version */ "not present");
      actors5_MPIRVERSION = tostring(__mpir_version);
      actors5_PYTHONVERSION = tostring(
 #ifdef HAVE_PYTHON

@@ -30,7 +30,7 @@ document {
 	  TO "Singular-Libfac",
 	  TO "frobby",
 	  TO "pari",
-	  TO "GNU MP",
+	  TO "MPIR",
 	  TO "MPFR",
 	  TO "GC garbage collector",
 	  TO "LAPACK",
@@ -169,13 +169,21 @@ document {
      }
 
 document {
-     Key => "GNU MP",
-     "The GNU MP library, gmp, version ", version#"gmp version", " provides
+     Key => "MPIR",
+     "The MPIR library, version ", version#"mpir version", " provides
      routines for arbitrary precision integer and floating point arithmetic,
      and is distributed under the terms of the GNU Lesser General Public License (LGPL), version 2.1 or later.
-     It's available at ", HREF "ftp://ftp.gnu.org/gnu/gmp/", " and 
-     ", HREF "http://gmplib.org/", "."
+     It's available at ", HREF "http://www.mpir.org/", "."
      }
+
+-- document {
+--      Key => "GNU MP",
+--      "The GNU MP library, gmp, version ", version#"gmp version", " provides
+--      routines for arbitrary precision integer and floating point arithmetic,
+--      and is distributed under the terms of the GNU Lesser General Public License (LGPL), version 2.1 or later.
+--      It's available at ", HREF "ftp://ftp.gnu.org/gnu/gmp/", " and 
+--      ", HREF "http://gmplib.org/", "."
+--      }
 
 document {
      Key => "Acknowledgements",

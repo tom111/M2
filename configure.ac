@@ -595,18 +595,21 @@ AC_COMPILE_IFELSE([# 1 "foo" 1 3 4
 
 AC_SUBST(BUILTLIBS,)
 
-# this list reflects dependencies
-#  factory needs ntl and gmp, libfac needs factory
-#  lapack includes blas, makes both libblas and liblapack
-#  mpfr needs gmp
-AC_SUBST(LIBLIST, "gc    gdbm    gmp    mpfr    pari    readline    ntl    factory        libfac         lapack    frobby    scscp")
-AC_SUBST(LIBFILES,"libgc libgdbm libgmp libmpfr libpari libreadline libntl libcf libcfmem libfac libblas liblapack libfrobby libscscp")
+# this list is the list of libraries that *might* be used
+# it reflects dependencies, with prerequisites listed first
+# in particular, there are the following dependencies:
+#    factory needs ntl and gmp, libfac needs factory
+#    lapack includes blas, makes both libblas and liblapack
+#    mpfr needs gmp
+#    mpir is a plug-in replacement for gmp
+AC_SUBST(LIBLIST, "gc    gdbm    mpir    mpfr    pari    readline    ntl    factory        libfac         lapack    frobby    ")
+AC_SUBST(LIBFILES,"libgc libgdbm libmpir libmpfr libpari libreadline libntl libcf libcfmem libfac libblas liblapack libfrobby ")
 for i in $LIBLIST
 do eval BUILD_$i=no
 done
 
 LIBLIST=" $LIBLIST "
-AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,list of libraries to build from downloaded source code (e.g., gc gdbm gmp mpfr readline pari ntl factory libfac lapack frobby scscp)),
+AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,list of libraries to build from downloaded source code (e.g., gc gdbm gmp mpir mpfr readline pari ntl factory libfac lapack frobby scscp)),
     [for i in $enableval
     do case $LIBLIST in
 	    *" $i "*) eval BUILD_$i=yes ;;
@@ -630,36 +633,70 @@ then AC_SEARCH_LIBS(add_history,history,,BUILD_readline=yes)
 fi
 test $BUILD_readline = yes && BUILTLIBS="-lreadline -lhistory $BUILTLIBS"
 
-if test $BUILD_gmp = no
+dnl We no longer link with gmp.
+dnl if test $BUILD_gmp = no
+dnl then :
+dnl      AC_LANG(C)
+dnl      AC_SEARCH_LIBS(__gmpz_init,gmp,,BUILD_gmp=yes)
+dnl      AC_CHECK_HEADER(gmp.h,,BUILD_gmp=yes)
+dnl      if test $BUILD_gmp = no
+dnl      then AC_MSG_CHECKING([whether gmp library is recent enough])
+dnl           # version 4.1.4 of gmp has a random number generator different from 4.2.1's
+dnl      	  AC_RUN_IFELSE( [[
+dnl      	  #include <gmp.h>
+dnl      	  #include <stdio.h>
+dnl      	  int main() {
+dnl      	    int A=4,B=2,a=0,b=0,c=0,r=sscanf(__gmp_version,"%d.%d.%d",&a,&b,&c), t;
+dnl      	    if (r < 2) {
+dnl      	      fprintf(stderr,"failed to parse gmp version number: %s\n", __gmp_version);
+dnl      	      return 1;
+dnl      	    }
+dnl      	    t = a>A || a==A && b>=B;
+dnl      	    printf("(gmp version %s %s %d.%d) ",__gmp_version, t ? ">=" : "<", A, B);
+dnl      	    return !t;
+dnl      	  }
+dnl      	  ]],
+dnl      	  [ AC_MSG_RESULT(yes) ],
+dnl      	  [ AC_MSG_RESULT(no); BUILD_gmp=yes ],
+dnl      	  [ AC_MSG_RESULT([cross-compiling, test not possible]) ])
+dnl      fi
+dnl fi
+dnl dnl frobby uses gmpxx
+dnl if test $BUILD_gmp = yes
+dnl then BUILTLIBS="-lgmpxx -lgmp $BUILTLIBS"
+dnl else LIBS="-lgmpxx $LIBS"
+dnl fi
+
+if test $BUILD_mpir = no
 then AC_LANG(C)
-     AC_SEARCH_LIBS(__gmpz_init,gmp,,BUILD_gmp=yes)
-     AC_CHECK_HEADER(gmp.h,,BUILD_gmp=yes)
-     if test $BUILD_gmp = no
-     then AC_MSG_CHECKING([whether gmp library is recent enough])
-          # version 4.1.4 of gmp has a random number generator different from 4.2.1's
+     AC_SEARCH_LIBS(__mpirz_init,mpir,,BUILD_mpir=yes)
+     AC_CHECK_HEADER(mpir.h,,BUILD_mpir=yes)
+     if test $BUILD_mpir = no
+     then AC_MSG_CHECKING([whether mpir library is recent enough])
+          # version 4.1.4 of mpir has a random number generator different from 4.2.1's
 	  AC_RUN_IFELSE( [[
-	  #include <gmp.h>
+	  #include <mpir.h>
 	  #include <stdio.h>
 	  int main() {
-	    int A=4,B=2,a=0,b=0,c=0,r=sscanf(__gmp_version,"%d.%d.%d",&a,&b,&c), t;
+	    int A=4,B=2,a=0,b=0,c=0,r=sscanf(__mpir_version,"%d.%d.%d",&a,&b,&c), t;
 	    if (r < 2) {
-	      fprintf(stderr,"failed to parse gmp version number: %s\n", __gmp_version);
+	      fprintf(stderr,"failed to parse mpir version number: %s\n", __mpir_version);
 	      return 1;
 	    }
 	    t = a>A || a==A && b>=B;
-	    printf("(gmp version %s %s %d.%d) ",__gmp_version, t ? ">=" : "<", A, B);
+	    printf("(mpir version %s %s %d.%d) ",__mpir_version, t ? ">=" : "<", A, B);
 	    return !t;
 	  }
 	  ]],
 	  [ AC_MSG_RESULT(yes) ],
-	  [ AC_MSG_RESULT(no); BUILD_gmp=yes ],
+	  [ AC_MSG_RESULT(no); BUILD_mpir=yes ],
 	  [ AC_MSG_RESULT([cross-compiling, test not possible]) ])
      fi
 fi
-dnl frobby uses gmpxx
-if test $BUILD_gmp = yes
-then BUILTLIBS="-lgmpxx -lgmp $BUILTLIBS"
-else LIBS="-lgmpxx $LIBS"
+dnl frobby uses mpirxx
+if test $BUILD_mpir = yes
+then BUILTLIBS="-lmpirxx -lmpir $BUILTLIBS"
+else LIBS="-lmpirxx $LIBS"
 fi
 
 if test "$PARI" = yes
@@ -706,7 +743,7 @@ AC_SUBST(ULIMIT_S,yes)
 ( ulimit -v 2000 2>/dev/null) || ULIMIT_V=no
 ( ulimit -s 2000 2>/dev/null) || ULIMIT_S=no
 
-if test $BUILD_gmp = yes
+if test $BUILD_mpir = yes
 then BUILD_mpfr=yes
 elif test $BUILD_mpfr = no
 then AC_LANG(C)
@@ -828,7 +865,7 @@ then AC_LANG(C++)
 			  #endif
 			  ); }]],
 	     [ AC_MSG_RESULT(yes) ],
-	     [ AC_MSG_RESULT([no, ntl compiled with gmp is required (ntl will be built from downloaded sources)]); BUILD_ntl=yes ])
+	     [ AC_MSG_RESULT([no, ntl compiled with gmp (or mpir) is required (ntl will be built from downloaded sources)]); BUILD_ntl=yes ])
      fi
 fi
 test $BUILD_ntl = yes && BUILTLIBS="-lntl $BUILTLIBS"

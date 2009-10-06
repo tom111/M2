@@ -348,6 +348,7 @@ M2_string actors5_REL;
 M2_string actors5_timestamp;
 M2_string actors5_GCVERSION;
 M2_string actors5_GMPVERSION;
+M2_string actors5_MPIRVERSION;
 M2_string actors5_MysqlVERSION;
 M2_string actors5_PYTHONVERSION;
 M2_string actors5_startupString;
@@ -721,6 +722,7 @@ char **argv;
 	  actors5_GCVERSION = tostring(buf);
 	  }
      actors5_GMPVERSION = tostring(__gmp_version);
+     actors5_MPIRVERSION = tostring(__mpir_version);
      actors5_PYTHONVERSION = tostring(
 #ifdef HAVE_PYTHON
          PY_VERSION				      

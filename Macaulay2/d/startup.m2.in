@@ -261,6 +261,7 @@ if firstTime then (
 	       "packages" => "@packagesdir@/",
 	       "docdir" => "@docdir@/",
 	       "libraries" => "@librariesdir@/",
+	       "programs" => "@programsdir@/",
 	       "package" => "@packagesdir@/PKG/",
 	       "packagedoc" => "@docdir@/PKG/",
 	       "packageimages" => "@docdir@/PKG/images/",

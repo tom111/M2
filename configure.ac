@@ -448,6 +448,7 @@ AC_SUBST(PACKAGES, dnl the internal ones first, then after that, the oldest firs
   RationalPoints
   MapleInterface
   ConvexInterface
+  SRdeformations
 ")
 # pending packages: SRdeformations
 

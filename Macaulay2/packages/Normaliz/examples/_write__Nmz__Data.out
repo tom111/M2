@@ -1,4 +1,4 @@
--- -*- M2-comint -*- {* hash: 793307396 *}
+-- -*- M2-comint -*- {* hash: -1163489933 *}
 
 i1 : setNmzFilename("example"); -- to keep the files
 

@@ -1,4 +1,4 @@
--- -*- M2-comint -*- {* hash: -1245837327 *}
+-- -*- M2-comint -*- {* hash: 788308032 *}
 
 i1 : setNmzFilename("VeryInteresting");
 
@@ -10,6 +10,6 @@ i3 : setNmzFilename("");
 
 i4 : nmzFile=setNmzFile()
 
-o4 = /tmp/M2-13422-2
+o4 = /tmp/M2-81756-2
 
 i5 : 

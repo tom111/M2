@@ -1,5 +1,4 @@
--- -*- M2-comint -*- {* hash: -853528982 *}
---warning: function parametersInIdeal redefined
+-- -*- M2-comint -*- {* hash: 155570369 *}
 
 i1 : getNmzVersion()
 

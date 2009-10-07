@@ -1,4 +1,4 @@
--- -*- M2-comint -*- {* hash: 62582662 *}
+-- -*- M2-comint -*- {* hash: 1805113213 *}
 
 i1 : setNmzExecPath("~/Normaliz2.1Linux");  -- Unix
 

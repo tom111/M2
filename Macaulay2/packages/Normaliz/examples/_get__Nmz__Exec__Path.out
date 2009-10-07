@@ -1,5 +1,4 @@
--- -*- M2-comint -*- {* hash: 2030645653 *}
---warning: function parametersInIdeal redefined
+-- -*- M2-comint -*- {* hash: 148600884 *}
 
 i1 : getNmzExecPath()
 

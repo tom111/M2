@@ -64,3 +64,4 @@ M=matrix {{-2*a^3+6*a^2+a+1, -5*a^3+4*a-1, -5*a^3-3*a^2+5*a, 4*a^3+2*a^2+3*a+1, 
 --     	    1.1        : 46,10  could be right
 rank M, rank syz M
 assert( rank M + rank syz M == numgens source M )
+assert( numgens source generators gb M + numgens source generators gb syz M == numgens source M )

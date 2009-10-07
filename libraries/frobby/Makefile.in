@@ -1,8 +1,8 @@
 
 #VERSION = 0.7.7-M2
 #VERSION = mike3
-#PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 VERSION = 0.8.2
+PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 
 VPATH = @srcdir@
 TARDIR = frobby_v$(VERSION)

@@ -608,7 +608,8 @@ AC_SUBST(BUILTLIBS,)
 #    4ti2 needs glpk
 #    gfan needs cddlib
 #    polymake needs readline, but under Mac OS X, it insists on finding /sw/lib/libreadline.dylib (!), so we don't include polymake
-AC_SUBST(PROGLIST, "glpk 4ti2 cddlib gfan")
+#    normaliz needs mpir providing libgmp and libgmpxx, but we provide that, anyway
+AC_SUBST(PROGLIST, "glpk 4ti2 cddlib gfan normaliz")
 AC_SUBST(LIBLIST, "gc    gdbm    mpir    mpfr    pari    readline    ntl    factory        libfac         lapack    frobby    scscp	")
 AC_SUBST(LIBFILES,"libgc libgdbm libmpir libmpfr libpari libreadline libntl libcf libcfmem libfac libblas liblapack libfrobby libscscp")
 for i in $LIBLIST

@@ -55,13 +55,6 @@ document {
      }
 
 document {
-     Key => "4ti2",
-     "The package of programs ", TT "4ti2", " is dedicated to algebraic, geometric and combinatorial
-     problems on linear spaces, and is distributed under the terms of the GNU General Public License (GPL), version 2 or later.
-     It is available at ", HREF "http://www.4ti2.de/", ".  The package ", TO "FourTiTwo::FourTiTwo", " runs it."
-     }
-
-document {
      Key => "LAPACK",
      PARA {
 	  "The ", TT "LAPACK", " library is used by Macaulay 2 for its linear algebra routines.  It is
@@ -203,7 +196,7 @@ document {
      Key => "4ti2",
      "The package of programs ", TT "4ti2", " is dedicated to algebraic, geometric and combinatorial
      problems on linear spaces, and is distributed under the terms of the GNU General Public License (GPL), version 2 or later.
-     It is available at ", HREF "http://www.4ti2.de/", "."
+     It is available at ", HREF "http://www.4ti2.de/", ".  The package ", TO "FourTiTwo::FourTiTwo", " runs it."
      }
 
 -- document {

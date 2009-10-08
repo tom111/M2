@@ -76,7 +76,7 @@ endif
 	    fi
 	if [ -d $(UNTARDIR) ] ; then mv $(UNTARDIR) $(OLDUNTARDIR) ; fi
 	mkdir $(UNTARDIR)
-	$(UNTARCMD) -C $(UNTARDIR)
+	cd $(UNTARDIR) && $(UNTARCMD)
 	$(PATCHCMD)
 	touch $@
 .untarred2-$(VERSION) : $(TARFILE_DIR)/$(TARFILE) ; mkdir tmp ; $(UNTARCMD) -C tmp && touch $@

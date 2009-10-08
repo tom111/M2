@@ -13,15 +13,34 @@ runExamples = method(Options=>options integralClosure)
 runExamples (HashTable,ZZ) := o -> (H,i) -> (
      I := value H#i#1;
      A = (ring I)/I;
-     t := timing (A' = integralClosure(A, o));
-     answer := {i, H#i#0, char ring I, numgens ring I, numgens I, t#0};
+     tim := timing (A' = integralClosure(A, o));
+     answer := {i, H#i#0, char ring I, numgens ring I, numgens I, tim#0};
      print answer;
      answer
      )
 runExamples (HashTable,List) := o -> (H,L) -> apply(L,a -> runExamples(H,a,o))
 runExamples HashTable := o -> (H) -> runExamples(H, sort keys H, o)
 
+
+runS2Examples = method(Options=>options integralClosure)
+runS2Examples (HashTable,ZZ) := o -> (H,i) -> (
+     I := value H#i#1;
+     A = (ring I)/I;
+     if numgens I > 1 and char A == 0 or char A > 7 then (
+       tim := timing ((F,G) = S2ification(A));
+       A' := target F;
+       if A' =!= A then print "NOT S2";
+       answer := {i, H#i#0, char ring I, numgens ring I, numgens I, numgens A', numgens ideal A', tim#0};
+       )
+     else answer = {i, H#i#0, char ring I};
+     print answer;
+     answer
+     )
+runS2Examples (HashTable,List) := o -> (H,L) -> apply(L,a -> runS2Examples(H,a,o))
+runS2Examples HashTable := o -> (H) -> runS2Examples(H, sort keys H, o)
+
 viewResults = (L) -> print netList(L, Boxes=>false, HorizontalSpace=>2)
+
 
 runSingularIC = method()
 runSingularIC Ideal := (I) -> (
@@ -96,7 +115,7 @@ runExamples(H, 60, Verbosity => 3, Strategy =>{SimplifyFractions})
 runExamples(H, 60, Verbosity => 0, Strategy =>{SimplifyFractionsInBase})
 runExamples(H, 60, Verbosity => 0)
 =======
-
+runS2Examples H
 
 >>>>>>> .r8646
 -- level1 examples, r8637, 4/28/09, MBP 10.5.6

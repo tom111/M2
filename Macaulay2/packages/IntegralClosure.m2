@@ -104,6 +104,7 @@ integralClosure Ring := Ring => o -> (R) -> (
      if verbosity >= 1 then 
      	  << "integral closure nvars " << numgens S << endl;
 
+     -- Step1: choose an ideal J contained in the radical of the ideal of the singular locus.
      -- Choose an ideal J here.  Allow option to start with a J?
      --    J = nonNormalLocus S;
      -- this one seems to be worse
@@ -850,7 +851,7 @@ parametersInIdeal Ideal := I -> (
      G := sort(gens I, DegreeOrder=>Ascending);
      s := 0; --  elements of G_{0..s-1} are already a sop (codim s)
      while s<c do(
-     	  t = s-1; -- elements of G_{0..t} generate an ideal of codim <= s
+     	  t := s-1; -- elements of G_{0..t} generate an ideal of codim <= s
      	  --make t maximal with this property, and then add one
      	  while codim ideal(G_{0..t})<=s and t<rank source G -1 do t=t+1;
      	  G1 = G_{s..t};
@@ -1536,7 +1537,7 @@ I=ideal(x^6-z^6-y^2*z^4)
 Q=S/I
 time J = integralClosure (Q, Variable => symbol a)
 use ring ideal J
-assert(ideal J == ideal (x^2-a_6*z, a_6*x-a_7*z, a_6^2-a_7*x, a_7^2-y^2-z^2))
+assert(ideal J == ideal (x^2-a_(3,0)*z, a_(3,0)*x-a_(4,0)*z, a_(3,0)^2-a_(4,0)*x, a_(4,0)^2-y^2-z^2))
 use Q
 assert(conductor(Q.icMap) == ideal(z^3,x*z^2,x^3*z,x^4))
 assert(matrix{icFractions Q} == substitute(matrix{{x^3/z^2,x^2/z,x,y,z}},frac Q))
@@ -1554,6 +1555,14 @@ use Q
 matrix{icFractions Q} == matrix{{d/a^2,a,b,c}}
 ///
 
+TEST ///
+-- rational quartic, to make sure S2 is not being forgotten!
+S = QQ[a..d]
+I = monomialCurveIdeal(S,{1,3,4})
+R = S/I
+R' = integralClosure R -- WRONG!!
+assert(numgens R' == 5)
+///
 --Ex from Wolmer's book - tests longer example and published result.
 TEST ///
 R = ZZ/101[symbol a..symbol e]

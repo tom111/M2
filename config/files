@@ -45,6 +45,7 @@ libraries/4ti2/Makefile
 libraries/gfan/Makefile
 libraries/cddlib/Makefile
 libraries/glpk/Makefile
+libraries/polymake/Makefile
 libraries/pari/Makefile
 libraries/scscp/Makefile
 libraries/readline/Makefile

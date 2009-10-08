@@ -100,7 +100,7 @@ GBComputation *GBComputation::choose_gb(const Matrix *m,
   const Ring *R1 = m->get_ring();
   const PolynomialRing *R2 = R1->cast_to_PolynomialRing();
 
-  if (R2 == 0)
+  if (R2 == 0 || R1->is_field())
     {
       // Look for the correct computation type here.
       if (R1 == globalZZ)

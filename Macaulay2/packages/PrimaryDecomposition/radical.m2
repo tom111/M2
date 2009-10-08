@@ -81,8 +81,8 @@ rad(Ideal,ZZ) := (Iorig, codimlimit) -> (
      radI := ideal(1_R);
      c := codim I;
 
-     << "R0 = " << toExternalString ring I << endl << flush;
-     << "J0 = " << toString I << endl << flush;
+     --<< "R0 = " << toExternalString ring I << endl << flush;
+     --<< "J0 = " << toString I << endl << flush;
 
      while codim I <= c + codimlimit do (
 	  u := independentSets(I,Limit=>1);

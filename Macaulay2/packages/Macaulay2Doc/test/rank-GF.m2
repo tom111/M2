@@ -65,3 +65,28 @@ M=matrix {{-2*a^3+6*a^2+a+1, -5*a^3+4*a-1, -5*a^3-3*a^2+5*a, 4*a^3+2*a^2+3*a+1, 
 rank M, rank syz M
 assert( rank M + rank syz M == numgens source M )
 assert( numgens source generators gb M + numgens source generators gb syz M == numgens source M )
+
+end
+-- MES: my attempts to get this to work.
+time gens gb M;
+time syz M;
+A = ambient KK
+promote(M,A)
+sub(M, vars A)
+M1 = lift(M,A)
+time gens gb M1;
+time syz M1;
+
+B =  (ZZ/p[a, MonomialOrder=>Position=>Up])/ideal(a^4-a^3+a^2-a+1)
+M2 = sub(M1,B)
+time gens gb M2;
+time gens gb syz M2;
+
+-- current state: gauss.cpp code is very very slow.
+--   on the plus side, it might be reasonably correct.
+-- placing Position=>Up, and then doing 'gens gb M2', 'gens gb syz M2', is much faster
+--   and seems to also give the correct answer.
+
+debug Core
+M1 = mutableMatrix M
+rawFFLU raw M1  

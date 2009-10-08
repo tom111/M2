@@ -227,12 +227,13 @@ integralClosure1 = (F,G,J,nsteps,varname,strategies) -> (
      else (
      	  Jup := trim (flattenRing J)_0;
 
-     << "about to compute radical" << endl << flush;
+          if verbosity >= 4 then << "about to compute radical" << endl << flush;
      
 	  t1 = timing(radJup := rad(Jup,0));
 	  radJ = trim promote(radJup, ring J);
 	  );
-     << "done computing radical" << endl << flush;     
+
+     if verbosity >= 4 then << "done computing radical" << endl << flush;     
      if verbosity >= 2 then << t1#0 << " seconds" << endl;
 
      if radJ === null then (
@@ -242,10 +243,13 @@ integralClosure1 = (F,G,J,nsteps,varname,strategies) -> (
      
      f := findSmallGen radJ; -- we assume that f is a non-zero divisor!!
      -- Compute Hom_S(radJ,radJ), using f as the common denominator.
+
      if verbosity >= 3 then <<"      small gen of radJ: " << f << endl << endl;
      if verbosity >= 6 then << "rad J: " << netList flatten entries gens radJ << endl;
      if verbosity >= 2 then <<"      idlizer1:  " << flush;
+
      t1 = timing((He,fe) := endomorphisms(radJ,f));
+
      if verbosity >= 2 then << t1#0 << " seconds" << endl;
      if verbosity >= 6 then << "endomorphisms returns: " << netList flatten entries He << endl;
      
@@ -964,6 +968,38 @@ document {
 	  }
      }
 
+doc ///
+  Key
+    isNormal
+    (isNormal, Ring)
+  Headline
+    determine if a reduced ring is normal
+  Usage
+    isNormal R
+  Inputs
+    R:Ring
+      a reduced equidimensional ring
+  Outputs
+    :Boolean
+      whether {\tt R} is normal, that is, whether it satisfies
+      Serre's conditions S2 and R1
+  Description
+   Text
+     This function computes the jacobian of the ring which can be costly for 
+     larger rings.  Therefore it checks the less costly S2 condition first and if 
+     true, then tests the R1 condition using the jacobian of {\tt R}.
+   Example
+     R = QQ[x,y,z]/ideal(x^6-z^6-y^2*z^4);
+     isNormal R
+     isNormal(integralClosure R)
+  Caveat
+    The ring {\tt R} must be an equidimensional ring.
+  SeeAlso
+    integralClosure
+    S2ification
+///
+
+{*
 document {
      Key => {isNormal, (isNormal, Ring)},
      Headline => "determine if a reduced ring is normal",
@@ -982,7 +1018,7 @@ document {
      larger rings.  Therefore it checks the less costly S2 condition first and if 
      true, then tests the R1 condition using the jacobian of ", TT "R", "."
      }	 
-
+*}
 --- needs better examples and check on how it reads...
 
 document {
@@ -1453,13 +1489,11 @@ TEST ///
 R = ZZ/101[symbol x..symbol z,Degrees=>{2,5,6}]/(z*y^2-x^5*z-x^8)
 time J = integralClosure (R,Variable => symbol b) 
 use ring ideal J
-answer = ideal(b_1*x^2-y*z, x^6-b_1*y+x^3*z, -b_1^2+x^4*z+x*z^2)
+answer = ideal(b_(1,0)*x^2-y*z, x^6-b_(1,0)*y+x^3*z, -b_(1,0)^2+x^4*z+x*z^2)
 assert(ideal J == answer)
 use R
 assert(conductor(R.icMap) == ideal(x^2,y))
-assert((icFractions R).matrix == substitute(matrix {{y*z/x^2, x, y, z}},frac R))
-target icFractions R === frac R
-source icFractions R === J
+assert((icFractions R) == first entries substitute(matrix {{y*z/x^2, x, y, z}},frac R))
 ///
 
 -- multigraded test
@@ -1467,8 +1501,9 @@ TEST ///
 R = ZZ/101[symbol x..symbol z,Degrees=>{{1,2},{1,5},{1,6}}]/(z*y^2-x^5*z-x^8)
 time J = integralClosure (R,Variable=>symbol a) 
 use ring ideal J
-assert(ideal J == ideal(-x^6+a_3*y-x^3*z,-a_3*x^2+y*z,a_3^2-x^4*z-x*z^2))
-assert(0 == (icFractions R).matrix - substitute(matrix {{y*z/x^2, x, y, z}},frac R))
+assert(ideal J == ideal(-x^6+a_(1,0)*y-x^3*z,-a_(1,0)*x^2+y*z,a_(1,0)^2-x^4*z-x*z^2))
+use R
+assert(0 == matrix{icFractions R} - matrix {{y*z/x^2, x, y, z}})
 ///
 
 -- multigraded homogeneous test
@@ -1476,12 +1511,9 @@ TEST ///
 R = ZZ/101[symbol x..symbol z,Degrees=>{{4,2},{10,5},{12,6}}]/(z*y^2-x^5*z-x^8)
 time J = integralClosure (R,Variable=>symbol a) 
 use ring ideal J
-assert(ideal J == ideal(a_1*x^2-y*z,a_1*y-x^6-x^3*z,a_1^2-x^4*z-x*z^2))
-assert(0 == (icFractions R).matrix - substitute(matrix {{y*z/x^2, x, y, z}},frac R))
--- This was the old answer, before changing choice of J0
---assert(ideal J == ideal(a_1*y-42*x^6-42*x^3*z,a_1^2-47*x^4*z-47*x*z^2,-12*a_1*x^2-z*y,-12*a_1*x*y-x^7-x^4
---      *z,43*a_1^2*x^2-x^6*z-x^3*z^2,-x^8-x^5*z+z*y^2))
+assert(ideal J == ideal(a_(1,0)*x^2-y*z,a_(1,0)*y-x^6-x^3*z,a_(1,0)^2-x^4*z-x*z^2))
 use R
+assert(0 == matrix {icFractions R} - matrix {{y*z/x^2, x, y, z}})
 assert(conductor(R.icMap) == ideal(x^2,y))
 ///
 
@@ -1490,11 +1522,11 @@ TEST ///
 S=ZZ/101[symbol a,symbol b,symbol c, symbol d]
 I=ideal(a*(b-c),c*(b-d),b*(c-d))
 R=S/I                              
-time V = integralClosure R  -- FAILS in new version
-assert(#V == 2)
-icMap R
--- assert false-- added: MES
--- the second ring is not a domain.  Anyway, the fractions are messed up here.
+compsR = apply(decompose ideal R, J -> S/J)
+ansR = compsR/integralClosure
+compsR/icFractions
+apply(decompose ideal R, J -> integralClosure(S/J))
+assert all(compsR/icMap, f -> f == 1)
 ///
 
 --Craig's example as a test
@@ -1503,13 +1535,11 @@ S=ZZ/101[symbol x,symbol y,symbol z,MonomialOrder => Lex]
 I=ideal(x^6-z^6-y^2*z^4)
 Q=S/I
 time J = integralClosure (Q, Variable => symbol a)
-time J = integralClosure (Q, Variable => symbol a, Verbosity=>1)
-
 use ring ideal J
 assert(ideal J == ideal (x^2-a_6*z, a_6*x-a_7*z, a_6^2-a_7*x, a_7^2-y^2-z^2))
 use Q
 assert(conductor(Q.icMap) == ideal(z^3,x*z^2,x^3*z,x^4))
-assert(icFractions Q == substitute(matrix{{x^3/z^2,x^2/z,x,y,z}},frac Q))
+assert(matrix{icFractions Q} == substitute(matrix{{x^3/z^2,x^2/z,x,y,z}},frac Q))
 ///
 
 --Mike's inhomogenous test
@@ -1519,15 +1549,13 @@ I = ideal(a^5*b*c-d^2)
 Q = R/I
 L = time integralClosure(Q,Variable => symbol x)
 use ring ideal L
-assert(ideal L == ideal(x_1^2-a*b*c))
+assert(ideal L == ideal(x_(1,0)^2-a*b*c))
 use Q
-icFractions Q == substitute(matrix{{d/a^2,a,b,c}},frac Q)
+matrix{icFractions Q} == matrix{{d/a^2,a,b,c}}
 ///
 
 --Ex from Wolmer's book - tests longer example and published result.
 TEST ///
-restart
-load "IntegralClosure.m2"
 R = ZZ/101[symbol a..symbol e]
 I = ideal(a^2*b*c^2+b^2*c*d^2+a^2*d^2*e+a*b^2*e^2+c^2*d*e^2,a*b^3*c+b*c^3*d+a^3*b*e+c*d^3*e+a*d*e^3,a^5+b^5+c^5+d^5-5*a*b*c*d*e+e^5,a^3*b^2*c*d-b*c^2*d^4+a*b^2*c^3*e-b^5*d*e-d^6*e+3*a*b*c*d^2*e^2-a^2*b*e^4-d*e^6,a*b*c^5-b^4*c^2*d-2*a^2*b^2*c*d*e+a*c^3*d^2*e-a^4*d*e^2+b*c*d^2*e^3+a*b*e^5,a*b^2*c^4-b^5*c*d-a^2*b^3*d*e+2*a*b*c^2*d^2*e+a*d^4*e^2-a^2*b*c*e^3-c*d*e^5,b^6*c+b*c^6+a^2*b^4*e-3*a*b^2*c^2*d*e+c^4*d^2*e-a^3*c*d*e^2-a*b*d^3*e^2+b*c*e^5,a^4*b^2*c-a*b*c^2*d^3-a*b^5*e-b^3*c^2*d*e-a*d^5*e+2*a^2*b*c*d*e^2+c*d^2*e^4)
 S = R/I
@@ -1615,7 +1643,7 @@ R = QQ[x,y,z]/ideal(x^6-z^6-y^2*z^4)
 J = integralClosure(R);
 F = R.icMap
 assert(conductor F == ideal((R_2)^3, (R_0)*(R_2)^2, (R_0)^3*(R_2), (R_0)^4))
-(icFractions R).matrix
+icFractions R
 ///
 
 end 
@@ -1626,7 +1654,7 @@ TEST ///
   factor discriminant(F,y)
   R=S/F
   R' = integralClosure R
-  (icFractions R).matrix
+  icFractions R
   describe R'
 ///
 

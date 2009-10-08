@@ -28,6 +28,18 @@ debug64 : always
 		--enable-download \
 		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac frobby pari"
 
+debug64nofrobby : always
+	mkdir -p debug64
+	cd debug64; ../../../configure \
+		--prefix="`pwd`/installed" \
+		CC="gcc -m64" CXX="g++ -m64" \
+		--build=x86_64-apple-darwin \
+		--enable-debug \
+		--disable-optimize \
+		--enable-download \
+		--disable-frobby \
+		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac pari"
+
 profile64 : always
 	mkdir -p profile64
 	cd profile64; ../../../configure \

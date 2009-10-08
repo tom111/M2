@@ -37,7 +37,7 @@ INSTALLTARGET ?= install
 INSTALLCMD    ?= $(MAKE) $(INSTALLOPTIONS) prefix=$(LIBRARIESDIR) $(INSTALLTARGET)
 BUILDDIR      ?= $(UNTARDIR)/$(TARDIR)
 TAROPTIONS    ?= --gzip
-UNTARCMD      ?= @TAR@ $(TAROPTIONS) xf $(TARFILE_DIR)/$(TARFILE)
+UNTARCMD      ?= @TAR@ xf $(TARFILE_DIR)/$(TARFILE) $(TAROPTIONS)
 %.E: %.c; $(COMPILE.c) -E $(OUTPUT_OPTION) $<
 export PATH := @abs_top_srcdir@/autoconf/final/bin:$(PATH)
 all:prereq install post-install

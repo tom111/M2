@@ -274,14 +274,20 @@ radicalJ = (J,codim1only,nsteps,strategies) -> (
 	  );
 
      Jup := trim first flattenRing J;
-     << "R0 = " << toExternalString ring Jup << endl;
-     << "J0 = " << toString Jup << endl;
-          
-     t1 := timing(radJ = 
-       if useRadical then {radical J}
-       else if useRadicalCodim1 then {rad(J,0)}
-       else if useDecompose then decompose J);
+     Jup = trim ideal apply(Jup_*, f -> product apply(apply(toList factor f, toList), first));
 
+     if verbosity >= 5 then (
+       << "R0 = " << toExternalString ring Jup << endl;
+       << "J0 = " << toString Jup << endl;
+       );
+
+     t1 := timing(radJup = 
+       if useRadical then {radical Jup}
+       else if useRadicalCodim1 then {rad(Jup,0)}
+       else if useDecompose then decompose Jup);
+
+     radJ := apply(radJup, L -> trim promote(L, R0));
+     
      if verbosity >= 4 then << "done computing radical" << endl << flush;     
      if verbosity >= 2 then << t1#0 << " seconds" << endl;
 

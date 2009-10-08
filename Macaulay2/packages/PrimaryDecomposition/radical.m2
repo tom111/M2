@@ -69,8 +69,8 @@ rad Ideal := (Iorig) -> (
 	    h = product factors h;
           I = I + ideal(h);
 	  );
-     if ring I =!= ring Iorig then radI = trim(G radI);
-     radI
+     if ring I =!= ring Iorig then radI = G radI;
+     trim radI
      )
 
 rad(Ideal,ZZ) := (Iorig, codimlimit) -> (
@@ -100,8 +100,8 @@ rad(Ideal,ZZ) := (Iorig, codimlimit) -> (
 	    h = product factors h;
           I = I + ideal(h);
 	  );
-     if ring I =!= ring Iorig then radI = trim(G radI);
-     radI
+     if ring I =!= ring Iorig then radI = G radI;
+     trim radI
      )
 
 end

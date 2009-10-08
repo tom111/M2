@@ -104,8 +104,9 @@ viewResults runExamples(H, level1, Verbosity=>2, Strategy=>{SimplifyFractions})
 viewResults runExamples(H, level2, Verbosity=>0, Strategy=>{SimplifyFractions, ExtraMinors1})
 viewResults runExamples(H, level3)
 viewResults runExamples(H, level4)
+viewResults runExamples(H, level1, Verbosity=>1)
 runExamples(H, leveltofile)
-<<<<<<< .mine
+
 runExamples(H, 10, Verbosity => 3, Strategy =>{SimplifyFractions, ExtraMinors1})
 runExamples(H, 10, Verbosity => 6, Strategy =>{ReallySimplifyFractions})
 runExamples(H, 10, Verbosity => 3, Strategy =>{SimplifyFractionsInBase})
@@ -199,8 +200,8 @@ runS2Examples H
 print netList runExamples(H, {40,42})
 
 print netList runExamples(H, level1)
-print netList runExamples(H, level2)
-print netList runExamples(H, level3)
+print netList runExamples(H, level2, Verbosity=>1)
+print netList runExamples(H, level3, Verbosity => 1)
 print netList runExamples(H, level4)
 
 +--+------------------+-----+-+-+-------+

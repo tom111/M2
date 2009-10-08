@@ -1,4 +1,5 @@
--- -*- M2-comint -*- {* hash: -1707719633 *}
+-- -*- M2-comint -*- {* hash: -1875834650 *}
+--warning: both types of layout in use for user-installed packages
 
 i1 : setNmzFilename("example") -- to keep the files
 
@@ -9,11 +10,11 @@ o2 : Matrix ZZ  <--- ZZ
 
 i3 : normaliz(sgr,0)
 
-o3 = | 7 8 10 |
-     | 1 2 3  |
+o3 = | 1 2 3  |
      | 2 3 4  |
      | 3 4 5  |
      | 4 5 6  |
+     | 7 8 10 |
 
               5        3
 o3 : Matrix ZZ  <--- ZZ

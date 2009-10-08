@@ -1,4 +1,5 @@
--- -*- M2-comint -*- {* hash: -1226666154 *}
+-- -*- M2-comint -*- {* hash: 204472853 *}
+--warning: both types of layout in use for user-installed packages
 
 i1 : setNmzFilename("VeryInteresting");
 

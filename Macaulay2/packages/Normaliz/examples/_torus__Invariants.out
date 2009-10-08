@@ -1,5 +1,5 @@
--- -*- M2-comint -*- {* hash: 96210279 *}
---warning: function parametersInIdeal redefined
+-- -*- M2-comint -*- {* hash: -590717586 *}
+--warning: both types of layout in use for user-installed packages
 
 i1 : R=QQ[x,y,z,w];
 

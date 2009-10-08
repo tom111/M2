@@ -1,5 +1,5 @@
--- -*- M2-comint -*- {* hash: -1482261946 *}
---warning: function parametersInIdeal redefined
+-- -*- M2-comint -*- {* hash: 1079330933 *}
+--warning: both types of layout in use for user-installed packages
 
 i1 : R=ZZ/37[x,y,t];
 
@@ -9,8 +9,8 @@ o2 : Ideal of R
 
 i3 : intclMonIdeal(I)
 
-              3     2   2    3                 3      2    2      3
-o3 = {ideal (y , x*y , x y, x ), ideal (y, x, y t, x*y t, x y*t, x t)}
+              3   2      2   3                 3    2        2    3
+o3 = {ideal (x , x y, x*y , y ), ideal (x, y, x t, x y*t, x*y t, y t)}
 
 o3 : List
 
@@ -20,8 +20,8 @@ o4 : Ideal of R
 
 i5 : intclMonIdeal(J)
 
-              3     2   2    3
-o5 = {ideal (y , x*y , x y, x )}
+              3   2      2   3
+o5 = {ideal (x , x y, x*y , y )}
 
 o5 : List
 

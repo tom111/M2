@@ -30,7 +30,7 @@ export{setNmzExecPath, getNmzExecPath,
 
 
 -- initialising some values
-nmzExecPath="";
+nmzExecPath=prefixDirectory|currentLayout#"programs";
 nmzDataPath="";
 nmzFilename="";
 nmzUserCalled=true;  -- wether the user calls a method

@@ -1,5 +1,5 @@
--- -*- M2-comint -*- {* hash: -1482025949 *}
---warning: function parametersInIdeal redefined
+-- -*- M2-comint -*- {* hash: 984236794 *}
+--warning: both types of layout in use for user-installed packages
 
 i1 : R=ZZ/37[x,y,t];
 
@@ -10,7 +10,7 @@ o2 : Ideal of R
 i3 : setNmzOption("hilb",true);
 
 i4 : intclMonIdeal(I);
-done.done.
+
 i5 : showNumInvs()
 hilbert basis elements : 6
 number extreme rays : 4

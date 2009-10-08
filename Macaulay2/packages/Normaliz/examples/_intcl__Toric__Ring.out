@@ -1,5 +1,5 @@
--- -*- M2-comint -*- {* hash: 1588169232 *}
---warning: function parametersInIdeal redefined
+-- -*- M2-comint -*- {* hash: 480382255 *}
+--warning: both types of layout in use for user-installed packages
 
 i1 : R=ZZ/37[x,y,t];
 

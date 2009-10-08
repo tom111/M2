@@ -747,9 +747,8 @@ fi
 
 if test $BUILD_glpk = no
 then AC_LANG(C)
-     AC_CHECK_HEADER(glpk.h,LIBS="-lglpk $LIBS",BUILD_glpk=yes)
+     AC_CHECK_HEADER(glpk.h,,BUILD_glpk=yes)
 fi
-test $BUILD_glpk = yes && BUILTLIBS="-lglpk $BUILTLIBS"
 
 AC_SUBST(ULIMIT_T,yes)
 AC_SUBST(ULIMIT_M,yes)

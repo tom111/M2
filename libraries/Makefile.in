@@ -38,6 +38,7 @@ install-shared:
 endif
 $(foreach f,Makefile Makefile.library,					\
 	$(eval $f: $f.in; cd .. && ./config.status libraries/$f))
+show-licenses:; grep -w license @srcdir@/*/Makefile.in
 clean:; rm -rf final
 distclean:clean ; rm -f Makefile
 # Local Variables:

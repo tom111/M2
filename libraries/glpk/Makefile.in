@@ -1,7 +1,7 @@
+# license for glpk: GPL v3
+# we link it with 4ti2, but not with Macaulay2
 VERSION = 4.39
-
 # see http://www.gnu.org/software/glpk/
-
 URL = ftp://ftp.gnu.org/gnu/glpk
 include ../Makefile.library
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/glpk/Makefile

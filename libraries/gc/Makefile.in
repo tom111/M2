@@ -1,3 +1,6 @@
+# license for gc: "Permission is hereby granted to use or copy this program for any purpose ... " 
+#  for details, see if file README.QUICK
+
 # warning: we don't use libcord.so, but it gets compiled with an RPATH set like this:
 #   $ objdump -x libcord.so | grep RPA
 #     RPATH                /home/dan/src/M2/trunk/BUILD/Linux-x86_64/ubuntu/include/.././libraries/final/lib

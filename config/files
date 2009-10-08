@@ -42,6 +42,8 @@ libraries/gmp/Makefile
 libraries/mpfr/Makefile
 libraries/mpir/Makefile
 libraries/4ti2/Makefile
+libraries/gfan/Makefile
+libraries/cddlib/Makefile
 libraries/glpk/Makefile
 libraries/pari/Makefile
 libraries/scscp/Makefile

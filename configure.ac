@@ -596,7 +596,9 @@ AC_COMPILE_IFELSE([# 1 "foo" 1 3 4
 
 AC_SUBST(BUILTLIBS,)
 
-# this list is the list of libraries that *might* be used
+# the list LIBLIST is the list of libraries that might be used and linked into M2
+# the list PROGLIST is the list of programs and libraries for them that are distributed with M2
+#     initially, we offer no option for not compiling some of them
 # it reflects dependencies, with prerequisites listed first
 # in particular, there are the following dependencies:
 #    factory needs ntl and gmp, libfac needs factory
@@ -604,8 +606,9 @@ AC_SUBST(BUILTLIBS,)
 #    mpfr needs gmp
 #    mpir is a plug-in replacement for gmp
 #    4ti2 needs glpk
-AC_SUBST(PROGLIST, "4ti2")
-AC_SUBST(LIBLIST, "gc    gdbm    mpir    mpfr    pari    readline    ntl    factory        libfac         lapack    frobby    scscp	glpk")
+#    gfan needs cddlib
+AC_SUBST(PROGLIST, "glpk 4ti2 cddlib gfan")
+AC_SUBST(LIBLIST, "gc    gdbm    mpir    mpfr    pari    readline    ntl    factory        libfac         lapack    frobby    scscp	")
 AC_SUBST(LIBFILES,"libgc libgdbm libmpir libmpfr libpari libreadline libntl libcf libcfmem libfac libblas liblapack libfrobby libscscp")
 for i in $LIBLIST
 do eval BUILD_$i=no

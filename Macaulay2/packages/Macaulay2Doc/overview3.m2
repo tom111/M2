@@ -24,7 +24,7 @@ document {
 	  },
      PARA {
       	  "Some free libraries have been compiled into (or linked with) Macaulay2, and some free programs, or packages
-	  of programs, have been compiled and distributed with Macaulay2:"
+	  of programs, with their libraries, have been compiled and distributed with Macaulay2:"
 	  },
      Subnodes => {
 	  "libraries",
@@ -38,9 +38,27 @@ document {
 	  TO "LAPACK",
 	  TO "BLAS",
 	  TO "NTL library",
-	  "programs",
-	  TO "4ti2"
+	  "programs and their libraries",
+--	  TO "glpk",
+	  TO "4ti2",
+--	  TO "cddlib",
+	  TO "gfan"
      	  }
+     }
+
+document {
+     Key => "gfan",
+     "The program ", TT "gfan", " computes Groebner fans.
+     It is available at ", HREF "http://www.math.tu-berlin.de/~jensen/software/gfan/", ".
+     The packages ", TO "StatePolytope::StatePolytope", " and ", TO "gfanInterface::gfanInterface", "
+     run it."
+     }
+
+document {
+     Key => "4ti2",
+     "The package of programs ", TT "4ti2", " is dedicated to algebraic, geometric and combinatorial
+     problems on linear spaces, and is distributed under the terms of the GNU General Public License (GPL), version 2 or later.
+     It is available at ", HREF "http://www.4ti2.de/", ".  The package ", TO "FourTiTwo::FourTiTwo", " runs it."
      }
 
 document {

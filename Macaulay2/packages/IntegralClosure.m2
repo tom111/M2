@@ -1943,68 +1943,6 @@ leadTerm gens gb Inew
 radical ideal oo
 
 
------ Minimal Presentation Tests 
-///
-restart
-loadPackage "IntegralClosure"
-
-U = ZZ/101[x,y,z]
-f = x^2+x+2*y+z
-g = x^2+y^2+x
-h = x^2+3*x -2*y + 4*z
-
-I = ideal(f)
-J = ideal(z,g)
-
-S = U/I
-T= U/J
-
-P = ideal(x)
-
-minimalPresentation I
-minimalPresentation P
-minimalPresentation J
-
-minimalPresentation S
-minimalPresentation T
-
-S.minimalPresentationMap
-S.minimalPresentationMapInv
-F = map(R, target I.cache.minimalPresentationMapInv)
-
-C=ZZ/101[x,y,z,Degrees => {2,3,1}]/ideal(x-x^2-y,z+x*y)
-V= time minPressy(C)
-gens V == {x}
-degrees V == {{2}}
-
-C=ZZ/101[x,y,z,Degrees => {{1,2},{1,3},{1,1}}]/ideal(x-x^2-y,z+x*y)
-V = time minPressy(C)
-gens V == {a_0}
-degrees V == {{1,2}}
-
-C=ZZ/101[x,y,z,u,w]/ideal(x-x^2-y,z+x*y,w^2-u^2)
-V= time minPressy(C)
-gens V == {x,u,w}
-use ring ideal V
-ideal V == ideal(u^2-w^2)
-
-w = symbol w
-y = symbol y
-S = ZZ/101[w_16, w_11, w_12, w_13, w_14, w_15, w_8, w_9, w_10, y_1, y_2, y_3, y_4, y_5, y_6, y_7, y_8,
-     Degrees => {{1}, {1}, {2}, {2}, {2}, {2}, {2}, {3}, {3}, {1}, {1}, {1}, {1}, {1}, {1}, {1}, {1}}, MonomialOrder => ProductOrder {1, 5, 3, 8}, MonomialSize => 16]
-
-J=ideal(y_2*y_6-y_3*y_7,w_11*y_6-w_8,w_11*y_1-y_3*y_7,w_11^2-w_15,w_16*y_6-y_1*y_5,w_16*y_3-w_13,w_16*y_2-w_15,w_16*y_1-w_8,w_16*w_11-y_2*y_5,w_16^2-w_11*y_5,y_1*y_4*y_5-y_2*y_3*y_8,w_11*y_3*y_8-y_4*y_5*y_6,w_11*y_2*y_8-y_4*y_5*y_7,w_11*y_4*y_7-w_9,w_14*y_6-y_1*y_2*y_8,w_14*y_5-w_15*y_8,w_14*y_3-w_8*y_4,w_14*y_2-w_9,w_14*y_1-y_4*y_6*y_7,w_12*y_7-y_1*y_2*y_8,w_12*y_6-y_1*y_3*y_8,w_12*y_5-w_13*y_8,w_12*y_3-w_10,w_12*y_2-w_8*y_4,w_12*y_1-y_4*y_6^2,w_11*w_14-y_2^2*y_8,w_11*w_12-y_2*y_3*y_8,w_16*y_4*y_7-y_2^2*y_8,w_16*w_14-y_4*y_5*y_7,w_16*w_12-y_4*y_5*y_6,w_14^2-y_2*y_4*y_7*y_8,w_12*w_14-y_3*y_4*y_7*y_8,w_12^2-y_3*y_4*y_6*y_8)
-
-minPresIdeal(J) == ideal(y_2*y_6-y_3*y_7,y_1*y_5-w_16*y_6,w_11*y_1-y_3*y_7,w_16*y_1-w_11*y_6,w_11^2-w_16*y_2,w_16*w_11-y_2*y_5,w_16^2-w_11*y_5,y_4*y_5*y_7-w_11*y_2*y_8,w_16*y_4*y_7-y_2^2*y_8,w_12*y_7-y_1*y_2*y_8,y_4*y_5*y_6-w_11*y_3*y_8,w_14*y_6-y_1*y_2*y_8,w_12*y_6-y_1*y_3*y_8,w_16*y_4*y_6-y_2*y_3*y_8,w_14*y_5-w_16*y_2*y_8,w_12*y_5-w_16*y_3*y_8,w_14*y_3-w_11*y_4*y_6,w_14*y_2-w_11*y_4*y_7,w_12*y_2-w_11*y_4*y_6,w_14*y_1-y_4*y_6*y_7,w_12*y_1-y_4*y_6^2,w_11*w_14-y_2^2*y_8,w_16*w_14-w_11*y_2*y_8,w_11*w_12-y_2*y_3*y_8,w_16*w_12-w_11*y_3*y_8,w_14^2-y_2*y_4*y_7*y_8,w_12*w_14-y_3*y_4*y_7*y_8,w_12^2-y_3*y_4*y_6*y_8)
-
-C = S/J
-V = time minPressy(C,Variable => a)
-gens V == {a_0,a_1,a_2,a_3,a_4,a_5,a_6,a_7,a_8,a_9,a_10,a_11}
-use ring ideal V
-ideal V == ideal(a_5*a_9-a_6*a_10,a_4*a_8-a_0*a_9,a_1*a_4-a_6*a_10,a_0*a_4-a_1*a_9,a_1^2-a_0*a_5,a_0*a_1-a_5*a_8,a_0^2-a_1*a_8,a_7*a_8*a_10-a_1*a_5*a_11,a_0*a_7*a_10-a_5^2*a_11,a_2*a_10-a_4*a_5*a_11,a_7*a_8*a_9-a_1*a_6*a_11,a_3*a_9-a_4*a_5*a_11,a_2*a_9-a_4*a_6*a_11,a_0*a_7*a_9-a_5*a_6*a_11,a_3*a_8-a_0*a_5*a_11,a_2*a_8-a_0*a_6*a_11,a_3*a_6-a_1*a_7*a_9,a_3*a_5-a_1*a_7*a_10,a_2*a_5-a_1*a_7*a_9,a_3*a_4-a_7*a_9*a_10,a_2*a_4-a_7*a_9^2,a_1*a_3-a_5^2*a_11,a_0*a_3-a_1*a_5*a_11,a_1*a_2-a_5*a_6*a_11,a_0*a_2-a_1*a_6*a_11,a_3^2-a_5*a_7*a_10*a_11,a_2*a_3-a_6*a_7*a_10*a_11,a_2^2-a_6*a_7*a_9*a_11)
-///
-
-
 --- Recent tests and experiments for integral closure.
 ///
 restart
@@ -2106,11 +2044,9 @@ S = ZZ/32003[x,y];
 F = (y^2-3/4*y-15/17)^3-9*y*(y^2-3/4*y-15/17*x)-27*x^11
 R = S/F
 time R' = integralClosure R
+use ring F
 factor discriminant(F,y)
 factor discriminant(F,x)
-
-R = ZZ/32003[a,b,c]/(a^2-b*c)
-radical ideal(1_R)
 ----------------------------------------------
 
 restart
@@ -2136,70 +2072,19 @@ time R'=integralClosure(R) -- really long?
 transpose gens ideal S
 icFracP R -- very much faster!
 ----------------------------------------------
-restart
-loadPackage "IntegralClosure"
-loadPackage "ReesAlgebra"
 
----------------------------------
--- making a set of examples for improving radical computation
----------------------------------
 restart
 -- in IntegralClosure dir:
 load "runexamples.m2"
 runExamples(H,10,Verbosity=>3)
 
 
---rational quartic
-restart
-load "IntegralClosure.m2"
-kk = QQ
-S=kk[x_0..x_3]
-I = monomialCurveIdeal(S,{1,3,4})
-A=S/I
-integralClosure(A, Verbosity=>2)
-icFractions A
-
-
-installPackage "IntegralClosure"
-check IntegralClosure
-viewHelp
-
-----------------------------------------------
 restart
 load "IntegralClosure.m2"
 kk = QQ
 S = kk[x,y,u]
 R = S/(u^2-x^3*y^3)
-J = trim radical ideal jacobian R
-Ja = ideal(x,u)
--- Let's keep computing Hom(rad Ja, rad Ja) until it stabilizes
-E1 = (x*Ja):Ja -- one new fraction u/x
-
-T1 = kk[x,y,u,v]
-I1 = saturate(ideal(u^2-x^3*y^3, v*x-u) ,x)
-R1 = T1/I1
-J2 = sub(Ja,R1)
-J2 = trim radical J2
-
-Jb = ideal(y,u)
-Jb = sub(Jb,R1)
-Jb = trim radical Jb
-
-(y*Jb):Jb  -- two new fractions?  u/y, v/y.  v/y = u/(x*y).
-
-E2 = (x*J2):J2 -- one new fraction v^2/x, actually it is already y^3
-T2 = kk[x,y,u,v,w]
-I2 = trim saturate(sub(I1,T2) + ideal(w*x-v^2),x)
-eliminate(
-
-I1 = eliminate(I1,u)
-
-
-J1 = trim(I1 + ideal jacobian I1)
-J1 = radical J1
-R1 = T1/I1
-J1 = sub(J1,R1)
-(y*J1):J1  -- add in v/y
+time integralClosure R
 
 -- another example from Doug Leonard ----------------------------
 S=ZZ/2[z,y,x,MonomialOrder=>{Weights=>{32,21,14}}];

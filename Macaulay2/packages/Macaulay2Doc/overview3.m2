@@ -39,11 +39,20 @@ document {
 	  TO "BLAS",
 	  TO "NTL library",
 	  "programs and their libraries",
---	  TO "glpk",
 	  TO "4ti2",
---	  TO "cddlib",
-	  TO "gfan"
+	  TO "gfan",
+	  TO "normaliz"
      	  }
+     }
+
+document {
+     Key => "normaliz",
+     PARA {
+     	  "The program ", TT "normaliz", ", written by Winfried Bruns and Bogdan Ichim,
+	  provides computations in affine monoids, vector configurations, lattice polytopes, 
+     	  and rational cones.  It is available at ", HREF "http://www.mathematik.uni-osnabrueck.de/normaliz/", ".  The package
+     	  ", TO "Normaliz::Normaliz", " runs it."
+	  }
      }
 
 document {

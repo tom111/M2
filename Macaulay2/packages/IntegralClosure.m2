@@ -274,8 +274,9 @@ radicalJ = (J,codim1only,nsteps,strategies) -> (
 	  );
 
      Jup := trim first flattenRing J;
-     Jup = trim ideal apply(Jup_*, f -> product apply(apply(toList factor f, toList), first));
-
+     Jup = ideal apply(Jup_*, f -> product apply(apply(toList factor f, toList), first));
+     Jup = trim ideal gens gb Jup;
+     
      if verbosity >= 5 then (
        << "R0 = " << toExternalString ring Jup << endl;
        << "J0 = " << toString Jup << endl;
@@ -323,43 +324,9 @@ integralClosure1 = (F,G,J,nsteps,varname,strategies) -> (
      R0 := target F;
      J = trim J;
      radJ := radicalJ(J, true, nsteps, strategies);
+     if #radJ == 0 then return (F,G,ideal(1_R0));
      radJ = trim intersect radJ;
-{*     
-     if false then ( -- for now, leave out this code.
-     if nsteps > 0 then ( -- MES: compute dimension of the orig ring above, so that we know the size of minors here,
-	                  -- with no extra computation
-	  newminors := ideal (0_R0);
-	  while newminors == 0 do
-	    newminors = ideal randomMinors(10,numgens R0 - dim R0,jacobian R0);
---	  error "look at J, newminors";
-	  J = J + newminors
-	  );
-       );
-     if codim J > 1 then return (F,G,ideal(1_R0));
 
-     if verbosity >= 2 then << endl << "      radical " << flush;
-     if nsteps == 0 then (
-       -- MES: make a strategy that chooses here:
-       --t1 := timing(radJ = trim codim1radical J);
-       t1 := timing(radJ = trim rad(J,0));       
-       )
-     else (
-     	  Jup := trim (flattenRing J)_0;
-
-          if verbosity >= 4 then << "about to compute radical" << endl << flush;
-     
-	  t1 = timing(radJup := rad(Jup,0));
-	  radJ = trim promote(radJup, ring J);
-	  );
-
-     if verbosity >= 4 then << "done computing radical" << endl << flush;     
-     if verbosity >= 2 then << t1#0 << " seconds" << endl;
-
-     if radJ === null then (
-	  -- we are integrally closed
-	  return (F,G,ideal(1_R0))
-	  );
-*}     
      f := findSmallGen radJ; -- we assume that f is a non-zero divisor!!
      -- Compute Hom_S(radJ,radJ), using f as the common denominator.
 
@@ -1248,7 +1215,7 @@ document {
      Headline => "Compute Hom(I,I) as quotient ring",
      Usage => "idealizer(I, f)",
      Inputs => {"I" => {ofClass Ideal},
-	  "f" => {{ofClass RingElement}, " that is a non-zero divisor in the
+	  "f" => {{ofClass RingElement}, " that is an element of I and a non-zero divisor in the
 	  ring of ", TT "I"},
 	  Variable => {" an unassigned symbol"},
 	  Index => {" an integer"}},
@@ -1678,7 +1645,7 @@ TEST ///
 S = QQ[a..d]
 I = monomialCurveIdeal(S,{1,3,4})
 R = S/I
-R' = integralClosure R -- WRONG!!
+R' = integralClosure R
 assert(numgens R' == 5)
 ///
 --Ex from Wolmer's book - tests longer example and published result.
@@ -1690,8 +1657,10 @@ icFractions S
 time Sbar = integralClosure S
 M:=pushForward (icMap S, Sbar^1);
 assert(degree (M/(M_0)) == 2)
+assert(# icFractions S == 7)
+///
 
-
+///  -- this is part of the above example.  But what to really place into the test?
 time integralClosure (target((S2ification(S))_0), Verbosity => 3)
 StoSbar = (S2ification(S))_0;
 M:=pushForward (StoSbar, (target StoSbar)^1);

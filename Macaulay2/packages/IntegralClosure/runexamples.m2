@@ -199,8 +199,13 @@ runS2Examples H
 -- where we stand at r8620, running on MBP 10.5.6:
 print netList runExamples(H, {40,42})
 
-print netList runExamples(H, level1)
-print netList runExamples(H, level2, Verbosity=>1)
+viewResults time runExamples(H, level1)
+viewResults time runExamples(H, level1, Strategy=>{RadicalCodim1})
+
+viewResults time runExamples(H, level2)
+viewResults time runExamples(H, level1, Strategy=>{RadicalCodim1})
+
+print netList time runExamples(H, level2, Verbosity=>1)
 print netList runExamples(H, level3, Verbosity => 1)
 print netList runExamples(H, level4)
 

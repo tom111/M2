@@ -607,7 +607,11 @@ AC_SUBST(BUILTLIBS,)
 #    mpir is a plug-in replacement for gmp
 #    4ti2 needs glpk
 #    gfan needs cddlib
-#    polymake needs readline, but under Mac OS X, it insists on finding /sw/lib/libreadline.dylib (!), so we don't include polymake
+#    polymake cannot be included in Macaulay2 because its compile/build/install procedure is flawed:
+#	it uses a dynamic readline library that can only be provided by fink and probably will not be copied into the install location
+#       it offers no way to provide a directory tree containing a readline library we've compiled
+#	it writes a file into the user's home directory called ".polymake"
+#	it asks questions
 #    normaliz needs mpir providing libgmp and libgmpxx, but we provide that, anyway
 AC_SUBST(PROGLIST, "glpk 4ti2 cddlib gfan normaliz")
 AC_SUBST(LIBLIST, "gc    gdbm    mpir    mpfr    pari    readline    ntl    factory        libfac         lapack    frobby    scscp	")

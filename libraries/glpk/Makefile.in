@@ -3,6 +3,7 @@
 VERSION = 4.39
 # see http://www.gnu.org/software/glpk/
 URL = ftp://ftp.gnu.org/gnu/glpk
+CONFIGOPTIONS = --disable-shared
 include ../Makefile.library
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/glpk/Makefile
 # Local Variables:

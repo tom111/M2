@@ -3,7 +3,7 @@
 i1 : writeNmzPaths();
 
 i2 : startNmz();
-nmzExecPath not set
+nmzExecPath is /Users/dan/src/M2-1.3/BUILD/dan/builds.tmp/mac64/StagingArea/x86_64-MacOS-10.5/libexec/Macaulay2/x86_64-MacOS-10.5/
 nmzDataPath not set
 
 i3 : 

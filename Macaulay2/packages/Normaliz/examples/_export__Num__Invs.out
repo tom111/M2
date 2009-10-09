@@ -1,5 +1,4 @@
 -- -*- M2-comint -*- {* hash: 708722746 *}
---warning: both types of layout in use for user-installed packages
 
 i1 : R=ZZ/37[x,y,t];
 

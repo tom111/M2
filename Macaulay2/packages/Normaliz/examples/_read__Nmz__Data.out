@@ -1,5 +1,4 @@
 -- -*- M2-comint -*- {* hash: -1875834650 *}
---warning: both types of layout in use for user-installed packages
 
 i1 : setNmzFilename("example") -- to keep the files
 

@@ -1033,8 +1033,16 @@ document {
 document {
      Key => "currentDirectory",
      Headline => "current working directory",
-     TT "currentDirectory", " is the name of the current directory,
-     together with an extra slash (or appropriate path separator)."
+     Usage => "currentDirectory()",
+     Outputs => {
+	  "the complete path to the current directory, together with an extra slash"
+	  },
+     EXAMPLE lines ///
+     currentDirectory()
+     ///,
+     PARA {
+	  "If a component of the path to the current directory no longer exist, an error will be signalled."
+	  }
      }
 
 document {

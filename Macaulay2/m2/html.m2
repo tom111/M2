@@ -442,7 +442,7 @@ aftermatch := (pat,str) -> (
      m := regex(pat,str);
      if m === null then "" else substring(m#0#0,str))
 
-runFile := (inf,inputhash,outf,tmpf,desc,pkg,announcechange,rundir,usermode) -> ( -- return false if error
+runFile := (inf,inputhash,outf,tmpf,desc,pkg,announcechange,usermode) -> ( -- return false if error
      announcechange();
      stderr << "--making " << desc << " in file " << outf << endl;
      if fileExists outf then removeFile outf;
@@ -455,17 +455,23 @@ runFile := (inf,inputhash,outf,tmpf,desc,pkg,announcechange,rundir,usermode) -> 
 	  ulimit = utest "-t 80" | utest "-m 200000"| utest "-v 200000" | utest "-s 8192";
 	  );
      tmpf << "-- -*- M2-comint -*- {* hash: " << inputhash << " *}" << endl << close;
-     cmd := ulimit | "cd " | rundir | "; " | cmdname | " " | args | " <" | format inf | " >>" | format tmpf | " 2>&1";
+     rundir := temporaryFileName() | "-rundir/";
+     cmd := ulimit | "cd " | rundir | "; " | cmdname | " " | args | " <" | format inf | " >>" | format toAbsolutePath tmpf | " 2>&1";
      stderr << cmd << endl;
+     makeDirectory rundir;
      r := run cmd;
      if r == 0 then (
+	  scan(reverse findFiles rundir, f -> if isDirectory f then removeDirectory f else removeFile f);
 	  moveFile(tmpf,outf);
 	  return true;
 	  );
      stderr << tmpf << ":0: (output file) error: program exited with return code: (" << r//256 << "," << r%256 << ")" << endl;
      stderr << aftermatch(M2errorRegexp,get tmpf);
-     stderr << inf  << ":0: (input file)" << endl;
+     stderr << inf  << ":0: (input file) error: ..." << endl;
      scan(statusLines get inf, x -> stderr << x << endl);
+     if # findFiles rundir == 1
+     then removeDirectory rundir
+     else stderr << rundir << ": error: files remain in temporary run directory after program exits abnormally" << endl;
      if r == 2 then (
 	  removeFile tmpf;
 	  error "subprocess interrupted";
@@ -480,7 +486,7 @@ runFile := (inf,inputhash,outf,tmpf,desc,pkg,announcechange,rundir,usermode) -> 
      return false;
      )
 
-runString := (x,pkg,rundir,usermode) -> (
+runString := (x,pkg,usermode) -> (
      tfn := temporaryFileName();
      inf := tfn | ".m2";
      tmpf := tfn | ".tmp";
@@ -488,7 +494,7 @@ runString := (x,pkg,rundir,usermode) -> (
      rm := fn -> if fileExists fn then removeFile fn;
      rmall := () -> rm \ {inf, tmpf, outf};
      inf << x << endl << close;
-     ret := runFile(inf,hash x,outf,tmpf,"test results",pkg,t->t,rundir,usermode);
+     ret := runFile(inf,hash x,outf,tmpf,"test results",pkg,t->t,usermode);
      if ret then (rm inf; rm outf;);
      ret)
 
@@ -505,7 +511,7 @@ onecheck = (seqno,pkg,usermode) -> (
      (filename,lineno,s) := pkg#"test inputs"#seqno;
      stderr << "--running test " << seqno << " of package " << pkg << " on line " << lineno << " in file " << filename << endl;
      stderr << "--    rerun with: check_" << seqno << " \"" << pkg << "\"" << endl;
-     runString(s,pkg,".",usermode);
+     runString(s,pkg,usermode);
      )
 check(ZZ,Package) := opts -> (seqno,pkg) -> (
      pkg = prep pkg;
@@ -770,7 +776,7 @@ installPackage Package := opts -> pkg -> (
 			 )
 		    else (
 			 inf << concatenate apply(inputs, s -> s|"\n") << close;
-			 if runFile(inf,inputhash,outf,tmpf,desc,pkg,changefun,".",if opts.UserMode === null then not noinitfile else opts.UserMode)
+			 if runFile(inf,inputhash,outf,tmpf,desc,pkg,changefun,if opts.UserMode === null then not noinitfile else opts.UserMode)
 			 then (
 			      removeFile inf;
 			      possiblyCache();
@@ -1030,7 +1036,7 @@ sampleInitFile = ///-- This is a sample init.m2 file provided with Macaulay2.
 -- startup of Macaulay2, unless you use the "-q" option.
 
 -- Uncomment the following line to cause Macaulay 2 to load "start.m2" in the current working directory upon startup.
--- if fileExists "start.m2" then load(currentDirectory|"start.m2")
+-- if fileExists "start.m2" then load(currentDirectory()|"start.m2")
 
 -- Uncomment and edit the following lines to add your favorite directories containing Macaulay 2
 -- source code files to the load path.  Terminate each directory name with a "/".

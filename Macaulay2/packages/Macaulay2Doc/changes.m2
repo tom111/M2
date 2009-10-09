@@ -39,7 +39,16 @@ document {
 	       "The function \"SimpleDoc :: doc\" will now handle example expressions that span multiple lines: within in each expression, indent lines
 	       after the first one more than the first."
 	       },
-	  LI { "fixed a bug in degree(x,f) where the degrees of the grading were used instead of the actual exponents." }
+	  LI { "Fixed a bug in degree(x,f) where the degrees of the grading were used instead of the actual exponents." },
+	  LI { "The ", TO "UserMode", " option to ", TO "installPackage", " and ", TO "check", " now has default value ", TO "null", ",
+	       meaning to propagate the command line option ", TT "-q", ", if present, to child processes running M2 on examples and tests"
+	       },
+	  LI { TO "currentDirectory", " is now a function rather than a string constant, in order to postpone signalling an error
+	       if a component of the path to the current working directory no longer exists."
+	       },
+	  LI { "The programs ", TT "4ti2", ", ", TT "gfan", ", and ", TT "normaliz", " are now included with Macaulay2 distributions,
+	       and are downloaded and compiled automatically during Macaulay2's build process."
+	       }
 	  }
      }
 

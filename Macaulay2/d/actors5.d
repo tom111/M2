@@ -1802,17 +1802,11 @@ storeGlobalDictionaries(e:Expr):Expr := (			    -- called with (symbol,newvalue)
      else WrongNumArgs(2));
 storeInHashTable(globalAssignmentHooks,Expr(SymbolClosure(globalFrame,dictionaryPathS)),Expr(CompiledFunction(storeGlobalDictionaries,nextHash())));
 
--- getcwdfun(e:Expr):Expr := (
---      when e
---      is s:Sequence do
---      if length(s) == 0
---      then Expr(getcwd())
---      else WrongNumArgs(0)
---      else WrongNumArgs(0));
--- setupfun("currentDirectory",getcwdfun);
-currentDirectory := setupconst("currentDirectory",Expr(getcwd()));
-resetCurrentDirectory():void := setGlobalVariable(currentDirectory,Expr(getcwd()));
-everytime(resetCurrentDirectory);
+getcwdfun(e:Expr):Expr := (				    -- this has to be a function, because getcwd may fail
+     when e is s:Sequence do
+     if length(s) == 0 then cwd() else WrongNumArgs(0)
+     else WrongNumArgs(0));
+setupfun("currentDirectory",getcwdfun);
 
 export debuggerHook := nullE;
 

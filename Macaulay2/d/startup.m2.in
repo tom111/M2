@@ -538,9 +538,9 @@ exe = minimizeFilename (
      else 
      *}
      if isAbsolutePath commandLine#0 then commandLine#0 else
-     if isStablePath commandLine#0 then concatenate(currentDirectory|commandLine#0)
+     if isStablePath commandLine#0 then concatenate(currentDirectory()|commandLine#0)
      else pathsearch commandLine#0)
-if not isAbsolutePath exe then exe = currentDirectory | exe ;
+if not isAbsolutePath exe then exe = currentDirectory() | exe ;
 exe = concatenate(realpath dir exe, base exe)
 
 describePath := () -> (

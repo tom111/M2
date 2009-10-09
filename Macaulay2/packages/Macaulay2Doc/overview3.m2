@@ -591,7 +591,7 @@ document {
 	  following line of code can be placed in the file ", TT "init.m2", "."
 	  },
      PRE {
-	  ///if fileExists "start.m2" then load(currentDirectory|"start.m2")///
+	  ///if fileExists "start.m2" then load(currentDirectory()|"start.m2")///
 	  },
      PARA {
 	  "Warning: former versions of the program would also load a file named ", TT "init.m2", " found in the current directory."

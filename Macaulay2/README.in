@@ -28,11 +28,11 @@ On Debian-based systems the file COPYING is not provided.  Instead, refer to:
 This is free software.  There is no warranty; not even for merchantability or
 fitness for a particular purpose.
 
-Some programs may be distributed along with Macaulay2 according to the terms of
+Some programs or packages may be distributed along with Macaulay2 according to the terms of
 their own licenses, not affecting the license we offer you for Macaulay2
-itself.  These include the following programs:
+itself.  These include the following programs: 4ti2, normaliz, and gfan.
 
-    4ti2: a suite of programs (4ti2gmp, 4ti2int32, 4ti2int64, genmodel, gensymm
-    	  output, ppi) linked with glpk, which is licensed under GPL v3
-
-    normaliz: 
+The source code for the libraries, programs, or packages that we use is
+available on our web site at
+	
+	http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode/

@@ -697,7 +697,7 @@ document {
 	       CurrentVersion => String => {"the version currently installed"},
 	       Repository => String => {"the URL of the repository"},
 	       DebuggingMode => Boolean => {"the debugging mode to be passed to ", TO "installPackage"},
-	       UserMode => Boolean => {"the user mode to be passed to ", TO "installPackage"},
+	       UserMode => {"the user mode to be passed to ", TO "installPackage"},
 	       Configuration => List => {"the list of configuration values to be passed to ", TO "loadPackage"}
 	       },
 	  Outputs => {

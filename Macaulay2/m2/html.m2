@@ -493,7 +493,7 @@ runString := (x,pkg,rundir,usermode) -> (
      ret)
 
 check = method(Options => {
-	  UserMode => true	  
+	  UserMode => null
 	  })
 prep := pkg -> (
      use pkg;
@@ -509,13 +509,13 @@ onecheck = (seqno,pkg,usermode) -> (
      )
 check(ZZ,Package) := opts -> (seqno,pkg) -> (
      pkg = prep pkg;
-     onecheck(seqno,pkg,opts.UserMode);
+     onecheck(seqno,pkg,if opts.UserMode === null then not noinitfile else opts.UserMode);
      if hadExampleError then error("error occurred running test for package ", toString pkg, ": ", toString seqno);
      )
 check(ZZ,String) := opts -> (seqno,pkg) -> check(seqno, needsPackage (pkg, LoadDocumentation => true), opts)
 check Package := opts -> pkg -> (
      pkg = prep pkg;
-     scan(keys pkg#"test inputs", seqno -> onecheck(seqno,pkg,opts.UserMode));
+     scan(keys pkg#"test inputs", seqno -> onecheck(seqno,pkg,if opts.UserMode === null then not noinitfile else opts.UserMode));
      if hadExampleError then error(toString numExampleErrors, " error(s) occurred running tests for package ", toString pkg);
      )
 check String := opts -> pkg -> check(needsPackage (pkg, LoadDocumentation => true), opts)
@@ -534,7 +534,7 @@ installPackage = method(Options => {
 	  SeparateExec => false,
 	  PackagePrefix => () -> applicationDirectory() | "encap/",
           InstallPrefix => () -> applicationDirectory() | "local/",
-	  UserMode => true,
+	  UserMode => null,
 	  Encapsulate => false,
 	  EncapsulateDirectory => pkg -> pkg#"title"|"-"|pkg.Options.Version|"/",
 	  IgnoreExampleErrors => false,
@@ -770,7 +770,7 @@ installPackage Package := opts -> pkg -> (
 			 )
 		    else (
 			 inf << concatenate apply(inputs, s -> s|"\n") << close;
-			 if runFile(inf,inputhash,outf,tmpf,desc,pkg,changefun,".",opts.UserMode)
+			 if runFile(inf,inputhash,outf,tmpf,desc,pkg,changefun,".",if opts.UserMode === null then not noinitfile else opts.UserMode)
 			 then (
 			      removeFile inf;
 			      possiblyCache();

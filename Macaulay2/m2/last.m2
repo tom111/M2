@@ -97,7 +97,7 @@ addStartFunction( () -> if not noinitfile then (
 		    if isDirectory fn and # readDirectory fn == 2 then removeDirectory fn else
 		    if readlink fn =!= null and not fileExists fn then removeFile fn
 		    ));
-	  if isDirectory d1 and isDirectory d2 then stderr << "--warning: both types of layout in use for user-installed packages" << endl
+	  -- if isDirectory d1 and isDirectory d2 then stderr << "--warning: both types of layout in use for user-installed packages" << endl
 	  ))
 
 addStartFunction( () -> if dumpdataFile =!= null and fileExists dumpdataFile then (

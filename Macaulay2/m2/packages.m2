@@ -447,7 +447,7 @@ getPackage = method(Options => {
 	  Repository => "http://www.math.uiuc.edu/Macaulay2/Packages/",
 	  Version => null, 
 	  CurrentVersion => null,
-	  UserMode => true,
+	  UserMode => null,
 	  DebuggingMode => false,
 	  Configuration => {}
 	  })

@@ -33,10 +33,13 @@ document {
      Inputs => {
 	  "PACKAGENAME" => {"a ", TO String, " or ", TO Package},
 	  FileName => String => "the name of the file containing the source code of the package, from which it should be loaded",
-	  UserMode => Boolean => { "whether the installation will ignore packages installed in the user's 
-	       ", TO2{"applicationDirectory", "application directory"}, " and will ignore the user's ", TO "initialization file", " when running
-	       examples.  Not setting this to ", TO "false", " is necessary when installing an optional package that depends on another optional package,
-	       previously installed by the user." 
+	  UserMode => { "if ", TO "true", ", then do not give the ", TT "-q", " option to ", TT "M2", " when running 
+	       examples, thereby allowing it to load the user's ", TO "initialization file", ",
+	       allowing it to load packages previously installed in the user's ", TO2{"applicationDirectory", "application directory"}, ",
+	       and allowing packages it loads to read their configuration files from the 
+	       the user's ", TO2{"applicationDirectory", "application directory"}, ".
+	       If ", TO "false", ", then do give the option.
+	       If ", TO "null", ", then propagate the option from the current ", TO "commandLine", ", if one occurs there." 
 	       },
 	  DebuggingMode => Boolean => { "whether to enter ", TO "the debugger", " if an error occurs during installation" },
 	  RerunExamples => Boolean => "whether to rerun all the examples during installation",

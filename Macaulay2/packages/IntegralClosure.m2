@@ -26,7 +26,7 @@ export{"integralClosure", "idealizer", "ringFromFractions", "nonNormalLocus", "I
   "canonicalIdeal", 
   "parametersInIdeal",
   "randomMinors",
-  "S2ification",
+  "makeS2",
   "endomorphisms",
   "vasconcelos",
   "Verbosity",
@@ -161,7 +161,7 @@ integralClosure Ring := Ring => o -> (R) -> (
      if not isS2 then (
 	  if verbosity >= 1 then 
 	  << "   S2-ification " << flush;
-	   t1 = (timing (F', G') := S2ification target F);
+	   t1 = (timing (F', G') := makeS2 target F);
 	   if verbosity >= 1 then
 		<< t1#0 << " seconds" << endl;
            F = F'*F;
@@ -655,7 +655,7 @@ R2=ringFromFractions endomorphisms(K,f)
 betti res I -- NOT depth 2.
 time integralClosure(R, Strategy => {"vasconcelos"})
 time integralClosure(R, Strategy => {})
-S2ification R
+makeS2 R
 ///
 
 ///
@@ -922,7 +922,7 @@ integralClosure(Ideal, ZZ) := opts -> (I,D) ->(
 integralClosure(Ideal) := opts -> I -> integralClosure(I,1)
 
 ----------------------------------------
--- Canonical ideal, S2ification --------
+-- Canonical ideal, makeS2 --------
 ----------------------------------------
 parametersInIdeal = method()
 
@@ -976,8 +976,8 @@ betti res PP
 w=canonicalIdeal (S/PP)
 ///     
 
-S2ification = method()
-S2ification Ring := R -> (
+makeS2 = method()
+makeS2 Ring := R -> (
      --find the S2-ification of a domain (or more generally a generically Gorenstein ring) R.
      --    Input: R, an affine ring
      --    Output: (like "idealizer") a sequence whose 
@@ -1004,7 +1004,7 @@ S=kk[a,b,c,d]
 PP = monomialCurveIdeal(S,{1,3,4})
 betti res PP
 integralClosure(S/PP)
-integralClosure(target (S2ification(S/PP))_0)
+integralClosure(target (makeS2(S/PP))_0)
 ///     
 
 
@@ -1082,7 +1082,7 @@ doc ///
     The ring {\tt R} must be an equidimensional ring.
   SeeAlso
     integralClosure
-    S2ification
+    makeS2
 ///
 
 {*
@@ -1661,8 +1661,8 @@ assert(# icFractions S == 7)
 ///
 
 ///  -- this is part of the above example.  But what to really place into the test?
-time integralClosure (target((S2ification(S))_0), Verbosity => 3)
-StoSbar = (S2ification(S))_0;
+time integralClosure (target((makeS2(S))_0), Verbosity => 3)
+StoSbar = (makeS2(S))_0;
 M:=pushForward (StoSbar, (target StoSbar)^1);
 gens M
 N=prune(M/M_0)

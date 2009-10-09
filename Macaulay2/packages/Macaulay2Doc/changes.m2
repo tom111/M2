@@ -1,6 +1,6 @@
 -- -*- coding:utf-8 -*-
 document {
-     Key => "changes to Macaulay 2, by version",
+     Key => "changes to Macaulay2, by version",
      Subnodes => {
 	  TO "changes, 1.0 and 1.1",
 	  TO "changes, 1.2",
@@ -82,7 +82,7 @@ document {
 		    	 TO (map,Module,RingMap), "."
 			 },
 		    LI { "The total Ext functor now accepts multigraded modules, see ", TO (Ext,Module,Module), "." },
-		    LI { "Macaulay 2 now incorporates ", TO "pari", ", a free library for computing in number theory.
+		    LI { "Macaulay2 now incorporates ", TO "pari", ", a free library for computing in number theory.
 			 It is used by ", TO (factor,ZZ), ", ", TO (factor,QQ), ", ", TO (isPseudoprime, ZZ), ", and ", TO (isPrime,ZZ), "."
 			 },
 		    LI { "new packages, included:",
@@ -262,24 +262,24 @@ document {
 	  LI { "functionality added or improved:",
 	       UL {
 		    LI {"Filenames starting with ", TT "~/", " will have the tilde replaced by the home directory."},
-		    LI {"The ", EM "D", " language, in which the Macaulay 2 interpreter is written, is now type-safe"},
-		    LI {"During compilation of Macaulay 2, as much of the computation as possible is now done
+		    LI {"The ", EM "D", " language, in which the Macaulay2 interpreter is written, is now type-safe"},
+		    LI {"During compilation of Macaulay2, as much of the computation as possible is now done
 			 to satisfy the make-target ", TT "all", ", with the resulting files placed in a staging
 			 area, ready for quickly satisfying the make-target ", TT "install", "."
 			 },
-		    LI {"During compilation of Macaulay 2, it is now possible to keep the architecture independent
+		    LI {"During compilation of Macaulay2, it is now possible to keep the architecture independent
 			 files in a separate directory tree, saving time if versions for multiple architectures
 			 are to be built.  Including those files in a source tar file will allow the distribution
 			 of a ", EM "fat", " source tar file, speeding up compilation."
 			 },
-		    LI {"Pressing the RET key in the Macaulay 2 interaction buffer on a line containing
+		    LI {"Pressing the RET key in the Macaulay2 interaction buffer on a line containing
 			 a source file name and line number will open up the source file at that position in
 			 a new buffer.  This allows error messages to be treated with dispatch."
 			 },
 		    LI {"The behavior of ", TO "setup", " has changed, in that the commands that set the paths are
 			 now placed in separate files in the home directory of the user, and those files are
 			 sourced only if they are present.  That enables the user to continue to share the usual 
-			 init files on multiple machines, even though Macaulay 2 may be installed in various different
+			 init files on multiple machines, even though Macaulay2 may be installed in various different
 			 locations."
 			 },
 		    LI {"A new division algorithm has been implemented in rings with monomials less than 1,
@@ -303,7 +303,7 @@ document {
 			 run length encoding."
 			 },
 		    LI {"Browsers started by ", TO "viewHelp", " are now run in a separate process group
-			 so they don't die when Macaulay 2 terminates."
+			 so they don't die when Macaulay2 terminates."
 			 },
 		    LI {"The function ", TO "prune", " and ", TO "decompose", " are no longer exact
 			 synonyms of ", TO "minimalPresentation", " and ", TO "minimalPrimes", ", respectively."
@@ -386,7 +386,7 @@ document {
 			 "The function ", TO "regex", " now has a form which restricts the range of the search."
 			 },
 		    LI {
-			 "Macaulay 2 now incorporates ", TO "frobby", ", a free library for computing
+			 "Macaulay2 now incorporates ", TO "frobby", ", a free library for computing
 			 the Alexander dual of a monomial ideal (see ", TO (dual,MonomialIdeal), ")."
 			 },
 		    LI {
@@ -457,7 +457,7 @@ document {
 	  provided (but they operate only with 53 bits of precision).
 	  "},
      PARA ///
-     An interface with TeXmacs has been provided, so Macaulay 2 can be run with
+     An interface with TeXmacs has been provided, so Macaulay2 can be run with
      a good graphical user interface.  More work remains to be done, but it is
      usable.
      ///,
@@ -594,7 +594,7 @@ document {
 	  TO "zeta", "."
 	  },
      PARA ///
-     Compilation of Macaulay 2 from source has been improved.  Needed third
+     Compilation of Macaulay2 from source has been improved.  Needed third
      party libraries will now be downloaded and compiled automatically if they
      are not already provided.
      ///,

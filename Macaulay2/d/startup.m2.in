@@ -143,7 +143,7 @@ if firstTime then (
      toAbsolutePath = pth -> if pth =!= "stdio" and not isAbsolutePath pth then "/" | relativizeFilename("/", pth) else pth;
 
      copyright = (
-	  "Macaulay 2, version " | version#"VERSION" | newline
+	  "Macaulay2, version " | version#"VERSION" | newline
 	  | "--Copyright 2009 D. R. Grayson and M. E. Stillman" | newline
 	  | "--GC " | version#"gc version" | ", by H. Boehm and Alan J. Demers" | newline
 	  | "--Singular-Factory " | version#"factory version" | ", by G.-M. Greuel et al." | newline
@@ -389,7 +389,7 @@ usage := arg -> (
      << "environment:"       << newline
      << "    M2ARCH             a hint to find the dumpdata file as" << newline
      << "                       bin/../cache/Macaulay2-$M2ARCH-data, where bin is the" << newline
-     << "                       directory containing the Macaulay 2 executable" << newline
+     << "                       directory containing the Macaulay2 executable" << newline
      << "    EDITOR             default text editor" << newline
      << "    LOADDATA_IGNORE_CHECKSUMS (loaddata: disable verification of memory map checksums)" << newline
      << "    COMPAREVDSO               (loaddata: enable verification for the vdso segment)" << newline
@@ -454,9 +454,9 @@ action := hashTable {
 	       topLevelMode = TeXmacs;
 	       addEndFunction(() -> if texmacsmode then (
 			 if restarting 
-			 then stderr << "Macaulay 2 restarting..." << endl << endl << flush
+			 then stderr << "Macaulay2 restarting..." << endl << endl << flush
 			 else (
-			      stderr << "Macaulay 2 exiting" << flush;
+			      stderr << "Macaulay2 exiting" << flush;
 			      << TeXmacsEnd << endl << flush)));
 	       )
 	  ),
@@ -565,7 +565,7 @@ loadSetup := () -> (
 
 dump = () -> (
      if not version#"dumpdata" then (
-	  error "not configured for dumping data with this version of Macaulay 2";
+	  error "not configured for dumping data with this version of Macaulay2";
 	  );
      arch := if getenv "M2ARCH" =!= "" then getenv "M2ARCH" else version#"architecture";
      fn := (

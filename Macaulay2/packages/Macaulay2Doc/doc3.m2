@@ -482,7 +482,7 @@ document {
 document {
      Key => {"operatorAttributes", Flexible, Binary, Prefix, Postfix},
      Usage => "operatorAttributes",
-     Outputs => {{ "an experimental hash table that give information about ", TO "operators", " in the Macaulay 2 language" }},
+     Outputs => {{ "an experimental hash table that give information about ", TO "operators", " in the Macaulay2 language" }},
      "Meanings of the symbols used:",
      UL {
 	  LI { TO "Flexible", " -- user defined methods may be installed" },
@@ -1027,7 +1027,7 @@ document { Key => cache,
 	  F === ZZ^3
      ///}
 document { Key => {(capture, String),capture},
-     Headline => "evaluate Macaulay 2 code and capture the output (under development)" }
+     Headline => "evaluate Macaulay2 code and capture the output (under development)" }
 document { Key => "catch",
      Headline => "catch a thrown exception", SeeAlso => {"throw"},
      Usage => "catch c",
@@ -1102,7 +1102,7 @@ document { Key => "continue",
      ///
      }
 document { Key => "copyright",
-     Headline => "a string containing the copyright notice for Macaulay 2",
+     Headline => "a string containing the copyright notice for Macaulay2",
      EXAMPLE "copyright" }
 document { Key => {listSymbols,(listSymbols, Dictionary), (listSymbols, List)},
      Headline => "compact display of symbols and their values",
@@ -1794,7 +1794,7 @@ document { Key => toUpper,
 
 document { Key => "encapDirectory",
      Headline => "encapsulated installation directory",
-     "This variable contains the path to the encapsulation directory tree where the files of Macaulay 2 are located.",
+     "This variable contains the path to the encapsulation directory tree where the files of Macaulay2 are located.",
      SeeAlso => { "prefixDirectory" }
      }
 

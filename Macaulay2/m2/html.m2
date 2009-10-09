@@ -208,7 +208,7 @@ html HTML := t -> concatenate(
      "</html>\n"
      )
 
--- produce html form of documentation, for Macaulay 2 and for packages
+-- produce html form of documentation, for Macaulay2 and for packages
 
 buttonBar := (tag) -> ButtonTABLE {{ 
 	  DIV splice {
@@ -364,7 +364,7 @@ assembleTree := (pkg,nodes) -> (
 setupButtons := () -> (
      topNodeButton = HREF {htmlDirectory|topFileName, "top" };
      tocButton = HREF {htmlDirectory|tocFileName, "toc"};
-     homeButton = HREF {Macaulay2HomePage (), "Macaulay 2 web site"};
+     homeButton = HREF {Macaulay2HomePage (), "Macaulay2 web site"};
      directoryButton = HREF { "file://" | externalPath | applicationDirectory() | "index.html", "directory"};
      nullButton = "";
      masterIndexButton = HREF {htmlDirectory|indexFileName,"index"};
@@ -387,7 +387,7 @@ capture String := s -> (
 
 -----------------------------------------------------------------------------
 -- installing packages -- eventually to be merged with 
--- the code above for making html for Macaulay 2 itself
+-- the code above for making html for Macaulay2 itself
 -----------------------------------------------------------------------------
 
 makeMasterIndex := (keylist,verbose) -> (
@@ -885,11 +885,11 @@ installPackage Package := opts -> pkg -> (
 	       infofile := openOut (infodir|tmpinfobasename);
 	       if verbose then stderr << "--making info file in " << infofile << endl;
 	       upto30 := t -> concatenate(t,30-#t:" ");
-	       infofile << " -*- coding: utf-8 -*- This is " << infobasename << ", produced by Macaulay 2, version " << version#"VERSION" << endl << endl;
+	       infofile << " -*- coding: utf-8 -*- This is " << infobasename << ", produced by Macaulay2, version " << version#"VERSION" << endl << endl;
 	       infofile << "INFO-DIR-SECTION " << pkg.Options.InfoDirSection << endl;
 	       infofile << "START-INFO-DIR-ENTRY" << endl;
 	       infofile << upto30 concatenate( "* ", infotitle, ": (", infotitle, ").") << "  ";
-	       infofile << (if pkg.Options.Headline =!= null then pkg.Options.Headline else infotitle | ", a Macaulay 2 package") << endl;
+	       infofile << (if pkg.Options.Headline =!= null then pkg.Options.Headline else infotitle | ", a Macaulay2 package") << endl;
 	       infofile << "END-INFO-DIR-ENTRY" << endl << endl;
 	       byteOffsets := new MutableHashTable;
 	       topNodeName := DocumentTag.FormattedKey topDocumentTag;
@@ -1032,13 +1032,13 @@ installPackage Package := opts -> pkg -> (
      )
 
 sampleInitFile = ///-- This is a sample init.m2 file provided with Macaulay2.
--- It contains Macaulay 2 code and is automatically loaded upon
+-- It contains Macaulay2 code and is automatically loaded upon
 -- startup of Macaulay2, unless you use the "-q" option.
 
--- Uncomment the following line to cause Macaulay 2 to load "start.m2" in the current working directory upon startup.
+-- Uncomment the following line to cause Macaulay2 to load "start.m2" in the current working directory upon startup.
 -- if fileExists "start.m2" then load(currentDirectory()|"start.m2")
 
--- Uncomment and edit the following lines to add your favorite directories containing Macaulay 2
+-- Uncomment and edit the following lines to add your favorite directories containing Macaulay2
 -- source code files to the load path.  Terminate each directory name with a "/".
 -- (To see your current load path, display the value of the variable "path".)
 -- path = join( { "~/" | "src/singularities/", "/usr/local/src/M2/" }, path )
@@ -1070,17 +1070,17 @@ automatically loaded upon startup of Macaulay2, unless you use the "-q" option.
 You may edit it to meet your needs.
 
 The web browser file "index.html" in this directory contains a list of links to
-the documentation of Macaulay 2 and its installed packages and is updated every
-time you start Macaulay 2 (unless you use the "-q" option).  To update it
+the documentation of Macaulay2 and its installed packages and is updated every
+time you start Macaulay2 (unless you use the "-q" option).  To update it
 manually, use "makePackageIndex()".  Point your web browser at that file and
 bookmark it.
 
-You may place Macaulay 2 source files in the subdirectory "code/".  It's on
+You may place Macaulay2 source files in the subdirectory "code/".  It's on
 your "path", so Macaulay2's "load" and "input" commands will automatically look
 there for your files.
 
-You may obtain source code for Macaulay 2 packages and install them yourself
-with the function "installPackage".  Behind the scenes, Macaulay 2 will use the
+You may obtain source code for Macaulay2 packages and install them yourself
+with the function "installPackage".  Behind the scenes, Macaulay2 will use the
 subdirectory "encap/" to house the code for those packages in separate
 subdirectories.  The subdirectory "local/" will hold a single merged directory
 tree for those packages, with symbolic links to the files of the packages.
@@ -1114,7 +1114,7 @@ makePackageIndex Sequence := x -> (
 makePackageIndex List := path -> (
      initInstallDirectory options installPackage;
      absoluteLinks = true;
-     key := "Macaulay 2";
+     key := "Macaulay2";
      htmlDirectory = applicationDirectory();
      fn := htmlDirectory | "index.html";
      if notify then stderr << "--making index of installed packages in " << fn << endl;
@@ -1128,14 +1128,14 @@ makePackageIndex List := path -> (
 	  BODY { 
 	       -- buttonBar tag, HR{},
 	       PARA {
-		    "This is the directory for Macaulay 2 and its packages.
-		    Bookmark this page for future reference, or run the viewHelp command in Macaulay 2
+		    "This is the directory for Macaulay2 and its packages.
+		    Bookmark this page for future reference, or run the viewHelp command in Macaulay2
 		    to open up your browser on this page."
 		    },
 	       HEADER3 "Documentation",
 	       ul splice {
                	    if prefixDirectory =!= null 
-		    then HREF { prefixDirectory | replace("PKG","Macaulay2Doc",currentLayout#"packagehtml") | "index.html", "Macaulay 2" },
+		    then HREF { prefixDirectory | replace("PKG","Macaulay2Doc",currentLayout#"packagehtml") | "index.html", "Macaulay2" },
 		    splice apply(toSequence unique apply(select(path,isDirectory),realpath), pkgdir -> (
 			      if debugLevel > 10 then stderr << "--checking package directory " << pkgdir << endl;
 			      apply(toSequence values Layout, layout -> (
@@ -1217,7 +1217,7 @@ showHtml = show Hypertext := x -> (
      fn := temporaryFileName() | ".html";
      fn << html HTML {
 	  HEAD {
-	       TITLE "Macaulay 2 Output"
+	       TITLE "Macaulay2 Output"
 	       },
      	  BODY {
 	       x

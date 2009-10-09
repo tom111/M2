@@ -2,7 +2,7 @@
 
 all: check-make check-autoconf configure monitor include/M2/config.h.in.stamp
 	@echo '--: The configure script in this directory has been prepared.'
-	@echo '--: To configure and build Macaulay 2:'
+	@echo '--: To configure and build Macaulay2:'
 	@echo '--: '
 	@echo '     mkdir BUILD/normal'
 	@echo '     cd BUILD/normal'
@@ -120,7 +120,7 @@ endif
 
 announce:
 	@ echo '-*- compilation; coding: utf-8 -*-'
-	@ echo ' -- Macaulay 2 compilation:'
+	@ echo ' -- Macaulay2 compilation:'
 	@ echo ' --   Paste this output into an emacs buffer and run M-x compilation-mode'
 	@ echo ' --   and then C-C ` (same as M-x next-error) to view the errors.'
 

@@ -200,7 +200,7 @@ html TEX := str -> (
      f(///\\xi\> *///,///&xi;///);
      f(///\\zeta\> *///,///&zeta;///);
      -- f(///Macaulay2///,///<i>Macaulay2</i>///); -- this is a bad idea because it interferes with URLs and filenames
-     f(///Macaulay 2///,///<i>Macaulay 2</i>///);
+     f(///Macaulay 2///,///<i>Macaulay2</i>///);
      while (
 	  oldstr = str;
      	  f(///\{([^{}]*)\}///,///\1///);

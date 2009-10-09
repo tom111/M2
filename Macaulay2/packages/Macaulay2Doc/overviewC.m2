@@ -4,7 +4,7 @@
 document {
      Key => "basic rings of numbers",
      "The following rings are initially present in every session with
-     Macaulay 2.",
+     Macaulay2.",
      UL { 
 	  TO "ZZ", 
 	  TO "QQ", 
@@ -520,7 +520,7 @@ document {
      mildly non-commutative, in that, for every x and y in the ring,
      y*x = (-1)^(deg(x) deg(y)) x*y, and that for every x of odd degree,
      x*x = 0.",
-     "In Macaulay 2, deg(x) is the degree of x, or the first degree of x, in case 
+     "In Macaulay2, deg(x) is the degree of x, or the first degree of x, in case 
      a multi-graded ring is being used.  The default degree for each variable is 1, so
      in this case, y*x = -x*y, if x and y are variables in the ring.",
      PARA{},
@@ -636,7 +636,7 @@ document {
 	  "dx*dy*x*y",
 	  "dx*x^5"
 	  },
-     "All modules over Weyl algebras are, in Macaulay 2, right modules.  This means that 
+     "All modules over Weyl algebras are, in Macaulay2, right modules.  This means that 
      multiplication of matrices is from the opposite side:",
      EXAMPLE {
 	  "dx*x",

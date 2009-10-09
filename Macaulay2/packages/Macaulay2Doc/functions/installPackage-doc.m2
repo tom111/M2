@@ -62,7 +62,7 @@ document {
 	       whose name is specified by the ", TT "EncapsulateDirectory", " option.
 	       Encapsulation makes it easy to delete all the files associated with a package
 	       (see ", TO "epkg", ").  On the other hand, encapsulation involves the use of symbolic links, which are of limited
-	       utility in a Cygwin version of Macaulay 2, because non-Cygwin programs don't understand them." 
+	       utility in a Cygwin version of Macaulay2, because non-Cygwin programs don't understand them." 
 	       },
 	  EncapsulateDirectory => { "a string that gives the name of the encapsulation subdirectory, terminated with a ", TT "/", ", in the case where
 	        the value of the ", TT "Encapsulate", " option is ", TT "true", ", or a function that accepts a package and returns
@@ -94,9 +94,9 @@ document {
 	  },
      Consequences => {
 	  {"The package is installed in a local directory, so that in the future, one may simply use ", TO "loadPackage", ".  Documentation for the
-	  package is also produced, running any Macaulay 2 examples that are requested in the package documentation." }
+	  package is also produced, running any Macaulay2 examples that are requested in the package documentation." }
 	  },
-     "The main action of this routine is to generate the documentation of the given package and install the Macaulay 2 package and documentation. ",
+     "The main action of this routine is to generate the documentation of the given package and install the Macaulay2 package and documentation. ",
      PARA{ "The actual file loaded is ", TT "PACKAGENAME.m2", ", which should be on the load ", TO "path", " and should contain a package named ", TT "PACKAGENAME", "."},
      PARA{ "In order to accomplish this, several steps are performed (or bypassed, depending on the values of the optional arguments)." },
      UL {
@@ -120,7 +120,7 @@ document {
 	  "It might be necessary to run ", TO "installPackage", " twice if a package with the same name is already installed:
 	  the second installation will redirect the hyperlinks to the freshly installed documentation, because the files will 
 	  have been installed by the first installation.
-	  This applies, for example, to those authors who are developing updates to packages already included with Macaulay 2."
+	  This applies, for example, to those authors who are developing updates to packages already included with Macaulay2."
 	  },
      PARA {
 	  "The files of the package are placed in subdirectories of the appropriate prefix directory as specified by ", TO "Layout", ", depending on

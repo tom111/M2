@@ -51,7 +51,7 @@ reach2 TOH := x -> (
 
 DocumentationProvided = set apply(topicList(), toString)
 scan(keys DocumentationProvided, s -> reachable#s = false)
-reach2 TO "Macaulay 2"
+reach2 TO "Macaulay2"
 
 o = "docStructure.out" << world << endl
 -- unreachable = applyPairs(new HashTable from reachable, (k,v) -> if not v then (k,true))

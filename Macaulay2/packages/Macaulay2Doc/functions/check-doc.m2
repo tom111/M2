@@ -25,7 +25,7 @@ document {
 		    }
 	       },
 	  Consequences => {
-	       "The tests in the package ", TT "P", " are run (in separate Macaulay 2 processes), and 
+	       "The tests in the package ", TT "P", " are run (in separate Macaulay2 processes), and 
 	       any errors are reported."
 	       },     
 	  PARA {

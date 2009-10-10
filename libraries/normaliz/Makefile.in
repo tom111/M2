@@ -11,6 +11,7 @@ INSTALLCMD = $(MKDIR_P) $(LIBRARIESDIR)/bin && \
 		@INSTALL@ norm32 $(LIBRARIESDIR)/bin/norm32 && \
 		@INSTALL@ norm64 $(LIBRARIESDIR)/bin/norm64 && \
 		@INSTALL@ normbig $(LIBRARIESDIR)/bin/normbig
+CHECKTARGET = .
 include ../Makefile.library
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/normaliz/Makefile
 # Local Variables:

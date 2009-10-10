@@ -79,7 +79,7 @@ endif
 	cd $(UNTARDIR) && $(UNTARCMD)
 	$(PATCHCMD)
 	touch $@
-.untarred2-$(VERSION) : $(TARFILE_DIR)/$(TARFILE) ; mkdir tmp ; $(UNTARCMD) -C tmp && touch $@
+.untarred2-$(VERSION) : $(TARFILE_DIR)/$(TARFILE) ; mkdir tmp ; (cd tmp && $(UNTARCMD)) && touch $@
 ifeq ($(FETCHER),)
 ifneq (@WGET@,)
 FETCHER = @WGET@

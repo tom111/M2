@@ -1,6 +1,7 @@
 # license for normaliz: GPL v3
 # http://www.mathematik.uni-osnabrueck.de/normaliz/
 VERSION = 2.2
+PATCHFILE = @abs_srcdir@/patch-2.2
 URL = http://www.mathematik.uni-osnabrueck.de/normaliz
 TARFILE = Normaliz$(VERSION)Linux32.zip
 TARDIR = Normaliz$(VERSION)Linux/source

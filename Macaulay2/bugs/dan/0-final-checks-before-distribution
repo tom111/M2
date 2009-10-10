@@ -1,50 +1,54 @@
 things to do manually before release
 
-       make sure "factor 100!" works (on some machines pari/gmp are reversed)
+	make sure "factor 100!" works (on some machines pari/gmp are reversed)
 
-       fix bugs
+	fix bugs
 
-       add test files
+	add test files
 
-       run ldd M2 to see that we don't depend on any of our own sharable libraries (yet)
+	run ldd M2 or otool -L M2 in ...your-build-tree.../StagingArea/x86_64-MacOS-10.5/bin/
+		 to see that we don't depend on any of our own sharable libraries (yet),
+		 or on any libraries installed in nonstandard locations, such as in /sw/lib
+	    do the same in ...your-build-tree.../StagingArea/x86_64-MacOS-10.5/libexec/Macaulay2/x86_64-MacOS-10.5/
+		 for all the programs we compile and distribute
 
-       check that readline and history and name completion work in an xterm
+	check that readline and history and name completion work in an xterm
 
-       look at html documentation 
+	look at html documentation 
 
-       look at info documentation
+	look at info documentation
 
-       try viewHelp
+	try viewHelp
 
-       try viewHelp res, etc.
+	try viewHelp res, etc.
 
-       update Macaulay2/man/M2.1.in
+	update Macaulay2/man/M2.1.in
 
-       check that getPackage works for all the packages available
+	check that getPackage works for all the packages available
 
-       test *.rpm files
+	test *.rpm files
 
-       test *.deb files
+	test *.deb files
 
-       test *.tar.gz file
+	test *.tar.gz file
 
-       test freebsd *.tbz package
+	test freebsd *.tbz package
 
-       check that alarm works or devise an automated test
+	check that alarm works or devise an automated test
 
-       check that installPackage works for the user (now, with no symbolic links)
-       	     and that it creates a documentation database and finds and uses it
+	check that installPackage works for the user (now, with no symbolic links)
+	      and that it creates a documentation database and finds and uses it
 
-       check that installPackage "Macaulay2Doc" works
+	check that installPackage "Macaulay2Doc" works
 
-       try edit(dim,Module), in emacs under X and in emacs in an xterm
+	try edit(dim,Module), in emacs under X and in emacs in an xterm
 
-       verify that ~/.Macaulay2/README is restored if it is deleted
+	verify that ~/.Macaulay2/README is restored if it is deleted
 
-       run M-x Info-validate on the info file
+	run M-x Info-validate on the info file
 
-       make sure the links in the html documentation work
+	make sure the links in the html documentation work
 
-       run "make -k check" and check the output
+	run "make -k check" and check the output
 
-       make sure the macos x readme file is up to date
+	make sure the macos x readme file is up to date

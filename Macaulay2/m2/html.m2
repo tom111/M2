@@ -461,7 +461,20 @@ runFile := (inf,inputhash,outf,tmpf,desc,pkg,announcechange,usermode) -> ( -- re
      makeDirectory rundir;
      r := run cmd;
      if r == 0 then (
-	  scan(reverse findFiles rundir, f -> if isDirectory f then removeDirectory f else removeFile f);
+	  scan(reverse findFiles rundir, f -> if isDirectory f then (
+		    -- under cygwin, it seems to take a random amount of time before the system knows the directory is no longer in use:
+		    try removeDirectory f
+		    else (
+			 stderr << "--warning: *** removing a directory failed, waiting..." << endl;
+			 sleep 1;
+		    	 try removeDirectory f
+			 else (
+			      stderr << "--warning: *** removing a directory failed again, waiting..." << endl;
+			      sleep 4;
+			      removeDirectory f
+			      )
+			 )
+		    ) else removeFile f);
 	  moveFile(tmpf,outf);
 	  return true;
 	  );

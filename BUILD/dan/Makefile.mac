@@ -12,7 +12,10 @@
 DEBUG = yes
 PROFILE = no
 M64 = no
+
+# try this one if configuration fails because of an undefined symbol Unwind_Resume
 # CONFIGOPTIONS += LDFLAGS=-static-libgcc
+
 # CONFIGOPTIONS += --enable-build-libraries=gmp
 unexport DEBUG
 unexport PROFILE

@@ -19,7 +19,7 @@ assert( (hash (1 => 2)) === 716026890 )
 assert( hash Nothing == 1000069 )
 
 -- these might change if our floating point implementation changes, but let's check anyway:
-assert( (hash 1.23p200) === -1502350228 )
+assert( hash 1.23p200 === -1502350228 {* big endian *} or hash 1.23p200 == -640232547 {* little endian *} )
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/basictests hashcodes.okay"

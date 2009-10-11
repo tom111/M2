@@ -1,5 +1,26 @@
 things to do manually before release
 
+	interactive input behaviour
+	try each of these, both in emacs (--no-readline) and in an xterm (with readline)
+	follow each of them with a simple expression (e.g., "4"), to see if parsing has recovered
+	   multiple statments per line:
+	   	1;2;3
+		1;2+;3
+		1;2+ RETURN 3				??
+	   interrupts:
+		///asdf RETURN CTRL-C
+		"asdf RETURN CTRL-C
+		1 + RETURN CTRL-C
+		{* RETURN CTRL-C
+	   blank lines
+		///asdf RETURN RETURN
+		"asdf RETURN RETURN
+		1 + RETURN RETURN
+		{* RETURN RETURN
+	   comments
+	   	-- foo RETURN 4
+	   	-- foo RETURN 4+ RETURN 5
+
 	fix bugs
 
 	add test files

@@ -1,7 +1,5 @@
 things to do manually before release
 
-	make sure "factor 100!" works (on some machines pari/gmp are reversed)
-
 	fix bugs
 
 	add test files

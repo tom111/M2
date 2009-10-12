@@ -3,11 +3,13 @@ things to do manually before release
 	interactive input behaviour
 	try each of these, both in emacs (--no-readline) and in an xterm (with readline)
 	follow each of them with a simple expression (e.g., "4"), to see if parsing has recovered
+	(current problem -- readline doesn't discard partial lines after SIGINT (?))
 	   multiple statments per line:
+	   	1;
 	   	1;2;3
 		1;2+;3
-		1;2+ RETURN 3				??
-	   interrupts:
+		1;2+ RETURN 3
+	   interrupts (M2 ignores SIGINTs that readline gets):
 		///asdf RETURN CTRL-C
 		"asdf RETURN CTRL-C
 		1 + RETURN CTRL-C
@@ -20,6 +22,12 @@ things to do manually before release
 	   comments
 	   	-- foo RETURN 4
 	   	-- foo RETURN 4+ RETURN 5
+		4 ; {* RETURN *} 5					OOPS
+	   EOF
+	        EOF
+		/// RETURN EOF
+		" RETURN EOF
+		{* RETURN EOF
 
 	fix bugs
 

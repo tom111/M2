@@ -664,14 +664,14 @@ if class Core =!= Symbol and not core "noinitfile" then (
 processCommandLineOptions 4
 interpreterDepth = 0
 errorDepth = loadDepth+1      -- anticipate loadDepth being incremented
-n := interpreter()	      -- loadDepth is incremented by commandInterpreter
+n := 0
+n = interpreter()	      -- loadDepth is incremented by commandInterpreter
 if class n === ZZ and 0 <= n and n < 128 then exit n
 if n === null then exit 0
 debuggingMode = false
 stopIfError = true
 stderr << "error: can't interpret return value as an exit code" << endl
 exit 1
-
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/d startup.m2 all "
 -- End:

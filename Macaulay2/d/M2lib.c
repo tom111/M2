@@ -253,7 +253,7 @@ bool interrupt_jump_set = FALSE;
 static void interrupt_handler(int sig)
 {
      int r;
-     if (isatty(STDIN) && isatty(STDOUT)) {
+     if (isatty(STDIN) && isatty(STDOUT) && !reading_from_readline) {
         r = write(STDERR,"\n",1);
      }
      if (system_interruptedFlag || system_interruptPending) {

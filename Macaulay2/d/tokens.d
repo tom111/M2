@@ -119,6 +119,7 @@ export flush(f:TokenFile):void := (f.nexttoken=NULL; flush(f.posFile););
 export close(file:TokenFile):int := close(file.posFile);
 export fileErrorMessage(f:TokenFile):string := fileErrorMessage(f.posFile);
 export fileError(f:TokenFile):bool := fileError(f.posFile);
+export clearFileError(f:TokenFile):void := clearFileError(f.posFile);
 export isatty(f:TokenFile):bool := isatty(f.posFile);
 
 export CompiledFunction := {fn:fun,hash:int};

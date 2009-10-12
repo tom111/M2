@@ -128,7 +128,7 @@ else
 DFILES += mysqldummy.d
 endif
 
-DFILES += evaluate.d libfac.d
+DFILES += evaluate.d
 DFILES += objects.d
 DFILES += struct.d
 DFILES += GC.d
@@ -149,6 +149,7 @@ DFILES += err.d
 DFILES += stdiop.d
 DFILES += getline.d
 DFILES += stdio.d
+DFILES += libfac.d
 DFILES += varnets.d
 DFILES += nets.d
 DFILES += ctype.d

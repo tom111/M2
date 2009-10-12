@@ -15,36 +15,51 @@ document {
 	       This was a problem for MacOS with lists of length greater than about 90000.  In a future version
 	       we will reduce the amount of memory required to parse, translate, and then evaluate the list." },
      	  LI { "The expression 'setRandomSeed()' can now be used to re-initialize the random number generator." },
-	  LI { "The initialization file 'init.m2' is now sought only in the user's application directory, and not also in the current directory." },
-	  LI { "When the program starts, the random number seed is now initialized to a value that depends on the date, time in seconds,
+	  LI { "The initialization file 'init.m2' is now sought only in the user's application directory, and 
+	       not also in the current directory." },
+	  LI { "When the program starts, the random number seed is now initialized to a value that 
+	       depends on the date, time in seconds,
 	       and the process id.  The former initial state can be obtained with ", TT "setRandomSeed()", "." },
-	  LI { "A new variable, 'handleInterrupts', specifies whether the default interrupt handlers for SIGINT and SIGALRM are installed." },
-	  LI { "The CTRL-C interrupt signal SIGINT will now interrupt system calls; formerly, they were restarted after the handler set a flag." },
-	  LI { "New packages (OpenMath, SCSCP) for communicating via SCSCP with OpenMath to programs such as GAP and Maple have been developed, 
-	       thanks to Dan Roozemond.  They depend on the new package XML, which uses the libxml2 library to parse xml code." },
-	  LI { "The function ", TO "realpath", " now returns a string ending in '/' if the path leads to a directory, for consistency with the convention
-	       elsewhere in Macaulay2 that directory names end in '/'." },
-	  LI { "The function ", TO "EXAMPLE", " will now accept objects of type ", TO "PRE", " to be interpreted as preformatted example output." },
+	  LI { "A new variable, 'handleInterrupts', specifies whether Macaulay2's interrupt handlers for 
+	       SIGINT and SIGALRM are installed." },
+	  LI { "The CTRL-C interrupt signal SIGINT will now interrupt system calls (such as read and write) that are
+	       in progress; formerly, they were restarted by the kernel
+	       after the handler set a flag.  This necessitated reworking the handling of interrupts
+	       by the top level interpreter, which will now respond to them immediately.
+	       When the readline library is active and reading user input (such as
+	       when the emacs interface to Macaulay2 is not used), interrupts are handled just by it."
+	       },
+	  LI { "New packages (OpenMath, SCSCP) for communicating via SCSCP with OpenMath to programs such as GAP and Maple 
+	       have been developed, 
+	       thanks to Dan Roozemond.  They depend on the new package XML, which uses the libxml2 
+	       library to parse xml code." },
+	  LI { "The function ", TO "realpath", " now returns a string ending in '/' if the path leads to a directory, for
+	       consistency with the convention elsewhere in Macaulay2 that directory names end in '/'." },
+	  LI { "The function ", TO "EXAMPLE", " will now accept objects of type ", TO "PRE", " to be interpreted as
+	       preformatted example output." },
 	  LI { "The function ", TO "openListener", " can now open a socket on a specified interface." },
 	  LI { "The operator ", TO "..", " can now be used to generate sequences of consecutive strings." },
-	  LI { "A new binary operator ", TO "..<", " provides for the generation of sequences that stop one short of those provided by ", TO "..", " ." },
+	  LI { "A new binary operator ", TO "..<", " provides for the generation of sequences that stop one short of
+	       those provided by ", TO "..", " ." },
 	  LI { "The operator ", TO "..", ", when applied to two generators a polynomial ring, will now give a sequence of
-	       consecutive generators abstracted from the list of all generators.  The old error-prone behavior involved looking at the names
+	       consecutive generators abstracted from the list of all generators.  The old error-prone behavior involved 
+	       looking at the names
 	       of the generators, and generating a sequence of consecutive names, which were then evaluated." },
-	  LI { "The operator ", TO "..", ", will now deliver rectangular sequences of consecutive indexed variables, e.g., ", TT "x_1 .. y_2", "
-	       will have the value ", TT "(x_1,x_2,y_1,y_2)", "."},	       
-	  LI { "New binary operators ", TO "<==", " and ", TO "<===", " have been introduced.  The operators are flexible, i.e., the 
-	       user can install methods for them." },
+	  LI { "The operator ", TO "..", ", will now deliver rectangular sequences of consecutive indexed variables, 
+	       e.g., ", TT "x_1 .. y_2", " will have the value ", TT "(x_1,x_2,y_1,y_2)", "."},	       
+	  LI { "New binary operators ", TO "<==", " and ", TO "<===", " have been introduced.  The operators are 
+	       flexible, i.e., the user can install methods for them." },
 	  LI {
-	       "The function \"SimpleDoc :: doc\" will now handle example expressions that span multiple lines: within in each expression, indent lines
-	       after the first one more than the first."
+	       "The function \"SimpleDoc :: doc\" will now handle example expressions that span multiple lines: within in 
+	       each expression, indent lines after the first one more than the first."
 	       },
 	  LI { "Fixed a bug in degree(x,f) where the degrees of the grading were used instead of the actual exponents." },
-	  LI { "The ", TO "UserMode", " option to ", TO "installPackage", " and ", TO "check", " now has default value ", TO "null", ",
-	       meaning to propagate the command line option ", TT "-q", ", if present, to child processes running M2 on examples and tests"
+	  LI { "The ", TO "UserMode", " option to ", TO "installPackage", " and ", TO "check", " now has 
+	       default value ", TO "null", ", meaning to propagate the command line option ", TT "-q", ", if present, to child 
+	       processes running M2 on examples and tests"
 	       },
-	  LI { TO "currentDirectory", " is now a function rather than a string constant, in order to postpone signalling an error
-	       if a component of the path to the current working directory no longer exists."
+	  LI { TO "currentDirectory", " is now a function rather than a string constant, in order to postpone signalling 
+	       an error if a component of the path to the current working directory no longer exists."
 	       },
 	  LI { "The programs ", TT "4ti2", ", ", TT "gfan", ", and ", TT "normaliz", " are now included with Macaulay2 distributions,
 	       and are downloaded and compiled automatically during Macaulay2's build process."

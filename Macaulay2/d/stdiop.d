@@ -128,7 +128,7 @@ export (o:file) << (w:Position) : file := (
 export SuppressErrors := false;
 cleanscreen():void := (
      flush(stdout);
-     if stdout.outfd == stderr.outfd && !atEndOfLine(stdout) then (
+     if stdout.outfd == stderr.outfd && !atEndOfLine(stdout) || interruptedFlag then (
 	  stdout << '\n';
      	  flush(stdout);
 	  )
@@ -158,6 +158,7 @@ export copy(p:Position):Position := Position(
 export PosFile := {file:file, lastchar:int, pos:Position};
 export dummyPosFile := PosFile(dummyfile,0,dummyPosition);
 export fileError(f:PosFile):bool := fileError(f.file);
+export clearFileError(f:PosFile):void := clearFileError(f.file);
 export fileErrorMessage(f:PosFile):string := fileErrorMessage(f.file);
 export makePosFile(o:file):PosFile := PosFile(o, 0,
      Position(o.filename, ushort(1), ushort(0), uchar(loadDepth)));
@@ -167,6 +168,7 @@ export peek(o:PosFile, offset:int):int := (
      c := 0;
      while (
 	  c = peek(o.file,i);
+	  if c == ERROR || c == EOF then return c;
 	  prevchar = c;
 	  i < offset
 	  )

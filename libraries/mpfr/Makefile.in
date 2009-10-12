@@ -1,5 +1,5 @@
-# license for mpfr 2.4.1: LGPL 2.1 or later and GPL (version number unspecified)
-# license for version 3.0: might be distributed under LGPL 3+
+# license: for mpfr version 2.4.1: LGPL 2.1 or later and GPL (version number unspecified)
+# license:          version 3.0  : might be distributed under LGPL 3+
 #VERSION = 2.3.2
 VERSION = 2.4.1
 # PATCHFILE = @abs_srcdir@/patch-$(VERSION)

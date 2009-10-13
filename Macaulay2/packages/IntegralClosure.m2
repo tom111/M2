@@ -121,6 +121,7 @@ integralClosure Ring := Ring => o -> (R) -> (
      -- 1 argument: affine ring R.  We might be able to handle rings over ZZ
      --   if we choose J in the non-normal ideal some other way.
      -- 2 options: Limit, Variable
+     if R.?icMap then return target R.icMap;
      verbosity = o.Verbosity;
      strategies := set o.Strategy;
      (S,F) := flattenRing R;
@@ -763,8 +764,10 @@ icMap(Ring) := RingMap => R -> (
      -- conductor and other methods that require this. 
      if R.?icMap then R.icMap
      else if isNormal R then id_R
-     else (S := integralClosure R;
-	  R.icMap)
+     else (
+	  integralClosure R;
+	  R.icMap
+	  )
      )
 
      
@@ -791,7 +794,7 @@ icFractions(Ring) := Matrix => (R) -> (
      if R.?icFractions then R.icFractions
      else if isNormal R then vars R
      else (
-	  if not R.?icFractions then integralClosure R;
+	  integralClosure R;
      	  R.icFractions	  
      )
 )
@@ -1082,7 +1085,9 @@ doc ///
      isNormal R
      isNormal(integralClosure R)
   Caveat
-    The ring {\tt R} must be an equidimensional ring.
+    The ring {\tt R} must be an equidimensional ring.  If {\tt R} is a domain,
+    then sometimes computing the integral closure of {\tt R} can be faster than
+    this test.
   SeeAlso
     integralClosure
     makeS2
@@ -1120,6 +1125,7 @@ doc ///
    Text
      Sometimes using @TO trim@ provides a cleaner set of generators.
    Text
+   
      If $R$ is not a domain, first decompose it, and collect all of the 
      integral closures.
    Example
@@ -1350,84 +1356,90 @@ document {
 	  the radical of the first nonzero element of the jacobian ideal. "
      }
 
---- I don't love the third example in icMap
-document {
-     Key => {icMap, (icMap,Ring)},
-     Headline => "natural map from an affine domain into its integral closure.",
-     Usage => "icMap R",
-     Inputs => {
-	  "R" => {ofClass Ring, " that is an affine domain"}
-	  },
-     Outputs => {
-	  	  {ofClass RingMap, " from ", TT "R", " to its integral closure"}
-	  },
-    "If an integrally closed ring is given as input, the identity map from 
-     the ring to itself is returned.", 
-     EXAMPLE{
-	  "R = QQ[x,y]/ideal(x+2);",
-	  "icMap R"},
-     "This finite map is needed to compute the ", TO "conductor", " of the integral closure 
-     into the original ring.",
-    	  EXAMPLE {
-	  "S = QQ[a,b,c]/ideal(a^6-c^6-b^2*c^4);",
-      	  "conductor(icMap S)"},
-     PARA{},
-     "If the user has already run the computation ", TT "integralClosure R", 
-     " then this map can also be obtained by typing ",
-     TT "R.icMap", ".",
-     EXAMPLE { 
-	  "integralClosure S;",
-	  "S.icMap"},
-     SeeAlso => {"conductor"},
-     }
-    
+doc ///
+  Key
+    icMap
+    (icMap,Ring)
+  Headline
+    natural map from an affine domain into its integral closure
+  Usage
+    icMap R
+  Inputs
+    R:Ring
+      an affine domain
+  Outputs
+    :RingMap
+      from {\tt R} to its integral closure
+  Description
+   Text
+     If the integral closure of {\tt R} has not yet been computed, 
+     that computation is performed first.  No extra computation
+     is involved.  If {\tt R} is integrally closed, then the identity
+     map is returned.
+   Example
+     R = QQ[x,y]/(y^2-x^3)
+     icMap R
+   Text     
+   
+     This finite ring map can be used to compute the conductor,
+     that is, the ideal of elements of {\tt R} which are 
+     universal denominators for the integral closure (i.e. those d \in R
+	  such that d R' \subset R).
+   Example
+     S = QQ[a,b,c]/ideal(a^6-c^6-b^2*c^4);
+     F = icMap S;
+     conductor F
+  Caveat
+    If you want to control the computation of the integral closure via optional
+    arguments, then make sure you call @TO (integralClosure,Ring)@ first, since
+    {\tt icMap} does not have optional arguments.
+  SeeAlso
+    (integralClosure,Ring)
+    conductor
+///
 
-document {
-     Key => {icFractions, (icFractions,Ring)},
-     Headline => "Compute the fractions integral over a domain.",
-     Usage => "icFractions R",
-     Inputs => {
-	  "R" => {ofClass Ring, " that is an affine domain"},
-	  },
-     Outputs => {
-  	  {ofClass List, " whose entries are fractions that generate the integral 
-     	       closure of ", TT "R", " over R."}
-	       },
-    	  EXAMPLE {
-	       "R = QQ[x,y,z]/ideal(x^6-z^6-y^2*z^4);",
-	       "integralClosure(R,Variable => a)",
-	       "icFractions R"
-	       },
-     	  "Thus the new variables ", TT "a_7", " and ", TT "a_6", " in
-	  the output from ", TT "integralClosure", " correspond to the 
-     	  last two fractions given.  The other fractions are those
-	  returned in intermediate recursive steps in the computation of the
-	  integral closure. ", TT "a_0", " for example corresponds to the first
-	  fraction to the left of the original ring variables.  
-	  The program currently also returns the original 
-    	  variables as part of the matrix.  In this way the user can see if any are 
-     	  simplified out of the ring during the process of computing the integral
-     	  closure.",
-     	  PARA{},
-	  "A future version of icFractions will return only the
-	  fractions corresponding to the variables returned by the
-	  function integralClosure. Thus the general format will be
-	  much easier to use"
---     	  "The fractions returned correspond to the variables returned by the function 
---     	  integralClosure.  The function integralClosure eliminates redundant fractions 
---     	  during its iteration.  If the user would like to see all fractions generated 
---     	  during the computation, use the optional argument ", TT "Strategy => Long", " as 
---     	  illustrated here.",
---	      	  EXAMPLE {
---	       "icFractions(R)"
---	       },
-     	  }
-
---document {
---     Key => [icFractions,Strategy],
---     Headline=> "Allows the user to obtain all of the fractions considered in the 
---     process of building the integral closure",
---     }
+doc ///
+  Key
+    icFractions
+    (icFractions, Ring)
+  Headline
+    fractions integral over an affine domain
+  Usage
+    icFractions R
+  Inputs
+    R:Ring
+      an affine domain
+  Outputs
+    :List
+      a list of fractions over {\tt R}, generating the
+      integral closure of {\tt R}, as an {\tt R}-algebra.
+  Description
+   Text
+     If the integral closure of {\tt R} has not yet been computed, 
+     that computation is performed first.  No extra computation
+     is then involved to find the fractions.
+   Example
+     R = QQ[x,y,z]/ideal(x^6-z^6-y^2*z^4);
+     icFractions R
+     R' = integralClosure R
+     gens R'
+     netList (ideal R')_*
+   Text
+     Notice that the $i$-th fraction corresponds to the $i$-th generator 
+     of the integral closure.  For instance, the variable $w_(3,0) = {x^2 \over z}$.
+  Caveat
+     (a) Currently in Macaulay2, fractions over quotients of polynomial rings
+     do not have a nice normal form.  In particular, sometimes
+     the fractions are 'simplified' to give much nastier looking fractions.
+     We hope that in the near future, this misfeature will be corrected.
+     (b)
+     If you want to control the computation of the integral closure via optional
+     arguments, then make sure you call @TO (integralClosure,Ring)@ first, since
+     {\tt icFractions} does not have optional arguments.
+  SeeAlso
+    integralClosure
+    icMap
+///
 
 document {
      Key => {conductor,(conductor,RingMap)},

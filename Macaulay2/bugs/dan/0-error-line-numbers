@@ -1,4 +1,8 @@
 
+i3 : errorDepth = 10
+
+o3 = 10
+
 i5 : load "/tmp/foo.m2"
 
 i6 : foo()

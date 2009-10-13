@@ -16,7 +16,7 @@ Macaulay2HomePage := () -> "http://www.math.uiuc.edu/Macaulay2/index-" | version
 -- we've turned off checking for existence of files...
 
 local prefix; local topNodeButton
-local nullButton; local masterIndexButton; local tocButton; local homeButton; local directoryButton;
+local nullButton; local masterIndexButton; local tocButton; local homeButton; {* local directoryButton; *}
 local NEXT; local PREV; local UP; local tableOfContents; local linkTable; local SRC
 local nextButton; local prevButton; local upButton; local backwardButton; local forwardButton
 local masterIndex
@@ -57,12 +57,13 @@ initInstallDirectory := o -> installDirectory = minimizeFilename(runfun o.Instal
 -----------------------------------------------------------------------------
 
 absoluteLinks := false
-withAbsolutelinks := f -> (
-     t := absoluteLinks;
-     absoluteLinks = true;
-     r := f();
-     absoluteLinks = t;
-     r)
+
+-- withAbsolutelinks := f -> (
+--      t := absoluteLinks;
+--      absoluteLinks = true;
+--      r := f();
+--      absoluteLinks = t;
+--      r)
 
 isAbsoluteURL := url -> match( "^(#|mailto:|[a-z]+://)", url )
 
@@ -77,15 +78,18 @@ searchPrefixPath = url -> (				    -- entries on the prefixPath may have differe
      if debugLevel > 5 then stderr << "--file " << url << " not found in " << prefixPath << endl;
      )
 
-toURL := path -> (
-     if isAbsolutePath path then concatenate("file://", externalPath, path)
-     else if isAbsoluteURL path then path
+toURL := pth -> (
+     if isAbsolutePath pth then concatenate(rootURI, realpath pth)
+     else if isAbsoluteURL pth then pth
      else if absoluteLinks then (
-	  p := searchPrefixPath path;
+	  p := searchPrefixPath pth;
 	  if p =!= null
-	  then concatenate("file://", externalPath, p)
-	  else relativizeFilename(htmlDirectory, path))
-     else relativizeFilename(htmlDirectory, path))
+	  then concatenate(rootURI, realpath p)
+	  else (
+	       error("failed to convert to absolute path: ",pth);
+	       -- relativizeFilename(htmlDirectory, pth)
+	       ))
+     else relativizeFilename(htmlDirectory, pth))
 
 htmlFilename = method(Dispatch => Thing)
 htmlFilename Thing := x -> htmlFilename makeDocumentTag x
@@ -93,14 +97,20 @@ htmlFilename2 = (tag,layout) -> (
      fkey := (class tag).FormattedKey tag;
      pkgtitle := (class tag).Title tag;
      replace("PKG",pkgtitle,layout#"packagehtml") | if fkey === pkgtitle then topFileName else toFilename fkey|".html" )
+
 htmlFilename DocumentTag := tag -> (
      -- this one is used for storing the file, hence "installationLayout"
      htmlFilename2(tag,installationLayout))
+
+-- this was the old thinking:
+-- htmlFilename FinalDocumentTag := tag -> (
+--      -- this one is used for creating links to the file, hence "currentLayout", since the bifurcation of the layout
+--      -- into common and exec halves is not retained in the final installation; it's just a convenience while assembling
+--      -- the distribution, so common files can be shared among build trees
+--      htmlFilename2(tag,currentLayout))
 htmlFilename FinalDocumentTag := tag -> (
-     -- this one is used for creating links to the file, hence "currentLayout", since the bifurcation of the layout
-     -- into common and exec halves is not retained in the final installation; it's just a convenience while assembling
-     -- the distribution, so common files can be shared among build trees
-     htmlFilename2(tag,currentLayout))
+     -- this one is used for creating links to the file
+     htmlFilename2(tag,installationLayout))
 
 html IMG  := x -> (
      (o,cn) := override(IMG.Options,toSequence x);
@@ -166,31 +176,14 @@ backward := tag -> ( b := BACKWARD tag; ( if b =!= null then HREF { htmlFilename
 linkTitle := s -> concatenate( " title=\"", fixtitle s, "\"" )
 linkTitleTag := tag -> "title" => fixtitle concatenate(DocumentTag.FormattedKey tag, commentize headline tag)
 links := tag -> (
-     f := FORWARD tag;
-     b := BACKWARD tag;
      nonnull splice (
-	  if topDocumentTag =!= null then LINK { "href" => toURL (htmlDirectory|topFileName), "rel" =>"Top", linkTitleTag topDocumentTag },
-	  LINK { "href" => toURL (htmlDirectory|indexFileName), "rel" => "Index" },
-	  LINK { "href" => toURL (htmlDirectory|tocFileName),   "rel" => "Table-of-Contents" },
-	  LINK { "href" => toURL Macaulay2HomePage(), "rel" => "Macaulay-2-Home-Page" },
-	  if f =!= null then LINK { "href" => toURL htmlFilename f, "rel" => "Next", linkTitleTag f},
-	  if b =!= null then LINK { "href" => toURL htmlFilename b, "rel" => "Previous", linkTitleTag b},
-	  if NEXT#?tag then (
-	       LINK { "href" => toURL htmlFilename NEXT#tag, "rel" => "Forward", linkTitleTag NEXT#tag},
-	       LINK { "href" => toURL htmlFilename LAST tag, "rel" => "Last", linkTitleTag LAST tag}
-	       ),
-	  if PREV#?tag then (
-	       LINK { "href" => toURL htmlFilename PREV#tag, "rel" => "Backward", linkTitleTag PREV#tag},
-	       LINK { "href" => toURL htmlFilename FIRST tag, "rel" => "First", linkTitleTag FIRST tag},
-	       ),
-	  if UP#?tag then LINK { "href" => toURL htmlFilename UP#tag, "rel" => "Up", linkTitleTag UP#tag},
-	  LINK { "href" => withAbsolutelinks (() -> toURL (replace("PKG","Style",installationLayout#"package") | "doc.css")), "rel" => "stylesheet", "type" => "text/css" },
-	  LINK { "href" => withAbsolutelinks (() -> toURL (replace("PKG","Style",installationLayout#"package") | "doc-no-buttons.css")), "rel" => "alternate stylesheet", "title" => "no buttons", "type" => "text/css" },
+	  LINK { "href" => toURL (replace("PKG","Style",installationLayout#"package") | "doc.css"           ), "rel" => "stylesheet", "type" => "text/css" },
 	  if SRC#?tag then (
      	       LINK { 
-		    "href" => concatenate("file://",externalPath, toAbsolutePath SRC#tag#0), 
+		    "href" => concatenate(rootURI, toAbsolutePath SRC#tag#0), 
 		    "rel" => concatenate("Source: see text above line ", toString SRC#tag#1),
-		    "type" => "text/plain" } ) ) )
+		    "type" => "text/plain" } )
+	  ) )
 
 BUTTON := (s,alt) -> (
      s = toURL s;
@@ -214,7 +207,7 @@ buttonBar := (tag) -> ButtonTABLE {{
 	  DIV splice {
      	       forward tag, backward tag, next tag, prev tag, up tag,
      	       (if tag =!= topDocumentTag then topNodeButton else topNodeButton#-1, " | "),
-     	       masterIndexButton, " | ", tocButton, " | ", directoryButton, " | ", homeButton
+     	       masterIndexButton, " | ", tocButton, {* " | ", directoryButton, *} " | ", homeButton
 	       }}}
 
 upAncestors := tag -> reverse (
@@ -365,7 +358,7 @@ setupButtons := () -> (
      topNodeButton = HREF {htmlDirectory|topFileName, "top" };
      tocButton = HREF {htmlDirectory|tocFileName, "toc"};
      homeButton = HREF {Macaulay2HomePage (), "Macaulay2 web site"};
-     directoryButton = HREF { "file://" | externalPath | applicationDirectory() | "index.html", "directory"};
+     -- directoryButton = HREF { rootURI | applicationDirectory() | "index.html", "directory"};
      nullButton = "";
      masterIndexButton = HREF {htmlDirectory|indexFileName,"index"};
      forwardButton = "next";
@@ -398,7 +391,7 @@ makeMasterIndex := (keylist,verbose) -> (
      r := HTML {
 	  HEAD splice { TITLE title, links() },
 	  BODY {
-	       DIV { topNodeButton, " | ", tocButton, " | ", directoryButton, " | ", homeButton },
+	       DIV { topNodeButton, " | ", tocButton, {* " | ", directoryButton, *} " | ", homeButton },
 	       HR{},
 	       HEADER1 title,
 	       DIV between(LITERAL "&nbsp;&nbsp;&nbsp;",apply(alpha, c -> HREF {"#"|c, c})), 
@@ -420,7 +413,7 @@ maketableOfContents := (verbose) -> (
      << html HTML {
 	  HEAD splice { TITLE title, links() },
 	  BODY {
-	       DIV { topNodeButton, " | ", masterIndexButton, " | ", directoryButton, " | ", homeButton },
+	       DIV { topNodeButton, " | ", masterIndexButton, {* " | ", directoryButton, *} " | ", homeButton },
 	       HR{},
 	       HEADER1 title,
 	       toDoc tableOfContents
@@ -1223,7 +1216,7 @@ show URL := x -> (
      )
 
 fix := fn -> (
-     r := "file://" | externalPath | replace(" ","%20",realpath fn); 		    -- might want to replace more characters
+     r := rootURI | replace(" ","%20",realpath fn); 		    -- might want to replace more characters
      if debugLevel > 0 then stderr << "--fixed URL: " << r << endl;
      r)
 showHtml = show Hypertext := x -> (

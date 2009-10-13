@@ -53,16 +53,17 @@ addStartFunction(
      )
 
 addStartFunction( () -> (
+	  -- we use "realpath" to produce real paths, because Cygwin-style symbolic links are not understood by native Windows applications
 	  prefixPath = 
 	  if prefixDirectory === null 
 	  then {} 
 	  else nonnull {				    -- detect the layout used and accomodate searches for both layouts
-	       prefixDirectory,
-	       if isDirectory(prefixDirectory|"common/") then prefixDirectory|"common/",
-	       if isDirectory(prefixDirectory|version#"machine") then prefixDirectory|version#"machine"
+	       if isDirectory(prefixDirectory|"common/") then realpath(prefixDirectory|"common/"),
+	       if isDirectory prefixDirectory then realpath prefixDirectory,
+	       if isDirectory(prefixDirectory|version#"machine") then realpath(prefixDirectory|version#"machine")
 	       };
 	  if not noinitfile and getenv "HOME" =!= "" then (
-	       prefixPath = prepend(applicationDirectory()|"local/", prefixPath);
+	       prefixPath = prepend(realpath(applicationDirectory()|"local/"), prefixPath);
 	       userMacaulay2Directory();
 	       makePackageIndex())))
 

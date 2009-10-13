@@ -63,6 +63,10 @@ document {
 	       },
 	  LI { "The programs ", TT "4ti2", ", ", TT "gfan", ", and ", TT "normaliz", " are now included with Macaulay2 distributions,
 	       and are downloaded and compiled automatically during Macaulay2's build process."
+	       },
+	  LI {
+	       "New constants ", TO "rootPath", " and ", TO "rootURI", " provide prefixes to be prepended to absolute file paths so that
+	       native Microsoft Windows programs can find them."
 	       }
 	  }
      }

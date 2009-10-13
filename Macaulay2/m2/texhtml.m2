@@ -7,7 +7,7 @@ html TEX := str -> (
      abbrev := () -> format if #origstr > 20 then (substring(0,20,origstr) | "...") else origstr;
      f := (p,r) -> (
 	  n := replace(p,r,str);
-	  if n != str and debugLevel > 0 then (
+	  if n != str and debugLevel == 120 then (
 	       stderr << "html TEX: ///" << str << "/// matches ///" << p << "/// and becomes ///" << n << "///" << endl;
 	       );
 	  str = n);

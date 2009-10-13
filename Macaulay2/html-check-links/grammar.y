@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <ctype.h>
 extern unsigned lastcount;
 
 typedef struct { int lineno, column; char *opener; } location;
@@ -157,7 +158,13 @@ static void checkURL(char *s) {
   if (strseg(s,"file://")) s += 7;
   t = strrchr(s,'#'); if (t != NULL) *t = 0;
   if (*s == 0) return;
-  s = concat(s[0] == '/' ? rootname : Dirname,s);
+  if (s[0] == '/' && isascii(s[1]) && isupper(s[1]) && s[2] == ':') {
+    /* Windows only */
+    s++;
+  }
+  else {
+    s = concat(s[0] == '/' ? rootname : Dirname,s);
+  }
   if (-1 == access(s, R_OK)) {
     char *p = demangle(s);
     if (0 == strcmp(p,s)) error("broken link: %s",s);
@@ -180,3 +187,9 @@ static void checkURL(char *s) {
 #endif
   }
 }
+
+/*
+ Local Variables:
+ compile-command: "make -C $M2BUILDDIR/Macaulay2/html-check-links "
+ End:
+*/

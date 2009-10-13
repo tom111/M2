@@ -780,15 +780,12 @@ ofClass ImmutableType := ofClass Type := X -> fixup (
      else SPAN {"an object of class ", TO X}
      )
 
-externalPath = (() -> (
-     -- on some operating systems the browser sees a bigger world than we do
-     if version#"operating system" === "MicrosoftWindows" 
-     then (
-	  f := select(lines get "!mount", match_" on / ");
-	  if #f == 0 then return "";	     -- maybe we should issue a warning
-	  replace(" on / .*","",first f))
-     else ""
-     ))()
+rootPath = "";
+rootURI = "file://";
+if version#"operating system" === "MicrosoftWindows" then (
+     rootPath = first lines get "!cygpath -m /"; 	   -- e.g.: "C:/cygwin"
+     rootURI = "file:///" | rootPath;		   -- e.g.: "file:///C:/cygwin"
+     )
 
 makeDocBody := method(Dispatch => Thing)
 makeDocBody Thing := key -> (
@@ -798,7 +795,7 @@ makeDocBody Thing := key -> (
      rec := fetchRawDocumentation ptag;
      fkey := DocumentTag.FormattedKey ptag;
      if rec =!= null then (
-	  comment := COMMENT{"file://",externalPath,toAbsolutePath rec#"filename",":",toString rec#"linenum"}; 
+	  comment := COMMENT{rootURI,toAbsolutePath rec#"filename",":",toString rec#"linenum"}; 
 	  docBody := extractBody rec;
 	  if docBody =!= null and #docBody > 0 then (
 	       docBody = processExamples(pkg, fkey, docBody);

@@ -1375,7 +1375,7 @@ document { Key => toAbsolutePath,
 	  checking the file system to see whether ", TT "x", " is a symbolic link.  For the other
 	  behavior, see ", TO "realpath", "."
 	  },
-     SeeAlso => {File,minimizeFilename, relativizeFilename, baseFilename, "path"}
+     SeeAlso => {File,minimizeFilename, relativizeFilename, baseFilename, "path", "rootPath", "rootURI"}
      }
 document { Key => baseFilename,
      Headline => "the base part of a filename or path",
@@ -1441,10 +1441,15 @@ document {
 	  ///temporaryFileName () | ".tex"///,
      	  ///temporaryFileName () | ".html"///,
 	  },
-     PARA{},
-     "This function will work under Unix, and also under Windows
-     if you have a directory on the same drive called ", TT "/tmp", ".",
-     SeeAlso => {File}
+     PARA{
+     	  "This function will work under Unix, and also under Windows
+     	  if you have a directory on the same drive called ", TT "/tmp", "."
+	  },
+     PARA {
+	  "If the name of the temporary file will be given to an external program, it may be necessary to
+	  concatenate it with ", TO "rootPath", " or ", TO "rootURI", " to enable the external program to find the file."
+	  },
+     SeeAlso => {File, "rootPath", "rootURI"}
      }
 
 

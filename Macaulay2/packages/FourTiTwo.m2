@@ -51,14 +51,6 @@ path'4ti2 = (options FourTiTwo).Configuration#"path"
 -- NOTE: the absolute path should be put into the .init file for 4ti2 inside the .Macaulay2 directory.
 if path'4ti2 == "" then path'4ti2 = prefixDirectory | currentLayout#"programs"
 
--- the following command is necessary to be run under windows-cygwin:
--- externalPath = value Core#"private dictionary"#"externalPath"
--- Note: outside of cygwin (linux/mac), this string is just the null string. 
--- But under Windows machines this is necessary (the value of the string is C:/cygwin).
-externalPath = replace("\\\\","/",value Core#"private dictionary"#"externalPath")
--- Without this command, the temporary files won't be found and there will be a ton of error messages.
-
-
 getFilename = () -> (
      filename := temporaryFileName();
      while fileExists(filename) or fileExists(filename|".mat") or fileExists(filename|".lat") do filename = temporaryFileName();
@@ -116,7 +108,7 @@ toricMarkov Matrix := Matrix => o -> (A) -> (
        	  F = openOut(filename|".mat");
      putMatrix(F,A);
      close F;
-     execstr = path'4ti2|"markov -q " |externalPath |filename; --added externalPath because Win needs: -- execstr = path'4ti2|"4ti2int32 markov -q "|filename; 
+     execstr = path'4ti2|"markov -q " |rootPath |filename;
      ret := run(execstr);
      if ret =!= 0 then error "error occurred while executing external program 4ti2: markov";
      getMatrix(filename|".mar")
@@ -134,8 +126,7 @@ toricGroebner Matrix := o -> (A) -> (
 	  cost = concatenate apply(o.Weights, x -> (x|" "));
 	  (filename|".cost") << "1 " << #o.Weights << endl << cost << endl  << close;
 	  );
-     execstr = path'4ti2|"groebner -q "|externalPath|filename; 
-          -- execstr command changed to incorporate cygwin options (added string externalPath)
+     execstr = path'4ti2|"groebner -q "|rootPath|filename;
      ret := run(execstr);
      if ret =!= 0 then error "error occurred while executing external program 4ti2: groebner";
      getMatrix(filename|".gro")
@@ -149,7 +140,7 @@ toricCircuits Matrix := Matrix => (A ->(
      F := openOut(filename|".mat");
      putMatrix(F,A);
      close F;
-     execstr = path'4ti2|"circuits -q " | externalPath | filename;--added externalPath
+     execstr = path'4ti2|"circuits -q " | rootPath | filename;
      ret := run(execstr);
      if ret =!= 0 then error "error occurred while executing external program 4ti2: circuits";
      getMatrix(filename|".cir")
@@ -162,7 +153,7 @@ toricGraver Matrix := Matrix => (A ->(
      F := openOut(filename|".mat");
      putMatrix(F,A);
      close F;
-     execstr = path'4ti2|"graver -q " | externalPath | filename;
+     execstr = path'4ti2|"graver -q " | rootPath | filename;
      ret := run(execstr);
      if ret =!= 0 then error "error occurred while executing external program 4ti2: graver";
      getMatrix(filename|".gra")
@@ -179,7 +170,7 @@ hilbertBasis Matrix := Matrix => o -> (A ->(
        	  F = openOut(filename|".mat");
      putMatrix(F,A);
      close F;
-     execstr = path'4ti2|"hilbert -q " |externalPath | filename;
+     execstr = path'4ti2|"hilbert -q " |rootPath | filename;
      ret := run(execstr);
      if ret =!= 0 then error "error occurred while executing external program 4ti2: hilbert";
      getMatrix(filename|".hil")
@@ -193,7 +184,7 @@ rays Matrix := Matrix => (A ->(
      F := openOut(filename|".mat");
      putMatrix(F,A);
      close F;
-     execstr = path'4ti2|"rays -q " |externalPath | filename;
+     execstr = path'4ti2|"rays -q " |rootPath | filename;
      ret := run(execstr);
      if ret =!= 0 then error "error occurred while executing external program 4ti2: rays";
      getMatrix(filename|".ray")
@@ -211,10 +202,10 @@ toricGraverDegrees Matrix := Matrix => (A ->(
      F := openOut(filename|".mat");
      putMatrix(F,A);
      close F;
-     execstr = path'4ti2|"graver -q " | externalPath | filename;
+     execstr = path'4ti2|"graver -q " | rootPath | filename;
      ret := run(execstr);
      if ret =!= 0 then error "error occurred while executing external program 4ti2: graver"; -- getMatrix(filename|".gra")
-     execstr = path'4ti2|"output --degrees " | externalPath | filename|".gra";
+     execstr = path'4ti2|"output --degrees " | rootPath | filename|".gra";
      ret = run(execstr);
      if ret =!= 0 then error "error occurred while executing external program 4ti2: output";
      ))

@@ -1052,6 +1052,13 @@ document {
 
 doc ///
   Key
+    integralClosure
+  Headline
+    integral closure of an ideal or a domain
+///
+
+doc ///
+  Key
     isNormal
     (isNormal, Ring)
   Headline
@@ -1261,12 +1268,15 @@ doc ///
      The method used is described in Vasconcelos' book, 
      {\em Computational methods in commutative algebra and algebraic
 	  geometry}, Springer, section 6.6.  Basically, one first
-     computes the Rees Algebra of the ideal
+     computes the Rees Algebra of the ideal, and then one reads off
+     the integral closure of any of the powers of the ideal, using
+     linear algebra.
    Example
      S = ZZ/32003[a,b,c];
      F = a^2*b^2*c+a^3+b^3+c^3
      J = ideal jacobian ideal F
-     integralClosure J
+     time integralClosure J
+     time integralClosure(J, Strategy=>{RadicalCodim1})
      integralClosure(J,2)
   Caveat
     It is usally much faster to use {\tt integralClosure(J,d)}

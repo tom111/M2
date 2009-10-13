@@ -1150,12 +1150,13 @@ makePackageIndex List := path -> (
 					if debugLevel > 10 then stderr << "--package directory " << format pkgdir << " does not end with " << format packagelayout << endl;
 					return;
 					);
-				   prefixDirectory := minimizeFilename substring(pkgdir,0,#pkgdir-#packagelayout);
+				   prefixDirectory := substring(pkgdir,0,#pkgdir-#packagelayout);
 				   p := prefixDirectory | layout#"docdir";
 				   if docdirdone#?p then (
 					if debugLevel > 10 then stderr << "--documentation directory already checked: " << p << endl;
 					)
 				   else if isDirectory p then (
+					p = realpath p;
 					docdirdone#p = true;
 					if debugLevel > 10 then stderr << "--checking documentation directory " << p << endl;
 					r := readDirectory p;

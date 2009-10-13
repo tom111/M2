@@ -17,6 +17,9 @@ assert( (hash null) === 333889 )
 assert( (hash Nothing) === 1000069 )
 assert( (hash (1 => 2)) === 716026890 )
 assert( hash Nothing == 1000069 )
+assert( (hash Boolean) === 1000035 )
+assert( (hash true) === 444777 )
+assert( (hash false) === 777333 )
 
 -- these might change if our floating point implementation changes, but let's check anyway:
 assert( hash 1.23p200 === -1502350228 {* big endian *} or hash 1.23p200 == -640232547 {* little endian *} )

@@ -22,7 +22,7 @@ install-programs:
 	if [ -d final/bin ] ; \
 	then rm -rf @pre_programsdir@ ; \
 	     @INSTALL@ -d @pre_programsdir@ ; \
-	     @TAR@ cf - -C final/bin . | @TAR@ xfv - -C @pre_programsdir@ ; \
+	     @TAR@ cf - -C final/bin . | @TAR@ xf - -C @pre_programsdir@ ; \
 	fi
 
 ifeq (@SHARED@,yes)

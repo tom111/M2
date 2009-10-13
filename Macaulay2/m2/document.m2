@@ -813,29 +813,29 @@ op := s -> if operator#?s then (
      if match("^[[:alpha:]]*$",ss) then ss = " "|ss|" ";
      fixup DIV {
 	  if binary#?s then DIV {
-	       DIV {
+	       PARA {
 	       	    "This operator may be used as a binary operator in an expression like ", TT ("x"|ss|"y"), ".  The user may install ", TO "binary methods", "
 	       	    for handling such expressions with code such as"
 		    },
 	       PRE if s === symbol SPACE then "         X Y := (x,y) -> ..." else "         X "|ss|" Y := (x,y) -> ...", 
-	       DIV {
+	       PARA {
 		    "where ", TT "X", " is the class of ", TT "x", " and ", TT "Y", " is the class of ", TT "y", "."
 		    }
 	       },
 	  if prefix#?s then DIV {
-	       DIV {"This operator may be used as a prefix unary operator in an expression like ", TT (ss|"y"), ".  The user may install a method for handling 
+	       PARA {"This operator may be used as a prefix unary operator in an expression like ", TT (ss|"y"), ".  The user may ", TO2{ "installing methods", "install a method" }, " for handling 
 	       	    such expressions with code such as"
 	       	    },
 	       PRE ("           "|ss|" Y := (y) -> ..."),
-	       DIV { "where ", TT "Y", " is the class of ", TT "y", "." }
+	       PARA { "where ", TT "Y", " is the class of ", TT "y", "." }
 	       },
 	  if postfix#?s then DIV {
-	       DIV {
-	       	    "This operator may be used as a postfix unary operator in an expression like ", TT ("x "|ss), ".  The user may install a method for handling 
+	       PARA {
+	       	    "This operator may be used as a postfix unary operator in an expression like ", TT ("x "|ss), ".  The user may ", TO2{ ":=", "install a method" }, " for handling 
 	       	    such expressions with code such as"
 		    },
-	       PRE ("         X "|ss|"   := (x,y) -> ..."),
-	       DIV { "where ", TT "X", " is the class of ", TT "x", "." }
+	       PRE ("         X "|ss|"   := (x) -> ..."),
+	       PARA { "where ", TT "X", " is the class of ", TT "x", "." }
 	       }
 	  }
      )

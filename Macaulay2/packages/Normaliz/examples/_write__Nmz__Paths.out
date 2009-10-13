@@ -1,5 +1,0 @@
--- -*- M2-comint -*- {* hash: 851067168 *}
-
-i1 : writeNmzPaths();
-
-i2 : 

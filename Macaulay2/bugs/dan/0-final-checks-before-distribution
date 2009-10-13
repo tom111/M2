@@ -18,7 +18,8 @@ things to do manually before release
 
 	look at info documentation
 
-	try viewHelp
+	run M2 without -q option and then try "viewHelp" to see if the list of installed packages is up to date
+		run "html-check-links ~/.Macaulay2/*.html" to see if all is well
 
 	try viewHelp res, etc.
 

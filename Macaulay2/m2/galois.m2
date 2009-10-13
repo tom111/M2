@@ -118,7 +118,7 @@ GF(Ring) := GaloisField => opts -> (S) -> (
      	  F.degreeLength = 0;
 	  )
      else (
-	  S = newRing(S, DegreeRank => 0);
+	  S = newRing(S, DegreeRank => 0, MonomialOrder=>{Position=>Up});
 	  F = new GaloisField from raw S;
 	  );
      F.degreeLength = 0;

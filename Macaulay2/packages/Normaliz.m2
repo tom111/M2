@@ -6,7 +6,8 @@ newPackage(
            Authors=>{{Name=> "Gesa Kaempf",
                     Email=>"gkaempf@mathematik.uni-osnabrueck.de"}},
            Headline=>"a package to use Normaliz in Macaulay 2",
-           DebuggingMode => false
+           DebuggingMode => false,
+	   AuxiliaryFiles => true
            )
 
 export{setNmzExecPath, getNmzExecPath,

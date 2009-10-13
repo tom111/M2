@@ -202,8 +202,8 @@ print netList runExamples(H, {40,42})
 viewResults time runExamples(H, level1)
 viewResults time runExamples(H, level1, Strategy=>{RadicalCodim1})
 
-viewResults time runExamples(H, level2)
-viewResults time runExamples(H, level1, Strategy=>{RadicalCodim1})
+viewResults time runExamples(H, level2, Verbosity=>1)
+viewResults time runExamples(H, level2, Verbosity=>0, Strategy=>{RadicalCodim1})
 
 print netList time runExamples(H, level2, Verbosity=>1)
 print netList runExamples(H, level3, Verbosity => 1)
@@ -349,8 +349,17 @@ runExamples(H,56)
 runExamples(H,55)
 runExamples(H,54) -- {54, rees1-32003, 48.1293} (3-15-09)
 -----------------------------------------------------------
+-- Status on 10-8-09, getting ready for 1.3 release
+viewResults time runExamples(H, level1)
+viewResults time runExamples(H, level1, Strategy=>{RadicalCodim1})
 
+viewResults time runExamples(H, level2, Verbosity=>1)
+viewResults time runExamples(H, level2, Verbosity=>0, Strategy=>{RadicalCodim1})
 
+viewResults time runExamples(H, level3, Verbosity=>1)
+viewResults time runExamples(H, level3, Verbosity=>1, Strategy=>{RadicalCodim1})
+
+-----------------------------------------------------------
 runExamples H
 runExamples(H,20)
 netList runExamples(H,{1,2,3,4,5,6,7})

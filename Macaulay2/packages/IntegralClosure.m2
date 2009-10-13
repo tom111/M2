@@ -268,9 +268,10 @@ radicalJ = (J,codim1only,nsteps,strategies) -> (
 
      if verbosity >= 2 then (
        	  << endl << "      radical " <<
-	  if useRadical then "(use usual radical) "
+	  (if useRadical then "(use usual radical) "
      	  else if useRadicalCodim1 then "(use codim1radical) "
-	  else "(use decompose) " << flush;
+	  else "(use decompose) ")
+          << flush;
 	  );
 
      Jup := trim first flattenRing J;
@@ -304,11 +305,6 @@ radicalJ = (J,codim1only,nsteps,strategies) -> (
      radJ
      )
 
-integralClosure2 = (J,nsteps,varname,strategies) -> (
-     -- If J is an ideal in R0,
-     -- we compute R1 = End(J), returning:
-     --  {F:R0-->R1, G:frac R1 --> frac R0}
-     )     
 integralClosure1 = (F,G,J,nsteps,varname,strategies) -> (
      -- F : R -> R0, R0 is assumed to be a domain
      -- G : frac R0 --> frac R
@@ -906,7 +902,7 @@ integralClosure(Ideal, ZZ) := opts -> (I,D) ->(
      z:= local z;
      w:= local w;
      Reesi := (flattenRing reesAlgebra(I,Variable =>z))_0;
-     Rbar := integralClosure(Reesi, Variable => w);
+     Rbar := integralClosure(Reesi, opts, Variable => w);
      zIdeal := ideal(map(Rbar,Reesi))((vars Reesi)_{0..numgens I -1});
      zIdealD := module zIdeal^D;
      RbarPlus := ideal(vars Rbar)_{0..numgens Rbar - numgens S-1};
@@ -919,7 +915,7 @@ integralClosure(Ideal, ZZ) := opts -> (I,D) ->(
      f := map(M, module ID, mapback gD);
      extendIdeal(ID,f)
      )
-integralClosure(Ideal) := opts -> I -> integralClosure(I,1)
+integralClosure(Ideal) := opts -> I -> integralClosure(I,1,opts)
 
 ----------------------------------------
 -- Canonical ideal, makeS2 --------
@@ -1085,130 +1081,200 @@ doc ///
     makeS2
 ///
 
-{*
-document {
-     Key => {isNormal, (isNormal, Ring)},
-     Headline => "determine if a reduced ring is normal",
-     Usage => "isNormal R",
-     Inputs => {"R" => {ofClass Ring}},
-     Outputs => {{ofClass Boolean, " that is true if ", TT "R", " is normal in the 
-	       sense of satisfying Serre's conditions S2 and R1 and false if one or 
-	       both conditions fail"}},      
-     EXAMPLE{
-	  "R = QQ[x,y,z]/ideal(x^6-z^6-y^2*z^4);",
-	  "isNormal R",
-	  "isNormal(integralClosure R)",
-	  },
-     PARA{},
-     "This function computes the jacobian of the ring which can be costly for 
-     larger rings.  Therefore it checks the less costly S2 condition first and if 
-     true, then tests the R1 condition using the jacobian of ", TT "R", "."
-     }	 
-*}
---- needs better examples and check on how it reads...
+doc ///
+  Key
+    (integralClosure, Ring)
+  Headline
+    compute the integral closure (normalization) of an affine domain
+  Usage
+    R' = integralClosure R
+  Inputs
+    R:Ring
+      a quotient of a polynomial ring over a field
+  Outputs
+    R':Ring
+      the integral closure of {\tt R}
+  Consequences
+    The inclusion map $R \rightarrow R'$
+      can be obtained with @TO icMap@.  
+    The fractions corresponding to the variables
+      of the ring {\tt R'} can be found with @TO icFractions@
+  Description
+   Text
+     The integral closure of a domain is the subring of the fraction field
+     consisting of all fractions integral over the domain.  For example,
+   Example
+     R = QQ[x,y,z]/ideal(x^6-z^6-y^2*z^4-z^3);
+     R' = integralClosure R
+     gens R'
+     icFractions R
+     icMap R
+     I = trim ideal R'
+   Text
+     Sometimes using @TO trim@ provides a cleaner set of generators.
+   Text
+     If $R$ is not a domain, first decompose it, and collect all of the 
+     integral closures.
+   Example
+     S = ZZ/101[a..d]/ideal(a*(b-c),c*(b-d),b*(c-d));
+     C = decompose ideal S
+     Rs = apply(C, I -> (ring I)/I);
+     Rs/integralClosure
+   Text
+     This function is roughly based on
+     Theo De Jong's paper, {\em An Algorithm for 
+     Computing the Integral Closure}, J. Symbolic Computation, 
+     (1998) 26, 273-277. This algorithm is similar to the round two
+     algorithm of Zassenhaus in algebraic number theory.
+   Text
+     There are several optional parameters which allows the user to control
+     the way the integral closure is computed.  These options may change
+     in the future.
+  Caveat
+    This function requires that the degree of the field extension 
+    (over a pure transcendental subfield) be greater 
+    than the characteristic of the base field.  If not, use @TO icFracP@.
+    This function requires that the ring be finitely generated over a ring.  If not (e.g. 
+    if it is f.g. over the integers), then the result is integral, but not necessarily 
+    the entire integral closure. Finally, if the ring is not a domain, then
+    the answers will often be incorrect, or an obscure error will occur.
+  SeeAlso
+    icMap
+    icFractions
+    conductor
+    icFracP
+///
 
-document {
-     Key => {integralClosure, (integralClosure, Ring)},
-     Headline => "compute the integral closure of a reduced ring",
-     Usage => "integralClosure R",
-     Inputs => {
-	  "R" => {" that is reduced and presented as a quotient ring"},
-	  Variable => {" an unassigned symbol"},
-	  Limit => {" limits the depth of the recursion"},
-	  },
-     Outputs => {{ofClass Ring, " that is the integral closure of ", TT "R", " in its total 
-	       ring of fractions when ", TT "R", " is a domain.  When ", TT "R", 
-	       " is reduced, a list of rings is returned with the property that the 
-	       direct product of the rings is isomorphic to the integral closure 
-	       of ", TT "R", ". The output rings use new indexed variables based 
-	       on the symbol ", TT "w"}
-	  },
-     "The code for this function allows users to retrieve 
-     certain information if desired.  
-     The information of largest interest is the fractions that 
-     correspond to the added variables in this description of 
-     the integral closure.  Unfortunately, all of the added features 
-     currently only work on affine domains.
-     The map and the corresponding fractions are obtained as 
-     a matrix using the function ", TO "icFractions", " where R is 
-     an affine domain.  This function can be run without first 
-     using ", TO "integralClosure", ".  The natural map from ", TT "R", " into 
-     its integral closure is obtained using the function ", TO "icMap", " and 
-     the conductor of the integral closure of R into R is found 
-     using ", TT "conductor (icMap R)", ".  Note that 
-     both ", TO "icFractions", " and ", TO "icMap", " take the input 
-     ring ", TT "R", " as input rather than the output 
-     of ", TO "integralClosure", ".  In this way you can use these 
-     functions without running ", TO "integralClosure", ".  The 
-     function ", TO "integralClosure", " is based on
-     Theo De Jong's paper, An Algorithm for 
-     Computing the Integral Closure, J. Symbolic Computation, 
-     (1998) 26, 273-277.  This implementation is written and maintained 
-     by Amelia Taylor, ", HREF {"mailto:amelia.taylor@coloradocollege.edu", 
-     "<amelia.taylor@coloradocollege.edu>"}, ".",
-     PARA{
-     	  "A domain example."
-	  },
-      EXAMPLE {
-	  "R = QQ[x,y,z]/ideal(x^6-z^6-y^2*z^4);",
-      	  "integralClosure R"},
-     "In the case that the input ring ", TT "R", " is reduced, but not a domain, 
-     the direct sum of the rings returned is isomporphic to the integral closure 
-     of ", TT "R", ", but the rings returned are not necessarily all domains.",
-     PARA{},
-     "Currently, the algorithm requires the ring to be a domain.  To find the 
-     integral closure of a reduced non-domain, do it for each component.",
-     EXAMPLE lines ///
-         S = ZZ/101[a..d]/ideal(a*(b-c),c*(b-d),b*(c-d));
-	 C = decompose ideal S
-	 Rs = apply(C, I -> (ring I)/I);
-	 "Rs/integralClosure"
-         ///,
-     "The algorithm can correctly  proceed without decomposing a reduced ring 
-     if it finds a non-zero divisor ", TT "f", " with which to compute 1/f(fJ:J), 
-     where ", TT "J", " is the ideal defining the non-normal locus at that stage.",
-     PARA{},
-     "A package implementing product rings is in development.  When this package is 
-     complete, the interface for the integralClosure code will change.  
-     In particular, in the case of a non-domain, a quotient ring of a polynomial ring  
-     isomorphic to the direct product of the factors formed during the computation 
-     will be returned. The individual 
-     factors will be available either as a part of the ring, or via a function and in 
-     this case, all the rings returned will be domains.  This provides two advantages: 
-     first access to all the factors as domains and the ability to use other functions 
-     described below in the reduced case.",  
-     PARA{},
-     "The code for this function allows users to retrieve 
-     certain information if desired.  
-     The information of largest interest is the fractions that 
-     correspond to the added variables in this description of 
-     the integral closure.  Unfortunately, all of the added features 
-     currently only work on affine domains.
-     The map and the corresponding fractions are obtained as 
-     a matrix using the function where R is 
-     an affine domain.  This function can be run without first 
-     using ", TO "integralClosure", ".  The natural map from ", TT "R", " into 
-     its integral closure is obtained using the function ", TO "icMap", " and 
-     the conductor of the integral closure of R into R is found 
-     using ", TT "conductor (icMap R)", ".  Note that 
-     both ", TO "icFractions", " and ", TT "icMap", " take the input 
-     ring ", TT "R", " as input rather than the output 
-     of ", TO "integralClosure", ".  In this way you can use these 
-     functions without running ", TT "integralClosure", ".",
-     SeeAlso => {"icMap", "icFractions", "conductor", "isNormal"}
-     }
-    
-document {
-     Key => [integralClosure,Variable],
-     Headline=> "Sets the name of the indexed variables introduced in computing 
-     the integral closure of a reduced ring."
-     }
+doc ///
+  Key
+    [integralClosure, Variable]
+  Headline
+    set the base letter for the indexed variables introduced while computing the integral closure
+  Usage
+    integralClosure(R, Variable=>x)
+  Inputs
+    x:Symbol
+  Consequences
+    The new variables will be subscripted using {\tt x}.
+  Description
+   Example
+     R = QQ[x,y,z]/ideal(x^6-z^6-y^2*z^4-z^3);
+     R' = integralClosure(R, Variable => symbol t)
+     trim ideal R'
+   Text
+     The algorithm works in stages, each time adding new fractions to the ring.
+     A variable {\tt t_(3,0)} represents the first (zero-th) variables added at stage 3.
+     In the future, the variables added will likely just be {\tt t_1, t_2, ...}.
+  Caveat
+    The base name should be a symbol
+///
 
-document {
-     Key => [integralClosure,Limit],
-     Headline=> "Sets the recursion level for the program allowing the
-     user to see results without computing the full integral closure."
-     }
+doc ///
+  Key
+    [integralClosure,Limit]
+  Headline
+    do a partial integral closure
+  Usage
+    integralClosure(R, Limit => n)
+  Inputs
+    n:ZZ
+      how many steps to perform
+  Description
+   Text
+     The integral closure algorithm proceeds by finding a suitable ideal $J$,
+     and then computing $Hom_R(J,J)$, and repeating these steps.  This
+     optional argument limits the number of such steps to perform.
+     
+     The result is an integral extension, but is not necessarily integrally closed.
+   Example
+     R = QQ[x,y,z]/ideal(x^6-z^6-y^2*z^4-z^3);
+     R' = integralClosure(R, Variable => symbol t, Limit => 2)
+     trim ideal R'
+     icFractions R
+///
+
+doc ///
+  Key
+    [integralClosure,Verbosity]
+  Headline
+    display a certain amount of detail about the computation
+  Usage
+    integralClosure(R, Verbosity => n)
+  Inputs
+    n:ZZ
+      The higher the number, the more information is displayed.  A value
+      of 0 means: keep quiet.
+  Description
+   Text
+     When the computation takes a considerable time, this function can be used to 
+     decide if it will ever finish, or to get a feel for what is happening
+     during the computation.
+   Example
+     R = QQ[x,y,z]/ideal(x^8-z^6-y^2*z^4-z^3);
+     time R' = integralClosure(R, Verbosity => 2)
+     trim ideal R'
+     icFractions R
+  Caveat
+    The exact information displayed may change.
+///
+
+doc ///
+  Key
+    [integralClosure,Strategy]
+  Headline
+    control the algorithm used
+  Usage
+    integralClosure(R, Strategy=>L)
+  Inputs
+    L:List
+      of a subset of the following: {\tt RadicalCodim1}
+  Description
+   Text
+     {\tt RadicalCodim1} chooses an alternate, often much faster, sometimes much slower,
+     algorithm for computing the radical of ideals.  This will often produce a different
+     presentation for the integral closure.
+   Example
+     R = QQ[x,y,z]/ideal(x^8-z^6-y^2*z^4-z^3);
+     time R' = integralClosure(R, Strategy=>{RadicalCodim1})
+     R = QQ[x,y,z]/ideal(x^8-z^6-y^2*z^4-z^3);
+     time R' = integralClosure(R)
+///
+
+doc ///
+  Key
+    (integralClosure,Ideal,ZZ)  
+    (integralClosure,Ideal)
+  Headline
+    integral closure of an ideal in an affine domain
+  Usage
+    integralClosure J
+    integralClosure(J, d)
+  Inputs
+    J:Ideal
+    d:ZZ
+      optional, default value 1
+  Outputs
+    :Ideal
+      the integral closure of $I^d$
+  Description
+   Text
+     The method used is described in Vasconcelos' book, 
+     {\em Computational methods in commutative algebra and algebraic
+	  geometry}, Springer, section 6.6.  Basically, one first
+     computes the Rees Algebra of the ideal
+   Example
+     S = ZZ/32003[a,b,c];
+     F = a^2*b^2*c+a^3+b^3+c^3
+     J = ideal jacobian ideal F
+     integralClosure J
+     integralClosure(J,2)
+  Caveat
+    It is usally much faster to use {\tt integralClosure(J,d)}
+    rather than {\tt integralClosure(J^d)}
+  SeeAlso
+    (integralClosure,Ring)
+    reesAlgebra
+///
 
 document {
      Key => {idealizer, (idealizer, Ideal, RingElement)},
@@ -1825,7 +1891,6 @@ TEST ///
 
 ---- Homogeneous Ex
 loadPackage"IntegralClosure"
-loadPackage"ParameterSchemes"
 R = ZZ/101[x,y, z]
 I1 = ideal(x,y-z)
 I2 = ideal(x-3*z, y-5*z)

@@ -9,9 +9,9 @@
 # Try
 #   gdb --osabi Darwin64
 #############################################################################
-DEBUG = yes
+DEBUG = no
 PROFILE = no
-M64 = no
+M64 = yes
 
 # try this one if configuration fails because of an undefined symbol Unwind_Resume
 # CONFIGOPTIONS += LDFLAGS=-static-libgcc
@@ -19,6 +19,8 @@ M64 = no
 # CONFIGOPTIONS += --enable-build-libraries=gmp
 unexport DEBUG
 unexport PROFILE
+
+CONFIGOPTIONS += CPPFLAGS="-DM2_TEST_MACRO=1"
 
 ifeq ($(M64),yes)
 DIRBASE = mac64

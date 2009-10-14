@@ -11,6 +11,8 @@ html TEX := str -> (
 	       stderr << "html TEX: ///" << str << "/// matches ///" << p << "/// and becomes ///" << n << "///" << endl;
 	       );
 	  str = n);
+     f("<","--TEMPORARY AMPERSAND--lt;");					   -- as in htmlLiteral
+     f("]]>","]]--TEMPORARY AMPERSAND--gt;");					   -- as in htmlLiteral
      -- we could try replacing \$ by \dollar and then bring it back later...
      -- but watch out for \\$ and \\\\$ ...
      -- but replace \\\$ and \\\\\$ ...
@@ -210,6 +212,7 @@ html TEX := str -> (
      f(///\\backslash\> *///,"--TEMPORARY BACKSLASH--");
      r := unique sort select("\\\\(.|[a-zA-Z]+)?",str);
      if #r > 0 then error("in conversion to html, unknown TeX control sequence(s): ",concatenate between(", ",r)," in string ",abbrev());
+     f("--TEMPORARY AMPERSAND--","&");
      f("--TEMPORARY BACKSLASH--",///\///);
      str)
 

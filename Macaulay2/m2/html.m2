@@ -5,7 +5,7 @@ fixtitle = method()
 fixtitle Nothing := identity
 fixtitle String := s -> replace("\"","&quot;",s)
 
-Macaulay2HomePage := () -> "http://www.math.uiuc.edu/Macaulay2/index-" | version#"VERSION" | ".html"
+Macaulay2HomePage := () -> "http://www.math.uiuc.edu/Macaulay2/"
 
 -----------------------------------------------------------------------------
 -- html output
@@ -178,7 +178,7 @@ linkTitleTag := tag -> "title" => fixtitle concatenate(DocumentTag.FormattedKey 
 links := tag -> (
      nonnull splice (
 	  LINK { "href" => toURL (replace("PKG","Style",installationLayout#"package") | "doc.css"           ), "rel" => "stylesheet", "type" => "text/css" },
-	  if SRC#?tag then (
+	  if SRC#?tag and fileExists SRC#tag#0 then (
      	       LINK { 
 		    "href" => concatenate(rootURI, toAbsolutePath SRC#tag#0), 
 		    "rel" => concatenate("Source: see text above line ", toString SRC#tag#1),

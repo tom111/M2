@@ -86,6 +86,6 @@ all: @pre_packagesdir@/D-modules.m2
 # this one we need for compatibility with the book
 all: @pre_packagesdir@/LLL.m2
 # Local Variables:
-# compile-command: "make -C $M2BUILDDIR/Macaulay2/packages "
+# compile-command: "make -C $M2BUILDDIR/Macaulay2/packages RemakePackages=false RemakeAllDocumentation=false IgnoreExampleErrors=false "
 # End:
 

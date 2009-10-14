@@ -101,9 +101,7 @@ document {
 	  "a^80",
 	  "a^40"
 	  },
-     "Note that, except for 0 and 1, every element is displayed as a power 
-     of the variable ", TT "a", 
-     ".  Use ", TO "ambient", " to see the quotient ring the field is made from.",
+     "Use ", TO "ambient", " to see the quotient ring the field is made from.",
      EXAMPLE "ambient F",
      "Now check that ", TT "a", " satisfies this equation.",
      EXAMPLE "a^4 + a - 1",

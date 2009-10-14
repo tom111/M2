@@ -85,11 +85,11 @@ level1 = {1,2,6,7,8,15,16,24,27,
      41,44,45,48,51} -- these are examples that take roughly < 1 sec 
 level2 = {3,4,11,17,28,39,
      43,46,49,50,53} -- these are examples that take roughly 1-10 sec
-level3 = {9,26,54,55,65,80} -- take 10-60 sec
+level3 = {9,25,26,54,55,65,80} -- take 10-60 sec
 level4 = {10} -- take 60-600 sec
 level5 = {} -- finish, but take > 600 sec
 levelbig = {5,12,13,14,18,
-     20,21,25,40,42,61,62} -- these have not successfully completed, or just have not been done yet
+     20,21,40,42,61,62} -- these have not successfully completed, or just have not been done yet
 levelbuggy = {19,22,23,47,52,79} -- ones that crash (currently -- these will be 
   --moved out to one of the ones above when they start working)
 leveltofile = {56, 57, 58, 59, 60, 63, 64, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 81, 82, 83, 84, 85}
@@ -215,8 +215,13 @@ print netList time runExamples(H, leveltofile, Verbosity => 1)
 print netList time runExamples(H, leveltofile, Verbosity => 1, Strategy=>{RadicalCodim1})
 
 -- MES
-print netList time runExamples(H, {12,13,14,18}, Verbosity => 1)
 print netList time runExamples(H, levelbig, Verbosity => 1, Strategy=>{RadicalCodim1})
+
+print netList time runExamples(H, {5}, Verbosity => 1) -- not hard
+print netList time runExamples(H, {14,18,19,20,21,22,61}, Verbosity => 1, Strategy=>{RadicalCodim1}) -- not hard
+print netList time runExamples(H, {47,52,79}, Verbosity => 1, Strategy=>{RadicalCodim1}) -- actual error
+print netList time runExamples(H, {5,12,13,23,40,42,62}, Verbosity => 1, Strategy=>{RadicalCodim1}) -- hard?
+print netList time runExamples(H, {5,12,13,23,40,42,62}, Verbosity => 1) -- hard?
 
 +--+------------------+-----+-+-+-------+
 |1 |leonard1          |0    |2|1|.784942|

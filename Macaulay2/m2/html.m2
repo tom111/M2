@@ -29,6 +29,8 @@ numExampleErrors := 0;
 hadDocumentationWarning := false
 numDocumentationWarnings := 0;
 
+makingPackageIndex := false;
+
 hadDocumentationError := false
 
 seenit := new MutableHashTable
@@ -86,7 +88,7 @@ toURL := pth -> (
 	  if p =!= null
 	  then concatenate(rootURI, realpath p)
 	  else (
-	       error("failed to convert to absolute path: ",pth);
+	       error("needed file not found on prefixPath (install package or use option AbsoluteLinks=>false): ",pth);
 	       -- relativizeFilename(htmlDirectory, pth)
 	       ))
      else relativizeFilename(htmlDirectory, pth))
@@ -176,8 +178,15 @@ backward := tag -> ( b := BACKWARD tag; ( if b =!= null then HREF { htmlFilename
 linkTitle := s -> concatenate( " title=\"", fixtitle s, "\"" )
 linkTitleTag := tag -> "title" => fixtitle concatenate(DocumentTag.FormattedKey tag, commentize headline tag)
 links := tag -> (
+     doccss := replace("PKG","Style",installationLayout#"package") | "doc.css";
+     if null === searchPrefixPath doccss
+     then error(
+	  if makingPackageIndex
+	  then "style file not found on prefixPath (install Style package or run 'M2 -q' to avoid making the package index) : "
+	  else "style file not found on prefixPath (install Style package) : ",
+	  doccss);
      nonnull splice (
-	  LINK { "href" => toURL (replace("PKG","Style",installationLayout#"package") | "doc.css"           ), "rel" => "stylesheet", "type" => "text/css" },
+	  LINK { "href" => toURL doccss, "rel" => "stylesheet", "type" => "text/css" },
 	  if SRC#?tag and fileExists SRC#tag#0 then (
      	       LINK { 
 		    "href" => concatenate(rootURI, toAbsolutePath SRC#tag#0), 
@@ -1118,6 +1127,7 @@ makePackageIndex Sequence := x -> (
      makePackageIndex path    -- this might get too many files (formerly we used packagePath)
      )
 makePackageIndex List := path -> (
+     makingPackageIndex = true;
      initInstallDirectory options installPackage;
      absoluteLinks = true;
      key := "Macaulay2";
@@ -1175,6 +1185,7 @@ makePackageIndex List := path -> (
 	       }
 	  } << endl
      << close;
+     makingPackageIndex = false;
      )
 
 runnable := fn -> (

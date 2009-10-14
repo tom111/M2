@@ -1257,26 +1257,41 @@ doc ///
     reesAlgebra
 ///
 
-document {
-     Key => {idealizer, (idealizer, Ideal, RingElement)},
-     Headline => "Compute Hom(I,I) as quotient ring",
-     Usage => "idealizer(I, f)",
-     Inputs => {"I" => {ofClass Ideal},
-	  "f" => {{ofClass RingElement}, " that is an element of I and a non-zero divisor in the
-	  ring of ", TT "I"},
-	  Variable => {" an unassigned symbol"},
-	  Index => {" an integer"}},
-     Outputs => {{ofClass Sequence, " where the first item is ", 
-	       ofClass RingMap, " from the ring of ", TT "I", " to a
-	       presentation of ", TT "Hom(I,I) = 1/f(f*J:J)", " and
-	       the second item is ", ofClass List,
-	       " consisting of the fractions that are added to the ring of J
-	       to form ", TT "Hom(I,I)", "."}},
-	       "We use this in integralClosure to complete a key step
-	       in deJong's algorithm. Interested users might want to
-	       use this to investigate different choices for ", 
-	       TT "f", " in the algorithm."
-     }
+doc ///
+  Key
+    idealizer
+    (idealizer, Ideal, RingElement)
+  Headline
+    compute Hom(I,I) as a quotient ring
+  Usage
+    (F,G) = idealizer(I,f)
+  Inputs
+    I:Ideal
+      in a domain $R$
+    f:RingElement
+      an element of the ideal $I$
+    Variable:Symbol
+    Index:ZZ
+  Outputs
+    F:RingMap
+      The inclusion map from $R$ into $S = Hom_R(I,I)$
+    G:RingMap
+      $frac S \rightarrow frac R$, giving the fractions
+      corresponding to each generator of $S$.
+  Description
+   Text
+     This is a key subroutine used in the computation of 
+     integral closures.
+   Example
+     R = QQ[x,y]/(y^3-x^7)
+     I = ideal(x^2,y^2)
+     (F,G) = idealizer(I,x^2);
+     target F
+     first entries G.matrix
+  SeeAlso
+    ringFromFractions
+    integralClosure
+///
 
 document {
      Key => [idealizer,Variable],
@@ -1291,7 +1306,7 @@ document {
      "This option allows the user to select the starting index for the
      new variables added in computing Hom(J,J) as a ring.  The default
      value is 0 and is what most users will use.  The option is needed
-     for the recurion implemented in integralClosure."
+     for the iteration implemented in integralClosure."
 }
 
 
@@ -1633,16 +1648,20 @@ document {
 --     Caveat => "NOTE: How do I make M2 put icFracP on the list of all functions that use Limit?"
 }
 
-document {
-     Key => Verbosity,
-     Headline => "Optional in icFracP",
-     PARA{},
-     "If the value is greater than 0, ", TT "icFracP",
-     " prints out the conductor element and
-           the number of intermediate modules it computed;
-           in addition to the output being
-           the module generators of the integral closure of the ring."
-}
+doc ///
+  Key
+    Verbosity
+  Headline
+    optional argument describing how verbose the output should be
+  Description
+   Text
+     Specifying the optional argument {\tt Verbosity => n}, where $n$ is an integer
+     tells the routine how much output should be given.  A value of 0 means be silent.
+     The larger the value $n$, the more output one might see.
+  SeeAlso
+    integralClosure
+    icFracP
+///
 
 document {
      Key => [icFracP,Verbosity],

@@ -11,7 +11,7 @@ o2 : Ideal of R
 
 i3 : time (M,L) = gfan I;
 LP algorithm being used: "cddgmp".
-     -- used 0.002913 seconds
+     -- used 0.00248 seconds
 
 i4 : M/toString/print;
 {b*d^2, a*d, a*c^2, a^2*c}

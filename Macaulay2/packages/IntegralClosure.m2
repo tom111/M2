@@ -22,7 +22,8 @@ debug PrimaryDecomposition
    
 export{
      "integralClosure", 
-     "Verbosity", 
+     "Verbosity",
+     "Keep",
      "conductor", 
      "icFractions", 
      "icMap", 
@@ -39,16 +40,14 @@ export{
 
      "idealizer", 
      "ringFromFractions", 
-     "nonNormalLocus", 
      "Index",
      "endomorphisms",
      "vasconcelos",
 
-  
-     "SimplifyFractions", -- simplify fractions
      "RadicalCodim1"
      } 
 
+     "SimplifyFractions", -- simplify fractions
      "Endomorphisms", -- compute end(I)
      "Vasconcelos", -- compute end(I^-1).  If both this and Endomorphisms are set:
                  -- compare them.
@@ -72,8 +71,10 @@ integralClosure = method(Options=>{
 	  Variable => global w,
 	  Limit => infinity,
 	  Strategy => {}, -- a mix of certain symbols
-     	  Verbosity => 0}
-	  )
+     	  Verbosity => 0,
+	  Keep => null -- list of variables to not simplify away.  Default is all original vars
+	  }
+	)
 
 idealInSingLocus = (S, opts) -> (
      -- Input: flattened poly ring S = S'/I, where S' is a poly ring.
@@ -86,9 +87,6 @@ idealInSingLocus = (S, opts) -> (
 
      -- Step1: choose an ideal J contained in the radical of the ideal of the singular locus.
      -- Choose an ideal J here.  Allow option to start with a J?
-     --    J = nonNormalLocus S;
-     -- this one seems to be worse
-     --    J := promote(minors(codim ideal S, jacobian presentation S), S);
 
      if opts.Verbosity >= 1 then (
 	  << " [jacobian time " << flush;
@@ -108,10 +106,14 @@ integralClosure Ring := Ring => o -> (R) -> (
      -- 1 argument: affine ring R.  We might be able to handle rings over ZZ
      --   if we choose J in the non-normal ideal some other way.
      -- 2 options: Limit, Variable
+     keepvars := o.Keep;
+     if keepvars === null then keepvars = generators R;
+
      if R.?icMap then return target R.icMap;
      verbosity = o.Verbosity;
      strategies := set o.Strategy;
      (S,F) := flattenRing R;
+
      P := ideal S;
      startingCodim := codim P;
      isCompleteIntersection := (startingCodim == numgens P);
@@ -169,7 +171,7 @@ integralClosure Ring := Ring => o -> (R) -> (
 
 	  if verbosity >= 1 then << " [step " << nsteps << ": " << flush;
 
-	  t1 = timing((F,G,J) = integralClosure1(F1,G,J,nsteps,o.Variable,strategies));
+	  t1 = timing((F,G,J) = integralClosure1(F1,G,J,nsteps,o.Variable,apply(keepvars, x -> F x),strategies));
 
           if verbosity >= 1 then (
 		 if verbosity >= 5 then (
@@ -293,7 +295,7 @@ radicalJ = (J,codim1only,nsteps,strategies) -> (
      radJ
      )
 
-integralClosure1 = (F,G,J,nsteps,varname,strategies) -> (
+integralClosure1 = (F,G,J,nsteps,varname,keepvars,strategies) -> (
      -- F : R -> R0, R0 is assumed to be a domain
      -- G : frac R0 --> frac R
      -- J : ideal in the non-normal ideal of R0
@@ -411,7 +413,8 @@ integralClosure1 = (F,G,J,nsteps,varname,strategies) -> (
 
      if doingMinimalization then (
        if verbosity >= 2 then << "      minpres:   " << flush;
-       t1 = timing(R1 := minimalPresentation R1temp);
+       keepvars = apply(keepvars, x -> F0 x);
+       t1 = timing(R1 := minimalPresentation(R1temp, Exclude => keepvars));
        if verbosity >= 2 then << t1#0 << " seconds" << endl;
        i := R1temp.minimalPresentationMap; -- R1temp --> R1
        iinv := R1temp.minimalPresentationMapInv.matrix; -- R1 --> R1temp
@@ -662,41 +665,6 @@ codim J
 syz gens J
 
 ///
-
-
-nonNormalLocus = method()
-nonNormalLocus Ring := (R) -> (
-     -- This handles the first key step in DeJong's algorithm: finding
-     -- an ideal that contains the NNL locus. 
-     -- 1 argument: a ring. it must be flattened. normally it will be
-     -- a quotient ring. 
-     -- Return: an ideal containing the non-normal locus of R.   
-     local J;
-     I := ideal presentation R;
-     Jac := jacobian R;
-     if isHomogeneous I and #(first entries generators I)+#(generators ring I) <= 20 then (
-	  SIdets := minors(codim I, Jac);
-	   -- the codimension of the singular locus.
-	  cs := codim SIdets + codim R;  -- codim of SIdets in poly ring. 
-	  if cs === dim ring I or SIdets == 1
-	  -- i.e. the sing locus is empty.
-	  then (J = ideal vars R;)
-	  else (J = radical ideal SIdets_0);
-	  )           	       
-     else (
-	  n := 1;
-	  det1 := ideal (0_R);
-	  while det1 == ideal (0_R) do (
-	       det1 = minors(codim I, Jac, Limit=>n); -- this seems
-	       -- very slow - there must be a better way!!  
-	       n = n+1);
-	  if det1 == 1
-	    -- i.e. the sing locus is empty.
-	   then (J = ideal vars R;)
-	   else (J = radical det1)
-	  );	 
-     J
-     )
 
 -- PURPOSE: check if an affine domain is normal.  
 -- INPUT: any quotient ring.  
@@ -1158,6 +1126,35 @@ doc ///
 
 doc ///
   Key
+    [integralClosure, Keep]
+  Headline
+    list ring generators which should not be simplified away
+  Usage
+    integralClosure(R, Keep=>L)
+  Inputs
+    L:List
+      a list of variables in the ring R, or {\tt null} (the default).
+  Consequences
+    The given list of variables (or all of the outer generators, if L is null)
+    will be generators of the integral closure
+  Description
+   Text
+     Consider the cuspidal cubic, and three different possibilities for {\tt Keep}.
+   Example
+     R = QQ[x,y]/ideal(x^3-y^2);
+     R' = integralClosure(R, Variable => symbol t)
+     trim ideal R'
+   Example
+     R = QQ[x,y]/ideal(x^3-y^2);
+     R' = integralClosure(R, Variable => symbol t, Keep => {x})
+     trim ideal R'
+   Example
+     R = QQ[x,y]/ideal(x^3-y^2);
+     integralClosure(R, Variable => symbol t, Keep => {})
+///
+
+doc ///
+  Key
     [integralClosure, Variable]
   Headline
     set the base letter for the indexed variables introduced while computing the integral closure
@@ -1338,22 +1335,6 @@ document {
      depending on the level of recursion involved. "
      }
 
-document {
-     Key => {nonNormalLocus, (nonNormalLocus, Ring)},
-     Headline => "an ideal containing the non normal locus of a ring",
-     Usage => "nonNormalLocus R",
-     Inputs => {"R" => {ofClass Ring}},
-     Outputs => {{ofClass Ideal, " an ideal containing the non-normal
-	  locus of ", TT "R"}},
-     	  "Primary use is as one step in deJong's algorithm for computing
-     	  the integral closure of a reduced ring. If the presenting
-	  ideal for the ring is homogeneous (e.g. the ring is graded)
-	  and it has fewer than 20 generators then the implementation
-	  checks to see if the singular locus is empty, if yes then
-	  the maximal ideal is returned. In all other cases it returns
-	  the radical of the first nonzero element of the jacobian ideal. "
-     }
-
 doc ///
   Key
     icMap
@@ -1490,6 +1471,50 @@ doc ///
     icFractions
     icMap
     pushForward
+///
+
+doc ///
+  Key
+    makeS2
+    (makeS2,Ring)
+  Headline
+    compute the S2ification of a reduced ring
+  Usage
+    (F,G) = makeS2 R
+  Inputs
+    R:Ring
+      an equidimensional reduced affine ring
+  Outputs
+    F:RingMap
+      $R \rightarrow S$, where $S$ is the so-called S2-ification of $R$
+    G:RingMap
+      $frac S \rightarrow frac R$, giving the corresponding fractions
+  Description
+   Text
+     A ring $S$ satisfies Serre's S2 condition if every principal ideal 
+     is equidimensional of codimension one.  If $R$ is an affine reduced ring, 
+     then there is a unique smallest $S$ satisfying S2, and then $S$ is finite 
+     over $R$.
+
+     There are several methods to compute $S$.  Currently, only one of these methods
+     is implemented in this package.  Stay tuned, or help write the other
+     methods!
+
+     One simple example is the rational quartic curve.
+   Example
+     A = ZZ/101[a..d];
+     I = monomialCurveIdeal(A,{1,3,4})
+     R = A/I;
+     (F,G) = makeS2 R
+   Text
+     This function is probabilistic, and can fail.  If it fails and the characteristic is not too small,
+     then simply rerun it.  If the characteristic is small, then another method needs to be used.  This
+     might mean that you need to either write it or ask us to do so!
+  Caveat
+     The return value of this function is likely to change in the future
+  SeeAlso
+    canonicalIdeal
+    integralClosure
 ///
 
 document {
@@ -1665,6 +1690,25 @@ document {
      SeeAlso => {"icFracP"},
      Caveat => "The interface to this algorithm will likely change in Macaulay2 1.4"     
 }
+
+doc ///
+  Key
+    Keep
+  Headline
+    an optional argument for various functions
+  SeeAlso
+    (integralClosure,Ring)
+    (integralClosure,Ideal,ZZ)
+///
+
+doc ///
+  Key
+    RadicalCodim1
+  Headline
+    a symbol denoting a strategy element usable with integralClosure(...,Strategy=>...)
+  SeeAlso
+    (integralClosure,Ring)
+///
 
 TEST ///
 S = ZZ/32003[a,b,c,d,x,y,z,u]
@@ -1983,7 +2027,6 @@ decompose oo
 factor F
 A = R/F
 loadPackage "IntegralClosure"
-nonNormalLocus A  -- crashes M2!
 
 ideal F + ideal jacobian matrix{{F}}
 decompose oo

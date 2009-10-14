@@ -17,7 +17,7 @@ export conwayPolynomial
 fn  := currentFileDirectory | "ConwayPolynomials/ConwayPolynomials.txt"
 getCP := memoize(
      () -> (
-	  stderr << "--loading file " << fn << endl;
+	  if notify then stderr << "--loading file " << fn << endl;
 	  hashTable apply( lines get fn,
 	       x -> (
 	       	    x = value x;

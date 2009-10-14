@@ -20,62 +20,49 @@ newPackage(
 needsPackage "PrimaryDecomposition"
 debug PrimaryDecomposition
    
-export{"integralClosure", "idealizer", "ringFromFractions", "nonNormalLocus", "Index",
-"isNormal", "conductor", "icFractions", "icMap", "icFracP", "conductorElement",
-"reportSteps", "icPIdeal",
-  "canonicalIdeal", 
-  "parametersInIdeal",
-  "randomMinors",
-  "makeS2",
-  "endomorphisms",
-  "vasconcelos",
-  "Verbosity",
+export{
+     "integralClosure", 
+     "Verbosity", 
+     "conductor", 
+     "icFractions", 
+     "icMap", 
+     "isNormal", 
+
+     "icFracP", 
+     "ConductorElement",
+     "icPIdeal",
+
+     "canonicalIdeal", 
+     "parametersInIdeal",
+     "randomMinors",
+     "makeS2",
+
+     "idealizer", 
+     "ringFromFractions", 
+     "nonNormalLocus", 
+     "Index",
+     "endomorphisms",
+     "vasconcelos",
+
   
-  "SimplifyFractions", -- simplify fractions
-  "StartWithS2", -- compute S2-ification first
-  "Endomorphisms", -- compute end(I)
-  "Vasconcelos", -- compute end(I^-1).  If both this and Endomorphisms are set:
+     "SimplifyFractions", -- simplify fractions
+     "RadicalCodim1"
+     } 
+
+     "Endomorphisms", -- compute end(I)
+     "Vasconcelos", -- compute end(I^-1).  If both this and Endomorphisms are set:
                  -- compare them.
-  "RecomputeJacobian",
-  "StartWithOneMinor",
-  "S2First", "S2Last", "S2None", -- when to do S2-ification
-  "RadicalCodim1",
-  "RadicalBuiltin" -- true: use 'intersect decompose' to get radical, other wise use 'rad' in PrimaryDecomposition package
-} 
+     "StartWithS2", -- compute S2-ification first
+     "RecomputeJacobian",
+     "StartWithOneMinor",
+     "S2First", 
+     "S2Last", 
+     "S2None", -- when to do S2-ification
+     "RadicalBuiltin" -- true: use 'intersect decompose' to get radical, other wise use 'rad' in PrimaryDecomposition package
 
 verbosity = 0
 
---needsPackage "Elimination"
 needsPackage "ReesAlgebra"
-
--- PURPOSE : Front end for the integralClosure function.  It governs
---           the iterative process using the helper function
---           integralClosureHelper. Generally implements DeJong's
---           algorthim to compute the integral closure using the
---           non-normal locus.
--- INPUT : any Ring that is a polynomial ring or a quotient of a
---         polynomial ring that is reduced. 
--- OUTPUT : a sequence of quotient rings R_1/I_1,..., R_n/I_n such
---          that the integral closure of R/I is the direct sum of
---          those rings 
--- HELPER FUNCTIONS: integralClosureHelper      
---                   nonNormalLocus  - computes the non-normal locus
---                   idealizer - a sequence consisting of a ring map
---                   from the ring of J to B/I, where B/I is
---                   isomorphic to Hom(J,J) = 1/f(f*J:J), and list of
---                   the fractions that are added to the ring of J to
---                   form B/I  .
--- COMMENTS: 
--- (1) The quotient rings are not necessarily domains.  The
--- algorithm can correctly proceed without decomposing a reduced ring
--- if it finds a non-zero divisor with which to compute 1/f(fJ:J). 
---
--- (2) The functional design is to allow a user to do individual steps
--- in DeJong's algorithm easily.  In particular, nonNormalLocus and
--- idealizer are now stand alone functions.  This could alow study of
--- the role of different choices of the non-zero element f in
--- idealizer, or of different possibly choices that "work" for the
--- nonNormalLocus. 
 
 --- Should Singh/Swanson be an option to integralClosure or its own
 --- program.  Right now it is well documented on its own.  I'm not
@@ -739,14 +726,27 @@ isNormal(Ring) := Boolean => (R) -> (
 
 --------------------------------------------------------------------
 conductor = method()
-conductor(RingMap) := Ideal => (F) -> (
+conductor RingMap := Ideal => (F) -> (
      --Input:  A ring map where the target is finitely generated as a 
      --module over the source.
      --Output: The conductor of the target into the source.
-     --NOTE:  If using this in conjunction with the command normalization,
-     --then the input is R#IIICCC#"map" where R is the name of the ring used as 
-     --input into normalization.  
-     if isHomogeneous (source F)
+     --Assumption: if R = source F, then R.icFractions is set
+     --  or R is homogeneous
+     R := source F;
+     if R.?icFractions
+       then (
+	    -- here we have a set of fractions which generate the integral closure
+	    L := R.icFractions;
+	    L = apply(L, h -> {numerator h, denominator h});
+	    L = select(L, h -> h#1 != 1);
+	    ans := ideal(1_R);
+	    scan(L, h -> (
+		      L1 := (ideal h#1) : h#0;
+		      ans = trim intersect(ans, L1);
+		      ));
+	    ans
+	    )
+     else if isHomogeneous (source F)
      	  then(M := presentation pushForward(F, (target F)^1);
      	       P := target M;
      	       intersect apply((numgens P)-1, i->(
@@ -754,6 +754,7 @@ conductor(RingMap) := Ideal => (F) -> (
 	       I:=ideal modulo(m,matrix{P_0}|M))))
 	  else error "conductor: expected a homogeneous ideal in a graded ring"
      )
+conductor Ring := (R) -> conductor icMap R
 
 icMap = method()
 icMap(Ring) := RingMap => R -> (
@@ -801,7 +802,7 @@ icFractions(Ring) := Matrix => (R) -> (
 
 --------------------------------------------------------------------
 
-icFracP = method(Options=>{conductorElement => null, Limit => infinity, reportSteps => false})
+icFracP = method(Options=>{ConductorElement => null, Limit => infinity, Verbosity => 0})
 icFracP Ring := List => o -> (R) -> (
      -- 1 argument: a ring whose base field has characteristic p.
      -- Returns: Fractions
@@ -812,11 +813,11 @@ icFracP Ring := List => o -> (R) -> (
      if ring ideal presentation R === ZZ then (
 	  D := 1_R;
 	  U := ideal(D);
-	  if o.reportSteps == true then print ("Number of steps: " | toString 0 | ",  Conductor Element: " | toString 1_R);
+	  if o.Verbosity > 0 then print ("Number of steps: " | toString 0 | ",  Conductor Element: " | toString 1_R);
 	  )    
      else if coefficientRing(R) === ZZ or coefficientRing(R) === QQ then error("Expected coefficient ring to be a finite field")
      else(
-	  if o.conductorElement === null then (
+	  if o.ConductorElement === null then (
      	       P := ideal presentation R;
      	       c := codim P;
      	       S := ring P;
@@ -830,7 +831,7 @@ icFracP Ring := List => o -> (R) -> (
 	       D = det1_0;
 	       D = (mingens(ideal(D)))_(0,0);
 	       )
-     	  else D = o.conductorElement;
+     	  else D = o.ConductorElement;
      	  p := char(R);
      	  K := ideal(1_R);
      	  U = ideal(0_R);
@@ -846,7 +847,7 @@ icFracP Ring := List => o -> (R) -> (
 	       	    );
                n = n+1;
      	       );
-     	  if o.reportSteps == true then print ("Number of steps: " | toString n | ",  Conductor Element: " | toString D);
+     	  if o.Verbosity > 0 then print ("Number of steps: " | toString n | ",  Conductor Element: " | toString D);
      	  );
      U = mingens U;
      if numColumns U == 0 then {1_R}
@@ -1008,9 +1009,6 @@ integralClosure(target (makeS2(S/PP))_0)
 
 
 --------------------------------------------------------------------
---- integralClosure, idealizer, nonNormalLocus, Index,
---- isNormal, conductor, icFractions, icMap, icFracP, conductorElement,
---- reportSteps, icPIdeal, minPressy
 
 beginDocumentation()
 
@@ -1441,54 +1439,72 @@ doc ///
     icMap
 ///
 
-document {
-     Key => {conductor,(conductor,RingMap)},
-     Headline => "compute the conductor of a finite ring map",
-     Usage => "conductor F",
-     Inputs => {
-	  "F" => {ofClass RingMap, " from a ring ", TT "R", " to a ring ", TT "S", 
-	       ". The map must be a finite."},
-	  },
-     Outputs => {
-	  {ofClass Ideal, " that is the conductor of ", TT "S", " into ", TT "R", "."}
-	  },
-     "Suppose that the ring map F : R --> S is finite: i.e. S is a finitely 
-     generated R-module.  The conductor of F is defined to be {",
-     TEX "g \\in R \\mid g S \\subset f(R)", "}.  One way to think
+doc ///
+  Key
+    conductor
+    (conductor,RingMap)
+    (conductor,Ring)
+  Headline
+    the conductor of a finite ring map
+  Usage
+    conductor F
+    conductor R
+  Inputs
+    F:RingMap
+      $R \rightarrow S$, a finite map with $R$ an affine reduced ring
+    R:Ring
+      an affine domain.  In this case, $F : R \rightarrow S$ is the 
+      inclusion map of $R$ into the integral closure $S$
+  Outputs
+    :Ideal
+      of $R$ consisting of all $d \in R$ such that $dS \subset F(R)$
+  Description
+   Text
+     Suppose that the ring map $F : R \rightarrow S$ is finite: i.e. $S$ is a finitely 
+     generated $R$-module.  The conductor of $F$ is defined to be 
+     $\{ g \in R \mid g S \subset F(R) \}$.
+     One way to think
      about this is that the conductor is the set of universal denominators
-     of ", TT "S", " over ", TT "R", ", or as the largest ideal of ", TT "R", " 
-     which is also an ideal in ", TT "S", ". On natural use is the
-     conductor of the map from a ring to its integral closure. ",
-     EXAMPLE {
-	  "R = QQ[x,y,z]/ideal(x^6-z^6-y^2*z^4);",
-	  "S = integralClosure R",
-	  "F = R.icMap",
-	  "conductor F"
-	  },
-     PARA{},
-     "The command ", TT "conductor", " calls the 
-     command ", TO pushForward, ".  Currently, the 
-     command ", TT "pushForward", 
-     " does not work if the source of the map ", TT "F", " is
-     inhomogeneous.  If the source of the map ", TT "F", " is not
-     homogeneous ", TT "conductor", " returns the message -- No
-     conductor for ", TT "F", ".",
-     SeeAlso =>{"pushForward", "integralClosure", "icMap"} 
-     }
+     of {\tt S} over {\tt R}, or as the largest ideal of {\tt R}
+     which is also an ideal in {\tt S}. An important case is the
+     conductor of the map from a ring to its integral closure.
+   Example
+     R = QQ[x,y,z]/ideal(x^8-z^6-y^2*z^5);
+     icFractions R
+     F = icMap R
+     conductor F
+   Text
+     If an affine domain (a ring finitely generated over a field) is given as input,
+     then the conductor of $R$ in its integral closure is returned.
+   Example
+     conductor R
+   Text
+   
+     If the map is not {\tt icFractions(R)}, then @TO pushForward@ is called to compute
+     the conductor.
+  Caveat
+    Currently this function only works if {\tt F} comes from a
+    integral closure computation, or is homogeneous
+  SeeAlso
+    integralClosure
+    icFractions
+    icMap
+    pushForward
+///
 
 document {
      Key => {icFracP, (icFracP, Ring)},
      Headline => "compute the integral closure in prime characteristic",
-     Usage => "icFracP R, icFracP(R, conductorElement => D), icFracP(R, Limit => N), icFracP(R, reportSteps => Boolean)",
+     Usage => "icFracP R, icFracP(R, ConductorElement => D), icFracP(R, Limit => N), icFracP(R, Verbosity => ZZ)",
      Inputs => {
 	"R" => {"that is reduced, equidimensional,
            finitely and separably generated over a field of characteristic p"},
-	conductorElement => {"optionally provide a non-zerodivisor conductor element ",
-               TT "conductorElement => D", ";
+	ConductorElement => {"optionally provide a non-zerodivisor conductor element ",
+               TT "ConductorElement => D", ";
                the output is then the module generators of the integral closure.
                A good choice of ", TT "D", " may speed up the calculations?"},
 	Limit => {"if value N is given, perform N loop steps only"},
-	reportSteps => {"if value true is given, report the conductor element and number of steps in the loop"},
+	Verbosity => {"if value is greater than 0, report the conductor element and number of steps in the loop"},
 	},
      Outputs => {{"The module generators of the integral closure of ", TT "R",
                " in its total ring of fractions.  The generators are
@@ -1503,7 +1519,7 @@ document {
      " that is a non-zerodivisor;
      its existence is guaranteed by the separability assumption.
      The user may supply ", TT "D",
-     " with the optional ", TT "conductorElement => D", ".
+     " with the optional ", TT "ConductorElement => D", ".
      (Sometimes, but not always, supplying ", TT "D", " speeds up the computation.)
      In any case, with the non-zero divisor ", TT "D", ",
      the algorithm starts by setting the initial approximation of the integral closure
@@ -1514,7 +1530,7 @@ document {
      the repeated module is the integral closure of ", TT "R", ".
      The user may optionally provide ", TT "Limit => N", " to stop the loop
      after ", TT "N", " steps,
-     and the optional ", TT "reportSteps => true", " reports the conductor
+     and the optional ", TT "Verbosity => 1", " reports the conductor
      element and the number of steps it took for the loop to stabilize.
      The algorithm is based on the
      Leonard--Pellikaan--Singh--Swanson algorithm.",
@@ -1531,7 +1547,7 @@ document {
      EXAMPLE {
           "R = ZZ/5[x,y,u,v]/ideal(x^2*u-y^2*v);",
           "icFracP(R)",
-          "icFracP(R, conductorElement => x)",
+          "icFracP(R, ConductorElement => x)",
      },
      "In case ", TT "D", " is not in the conductor, the output is ",
      TT "V_e = (1/D) {r in R | r^(p^i) in (D^(p^i-1)) ", "for ",
@@ -1541,7 +1557,7 @@ document {
      EXAMPLE {
 	  "R=ZZ/2[u,v,w,x,y,z]/ideal(u^2*x^3+u*v*y^3+v^2*z^3);",
           "icFracP(R)",
-          "icFracP(R, conductorElement => x^2)"
+          "icFracP(R, ConductorElement => x^2)"
      },
      "The user may also supply an optional limit on the number of steps
      in the algorithm.  In this case, the output is a finitely generated ",
@@ -1558,25 +1574,26 @@ document {
      intermediate modules the program should compute or did compute
      in the loop to get the integral closure.  A shortcut for finding
      the number of steps performed is to supply the ",
-     TT "reportSteps => true", " option.",
+     TT "Verbosity => 1", " option.",
      EXAMPLE {
           "R=ZZ/3[u,v,w,x,y,z]/ideal(u^2*x^4+u*v*y^4+v^2*z^4);",
-          "icFracP(R, reportSteps => true)"
+          "icFracP(R, Verbosity => 1)"
      },
      "With this extra bit of information, the user can now compute
      integral closures of principal ideals in ", TT "R", " via ",
      TO icPIdeal, ".",
      SeeAlso => {"icPIdeal", "integralClosure", "isNormal"},
-     Caveat => "NOTE: mingens is not reliable, neither is kernel of the zero map!!!"
+     Caveat => "The interface to this algorithm will likely change in Macaulay2 1.4"
+--     Caveat => "NOTE: mingens is not reliable, neither is kernel of the zero map!!!"
 }
 
 document {
-     Key => conductorElement,
+     Key => ConductorElement,
      Headline => "Specifies a particular non-zerodivisor in the conductor."
 }
 
 document {
-     Key => [icFracP,conductorElement],
+     Key => [icFracP,ConductorElement],
      Headline => "Specifies a particular non-zerodivisor in the conductor.",
      "A good choice can possibly speed up the calculations.  See ",
      TO icFracP, "."
@@ -1585,37 +1602,36 @@ document {
 
 document {
      Key => [icFracP,Limit],
-     Headline => "Limits the number of computed intermediate modules.",
-     Caveat => "NOTE: How do I make M2 put icFracP on the list of all functions that use Limit?"
+     Headline => "Limits the number of computed intermediate modules."
+--     Caveat => "NOTE: How do I make M2 put icFracP on the list of all functions that use Limit?"
 }
 
 document {
-     Key => reportSteps,
+     Key => Verbosity,
      Headline => "Optional in icFracP",
      PARA{},
-     "With this option, ", TT "icFracP",
+     "If the value is greater than 0, ", TT "icFracP",
      " prints out the conductor element and
            the number of intermediate modules it computed;
            in addition to the output being
-           the module generators of the integral closure of the ring.",
-     Caveat => "NOTE: There is probably a better name for this, or a better way of doing this."
+           the module generators of the integral closure of the ring."
 }
 
 document {
-     Key => [icFracP,reportSteps],
+     Key => [icFracP,Verbosity],
      Headline => "Prints out the conductor element and
            the number of intermediate modules it computed.",
-     Usage => "icFracP(R, reportSteps => Boolean)",
+     Usage => "icFracP(R, Verbosity => ZZ)",
      "The main use of the extra information is in computing the
      integral closure of principal ideals in ", TT "R",
      ", via ", TO icPIdeal,
      ".",
      EXAMPLE {
           "R=ZZ/3[u,v,x,y]/ideal(u*x^2-v*y^2);",
-          "icFracP(R, reportSteps => true)",
+          "icFracP(R, Verbosity => 1)",
 	  "S = ZZ/3[x,y,u,v];",
           "R = S/kernel map(S,S,{x-y,x+y^2,x*y,x^2});",
-	  "icFracP(R, reportSteps => true)"
+	  "icFracP(R, Verbosity => 1)"
      },
 }
 
@@ -1638,16 +1654,32 @@ document {
      a non-zerodivisor conductor element ", TT "D",
      " and the number of steps ", TT "N", 
      " are the pieces of information obtained from ",
-     TT "icFracP(R, reportSteps => true)",
+     TT "icFracP(R, Verbosity => true)",
      ".  (See the Singh--Swanson paper, An algorithm for computing
      the integral closure, Remark 1.4.)",
      EXAMPLE {
           "R=ZZ/3[u,v,x,y]/ideal(u*x^2-v*y^2);",
-          "icFracP(R, reportSteps => true)",
+          "icFracP(R, Verbosity => 1)",
           "icPIdeal(x, x^2, 3)"
      },
-     SeeAlso => {"icFracP"}
+     SeeAlso => {"icFracP"},
+     Caveat => "The interface to this algorithm will likely change in Macaulay2 1.4"     
 }
+
+TEST ///
+S = ZZ/32003[a,b,c,d,x,y,z,u]
+I = ideal(
+   a*x-b*y,
+   b*u^7+b*u^6-2*b*z*u^4+b*u^5-2*b*z*u^3-2*b*z*u^2+3*b*z^2+c*x,
+   a*u^7+a*u^6-2*a*z*u^4+a*u^5-2*a*z*u^3-2*a*z*u^2+3*a*z^2+c*y,
+   b*z*u^6+9142*b*z*u^5+13715*b*z^2*u^3-9143*b*z*u^4-9145*b*u^5-13716*b*z^2*u^2-13712*b*z^2*u-13713*b*z*u^2+4568*b*z^2+9145*c*x*u-9145*c*x+4572*d*x,
+   a*z*u^6+9142*a*z*u^5+13715*a*z^2*u^3-9143*a*z*u^4-9145*a*u^5-13716*a*z^2*u^2-13712*a*z^2*u-13713*a*z*u^2+4568*a*z^2+9145*c*y*u-9145*c*y+4572*d*y,
+   c*u^8+7111*c*z*u^6+3556*d*u^7+10667*c*z*u^5+3556*d*u^6+14224*c*z^2*u^3+14223*c*z*u^4-7112*d*z*u^4+3556*d*u^5+10668*c*z^2*u^2-7112*d*z*u^3+7112*c*z^2*u-7112*d*z*u^2+10668*d*z^2);
+R = S/I
+time R' = integralClosure(R, Strategy=>{RadicalCodim1})
+use R
+assert(conductor icMap R == ideal"x,y,z-u,u2-u")
+///
 
 -- integrally closed test
 TEST ///

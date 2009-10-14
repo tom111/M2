@@ -42,7 +42,8 @@ export{
      "ringFromFractions", 
      "Index",
 
-     "RadicalCodim1"
+     "RadicalCodim1",
+     "AllCodimensions"
      } 
 
      "endomorphisms",
@@ -122,6 +123,11 @@ integralClosure Ring := Ring => o -> (R) -> (
      nsteps := 0;
      t1 := null;  -- used for timings
 
+     codim1only := not member(AllCodimensions, strategies);
+       -- this means: don't bother to compute the S2-ification
+       -- and don't try to take only the codim 1 part of the radical
+       -- of the jacobian locus.
+       
      ------------------------------------------
      -- Step 1: Find ideal in singular locus --
      ------------------------------------------     
@@ -147,23 +153,30 @@ integralClosure Ring := Ring => o -> (R) -> (
      ------------------------------
      --  unless we are using an option that
      --  doesn't require it.
-     if not isS2 then (
+     if not isS2 and codim1only then (
 	  if verbosity >= 1 then 
 	  << "   S2-ification " << flush;
-	   t1 = (timing (F', G') := makeS2 target F);
+	   t1 = (timing F'G' := makeS2 target F);
 	   if verbosity >= 1 then
 		<< t1#0 << " seconds" << endl;
+	   if F'G' === null then (
+		<< "warning: probabilistic computation of S2-ification failed " << endl;
+		<< "         reverting to standard algorithm" << endl;
+		strategies = strategies + set {AllCodimensions};
+		codim1only = false
+	   ) else (
+	   (F', G') := F'G';
            F = F'*F;
 	   G = G*G';
 	   -- also extend J to be in this ring
 	   J = trim(F' J);
 	   isS2 = true;
-	   );
+	   ));
 
      -------------------------------------------
      -- Step 3: incrementally add to the ring --
      -------------------------------------------
-     if not isR1 then (     
+     if not isR1 or not codim1only then (     
      -- loop (note: F : R --> Rn, G : frac Rn --> frac R)
      while (
 	  F1 := F;
@@ -277,9 +290,11 @@ integralClosure1 = (F,G,J,nsteps,varname,keepvars,strategies) -> (
      --      G1 : frac R1 --> frac R
      --      J1 : is the extension of J to an ideal of R1.
      -- R1 is integrally closed iff target F === target F1
+     codim1only := not member(AllCodimensions, strategies);
+
      R0 := target F;
      J = trim J;
-     radJ := radicalJ(J, true, nsteps, strategies);
+     radJ := radicalJ(J, codim1only, nsteps, strategies);
      if #radJ == 0 then return (F,G,ideal(1_R0));
      radJ = trim intersect radJ;
 
@@ -868,7 +883,7 @@ parametersInIdeal Ideal := I -> (
      --first find a maximal system of parameters in I, that is, a set of
      --c = codim I elements generating an ideal of codimension c.
      --assumes ring I is affine. 
-     --routine is probabilistic, often fails over ZZ/2, returns error when it fails.
+     --routine is probabilistic, often fails over ZZ/2, returns null when it fails.
      R := ring I;
      c := codim I;
      G := sort(gens I, DegreeOrder=>Ascending);
@@ -884,7 +899,10 @@ parametersInIdeal Ideal := I -> (
      	  newg := G1*coeffs;
      	  if s<c-1 then G = G_{0..s-1}|newg|G_{t..rank source G-1}
 	       else G = G_{0..s-1}|newg;
-	  if codim ideal G <s+1 then error ("random coeffs not general enough at step ",s);
+	  if codim ideal G <s+1 then (
+	       return null;
+	       error ("random coeffs not general enough at step ",s);
+	       );
 	  s = s+1);
       ideal G)
 ///
@@ -902,6 +920,7 @@ canonicalIdeal Ring := R -> (
      (S,f) := flattenRing R;
      P := ideal S;
      J := parametersInIdeal P;
+     if J === null then return null;
      Jp := J:P;
      trim promote(Jp,R)
      )
@@ -932,8 +951,12 @@ makeS2 Ring := R -> (
 	  --or some such. How should this be done?? There should be a "general element"
 	  --routine...
      w := canonicalIdeal R;
+     if w === null then return null;
      if ideal(0_R):w_0 == 0 then idealizer(w,w_0)
-     else error"first generator of the canonical ideal was a zerodivisor"
+     else (
+	  return null;
+	  error"first generator of the canonical ideal was a zerodivisor"
+	  )
      )
 
 ///
@@ -1205,17 +1228,29 @@ doc ///
     integralClosure(R, Strategy=>L)
   Inputs
     L:List
-      of a subset of the following: {\tt RadicalCodim1}
+      of a subset of the following: {\tt RadicalCodim1, AllCodimensions}
   Description
    Text
      {\tt RadicalCodim1} chooses an alternate, often much faster, sometimes much slower,
      algorithm for computing the radical of ideals.  This will often produce a different
      presentation for the integral closure.
+     
+     {\tt AllCodimensions} tels the algorithm to bypass the computation of the
+     S2-ification, but in each iteration of the algorithm, use the radical of
+     the extended Jacobian ideal from the previous step, instead of using only the
+     codimension 1 components of that.  This is useful when for some reason the
+     S2-ification is hard to compute, or if the probabilistic algorithm for 
+     computing it fails.  In general though, this option slows down the computation
+     for many examples.
    Example
      R = QQ[x,y,z]/ideal(x^8-z^6-y^2*z^4-z^3);
      time R' = integralClosure(R, Strategy=>{RadicalCodim1})
      R = QQ[x,y,z]/ideal(x^8-z^6-y^2*z^4-z^3);
      time R' = integralClosure(R)
+     R = QQ[x,y,z]/ideal(x^8-z^6-y^2*z^4-z^3);
+     time R' = integralClosure(R, Strategy=>{AllCodimensions})
+     R = QQ[x,y,z]/ideal(x^8-z^6-y^2*z^4-z^3);
+     time R' = integralClosure(R, Strategy=>{RadicalCodim1, AllCodimensions})
 ///
 
 doc ///

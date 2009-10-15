@@ -1215,7 +1215,7 @@ documentationValue(Symbol,Package) := (s,pkg) -> if pkg =!= Core then (
 		    SUBSECTION "Certification",
 		    PARA {
 			 "Version ",BOLD cert#"version at publication"," of this package was accepted for
-			 publication in volume ",BOLD cert#"volume number"," of the 
+			 publication in volume ",HREF{cert#"volume URI",BOLD cert#"volume number"}," of the 
 			 journal ",HREF{cert#"journal URI",cert#"journal name"}," on ",cert#"acceptance date",", in the 
 			 article ",HREF{cert#"published article URI",cert#"article title"},".  That version can be 
 			 obtained ", HREF{cert#"published code URI","from the journal"}, " or from the ", EM "Macaulay2", " source code

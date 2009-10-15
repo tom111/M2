@@ -12,7 +12,9 @@ newPackage(
 	       "published code URI" => "http://j-sag.org/Volume1/PieriMaps.m2",
 	       "repository code URI" => "svn://macaulay2.math.uiuc.edu/Macaulay2/trunk/M2/Macaulay2/packages/PieriMaps.m2",
 	       "release at publication" => "9343",
-	       "version at publication" => "1.0"
+	       "version at publication" => "1.0",
+		"volume number" => "1",
+		"volume URI" => "http://www.j-sag.org/volume1.html"
 	       },
 	  Authors => {{
 		    Name => "Steven V Sam",

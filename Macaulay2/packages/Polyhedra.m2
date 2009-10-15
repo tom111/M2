@@ -19,7 +19,9 @@ newPackage("Polyhedra",
 	 "published code URI" => "http://j-sag.org/Volume1/Polyhedra.m2",
 	 "repository code URI" => "svn://macaulay2.math.uiuc.edu/Macaulay2/trunk/M2/Macaulay2/packages/Polyhedra.m2",
      	 "release at publication" => "9344",
-	 "version at publication" => "1.0.5"
+	 "version at publication" => "1.0.5",
+	 "volume number" => "1",
+	 "volume URI" => "http://www.j-sag.org/volume1.html"
 	 },
     Authors => {
          {Name => "René Birkner",

@@ -76,6 +76,13 @@ document {
 	  LI {
 	       "Fixed a bug in ", TO "read", " reported by Dan Roozemond: whenever it would return a string of length 4096, subsequent
 	       read operations would change the bytes in it."
+	       },
+	  LI {
+	       "The function ", TO "installPackage", " will now, when the option ", TO "AbsoluteLinks", " is set to ", TO "true", ",
+	       will now also search the installation prefix where the package is about to be installed for the files that are linked to.
+	       This should resolve the situation where a developer uses the function to modify a package that is already incorporated
+	       into ", EM "Macaulay2", " itself, and (some of) the links in the freshly installed package end up pointing to 
+	       the wrong web pages."
 	       }
 	  }
      }

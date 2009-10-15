@@ -50,11 +50,11 @@ document {
 	  MakeInfo => Boolean => { "whether to make the info pages.  This is a form of the documentation that can be viewed using the
 	       Unix command ", TT "info", " or using ", TT "emacs", "." 
 	       },
-	  InstallPrefix => { "the path to the directory where the files should be installed, in case encapsulation is not
-	       enabled, or where the links should be created, in case encapsulation is enabled.  The value of this option can
-	       be a string or a function of no arguments returning a string.  The default value is the subdirectory named ", TT "local", " of
-	       the user's ", TO "application directory", "." },
-	  PackagePrefix => { "the path to the directory where the files of the package should be installed in case encapsulation is
+	  InstallPrefix => { "the installation prefix for installation of the files of the package, in case encapsulation is not
+	       enabled, or for installation of the links to the files, in case encapsulation is enabled.  The value of 
+	       this option can be a string or a function of no arguments returning a string.  The default value is the 
+	       subdirectory named ", TT "local", " of the user's ", TO "application directory", "." },
+	  PackagePrefix => { "the installation prefix for installation of the files of the package in case encapsulation is
 	       enabled.  The value of this option can
 	       be a string or a function of no arguments returning a string.  
 	       The default value is the subdirectory named ", TT "encap", " of the user's ", TO "application directory", "." },
@@ -75,11 +75,9 @@ document {
 	  MakeLinks => Boolean => { "whether to make links to the files after installing them, in case encapsulation is enabled" },
 	  AbsoluteLinks => Boolean => {
 	       "whether the links made should contain real absolute paths, rather than relative paths.  If set to
-	       ", TO "true", ", the default value, then the files linked to should already exist, and can be located in any of the directory trees
-	       listed in ", TO "prefixPath", ".  (The other files to be created as part of the installation of the current package will
-	       be made to exist (as empty files) in an earlier pass.  To take advantage of that (currently, though that may change in
-		    a future version), ensure that the installation directory
-	       is listed in ", TO "prefixPath", "; e.g., avoid using ", TT "-q", " on the M2 command line.)
+	       ", TO "true", ", the default value, then the files linked to should already exist, either under the current installation prefix,
+	       or in any of the directory trees listed in ", TO "prefixPath", ".  (The other files to be created as part of the installation of 
+	       the current package will be made to exist (as empty files) in an earlier pass.)
 	       If the option is set to ", TO "false", ", then no absolute links will be made, and all references 
 	       to documentation nodes will point to locations in the same directory tree, even though the corresponding files may 
 	       not be there (yet).  This behaviour is useful only when installing documentation in the main ", EM "Macaulay2", " 

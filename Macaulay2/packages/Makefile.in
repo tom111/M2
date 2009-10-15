@@ -57,7 +57,6 @@ all: info-dir @pre_libm2dir@/$1/.installed
 	    $(EARGS) \
 	    -e "installPackage(\"$1\", $(ARGS)); exit 0"
 	@echo "make: Leaving directory \`$(shell pwd)/$1-temporary'"
-	: && @FIND@ @pre_htmldir@/$1/html -name '*.html' | xargs ../html-check-links/html-check-links
 	ls -l $1-temporary
 	rm -rf $1-temporary
 	install-info --quiet --info-dir=@pre_infodir@ @pre_infodir@/$1.info

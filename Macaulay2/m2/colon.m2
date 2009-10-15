@@ -220,23 +220,18 @@ satideal1 := opts -> (I,f) -> (
                 SyzygyRows=>1,Syzygies=>true););
     I)
 
-satideal2 := opts -> (I,f) -> (
+satideal2 = opts -> (I,f) -> (
      -- Strategy => Linear
-    -- This version may be used if f is a linear form
-    -- and I is a submodule
-    -- We need an easy test whether the ring of I
-    -- uses rev lex order
+     -- See below for what assumptions are required to run this
     R := ring I;
     f = f_0;
-    -- either check that R is rev lex, or make new ring...
-    if degree f === {1} then (
-	res := newCoordinateSystem(R,matrix{{f}});
-	fto := res#1;
-	fback := res#0;
-	J := fto generators I;
-	gb(J,opts);
-	(m, notused) := divideByVariable(generators gb J, R_(numgens R-1));
-	ideal fback m)
+    res := newCoordinateSystem(R,matrix{{f}});
+    fto := res#1;
+    fback := res#0;
+    J := fto generators I;
+    gb(J,opts);
+    (m, notused) := divideByVariable(generators gb J, R_(numgens R-1));
+    ideal fback m
     )
 
 satideal3 := opts -> (I,f) -> (

@@ -788,7 +788,7 @@ export read(o:file):(string or errmsg) := (
 	  if r == ERROR then return (string or errmsg)(errmsg(fileErrorMessage(o)));
 	  )
      else if o.bol && !o.readline then maybeprompt(o);
-     s := substr(o.inbuffer,o.inindex,o.insize);
+     s := substrAlwaysCopy(o.inbuffer,o.inindex,o.insize);
      o.insize = 0;
      o.inindex = 0;
      if o.echo then (

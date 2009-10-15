@@ -526,7 +526,7 @@ internalCapture(e:Expr):Expr := (
 	  setLineNumber(0);
 	  setprompt(stringFile,topLevelPrompt);
 	  r := readeval3(stringFile,true,newStaticLocalDictionaryClosure(),false,false,true);
-	  out := substr(stdIO.outbuffer,0,stdIO.outindex);
+	  out := substrAlwaysCopy(stdIO.outbuffer,0,stdIO.outindex);
 	  stdIO.outfd = oldfd;
 	  stdIO.outbuffer = oldbuf;
 	  stdIO.outindex = 0;

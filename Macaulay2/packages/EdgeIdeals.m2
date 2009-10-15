@@ -5,6 +5,17 @@ needsPackage "SimplicialComplexes"
 newPackage("EdgeIdeals", 
            Version => "1.0.0",
            Date => "July 13, 2009",
+	   Certification => {
+		"journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",
+		"journal URI" => "http://j-sag.org/",
+		"article title" => "EdgeIdeals: a package for (hyper)graphs",
+		"acceptance date" => "2009-06-27",
+		"published article URI" => "http://j-sag.org/Volume1/jsag-1-2009.pdf",
+		"published code URI" => "http://j-sag.org/Volume1/EdgeIdeals.m2",
+     	        "repository code URI" => "svn://macaulay2.math.uiuc.edu/Macaulay2/trunk/M2/Macaulay2/packages/EdgeIdeals.m2",
+		"release at publication" => "9342",
+		"version at publication" => "1.0.0"
+		},
            Authors => {
 		       {Name => "Chris Francisco", 
                         Email => "chris@math.okstate.edu",
@@ -20,7 +31,7 @@ newPackage("EdgeIdeals",
                        }
                       },
            Headline => "a package for edge ideals.",
-           DebuggingMode => true
+           DebuggingMode => false
           )
 
 needsPackage "GenericInitialIdeal"

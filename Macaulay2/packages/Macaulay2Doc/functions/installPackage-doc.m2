@@ -55,8 +55,9 @@ document {
 	       be a string or a function of no arguments returning a string.  The default value is the subdirectory named ", TT "local", " of
 	       the user's ", TO "application directory", "." },
 	  PackagePrefix => { "the path to the directory where the files of the package should be installed in case encapsulation is
-	       enabled.  The default value is the subdirectory named ", TT "encap", " of the user's ", TO "application directory", ".
-	       (Note: in version 1.1 and before, the files were installed here also when encapsulation was not enabled.)" },
+	       enabled.  The value of this option can
+	       be a string or a function of no arguments returning a string.  
+	       The default value is the subdirectory named ", TT "encap", " of the user's ", TO "application directory", "." },
 	  Encapsulate => Boolean => { "whether to encapsulate all the installed files in a subdirectory of
 	       the directory specified by the ", TT "PackagePrefix", " option, 
 	       whose name is specified by the ", TT "EncapsulateDirectory", " option.
@@ -72,7 +73,16 @@ document {
 	       provided to ", TO "newPackage", "."
 	       },
 	  MakeLinks => Boolean => { "whether to make links to the files after installing them, in case encapsulation is enabled" },
-	  AbsoluteLinks => { "whether the links made should contain real absolute paths, rather than relative paths" },
+	  AbsoluteLinks => Boolean => {
+	       "whether the links made should contain real absolute paths, rather than relative paths.  If set to
+	       ", TO "true", ", the default value, then the files linked to should already exist, and can be located in any of the directory trees
+	       listed in ", TO "prefixPath", ".  (The other files to be created as part of the installation of the current package will
+	       be made to exist (as empty files) in a earlier pass.)
+	       If the option is set to ", TO "false", ", then no absolute links will be made, and all references 
+	       to documentation nodes will point to locations in the same directory tree, even though the corresponding files may 
+	       not be there (yet).  This behaviour is useful only when installing documentation in the main ", EM "Macaulay2", " 
+	       documentation tree (given by ", TO "prefixDirectory", ")."
+	       },
 	  RemakeAllDocumentation => { "whether to regenerate all of the help pages for this package.  The default action
      	       is to rebuild only the html pages of the documentation entries that have been changed since the last time
      	       the package was installed.  However, some changes to an entry, such as to its headline, will change the html of other pages

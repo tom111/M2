@@ -189,7 +189,8 @@ document {
 document {
      Key => {(newPackage,String), newPackage, Date, [newPackage,Date], Authors, [newPackage,Authors], Version, [newPackage, Version],
 	  [newPackage,Headline],HomePage, [newPackage,HomePage],[newPackage,DebuggingMode],Email,Name,Configuration,[newPackage,Configuration],
-	  InfoDirSection, [newPackage,InfoDirSection],AuxiliaryFiles,[newPackage,AuxiliaryFiles],[newPackage,CacheExampleOutput]
+	  InfoDirSection, [newPackage,InfoDirSection],AuxiliaryFiles,[newPackage,AuxiliaryFiles],[newPackage,CacheExampleOutput],
+	  [newPackage,Certification]
 	  }, 
      Headline => "package item: start a new package",
      Usage => "newPackage ( title )",
@@ -212,6 +213,11 @@ document {
 	       named ", TT "examples", ", for use in a future installation.  This value can be overridden by a value explicitly specified
 	       when ", TO "installPackage", " is called.  After the directory is created, it will necessary for the user also to specify
 	       ", TT "AuxiliaryFiles=>true", "."
+	       },
+	  Certification => List => {
+	       "the certfication block inserted by the maintainers of ", EM "Macaulay2", " after the package has been accepted for publication by a 
+	       journal, such as The Journal of Software for Algebra and Geometry: ", EM "Macaulay2", ".  Authors should
+	       not undertake to create such a certification block themselves."
 	       },
 	  Configuration => List => {"a list of configuration options for the package.  The keys and values should be constant expressions,
 	       such as strings and integers, not incorporating symbols to be exported by the package (and not yet defined).

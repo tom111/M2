@@ -91,7 +91,14 @@ toURL := pth -> (
 	       error("needed file not found on prefixPath (install package or use option AbsoluteLinks=>false): ",pth);
 	       -- relativizeFilename(htmlDirectory, pth)
 	       ))
-     else relativizeFilename(htmlDirectory, pth))
+     else (
+	  r := relativizeFilename(htmlDirectory, pth);
+	  if debugLevel == 121 then (
+	       stderr << "--toURL: htmlDirectory   = " << htmlDirectory << endl;
+	       stderr << "--       pth             = " << pth << endl;
+	       stderr << "--       relative result = " << r << endl;
+	       );
+	  r))
 
 htmlFilename = method(Dispatch => Thing)
 htmlFilename Thing := x -> htmlFilename makeDocumentTag x
@@ -942,10 +949,17 @@ installPackage Package := opts -> pkg -> (
 	  makeDirectory (buildDirectory|htmlDirectory);
 	  if verbose then stderr << "--making html pages in " << buildDirectory|htmlDirectory << endl;
 	  scan(nodes, tag -> if not isUndocumented tag then (
+	       fkey := DocumentTag.FormattedKey tag;
+	       fn := buildDirectory | htmlFilename tag;
+	       if fileExists fn then return;
+	       if isSecondary tag then return;
+	       if debugLevel > 0 then stderr << "--creating empty html page for " << tag << endl;
+	       fn << close));
+     	  scan(nodes, tag -> if not isUndocumented tag then (
 	       -- key := DocumentTag.Key tag;
 	       fkey := DocumentTag.FormattedKey tag;
 	       fn := buildDirectory | htmlFilename tag;
-	       if fileExists fn and not opts.RemakeAllDocumentation and rawDocUnchanged#?fkey then return;
+	       if fileExists fn and fileLength fn > 0 and not opts.RemakeAllDocumentation and rawDocUnchanged#?fkey then return;
 	       if isSecondary tag then return;
 	       if debugLevel > 0 then stderr << "--making html page for " << tag << endl;
 	       fn
@@ -1037,7 +1051,7 @@ installPackage Package := opts -> pkg -> (
 	  iname << close;
 	  if verbose then stderr << "--file created: " << iname << endl;
 	  );
-     if verbose then << "--installed package " << pkg << " in " << buildDirectory << endl;
+     if verbose then stderr << "--installed package " << pkg << " in " << buildDirectory << endl;
      currentPackage = oldpkg;
      if not noinitfile then (
 	  userMacaulay2Directory();

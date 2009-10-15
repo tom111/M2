@@ -1098,6 +1098,7 @@ doc ///
      C = decompose ideal S
      Rs = apply(C, I -> (ring I)/I);
      Rs/integralClosure
+     oo/prune
    Text
      This function is roughly based on
      Theo De Jong's paper, {\em An Algorithm for 

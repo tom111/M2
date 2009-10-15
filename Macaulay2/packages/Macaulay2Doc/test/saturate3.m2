@@ -1,6 +1,7 @@
 -- bug reported by Paolo Aluffi <aluffi@mail.math.fsu.edu>
 
-QQ[e1,e2,e3,e4,e5,e6];
+kk = QQ
+kk[e1,e2,e3,e4,e5,e6];
 I=ideal(e1*e2*e3*e4+e1*e2*e3*e5+e1*e2*e3*e6+e1*e2*e4*e6+e1*e2*e5*e6
      +e1*e3*e4*e5+e1*e3*e5*e6+e1*e4*e5*e6+e2*e3*e4*e5+e2*e3*e4*e6
      +e2*e4*e5*e6+e3*e4*e5*e6);
@@ -10,7 +11,14 @@ R:=(ring J)[t_0 .. t_(m-1),Join=>false];
 II:=substitute(J,R);
 JJ:=ideal apply(0..(m-2), i -> apply((i+1)..(m-1), j -> (II_i*t_j-II_j*t_i)));
 
-time saturate(JJ,II_0,Strategy => Bayer)
+assert try time saturate(JJ,II_0,Strategy => Bayer) else true
+
+{* -- it would be nice if this example would run quicker
+JJ' = first flattenRing JJ
+II0 = sub(II_0, ring JJ')
+time saturate(JJ',II0,Strategy => Bayer)
+*}
+
 --stdio:10:6:(1):[0]: error: expected argument 2 to be an integer
 --     -- used 4.3 seconds
 

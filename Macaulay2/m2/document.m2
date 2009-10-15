@@ -795,14 +795,13 @@ makeDocBody Thing := key -> (
      rec := fetchRawDocumentation ptag;
      fkey := DocumentTag.FormattedKey ptag;
      if rec =!= null then (
-	  comment := COMMENT{rootURI,toAbsolutePath rec#"filename",":",toString rec#"linenum"}; 
 	  docBody := extractBody rec;
 	  if docBody =!= null and #docBody > 0 then (
 	       docBody = processExamples(pkg, fkey, docBody);
 	       if class key === String 
-	       then DIV { comment, docBody}
-	       else DIV1 { comment, SUBSECTION "Description", DIV {docBody} })
-	  else DIV { comment }))
+	       then DIV { docBody}
+	       else DIV1 { SUBSECTION "Description", DIV {docBody} })
+	  else DIV { COMMENT "empty documentation body" }))
 
 topheader := s -> (
      h := headline s;

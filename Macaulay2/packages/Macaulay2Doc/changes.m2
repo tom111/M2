@@ -67,6 +67,15 @@ document {
 	  LI {
 	       "New constants ", TO "rootPath", " and ", TO "rootURI", " provide prefixes to be prepended to absolute file paths so that
 	       native Microsoft Windows programs can find them."
+	       },
+	  LI {
+	       "A new option (called ", TO "Certification", ") for ", TO "newPackage", ", provides information about packages that have been
+	       accepted for publication in a refereed journal.  The information is displayed in the top documentation node of
+	       the package.  The first three packages so certified are ", TO "EdgeIdeals", ", ", TO "PieriMaps", ", and ", TO "Polyhedra", "."
+	       },
+	  LI {
+	       "Fixed a bug in ", TO "read", " reported by Dan Roozemond: whenever it would return a string of length 4096, subsequent
+	       read operations would change the bytes in it."
 	       }
 	  }
      }

@@ -106,13 +106,18 @@ idealInSingLocus = (S, opts) -> (
 integralClosure Ring := Ring => o -> (R) -> (
      -- 1 argument: affine ring R.  We might be able to handle rings over ZZ
      --   if we choose J in the non-normal ideal some other way.
-     keepvars := o.Keep;
-     if keepvars === null then keepvars = generators R;
-
      if R.?icMap then return target R.icMap;
      verbosity = o.Verbosity;
      strategies := set o.Strategy;
      (S,F) := flattenRing R;
+
+     -- right here, we will grab the variables to be excluded
+     -- this seems a bit awkward, perhaps there is a better way?
+     T := ambient S;
+     kk := ultimate(coefficientRing,T);
+     allgens := generators(T, CoefficientRing => kk);
+     keepvars := o.Keep;
+     if keepvars === null then keepvars = allgens;
 
      P := ideal S;
      startingCodim := codim P;
@@ -183,7 +188,7 @@ integralClosure Ring := Ring => o -> (R) -> (
 
 	  if verbosity >= 1 then << " [step " << nsteps << ": " << flush;
 
-	  t1 = timing((F,G,J) = integralClosure1(F1,G,J,nsteps,o.Variable,apply(keepvars, x -> F x),strategies));
+	  t1 = timing((F,G,J) = integralClosure1(F1,G,J,nsteps,o.Variable,keepvars,strategies));
 
           if verbosity >= 1 then (
 		 if verbosity >= 5 then (
@@ -398,8 +403,9 @@ integralClosure1 = (F,G,J,nsteps,varname,keepvars,strategies) -> (
 
      if doingMinimalization then (
        if verbosity >= 2 then << "      minpres:   " << flush;
-       keepvars = apply(keepvars, x -> F0 x);
-       t1 = timing(R1 := minimalPresentation(R1temp, Exclude => keepvars));
+       R1tempAmbient := ambient R1temp;
+       keepindices := apply(keepvars, x -> index substitute(x, R1tempAmbient));
+       t1 = timing(R1 := minimalPresentation(R1temp, Exclude => keepindices));
        if verbosity >= 2 then << t1#0 << " seconds" << endl;
        i := R1temp.minimalPresentationMap; -- R1temp --> R1
        iinv := R1temp.minimalPresentationMapInv.matrix; -- R1 --> R1temp

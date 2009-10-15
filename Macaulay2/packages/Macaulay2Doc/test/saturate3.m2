@@ -14,6 +14,8 @@ time saturate(JJ,II_0,Strategy => Bayer)
 --stdio:10:6:(1):[0]: error: expected argument 2 to be an integer
 --     -- used 4.3 seconds
 
+-- time saturate(JJ,II_0,Strategy => Iterate) -- this takes too long...
+
 R=QQ[x];
 assert( saturate(ideal(0_R),0_R,Strategy => Iterate) == 1 )
 

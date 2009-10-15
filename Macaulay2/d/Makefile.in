@@ -11,7 +11,7 @@ all: tags
 endif
 initialize all: compat.h
 
-recompile:
+relink:
 	rm -f @pre_bindir@/M2@EXE@
 	$(MAKE)
 

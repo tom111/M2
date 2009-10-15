@@ -272,17 +272,17 @@ document {
 	  "The following example shows the list of places where we might find the source code of a package called ", TT "Foo", "
 	  after it has been installed by ", TO "installPackage", "."
 	  },
-     EXAMPLE ///apply(prefixPath, p -> p | Layout#1#"packages" | "Foo.m2")///,
+     EXAMPLE ///stack apply(prefixPath, p -> p | Layout#1#"packages" | "Foo.m2")///,
      PARA {
      	  "This example shows the list of places where we might reasonably find the html file documenting a
 	  function named ", TT "bar", " in a package called ", TT "Foo", "."
 	  },
-     EXAMPLE ///apply(prefixPath, p -> p | replace("PKG","Foo",Layout#1#"packagehtml") | "bar.html")///,
+     EXAMPLE ///stack apply(prefixPath, p -> p | replace("PKG","Foo",Layout#1#"packagehtml") | "bar.html")///,
      PARA {
      	  "This example shows the list of places where we might reasonably find the info file documenting a
 	  package called ", TT "Foo", "."
 	  },
-     EXAMPLE ///apply(prefixPath, p -> p | Layout#1#"info" | "Foo.info")///,
+     EXAMPLE ///stack apply(prefixPath, p -> p | Layout#1#"info" | "Foo.info")///,
      SeeAlso => {"commandLine", "Invoking the program", applicationDirectory, "prefixDirectory", "path", searchPath, load, loadPackage, needsPackage}
      }
 

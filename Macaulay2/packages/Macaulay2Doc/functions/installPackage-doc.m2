@@ -77,11 +77,14 @@ document {
 	       "whether the links made should contain real absolute paths, rather than relative paths.  If set to
 	       ", TO "true", ", the default value, then the files linked to should already exist, and can be located in any of the directory trees
 	       listed in ", TO "prefixPath", ".  (The other files to be created as part of the installation of the current package will
-	       be made to exist (as empty files) in a earlier pass.)
+	       be made to exist (as empty files) in an earlier pass.  To take advantage of that (currently, though that may change in
+		    a future version), ensure that the installation directory
+	       is listed in ", TO "prefixPath", "; e.g., avoid using ", TT "-q", " on the M2 command line.)
 	       If the option is set to ", TO "false", ", then no absolute links will be made, and all references 
 	       to documentation nodes will point to locations in the same directory tree, even though the corresponding files may 
 	       not be there (yet).  This behaviour is useful only when installing documentation in the main ", EM "Macaulay2", " 
-	       documentation tree (given by ", TO "prefixDirectory", ")."
+	       documentation tree (given by ", TO "prefixDirectory", "), or for preparing documentation that will eventually be
+	       installed there."
 	       },
 	  RemakeAllDocumentation => { "whether to regenerate all of the help pages for this package.  The default action
      	       is to rebuild only the html pages of the documentation entries that have been changed since the last time

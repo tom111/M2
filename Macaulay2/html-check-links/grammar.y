@@ -154,12 +154,6 @@ static void demangle_error(char *msg,char *s) {
     error("%s: %s ==> %s",msg,s,p);
 }
 
-static int abs_link_okay(char *s) {
-  /* an absolute link to a source file is okay */
-  int n = strlen(s);
-  return n>=3 && s[n-3]=='.' && s[n-2]=='m' && s[n-1]=='2';
-}
-
 static void checkURL(char *s0) {
   char *s;
   if (s0[0] == '"' && s0[strlen(s0)-1] == '"') s0++, s0[strlen(s0)-1]=0;
@@ -175,11 +169,11 @@ static void checkURL(char *s0) {
   if (s[0] == '/' && isascii(s[1]) && isupper(s[1]) && s[2] == ':') {
     /* absolute path in Windows */
     s++;
-    if (!abs_links && !abs_link_okay(s)) demangle_error("absolute link",s0);
+    if (!abs_links) demangle_error("absolute link",s0);
   }
   else if (s[0] == '/') {
     /* absolute path */
-    if (!abs_links && !abs_link_okay(s)) demangle_error("absolute link",s0);
+    if (!abs_links) demangle_error("absolute link",s0);
     s = concat(rootname,s);
   }
   else {

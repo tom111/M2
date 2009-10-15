@@ -166,12 +166,12 @@ document {
 	  "A = ZZ/2[T]/(T^9+T+1)",
       	  "k = GF (A, PrimitiveElement => T^3+1)",
 	  },
-     "Notice that ", TT "T", " is still recorded as an element of its
-     quotient ring, rather than this finite field.",
+     "Notice that ", TT "T", " is now recorded as an element of this finite field.",
      EXAMPLE "T",
-     "Use ", TO "substitute", " to see how the generator ", TT "T", " appears as
-     an element of the finite field.",
-     EXAMPLE "substitute(T,k)",
+     "The generator of A can be obtained this way:",
+     EXAMPLE "A_0",
+     "Use ", TO "substitute", " to see map it to an element of the finite field.",
+     EXAMPLE "substitute(A_0,k)",
      "Conversely, a given element of the finite field can be transferred back
      to the quotient ring with ", TO "lift", ".",
      EXAMPLE "lift(k_0, ring T)",

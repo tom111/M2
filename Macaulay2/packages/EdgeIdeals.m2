@@ -16,7 +16,7 @@ newPackage("EdgeIdeals",
 		"release at publication" => "9342",
 		"version at publication" => "1.0.0",
 		"volume number" => "1",
-		"volume URI" => "http://www.j-sag.org/volume1.html"
+		"volume URI" => "http://j-sag.org/Volume1/"
 		},
            Authors => {
 		       {Name => "Chris Francisco", 

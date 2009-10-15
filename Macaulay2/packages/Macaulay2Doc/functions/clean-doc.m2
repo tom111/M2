@@ -18,7 +18,7 @@ document {
      is replaced with zero."},
      EXAMPLE lines ///
      	  e = 1e-11;
-     	  M = random(RR^4,RR^5)
+     	  M = random(RR^4,RR^4)
 	  M * M^-1
 	  clean_e oo
 	  ///,

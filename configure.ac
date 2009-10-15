@@ -393,11 +393,11 @@ test "$MEMDEBUG" = "yes" && DEBUG=yes
 test "$DEBUG" = "yes" && STRIP=no
 test "$PROFILING" = "yes" && CFLAGS="$CFLAGS -pg" CXXFLAGS="$CXXFLAGS -pg" LDFLAGS="$LDFLAGS -pg" STRIP=no
 
-AC_SUBST(PACKAGES, dnl the internal ones first, then after that, the oldest first:
+AC_SUBST(PACKAGES, dnl first Style, then Macaulay2Doc, then the other internal ones, then other ones, starting with the oldest
 "
+  Style
   Macaulay2Doc
   FirstPackage
-  Style
   Parsing
   Classic
   Browse

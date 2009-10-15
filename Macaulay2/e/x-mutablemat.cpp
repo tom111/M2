@@ -679,6 +679,7 @@ MutableMatrixOrNull * IM2_MutableMatrix_scalar_mult(const RingElement *f,
 						    M2_bool opposite_mult)
 {
   ERROR("not implemented for mutable matrices");
+  return 0;
   return M->mult(f);
 }
 

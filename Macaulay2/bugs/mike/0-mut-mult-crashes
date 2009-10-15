@@ -1,2 +1,12 @@
+-- fixed, 10-14-09, by adding in 'not implemented' checks.
+
 m = mutableIdentity(QQ[x],6)
 x*m -- dies
+
+m = mutableIdentity(RR,6) -- what?!
+3.2*m -- no method
+
+m + m
+m - m
+m * m
+3 * m

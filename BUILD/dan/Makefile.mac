@@ -9,6 +9,7 @@
 # Try
 #   gdb --osabi Darwin64
 #############################################################################
+PRODUCTION = no
 DEBUG = no
 PROFILE = no
 M64 = yes
@@ -51,6 +52,12 @@ DIRECTORY = $(DIRBASE)
 MACTARGETS += check install
 endif
 endif
+
+ifeq ($(PRODUCTION),yes)
+CONFIGOPTIONS += --disable-common-staging-area
+DIRECTORY = $(DIRBASE).production
+endif
+
 include Makefile.include
 
 default: $(MACTARGETS)

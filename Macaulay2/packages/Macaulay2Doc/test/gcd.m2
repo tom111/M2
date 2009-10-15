@@ -80,5 +80,5 @@ rawExtendedGCD( raw ( 1/2*f ), raw ( 1/3*g ))
 
 end
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test gcd.out"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test gcd.out"
 -- End:

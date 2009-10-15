@@ -1222,21 +1222,21 @@ documentationValue(Symbol,Package) := (s,pkg) -> if pkg =!= Core then (
 			 repository, after installing ", HREF{"http://subversion.tigris.org/", "subversion"}, ",
 			 with the following shell command:"
 			 },
-		    PRE concatenate("   svn export -r ",cert#"release at publication"," ",cert#"repository code URI"),
+		    PRE concatenate("   svn export -r ",toString(cert#"release at publication")," ",cert#"repository code URI"),
 		    PARA {
 			 "The following command will display the log messages accompanying any changes to the file in the repository since publication."
 			 },
-		    PRE concatenate("   svn log -r ",cert#"release at publication",":HEAD ",cert#"repository code URI"),
+		    PRE concatenate("   svn log -r ",toString(cert#"release at publication"+1),":HEAD ",cert#"repository code URI"),
 		    PARA {
 			 "The following command will summarize the changes to the file in the repository since publication, in
 			 the format the program ", TT "diff", " uses: lines starting with ", TT "+", " have been added, and
 			 lines starting with ", TT "-", " have been removed.  (Changes to white space or end of line style will not
 			 be reported.)"
 			 },
-		    PRE concatenate("   svn diff -x -b --ignore-eol-style -r ",cert#"release at publication",":HEAD ",cert#"repository code URI"),
+		    PRE concatenate("   svn diff -x \"-b --ignore-eol-style\" -r ",toString(cert#"release at publication"),":HEAD ",cert#"repository code URI"),
 		    PARA {
 			 "The differences between two releases in the repository mentioned in the log can be displayed by 
-			 replacing ",TT{cert#"release at publication",":HEAD"}," by the pair of release numbers separated by a colon."
+			 replacing ",TT{toString(cert#"release at publication"),":HEAD"}," by the pair of release numbers separated by a colon."
 			 }
 		    }
 	       ),

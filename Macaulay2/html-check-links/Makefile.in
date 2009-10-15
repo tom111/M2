@@ -55,7 +55,8 @@ lex.o : grammar.fixed.c
 CHKARGS = --no-absolute-links
 DIR = $(shell pwd)
 NEW = @pre_htmldir@
-check : html-check-links
+all check : html-check-links run-html-check-links
+run-html-check-links: html-check-links
 ifneq (,$(findstring w,$(word 1,$(MAKEFLAGS))))
 	@echo "make: Entering directory \`$(NEW)'"
 endif
@@ -72,5 +73,5 @@ distclean : clean
 	rm -f Makefile
 
 # Local Variables:
-# compile-command: "make -C $M2BUILDDIR/Macaulay2/html-check-links "
+# compile-command: "make -C $M2BUILDDIR/Macaulay2/html-check-links run-html-check-links"
 # End:

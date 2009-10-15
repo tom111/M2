@@ -176,7 +176,7 @@ newPackage(String) := opts -> (title) -> (
 	       opts = merge(opts, new OptionTable from {DebuggingMode => loadOptions.DebuggingMode},last);
 	       );
 	  );
-     newpkg := new Package from {
+     newpkg := new Package from nonnull {
           "title" => title,
 	  symbol Options => opts,
      	  symbol Dictionary => new Dictionary, -- this is the global one
@@ -195,6 +195,7 @@ newPackage(String) := opts -> (title) -> (
 	  "exported mutable symbols" => {},
 	  "example results" => new MutableHashTable,
 	  "source directory" => toAbsolutePath currentFileDirectory,
+	  if opts.AuxiliaryFiles then "auxiliary files" => toAbsolutePath currentFileDirectory | title | "/",
 	  "source file" => toAbsolutePath currentFileName,
 	  "undocumented keys" => new MutableHashTable,
 	  "package prefix" => (

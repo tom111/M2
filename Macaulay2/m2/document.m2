@@ -1224,25 +1224,33 @@ documentationValue(Symbol,Package) := (s,pkg) -> if pkg =!= Core then (
 			 },
 		    PRE concatenate("   svn export -r ",cert#"release at publication"," ",cert#"repository code URI"),
 		    PARA {
-			 "The following command will display the log messages accompanying any changes to the file since publication."
+			 "The following command will display the log messages accompanying any changes to the file in the repository since publication."
 			 },
 		    PRE concatenate("   svn log -r ",cert#"release at publication",":HEAD ",cert#"repository code URI"),
 		    PARA {
-			 "The following command will summarize the changes to the file since publication, in
+			 "The following command will summarize the changes to the file in the repository since publication, in
 			 the format the program ", TT "diff", " uses: lines starting with ", TT "+", " have been added, and
 			 lines starting with ", TT "-", " have been removed.  (Changes to white space or end of line style will not
 			 be reported.)"
 			 },
-		    PRE concatenate("   svn diff -x -b --ignore-eol-style -r ",cert#"release at publication",":HEAD ",cert#"repository code URI")
+		    PRE concatenate("   svn diff -x -b --ignore-eol-style -r ",cert#"release at publication",":HEAD ",cert#"repository code URI"),
+		    PARA {
+			 "The differences between two releases in the repository mentioned in the log can be displayed by 
+			 replacing ",TT{cert#"release at publication",":HEAD"}," by the pair of release numbers separated by a colon."
+			 }
 		    }
 	       ),
-	  DIV1 { SUBSECTION "Version", "This documentation describes version ", pkg.Options.Version, " of ",
+	  DIV1 { SUBSECTION "Version", "This documentation describes version ", BOLD pkg.Options.Version, " of ",
 	       if pkg#"title" === "Macaulay2Doc" then "Macaulay2" else pkg#"title",
 	       "." },
 	  if pkg#"title" =!= "Macaulay2Doc" 
 	  then DIV1 {
 	       SUBSECTION "Source code",
-	       "The source code is in the file ", HREF { installationLayout#"packages" | fn, fn }, "."
+	       "The source code from which this documentation is derived is in the file ", HREF { installationLayout#"packages" | fn, fn }, ".",
+	       if pkg#?"auxiliary files" then (
+		    "  The auxiliary files accompanying it are in the
+		    directory ", HREF { installationLayout#"packages" | pkg#"title" | "/", pkg#"title" | "/" }, "."
+		    )
 	       },
 	  if #e > 0 then DIV1 {
 	       SUBSECTION "Exports",

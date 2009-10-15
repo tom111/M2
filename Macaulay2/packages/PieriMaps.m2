@@ -3,6 +3,17 @@ newPackage(
     	  "PieriMaps",
    	  Version => "1.0",
 	  Date => "July 3, 2009",
+	  Certification => {
+	       "journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",
+	       "journal URI" => "http://j-sag.org/",
+	       "article title" => "Computing inclusions of Schur modules",
+	       "acceptance date" => "2009-06-27",
+	       "published article URI" => "http://j-sag.org/Volume1/jsag-2-2009.pdf",
+	       "published code URI" => "http://j-sag.org/Volume1/PieriMaps.m2",
+	       "repository code URI" => "svn://macaulay2.math.uiuc.edu/Macaulay2/trunk/M2/Macaulay2/packages/PieriMaps.m2",
+	       "release at publication" => "9343",
+	       "version at publication" => "1.0"
+	       },
 	  Authors => {{
 		    Name => "Steven V Sam",
 		    Email => "ssam@math.mit.edu",

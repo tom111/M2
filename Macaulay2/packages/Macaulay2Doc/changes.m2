@@ -83,7 +83,12 @@ document {
 	       This should resolve the situation where a developer uses the function to modify a package that is already incorporated
 	       into ", EM "Macaulay2", " itself, and (some of) the links in the freshly installed package end up pointing to 
 	       the wrong web pages."
-	       }
+	       },
+	  LI { "Improved handling of finite fields: ", TO "GF", " now uses ",
+	       TO2{"ConwayPolynomials :: ConwayPolynomials","Conway polynomials"}, " when possible.
+	       Maps between Galois fields made with them are now easy to produce 
+	       with ", TT "map(E,F)", ".  (This was advertised as a change to 1.2, when the package was introduced,
+		    but the package was not pre-loaded, where as now it is.)." }
 	  }
      }
 
@@ -108,7 +113,7 @@ document {
 		    LI { "Improved handling of finite fields: ", TO "GF", " now uses ",
 			 TO2{"ConwayPolynomials :: ConwayPolynomials","Conway polynomials"}, " when possible.
 			 Maps between Galois fields made with them are now easy to produce 
-			 with ", TT "map(E,F)", "." },
+			 with ", TT "map(E,F)", ".  (Note: actually, the user must load the package manually.)" },
 		    LI {"The function ", TO "hilbertFunction", " is now faster at computing power series expansions."},
 		    LI { "Homomorphisms (maps) of modules over different rings with respect to a ring homomorphism
 			 between them are now supported.  Composition, coimage (replacing pushForward1), and kernel work.

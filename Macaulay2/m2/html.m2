@@ -438,7 +438,7 @@ maketableOfContents := (verbose) -> (
 
 utest := opt -> (
      cmd := "ulimit " | opt | "; ";
-     if run("2>/dev/null >/dev/null "|cmd) == 0 then cmd else ""
+     if chkrun("2>/dev/null >/dev/null "|cmd) == 0 then cmd else ""
      )
 ulimit := null
 
@@ -467,7 +467,7 @@ runFile := (inf,inputhash,outf,tmpf,desc,pkg,announcechange,usermode) -> ( -- re
      cmd := ulimit | "cd " | rundir | "; " | cmdname | " " | args | " <" | format inf | " >>" | format toAbsolutePath tmpf | " 2>&1";
      stderr << cmd << endl;
      makeDirectory rundir;
-     r := run cmd;
+     r := chkrun cmd;
      if r == 0 then (
 	  scan(reverse findFiles rundir, f -> if isDirectory f then (
 		    -- under cygwin, it seems to take a random amount of time before the system knows the directory is no longer in use:
@@ -501,6 +501,7 @@ runFile := (inf,inputhash,outf,tmpf,desc,pkg,announcechange,usermode) -> ( -- re
 	  removeFile tmpf;
 	  error "subprocess terminated abnormally";
 	  );
+     if debugLevel == 124 then stderr << "-- r = " << r << endl;
      stderr << "M2: *** [check] Error " << r//256 << endl;
      hadExampleError = true;
      numExampleErrors = numExampleErrors + 1;

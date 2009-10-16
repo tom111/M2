@@ -1340,7 +1340,7 @@ pager = x -> (
 infoHelp = key -> (
      tag := makeDocumentTag(key,Package=>null);
      t := infoTagConvert tag;
-     run ("info "|format t);)
+     chkrun ("info "|format t);)
 
 
 -----------------------------------------------------------------------------

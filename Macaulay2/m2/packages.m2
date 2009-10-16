@@ -487,7 +487,7 @@ getPackage String := opts -> pkgname -> (
 	  tgzfilenm << tgzfile << close;
 	  cmd := concatenate("cd ",tmp,"; tar xzf ",tfn);
 	  stderr << "--- " << cmd << endl;
-	  if 0 != run cmd then error("getPackage: failed to untar ",tfn);
+	  if 0 != chkrun cmd then error("getPackage: failed to untar ",tfn);
 	  if not fileExists filename then error("package file ",filename," missing");
 	  )
      else (

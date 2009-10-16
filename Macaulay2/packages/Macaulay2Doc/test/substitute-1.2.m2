@@ -54,3 +54,12 @@ use F
 f = 1/5*z^2+a
 errorDepth = 0
 substitute(f,{z=>a})				      -- at least fix this one!
+
+-- similar test with internal GF
+p = 13;
+F = GF 13^3;
+G = F[z];
+use F
+e = map(F,G,{z=>a})
+e a_G
+assert( a == e a_G )					    -- this works!

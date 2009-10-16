@@ -116,11 +116,13 @@ GF(Ring) := GaloisField => opts -> (S) -> (
      then (
 	  F := new GaloisField from rawGaloisField raw primitiveElement;
      	  F.degreeLength = 0;
+	  F.rawGaloisField = true;
 	  )
      else (
 	  S' := S;
 	  S = newRing(S, DegreeRank => 0, MonomialOrder=>{Position=>Up});
 	  F = new GaloisField from raw S;
+	  F.rawGaloisField = false;
 	  );
      F.degreeLength = 0;
      F.PrimitiveElement = primitiveElement;		    -- is this (old way) right?

@@ -48,7 +48,7 @@ topFileName := "index.html"				    -- top node's file name, constant
 indexFileName := "master.html"  			    -- file name for master index of topics in a package
 tocFileName := "toc.html"       			    -- file name for the table of contents of a package
 buildPrefix := null	   				    -- the root of the relative paths:
-installPrefix := "/.../"	       	    	      	    -- the value of the option InstallPrefix; search also here for links
+installPrefix := null	  	       	    	      	    -- the value of the option InstallPrefix; search also here for links
 htmlDirectory := ""					    -- relative path to the html directory, depends on the package
 installDirectory := ""					    -- absolute path to the install directory
 
@@ -73,7 +73,8 @@ isAbsoluteURL := url -> match( "^(#|mailto:|[a-z]+://)", url )
 searchPrefixPath = url -> (
      -- we also search the current InstallPrefix, first
      -- entries on the prefixPath may have different layouts
-     for i in prepend(buildPrefix,prefixPath) do (
+     pth := if buildPrefix === null then buildPrefix else prepend(buildPrefix,prefixPath); -- what if buildPrefix has a left-over value from a previous invocation???
+     for i in pth do (
 	  p := i|url;
 	  if fileExists p then (
 	       if debugLevel > 5 then stderr << "--file " << url << " found in " << i << endl;
@@ -556,6 +557,8 @@ setupNames := (opts,pkg) -> (
 	       else if instance(opts.EncapsulateDirectory,String) then opts.EncapsulateDirectory
 	       else error "expected EncapsulateDirectory option to be a function or a string"))
      else installPrefix)
+unsetupNames := () -> buildPrefix = installPrefix = buildPackage = null
+
 
 installPackage = method(Options => {
 	  SeparateExec => false,
@@ -593,8 +596,8 @@ removeFiles = p -> scan(reverse findFiles p, fn -> if fileExists fn or readlink 
 
 uninstallPackage String := opts -> pkg -> (
      checkPackageName pkg;
-     buildPrefix := minimizeFilename(runfun opts.PackagePrefix | "/");
-     scan(readDirectory buildPrefix, dir -> if match("^" | pkg | "-",dir) then removeFiles (buildPrefix|dir|"/"));
+     buildDirectory := minimizeFilename(runfun opts.PackagePrefix | "/");
+     scan(readDirectory buildDirectory, dir -> if match("^" | pkg | "-",dir) then removeFiles (buildDirectory|dir|"/"));
      installDirectory := minimizeFilename(runfun opts.InstallPrefix | "/");
      apply(findFiles apply({1,2},
 	       i -> apply(flatten {
@@ -1057,6 +1060,7 @@ installPackage Package := opts -> pkg -> (
 	  makePackageIndex();
 	  );
      installationLayout = oldlayout;
+     unsetupNames();
      )
 
 sampleInitFile = ///-- This is a sample init.m2 file provided with Macaulay2.

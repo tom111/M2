@@ -73,7 +73,7 @@ isAbsoluteURL := url -> match( "^(#|mailto:|[a-z]+://)", url )
 searchPrefixPath = url -> (
      -- we also search the current InstallPrefix, first
      -- entries on the prefixPath may have different layouts
-     pth := if buildPrefix === null then buildPrefix else prepend(buildPrefix,prefixPath); -- what if buildPrefix has a left-over value from a previous invocation???
+     pth := if buildPrefix === null then prefixPath else prepend(buildPrefix,prefixPath); -- what if buildPrefix has a left-over value from a previous invocation???
      for i in pth do (
 	  p := i|url;
 	  if fileExists p then (

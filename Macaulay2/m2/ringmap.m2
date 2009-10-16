@@ -141,7 +141,7 @@ RingMap RingElement := RingElement => fff := (p,m) -> (
      R := source p;
      S := target p;
      if R =!= ring m then (
-	  m = promote(m,R);
+	  m = try promote(m,R) else error "ring element not in source of ring map, and not promotable to it";
 	  );
      promote(rawRingMapEval(raw p, raw m),S))
 

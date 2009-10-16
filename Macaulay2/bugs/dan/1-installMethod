@@ -1,0 +1,1 @@
+There should be a form of installMethod that accepts installMethod((M,A,B,C),f), etc.

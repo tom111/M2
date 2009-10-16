@@ -11,6 +11,10 @@ document {
 document {
      Key => "changes, 1.3",
      UL {
+	  LI {
+	       "Fixed a long-standing bug in ", TO "saturate", " that caused it to give incorrect answers (too small)
+	       when the ring has a non-standard monomial ordering or degree length." -- make less vague before 1.3
+	       },
 	  LI { "Very long lists can now be parsed without overflowing the stack and causing the program to crash.
 	       This was a problem for MacOS with lists of length greater than about 90000.  In a future version
 	       we will reduce the amount of memory required to parse, translate, and then evaluate the list." },

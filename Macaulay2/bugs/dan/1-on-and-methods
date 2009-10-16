@@ -1,0 +1,7 @@
+Here's code that monitors every call to any method function of random, which should be incorporated into "on"
+
+scan( methods random, x -> (
+	  f := lookup x;
+	  assert( f =!= null );
+	  installMethod append (x,opts -> on ( x -> ( stderr << "-- " << x << endl ; (f opts) x ) ) );
+	  ))

@@ -35,7 +35,7 @@ MacOS X notes
     use either the packages that are on your system install DVD, or download
     from http://connect.apple.com.
 
-    The script below downloads gc, gdbm, gmp, readline, ntl, factory and
+    The script below downloads gc, gdbm, mpir, readline, ntl, factory and
     libfac, builds them, and then builds Macaulay2.  The libraries are
     statically linked in, to make installation simpler for most people.
     To make a 64 bit (intel) distribution disk image:

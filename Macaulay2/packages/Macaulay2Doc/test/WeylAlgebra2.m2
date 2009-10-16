@@ -11,3 +11,12 @@ W1 = QQ[elimvars,keepvars,WeylAlgebra=>(options W).WeylAlgebra,MonomialOrder=>El
 I1 = sub(I,W1)
 J = ideal selectInSubring(1,gens gb I1)
 isSubset(J,I1)
+
+restart
+loadPackage "Elimination"
+debug Elimination
+
+W = QQ[x, t_0, dt_0, s, WeylAlgebra=>{t_0=>dt_0}]
+(F,G) = eliminationRing(W,{1,2},z)
+target F
+options oo

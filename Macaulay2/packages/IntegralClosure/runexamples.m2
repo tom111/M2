@@ -431,7 +431,8 @@ use ring F
 D = discriminant(F,x)
 factor D
 singularLocus C
-eliminate(o24_1,x)
+J = ideal oo
+eliminate(x,J)
 
 -- This one is really bad at the moment...
 kk = ZZ/32003

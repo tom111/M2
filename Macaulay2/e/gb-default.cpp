@@ -2388,7 +2388,7 @@ void gbA::start_computation()
 	  o << "nsaved = " << nsaved_unneeded;
 	  emit_line(o.str());
 	}
-      show();
+      if (gbTrace >= 15) show();
     }
 }
 

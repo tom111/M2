@@ -40,6 +40,7 @@ map(GaloisField,GaloisField) := RingMap => o -> (K,F) -> (
      if char K =!= p 
      or n % m != 0
      then error "no map of fields exists";
+     if F === K then return map(K,F,vars K);
      if not (isConway F and isConway K) then error "not implemented: maps between non-Conway Galois fields";
      map(K,F,{K_0^((p^n-1)//(p^m-1))}))
 beginDocumentation()

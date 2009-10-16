@@ -47,13 +47,15 @@ assert( a == e a_G )					    -- fails in 1.3, didn't get to here in 1.2, but it 
 
 use D
 promote(a,F)						    -- fixed
-z+a							    -- fails
+-- deferred:
+-- z+a							    -- fails
 p = F.PrimitiveElement
 
 use F
 f = 1/5*z^2+a
 errorDepth = 0
-substitute(f,{z=>a})				      -- at least fix this one!
+y = substitute(f,{z=>a})				      -- at least fix this one!
+assert( y == 1/5*a^2+a )
 
 -- similar test with internal GF
 p = 13;

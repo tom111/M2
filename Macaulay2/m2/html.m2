@@ -468,7 +468,11 @@ runFile := (inf,inputhash,outf,tmpf,desc,pkg,announcechange,usermode) -> ( -- re
      stderr << cmd << endl;
      makeDirectory rundir;
      r := chkrun cmd;
-     if r == 0 then (
+     if r == 512 then (
+	  stderr << newline;
+	  error("run: M2 subprocess interrupted, returns exit code 2");
+	  )
+     else if r == 0 then (
 	  scan(reverse findFiles rundir, f -> if isDirectory f then (
 		    -- under cygwin, it seems to take a random amount of time before the system knows the directory is no longer in use:
 		    try removeDirectory f

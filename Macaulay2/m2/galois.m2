@@ -118,11 +118,12 @@ GF(Ring) := GaloisField => opts -> (S) -> (
      	  F.degreeLength = 0;
 	  )
      else (
+	  S' := S;
 	  S = newRing(S, DegreeRank => 0, MonomialOrder=>{Position=>Up});
 	  F = new GaloisField from raw S;
 	  );
      F.degreeLength = 0;
-     F.PrimitiveElement = primitiveElement;
+     F.PrimitiveElement = primitiveElement;		    -- is this (old way) right?
      F.isBasic = true;
      toString F := h -> toString expression h;
      net F := h -> net expression h;
@@ -153,6 +154,14 @@ GF(Ring) := GaloisField => opts -> (S) -> (
      F.use F;
      F / F := (x,y) -> x // y;
      F % F := (x,y) -> if y == 0 then x else 0_F;
+     if S' =!= null then (
+     	  -- what really want is to modify newRing so when it's called above,
+     	  -- it makes the old ring into one of the base rings of the new ring,
+     	  -- or (?)
+     	  q := map(S,S');
+     	  promote(S',S) := (s,F) -> q s;
+     	  promote(S',F) := (s,F) -> promote(promote(s,S),F);
+     	  );
      F)
 
 random GaloisField := opts -> F -> (

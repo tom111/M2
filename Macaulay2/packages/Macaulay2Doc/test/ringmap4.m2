@@ -1,20 +1,20 @@
 R1 = ZZ/101[x_0 .. x_10]
-R3 = ZZ/101[x_0 .. x_8][x_9,x_10]
+R3 = ZZ/101[x_0 .. x_8][x_9,x_10,Join=>false]
 
 F3 = map(R3,R1)
-F3inv = map(R1,R3) -- fails
+F3inv = map(R1,R3)
 F3 * F3inv
-assert((F3inv * F3) (vars R1) ==  vars R1)
+assert((F3inv * F3) vars R1 ==  vars R1)
+assert(F3inv F3 vars R1 ==  vars R1)
 
 -- ringmap for towers
 
 R = QQ[x][y]
-F = frac R
-f = map(F,F)
-g = map(F,F,{y+1})
-h = map(F,F,{y+1,x-1})
-x = promote(x,F)
-y = promote(y,F)
+f = map(R,R)
+g = map(R,R,{y+1})
+h = map(R,R,{y+1,x-1})
+x = promote(x,R)
+y = promote(y,R)
 assert( f x == x )
 assert( f y == y )
 assert( g x == x )
@@ -174,12 +174,7 @@ pe+pe^2-1 == 0
 pe^2 + a == 0
 (r pe)^2 + a == 0
 
-assert( not isWellDefined r )
---status: priority: low
---status: The problem here is that to check that a map on Galois fields is well defined
---status: we need to check an equation of a primitive element, rather than of the generator.
---status: Thus "isWellDefined" doesn't work for Galois fields.
---status: We haven't pre-computed such an equation.
+assert( not isWellDefined r )				    -- this test fails randomly, but there's nothing random about it
 
 R = k[x,y]/x^2
 S = k[t,u]/t^3
@@ -195,3 +190,7 @@ assert isWellDefined map(R,S,{x,y,-a})
 q = map(R,S,{x,y,a+1})
 assert not isWellDefined q
 
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test ringmap4.out"
+-- End:

@@ -899,7 +899,7 @@ M = mat2betti matrix"4,0,0,0;
 		     0,0,32,24"
 assert(B'==M)
 
-B'=betti res randomModule(L,2, CoefficientRing=>ZZ/5)
+B'=betti res randomModule(L,2, CoefficientRing=>ZZ/32003)
 M = mat2betti matrix"2,0,0,0;
      	       	     0,0,0,0;
 		     0,0,0,0;

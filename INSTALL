@@ -244,7 +244,8 @@ There are several methods for installing Macaulay2 under Mac OS X.
 
 (3) Build from source yourself.  
     
-    For specific scripts that we use to build the disk images, see the file arch/M2-build-notes.
+    For specific scripts that we use to build the disk images,
+    see BUILD/mike/Makefile and BUILD/mike/darwin64/Makefile.
 
 -------------------------------
 -- Ubuntu linux, from source --

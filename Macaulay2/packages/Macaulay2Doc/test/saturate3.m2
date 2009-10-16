@@ -32,3 +32,7 @@ assert( saturate(ideal(0_R),0_R,Strategy => Eliminate) == 1 )
 
 assert( saturate(ideal(0_R),0_R,Strategy => Bayer) == 1 )
 --stdio:15:9:(1):[1]: error: expected degree to be an integer or list of integers
+
+-- # Local Variables:
+-- # compile-command: "make -k -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test saturate3.out "
+-- # End:

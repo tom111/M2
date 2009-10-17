@@ -8,6 +8,7 @@ else
 default: arch-chk all install check
 INSTALLOPTIONS += prefix=/usr/local/encap
 CONFIGOPTIONS += --enable-deb
+CONFIGOPTIONS += --enable-tar
 CONFIGOPTIONS += --disable-common-staging-area
 DIRECTORY = ubuntu32.production
 # i386 must be architecture for debian based systems; we should automate this deeper:

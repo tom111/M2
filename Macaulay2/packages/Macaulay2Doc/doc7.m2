@@ -1576,7 +1576,7 @@ document {
 	  previously computed, and R is the ring of f, M and N"},
 	  },
      Outputs => {
-	  {"M <-- N, corresponding to the element f"}
+	  {"the ", TO "Matrix", " ", TT "M --> N", ", corresponding to the element ", TT "f", ""}
 	  },
      "When ", TT "H := Hom(M,N)", " is computed, enough information is stored in ", 
      TT "H.cache.Hom", " to compute this correspondence.",

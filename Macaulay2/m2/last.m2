@@ -63,7 +63,7 @@ addStartFunction( () -> (
 	       if isDirectory(prefixDirectory|version#"machine") then realpath(prefixDirectory|version#"machine")
 	       };
 	  if not noinitfile and getenv "HOME" =!= "" then (
-	       prefixPath = prepend(realpath(applicationDirectory()|"local/"), prefixPath);
+	       prefixPath = prepend(applicationDirectory()|"local/", prefixPath);
 	       userMacaulay2Directory();
 	       makePackageIndex())))
 

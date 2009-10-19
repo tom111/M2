@@ -663,7 +663,7 @@ document {
      -- Mike wanted this: "  See ", TO "parts of monomial orders", " for an explanation.",
      PARA{},
      "In the following example, the lead terms using the first part refers to all the
-     monomials which have the lead monomial in the indeterminates a and b.  This has a
+     monomials that have the lead monomial in the indeterminates ", TT "a", " and ", TT "b", ".  This has a
      effect similar to selecting leadTerm in the ring ", TT "QQ[c,d][a,b]", ".",
      EXAMPLE lines ///
 	  R = QQ[a..d, MonomialOrder => ProductOrder{2,2}];
@@ -1069,7 +1069,7 @@ document {
      Headline => "global flag for compact printing",
 	Usage => "compactMatrixForm = x",
 	Consequences => {"changes the display of matrices"},
-     TT "compactMatrixForm", " is a global flag which specifies whether to display
+     TT "compactMatrixForm", " is a global flag that specifies whether to display
      matrices in compact form.",
      PARA{},
      "The default value is ", TT "true", ".  The compact form is the form used by

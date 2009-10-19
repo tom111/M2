@@ -347,7 +347,7 @@ document {
 
 document {
      Key => "mathematical examples",
-     "In this section we present some tutorials which aim to introduce
+     "In this section we present some tutorials that aim to introduce
      the user to some mathematical ways of using Macaulay2.  The tutorials
      are relatively independent of each other, and each one introduces the use
      of some features of Macaulay2 in a slow and leisurely way, assuming the

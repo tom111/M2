@@ -427,7 +427,7 @@ document {
 			 is now much faster because strings are not copied."
 			 },
 		    LI {
-			 "The function ", TO "regex", " now has a form which restricts the range of the search."
+			 "The function ", TO "regex", " now has a form that restricts the range of the search."
 			 },
 		    LI {
 			 "Macaulay2 now incorporates ", TO "frobby", ", a free library for computing

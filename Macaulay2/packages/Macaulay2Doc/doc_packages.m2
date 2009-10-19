@@ -36,7 +36,7 @@ document {
 	  TO debug,
 	  TO check
 	  },
-     BOLD "Functions which are only rarely used.",
+     BOLD "Functions that are only rarely used.",
      UL {
 	  TO dismiss,
 	  TO uninstallPackage,

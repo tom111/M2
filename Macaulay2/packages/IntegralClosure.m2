@@ -901,7 +901,7 @@ parametersInIdeal Ideal := I -> (
      	  G1 = G_{s..t};
 	  coeffs := random(source G1, R^{-last flatten degrees G1});
 	  lastcoef := lift(last last entries coeffs,ultimate(coefficientRing, R));
-	  coeffs = (1/lastcoef)*coeffs;
+	  --coeffs = (1/lastcoef)*coeffs;
      	  newg := G1*coeffs;
      	  if s<c-1 then G = G_{0..s-1}|newg|G_{t..rank source G-1}
 	       else G = G_{0..s-1}|newg;
@@ -1025,6 +1025,15 @@ integralClosure(S/PP)
 integralClosure(target (makeS2(S/PP))_0)
 ///     
 
+TEST ///
+   setRandomSeed 2342351
+   S = QQ[a..d]
+
+   I = monomialCurveIdeal(S,{1,3,4})
+   R = S/I
+   R' = integralClosure R
+
+///
 
 --------------------------------------------------------------------
 

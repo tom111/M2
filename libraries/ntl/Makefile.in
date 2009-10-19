@@ -7,8 +7,8 @@ TARDIR = ntl-$(VERSION)
 BUILDDIR = $(UNTARDIR)/$(TARDIR)/src
 TARFILE = ntl-$(VERSION).tar.gz
 URL = http://shoup.net/ntl
-CONFIGURECMD := ./configure $(CONFIGOPTIONS)
-CONFIGOPTIONS =
+CONFIGURECMD = ./configure $(CONFIGUREOPTIONS)
+CONFIGUREOPTIONS = \
 	PREFIX=@pre_librariesdir@ \
 	LIBDIR=@pre_librariesdir@/lib \
 	INCLUDEDIR=@pre_librariesdir@/include \
@@ -21,7 +21,7 @@ CONFIGOPTIONS =
 	CPPFLAGS="$(CPPFLAGS)" \
 	LDFLAGS="$(LDFLAGS)"
 ifeq (@DEBUG@,yes)
-CONFIGOPTIONS += WIZARD=off
+CONFIGUREOPTIONS += WIZARD=off
 endif
 BUILDOPTIONS := \
 	CFLAGS="$(CFLAGS) -O2" \

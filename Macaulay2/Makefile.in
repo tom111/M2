@@ -11,7 +11,13 @@ SUBDIRS = compat util probe regex c
 ifeq "@DUMPDATA@" "yes"
 SUBDIRS += dumpdata
 endif
-SUBDIRS += e d packages/Macaulay2Doc/basictests m2 emacs man packages html-check-links tests book packages/Macaulay2Doc/test
+SUBDIRS += e d packages/Macaulay2Doc/basictests m2 emacs man packages html-check-links tests
+SUBDIRS += packages/Macaulay2Doc/test
+SUBDIRS += book
+SUBDIRS += packages/Macaulay2Doc/test/slow
+SUBDIRS += packages/Macaulay2Doc/test/gigantic
+SUBDIRS += packages/Macaulay2Doc/test/goals
+SUBDIRS += packages/Macaulay2Doc/test/quarantine
 
 define do-in-subdirs
 $(foreach d,$(SUBDIRS),

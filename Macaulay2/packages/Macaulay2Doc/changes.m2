@@ -75,7 +75,7 @@ document {
 	  LI {
 	       "A new option (called ", TO "Certification", ") for ", TO "newPackage", ", provides information about packages that have been
 	       accepted for publication in a refereed journal.  The information is displayed in the top documentation node of
-	       the package.  The first three packages so certified are ", TO "EdgeIdeals", ", ", TO "PieriMaps", ", and ", TO "Polyhedra", "."
+	       the package.  The first three packages so certified are ", TO "EdgeIdeals::EdgeIdeals", ", ", TO "PieriMaps::PieriMaps", ", and ", TO "Polyhedra::Polyhedra", "."
 	       },
 	  LI {
 	       "Fixed a bug in ", TO "read", " reported by Dan Roozemond: whenever it would return a string of length 4096, subsequent

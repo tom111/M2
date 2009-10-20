@@ -399,6 +399,12 @@ TEST ///
       v = straighten(new Filling from {{3,2,1}}, M)
       assert(v == vector{0_QQ,0,0,-1}) 
 ///     
+
+TEST ///
+c=character({{1,1,1},{2}},4)
+assert ( splitCharacter(c) == s_(4,1,1)+s_(3,3) )
+///
+
 end
 restart
 loadPackage "SchurFunctors"

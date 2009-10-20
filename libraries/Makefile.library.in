@@ -121,7 +121,27 @@ endif
 distclean: package-distclean
 clean::; rm -rf .patched* .untarred* $(LIBNAME)* .compiled* .configured* .installed* .untarred2* diffs tmp $(TARDIR) $(UNTARDIR) $(OLDUNTARDIR)
 distclean: clean ; rm -rf Makefile
-check:; $(CHECKCMD)
+
+SLIMIT ?= 8192
+TLIMIT ?= 100
+MLIMIT ?= 400000
+VLIMIT ?= 400000
+LIMIT := :
+ifeq (@ULIMIT_T@,yes)
+LIMIT += ; ulimit -t $(TLIMIT)
+endif
+ifeq (@ULIMIT_M@,yes)
+LIMIT += ; ulimit -m $(MLIMIT)
+endif
+ifeq (@ULIMIT_V@,yes)
+LIMIT += ; ulimit -v $(VLIMIT)
+endif
+ifeq (@ULIMIT_S@,yes)
+LIMIT += ; ulimit -s $(SLIMIT)
+endif
+check:
+	$(LIMIT); time $(CHECKCMD)
+
 ls:; ls -la . tarfiles
 help:;
 	@ echo ""

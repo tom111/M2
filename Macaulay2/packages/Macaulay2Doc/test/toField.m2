@@ -3,6 +3,8 @@ K1=K0/ideal(a^2+15);
 KK=toField K1;
 R=KK[x,y,z];
 
+assert( numgens R.FlatMonoid == 3 )
+
 p = matrix {{x^6}}
 debug Core
 monomialIdealOfRow := (i,m) -> newMonomialIdeal(ring m,rawMonomialIdeal(raw m, i))

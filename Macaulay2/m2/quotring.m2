@@ -218,6 +218,8 @@ toField Ring := R -> (
      if R.?Engine and R.Engine then (
 	  S := R[MonomialOrder => Position => Up, DegreeRank => 0, Join => false, DegreeMap => x -> {}, DegreeLift => x -> toList(degreeLength R : 0)];
 	  rawDeclareField raw S;
+	  S.toField = true;
+	  S.isBasic = true;
 	  S / S := (x,y) -> x * y^-1;
 	  S)
      else error "toField: no method for declaring this type of ring to be a field")

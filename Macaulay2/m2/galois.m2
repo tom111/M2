@@ -122,6 +122,7 @@ GF(Ring) := GaloisField => opts -> (S) -> (
 	  -- S' := S;
 	  T := toField(S);
 	  F = new GaloisField from raw T;		    -- this seems to throw out a lot of information about T!
+     	  F.toField = true;
 	  F.rawGaloisField = false;
 	  );
      F.degreeLength = 0;

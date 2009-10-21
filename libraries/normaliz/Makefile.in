@@ -8,7 +8,7 @@ TARFILE = Normaliz$(VERSION)Linux32.zip
 PATCHFILE = @abs_srcdir@/patch-2.2
 TARDIR = Normaliz$(VERSION)Linux/source
 UNTARCMD = unzip $(TARFILE_DIR)/$(TARFILE)
-CONFIGURECMD = :
+CONFIGURECMD = true
 BUILDOPTIONS = CXX="$(CXX)" CXXFLAGS=" $(CPPFLAGS) $(CXXFLAGS)" GMPFLAGS="$(LDFLAGS) -lgmpxx -lgmp"
 INSTALLCMD = $(MKDIR_P) $(LIBRARIESDIR)/bin && \
 		@INSTALL@ norm32 $(LIBRARIESDIR)/bin/norm32 && \

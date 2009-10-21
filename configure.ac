@@ -613,9 +613,10 @@ AC_SUBST(BUILTLIBS,)
 #	it writes a file into the user's home directory called ".polymake"
 #	it asks questions
 #    normaliz needs mpir providing libgmp and libgmpxx, but we provide that, anyway
-AC_SUBST(PROGLIST, "glpk 4ti2 cddlib gfan normaliz")
-AC_SUBST(LIBLIST, "gc    gdbm    mpir    mpfr    pari    readline    ntl    factory        libfac         lapack    frobby    scscp	")
-AC_SUBST(LIBFILES,"libgc libgdbm libmpir libmpfr libpari libreadline libntl libcf libcfmem libfac libblas liblapack libfrobby libscscp")
+AC_SUBST(PROGLIST, "4ti2 gfan normaliz")
+AC_SUBST(LIBLIST, "gc    gdbm    mpir    mpfr    pari    readline    ntl    factory        libfac         lapack    frobby    scscp	glpk    cddlib ")
+dnl I think we don't use this:
+dnl AC_SUBST(LIBFILES,"libgc libgdbm libmpir libmpfr libpari libreadline libntl libcf libcfmem libfac libblas liblapack libfrobby libscscp  libglpk ")
 for i in $LIBLIST
 do eval BUILD_$i=no
 done
@@ -684,29 +685,8 @@ dnl fi
 
 if test $BUILD_mpir = no
 then AC_LANG(C)
-     AC_SEARCH_LIBS(__mpirz_init,mpir,,BUILD_mpir=yes)
+     AC_SEARCH_LIBS(__mpir_version,mpir,,BUILD_mpir=yes)
      AC_CHECK_HEADER(mpir.h,,BUILD_mpir=yes)
-     if test $BUILD_mpir = no
-     then AC_MSG_CHECKING([whether mpir library is recent enough])
-          # version 4.1.4 of mpir has a random number generator different from 4.2.1's
-	  AC_RUN_IFELSE( [[
-	  #include <mpir.h>
-	  #include <stdio.h>
-	  int main() {
-	    int A=4,B=2,a=0,b=0,c=0,r=sscanf(__mpir_version,"%d.%d.%d",&a,&b,&c), t;
-	    if (r < 2) {
-	      fprintf(stderr,"failed to parse mpir version number: %s\n", __mpir_version);
-	      return 1;
-	    }
-	    t = a>A || a==A && b>=B;
-	    printf("(mpir version %s %s %d.%d) ",__mpir_version, t ? ">=" : "<", A, B);
-	    return !t;
-	  }
-	  ]],
-	  [ AC_MSG_RESULT(yes) ],
-	  [ AC_MSG_RESULT(no); BUILD_mpir=yes ],
-	  [ AC_MSG_RESULT([cross-compiling, test not possible]) ])
-     fi
 fi
 dnl frobby uses mpirxx
 if test $BUILD_mpir = yes
@@ -752,6 +732,13 @@ fi
 if test $BUILD_glpk = no
 then AC_LANG(C)
      AC_CHECK_HEADER(glpk.h,,BUILD_glpk=yes)
+fi
+
+if test $BUILD_cddlib = no
+then AC_LANG(C)
+     AC_CHECK_HEADER(cdd.h,,BUILD_cdd=yes,[
+#include <setoper.h>
+])
 fi
 
 AC_SUBST(ULIMIT_T,yes)
@@ -1053,6 +1040,18 @@ do eval t=\$BUILD_$i
    test "$t" = yes && BUILDLIST="$BUILDLIST $i"
 done
 
+AC_SUBST(BUILDLIBLIST,)
+for i in $LIBLIST
+do eval t=\$BUILD_$i
+   test "$t" = yes && BUILDLIBLIST="$BUILDLIBLIST $i"
+done
+
+AC_SUBST(BUILDPROGLIST,)
+for i in $PROGLIST
+do eval t=\$BUILD_$i
+   test "$t" = yes && BUILDPROGLIST="$BUILDPROGLIST $i"
+done
+
 TESTFLAG=-Wno-strict-aliasing
 AC_MSG_CHECKING(whether $CC accepts $TESTFLAG)
 AC_SUBST(HAVE_NO_STRICT_ALIASING,)
@@ -1151,16 +1150,18 @@ do case $i in
    esac
 done
 
-AC_MSG_NOTICE([using BUILDLIST    = $BUILDLIST (libraries and programs to be built from downloaded sources)])
-AC_MSG_NOTICE([using BUILTLIBS    = $BUILTLIBS])
-AC_MSG_NOTICE([using SINGULARLIBS = $SINGULARLIBS])
-AC_MSG_NOTICE([using LIBS_STATIC  = $LIBS_STATIC])
+AC_MSG_NOTICE([using BUILDLIBLIST  = $BUILDLIBLIST (libraries to be built from downloaded sources)])
+AC_MSG_NOTICE([using BUILDPROGLIST = $BUILDPROGLIST (programs to be built from downloaded sources)])
+AC_MSG_NOTICE([using BUILDLIST     = $BUILDLIST (libraries and programs to be built from downloaded sources)])
+AC_MSG_NOTICE([using BUILTLIBS     = $BUILTLIBS])
+AC_MSG_NOTICE([using SINGULARLIBS  = $SINGULARLIBS])
+AC_MSG_NOTICE([using LIBS_STATIC   = $LIBS_STATIC])
 AC_MSG_NOTICE([using LIBS_STATIC_OR_DYNAMIC  = $LIBS_STATIC_OR_DYNAMIC])
-AC_MSG_NOTICE([using LIBS_DYNAMIC = $LIBS_DYNAMIC])
+AC_MSG_NOTICE([using LIBS_DYNAMIC  = $LIBS_DYNAMIC])
 
 BUILDING=yes
 AC_ARG_ENABLE(building, AS_HELP_STRING(--disable-building,disable automatic building of libraries), BUILDING=$enableval)
-if test "$BUILDING" = no -a "$BUILDLIST"
+if test "$BUILDING" = no -a "$BUILDLIBLIST"
 then AC_MSG_ERROR([automatic building of libraries disabled, but some must be built])
 fi
 

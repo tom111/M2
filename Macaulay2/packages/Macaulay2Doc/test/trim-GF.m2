@@ -7,3 +7,4 @@ kA2 = ker A2
 assert(numgens trim image gens gb gens kA2 === 1 )
 -- deferred:
 -- assert(numgens trim kA2 === 1)
+-- MES: need to change engine code about this, or incorporate more info into the engine.

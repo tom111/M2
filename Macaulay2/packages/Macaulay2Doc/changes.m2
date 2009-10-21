@@ -118,7 +118,7 @@ document {
 	       epsecially 'decompose'."
 	       },
 	  LI {
-	       TO "eliminate, " has been fixed.  The function previously quietly assumed a flat polynomial ring
+	       TO "eliminate", , " has been fixed.  The function previously quietly assumed a flat polynomial ring
 	       with no quotient elements, and also quietly assumed that the ring was commutative.  Now error
 	       messages are given when it would have produced incorrect answers, and it handles Weyl and skew 
 	       commutative poly rings correctly.  Addtionally, this function now uses an elimination order 
@@ -158,7 +158,7 @@ document {
 	       "Fixed a bug in minimalPresentation of an Ideal or Ring, which would produce
 	       incorrect answers in rare situations."
 	  }
-     }
+     }}
 
 document {
      Key => "changes, 1.2",

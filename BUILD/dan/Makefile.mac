@@ -21,10 +21,10 @@ unexport DEBUG
 unexport PROFILE
 
 ifeq ($(M64),yes)
-DIRBASE = mac64
+DIRECTORY := mac64
 CONFIGOPTIONS += CC="gcc -m64" CXX="g++ -m64" --build=x86_64-apple-darwin
 else
-DIRBASE = mac
+DIRECTORY := mac
 endif
 
 default: all
@@ -36,7 +36,7 @@ default: all
 ifeq ($(PRODUCTION),yes)
    default: check install
    CONFIGOPTIONS += --disable-common-staging-area
-   DIRECTORY = $(DIRBASE).production
+   DIRECTORY := $(DIRECTORY).production
    CONFIGOPTIONS += --enable-dmg
    INSTALLOPTIONS += prefix=$(HOME)/local/encap
    ifeq ($(DEBUG),yes)
@@ -45,20 +45,16 @@ ifeq ($(PRODUCTION),yes)
    ifeq ($(PROFILE),yes)
       $(error PRODUCTION=yes and PROFILE=yes)
    endif
-else
-   ifeq ($(PROFILE),yes)
-      INSTALLOPTIONS += prefix=/none
-      CONFIGOPTIONS += --enable-profile
-      DIRECTORY := $(DIRBASE).profile
-   else
-      ifeq ($(DEBUG),yes)
-	 INSTALLOPTIONS += prefix=/none
-	 CONFIGOPTIONS += --enable-debug
-	 DIRECTORY = $(DIRBASE).debug
-      else
-         DIRECTORY = $(DIRBASE)
-      endif
-   endif
+endif
+ifeq ($(DEBUG),yes)
+   INSTALLOPTIONS += prefix=/none
+   CONFIGOPTIONS += --enable-debug
+   DIRECTORY := $(DIRECTORY).debug
+endif
+ifeq ($(PROFILE),yes)
+   INSTALLOPTIONS += prefix=/none
+   CONFIGOPTIONS += --enable-profile
+   DIRECTORY := $(DIRECTORY).profile
 endif
 include Makefile.include
 pre-install:;	rm -rf /usr/local/encap/Macaulay2-$(PACKAGE_VERSION)

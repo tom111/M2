@@ -113,7 +113,7 @@ $(TARFILE_DIR)/$(TARFILE) :
 ifeq (@DOWNLOAD@,yes)
 	(cd $(TARFILE_DIR) && $(FETCHER) $(URL)/$(TARFILE) $(FETCHOPTS) && $(CHECKFETCHED))
 else
-	@ echo "error: third-party library source code not present: $(LIBNAME)" >&2
+	@ echo "error: third-party library or program source code not present: $(LIBNAME)" >&2
 	@ echo "       in file $@" >&2
 	@ echo "       and not configured for automatic downloading with --enable-download" >&2
 	@ false

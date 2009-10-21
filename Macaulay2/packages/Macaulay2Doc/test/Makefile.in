@@ -17,8 +17,9 @@ check::
 
 check:: check-deferred
 check-deferred:
-	@ cd @abs_srcdir@ && if grep -w deferred *.m2 >/dev/null 2>&1 ; \
-	  then echo "-- *** error: some tests in the following files have been deferred: `grep -lw deferred *.m2`" >&2 ; \
+	@ if egrep -nHw 'defer|deferred|disable|disabled' @abs_srcdir@/*.m2 >/dev/null 2>&1 ; \
+	  then echo "-- *** error: tests in the following files have been deferred:" >&2 ; \
+	       egrep -nHw 'defer|deferred|disable|disabled' @abs_srcdir@/*.m2 >&2 ; \
 	       false ; \
 	  fi
 

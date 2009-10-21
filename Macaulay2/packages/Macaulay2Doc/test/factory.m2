@@ -3,7 +3,7 @@
 A = QQ[a]
 f = a^2+1
 k = A/f
-toField k
+k = toField k
 R = k[x]
 d = x-a
 p = d*(x^5-a)

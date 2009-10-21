@@ -14,7 +14,8 @@ endif
 SUBDIRS += e d packages/Macaulay2Doc/basictests m2 emacs man packages html-check-links tests
 SUBDIRS += packages/Macaulay2Doc/test
 SUBDIRS += book
-SUBDIRS += packages/Macaulay2Doc/test/slow
+# also done in packages/Macaulay2Doc/test
+# SUBDIRS += packages/Macaulay2Doc/test/slow
 SUBDIRS += packages/Macaulay2Doc/test/gigantic
 SUBDIRS += packages/Macaulay2Doc/test/goals
 SUBDIRS += packages/Macaulay2Doc/test/quarantine

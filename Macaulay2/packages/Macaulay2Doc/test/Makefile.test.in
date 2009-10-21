@@ -45,7 +45,7 @@ ifeq ($(DEFERRED),no)
 check:: $(RESULTS)
 else
 check::
-	@ echo "-- *** warning: tests deferred:" $(patsubst %.out, %, $(RESULTS)) >&2
+	@ for i in $(TESTFILES) ; do echo "$$i:1: warning: test file deferred" >&2 ; done
 	@ false
 endif
 

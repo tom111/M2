@@ -736,9 +736,7 @@ fi
 
 if test $BUILD_cddlib = no
 then AC_LANG(C)
-     AC_CHECK_HEADER(cdd.h,,BUILD_cdd=yes,[
-#include <setoper.h>
-])
+     AC_CHECK_HEADER(cdd.h,,BUILD_cddlib=yes,[#include <setoper.h>])
 fi
 
 AC_SUBST(ULIMIT_T,yes)

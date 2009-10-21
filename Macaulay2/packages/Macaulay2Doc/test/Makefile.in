@@ -13,7 +13,6 @@ all:
 
 check::
 	$(MAKE) -C slow $@
-	: skipping obsolete raw engine tests: $(MAKE) -k -C engine $@
 
 check:: check-deferred
 check-deferred:

@@ -23,7 +23,8 @@ symring= R->(
      X:= flatten entries vars R;
      n := #X;
      w := (for i to n-1 list (1))|toList(1..n);
-     S = (coefficientRing R)[X,s_1..s_n,MonomialOrder=>{Weights => w,Lex}];
+     e := global e;
+     S = (coefficientRing R)[X,e_1..e_n,MonomialOrder=>{Weights => w,Lex}];
      return S
       )
  
@@ -92,7 +93,7 @@ document {
 	Key =>elementarySymmetric,
 	Headline => "expression in terms of elementary symmetric polynomials",
 	Inputs => {"f, a symmetric", TO RingElement},
-	Outputs =>{"the epression of f in terms of the elementary symmetric functions s_i"},
+	Outputs =>{"the epression of f in terms of the elementary symmetric functions e_i"},
 	Usage => "elementalSymm f",
 	Caveat => {"if the input is not symmetric the function will announce this"},
 EXAMPLE lines ///
@@ -109,7 +110,7 @@ document {
 	Key =>(elementarySymmetric,RingElement),
 	Headline => "expression in terms of elementary symmetric polynomials",
 	Inputs => {"f"=> {"a symmetric", TO RingElement}},
-	Outputs =>{"the epression of f in terms of the elementary symmetric functions s_i"},
+	Outputs =>{"the epression of f in terms of the elementary symmetric functions e_i"},
 	Usage => "elementalSymm f",
 	Caveat => {"if the input is not symmetric the function will announce this"},
 EXAMPLE lines ///
@@ -126,7 +127,7 @@ document {
 	Key =>(elementarySymmetric,PolynomialRing),
 	Headline => "elementary symmetric polynomials algebra",
 	Inputs => {"R"=>{ "a", TO PolynomialRing}},
-	Outputs =>{"a map from R adjoin the elementary symmetric functions s_i to R"},
+	Outputs =>{"a map from R adjoin the elementary symmetric functions e_i to R"},
 	Usage => "elementalSymm R",
 EXAMPLE lines ///
 	n=5;

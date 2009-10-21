@@ -222,6 +222,7 @@ toField Ring := R -> (
 	  S.toField = true;
 	  S.isBasic = true;
 	  S / S := (x,y) -> x * y^-1;
+	  S.use = S -> if R.?generators and R.?generatorSymbols then scan(R.generatorSymbols,R.generators,(sym,val) -> sym <- promote(val,S));
 	  S)
      else error "toField: no method for declaring this type of ring to be a field")
 

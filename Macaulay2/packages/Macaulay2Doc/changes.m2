@@ -92,7 +92,13 @@ document {
 	       TO2{"ConwayPolynomials :: ConwayPolynomials","Conway polynomials"}, " when possible.
 	       Maps between Galois fields made with them are now easy to produce 
 	       with ", TT "map(E,F)", ".  (This was advertised as a change to 1.2, when the package was introduced,
-		    but the package was not pre-loaded, whereas now it is.)." }
+		    but the package was not pre-loaded, whereas now it is.)." },
+     	  LI {
+	       "The function ", TO "toField", " has been changed so that the expression ", TT "F = toField A", " returns a new ring ", TT "F", " isomorphic
+	       to ", TT "A", " and declares it to be field, whereas formerly ", TT "A", " was declared to be a field.  Users of
+	       this function should check their code and ensure that the return value ", TT "F", " is used.  (The return value is a polynomial
+		    ring of no variables over A, with a new monomial ordering, and with degree length equal to 0.)"
+	       }
 	  }
      }
 

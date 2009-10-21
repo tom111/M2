@@ -850,6 +850,7 @@ randomModule(List,ZZ) := opts -> (L, m) -> (
      coker (M=random(R^{m*B_0:-L_0}, R^{m*B_1:-L_1})))
 
 TEST ///
+setRandomSeed()
 L={0,4,9,10}
 B = pureBetti L
 

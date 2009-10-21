@@ -367,10 +367,13 @@ needsPackage "SchurRings"
 
 splitCharacter = method()
 splitCharacter RingElement := ce -> (
-     pe:=elementarySymmetric(ce);
+     pe:=elementarySymmetric(ce);  
+     -- Assumption: ring of pe: vars 0..n-1 
+     --   are orig vars, n..2n-1 are elem symm fcns
      n:=numgens source vars ring ce;
-     R2:=symmRing n;
-     toS substitute(pe,R2)
+     R2:=symmRing n; -- vars 0..n-1 are elem symm fcns
+     es := (vars R2)_{0..n-1};
+     toS substitute(pe,es|es)
      )
 
 beginDocumentation()

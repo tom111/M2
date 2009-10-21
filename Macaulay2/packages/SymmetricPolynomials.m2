@@ -84,7 +84,7 @@ document {
 	Key =>SymmetricPolynomials,
 	Headline => "the algebra of symmetric polynomials",
 	PARA{"This package uses an explicit description of the Groebner basis of the ideal of obvious relations in this algebra based on:"},
-	PARA{"Grayson, Stillmann - Computations in the intersection theory of flad varieties, preprint, 2009"},
+	PARA{"Grayson, Stillmann - Computations in the intersection theory of flag varieties, preprint, 2009"},
 	PARA{"Sturmfels - Algorithms in Invariant Theory, Springer Verlag, Vienna, 1993"}
 }
 

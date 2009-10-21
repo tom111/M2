@@ -17,7 +17,7 @@ assert( monomialIdealOfRow(0,p) == monomialIdeal x^6 )	    -- this is what break
 
 f=(-3+5*a)*x^6+(135+15*a)*x^4*y*z-(45-15*a)*x^2*y^2*z^2-18*x*y^5-18*x*z^5+(15+5*a)*x^3*y^3;
 I = ideal f;
-assert isHomogeneous I					    -- fails in 1.2, fixed in 1.3
-assert( dim I == 2 )					    -- fails in 1.2
-assert( dim Proj (R/I) == 1 )				    -- fails in 1.2
+assert isHomogeneous I -- fails in 1.2, fixed in 1.3
+assert( dim I == 2 )  -- fails in 1.2
+assert( dim Proj (R/I) == 1 ) -- fails in 1.2
 assert( hilbertPolynomial I == - 15 * hilbertPolynomial (QQ[x]) + 6 * hilbertPolynomial (QQ[x,y]) ) -- fails in 1.2

@@ -13,7 +13,8 @@ document {
      UL {
 	  LI {
 	       "Fixed a long-standing bug in ", TO "saturate", " that caused it to give incorrect answers (too small)
-	       when the ring has a non-standard monomial ordering or degree length." -- make less vague before 1.3
+	       when the ring has a non-standard monomial ordering or degree length.  This only caused a problem if
+	       the degrees were not all 1, yet the degree of the element f being used to saturate , was 1."
 	       },
 	  LI { "Very long lists can now be parsed without overflowing the stack and causing the program to crash.
 	       This was a problem for MacOS with lists of length greater than about 90000.  In a future version
@@ -98,7 +99,64 @@ document {
 	       to ", TT "A", " and declares it to be field, whereas formerly ", TT "A", " was declared to be a field.  Users of
 	       this function should check their code and ensure that the return value ", TT "F", " is used.  (The return value is a polynomial
 		    ring of no variables over A, with a new monomial ordering, and with degree length equal to 0.)"
-	       }
+	       },
+	  LI {
+	       "Integral closure has been largely rewritten.  The input ring to integralClosure must be a
+	       domain, although the documentation describes how to get around this.  
+	       The package now provides correct output when it finishes, and it can handle much larger input 
+	       than previously.  There are additional routines added, as well as addition
+	       strategies for performing the computation: see the documentation
+	       for the package IntegralClosure."
+	       },
+	  LI {
+	       "A bug in Groebner bases over the integers was fixed, which, under certain situations, led to
+	       in incomplete Groebner basis."},
+	  LI {
+	       "A bug in Groebner bases over fields and the integers was fixed, which caused, under some situations,
+	       that the reported 'trimmed' generators would miss generators.  The Groebner basis itself was correct, only
+	       the generating set was potentially missing elements.  This impacted functions which use 'trim', 
+	       epsecially 'decompose'."
+	       },
+	  LI {
+	       TO "eliminate, " has been fixed.  The function previously quietly assumed a flat polynomial ring
+	       with no quotient elements, and also quietly assumed that the ring was commutative.  Now error
+	       messages are given when it would have produced incorrect answers, and it handles Weyl and skew 
+	       commutative poly rings correctly.  Addtionally, this function now uses an elimination order 
+	       rather than a product order, improving performance in many cases."
+	       },
+	  LI {
+	       TO (minimalPresentation,Ring), " now allows an option, 'Exclude', which takes a list
+	       of integers.  The corresponding variables (with these indices)
+	       given in the exclude list will not be simplified away.  Indices are used, since 
+	       if the ring is a quotient by linear polynomials, variables might be simplified to 
+	       complicated polynomials"
+	       },
+	  LI {
+	       "Multiplication of a scalar and a mutable matrix is not allowed.  Previously
+	       attempting this could cause Macaulay2 to crash."
+	       },
+	  LI {
+	       "Fixed a a bug in ", TO "independentSets", " which produced incorrect answers
+	       on the cygwin version.  A variable was not being initialized.  Thanks to B. Roune for
+	       reporting the bug and suggesting the fix."
+	       },
+	  LI {
+	       "A bug in decompose was unearthed that could produce incorrect answers.  The problem
+	       was that 'trim' sometimes could produce incorrect answers (fixed)."
+	       },
+	  LI {
+     	       "Fixed a bug where
+     	       if the degrees of a ring were non-standard, and weight vectors
+     	       were present, then the monomial order was not the documented one."
+	       },
+	  LI {
+     	       "If you set the variable gbTrace to 15, then one sees a large amount of information
+	       about the spairs being computed in a Groebner basis computation, using the 
+	       default algorithm."
+	       },
+	  LI {
+	       "Fixed a bug in minimalPresentation of an Ideal or Ring, which would produce
+	       incorrect answers in rare situations."
 	  }
      }
 

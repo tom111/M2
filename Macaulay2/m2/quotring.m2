@@ -218,6 +218,7 @@ toField Ring := R -> (
      if R.?Engine and R.Engine then (
 	  S := R[MonomialOrder => Position => Up, DegreeRank => 0, Join => false, DegreeMap => x -> {}, DegreeLift => x -> toList(degreeLength R : 0)];
 	  rawDeclareField raw S;
+	  remove(S,"has quotient elements");
 	  S.toField = true;
 	  S.isBasic = true;
 	  S / S := (x,y) -> x * y^-1;

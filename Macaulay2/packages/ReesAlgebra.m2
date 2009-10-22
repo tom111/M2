@@ -1287,6 +1287,11 @@ doc ///
       analyticSpread i
       minimalReduction i
       reductionNumber i
+  Caveat
+     It is possible for the routine to not finish in reasonable time, due to the
+     probabilistic nature of the routine.  This will be addressed in a future version
+     of the package.  In the meantime, simply interrupt the routine, and restart the
+     computation.
   SeeAlso
     analyticSpread
     minimalReduction

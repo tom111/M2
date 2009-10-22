@@ -6,7 +6,7 @@ ifeq (@SHARED@,no)
 CONFIGOPTIONS += --disable-shared
 endif
 include ../Makefile.library
-CONFIGENV += env -u CXXFLAGS -u CFLAGS 
+COMPILEFLAGS = 
 ifeq (@OS@-@ISSUE@,MicrosoftWindows-Cygwin)
 LDFLAGS += -Wl,--enable-auto-import
 endif

@@ -1280,6 +1280,7 @@ doc ///
       London Mathematical Society Lecture Note Series, 336. Cambridge University Press, Cambridge, 2006.
       for further information.
     Example
+      setRandomSeed()
       kk = ZZ/101;
       S = kk[a..c];
       m = ideal vars S;

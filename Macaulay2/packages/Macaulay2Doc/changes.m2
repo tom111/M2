@@ -13,8 +13,9 @@ document {
      UL {
 	  LI {
 	       "Fixed a long-standing bug in ", TO "saturate", " that caused it to give incorrect answers (too small)
-	       when the ring has a non-standard monomial ordering or degree length.  This only caused a problem if
-	       the degrees were not all 1, yet the degree of the element f being used to saturate , was 1."
+	       in the case that the following three conditions all held:
+	       the ring has a non-standard monomial ordering, such as a weight vector; all variables had degree 1;
+	       and the degree of the element f being used to saturate was 1."
 	       },
 	  LI { "Very long lists can now be parsed without overflowing the stack and causing the program to crash.
 	       This was a problem for MacOS with lists of length greater than about 90000.  In a future version

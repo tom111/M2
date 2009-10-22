@@ -640,7 +640,7 @@ AC_ARG_ENABLE(download, AS_HELP_STRING(--enable-download,enable automatic downlo
 AC_LANG(C)
 AC_SEARCH_LIBS(tgoto,ncurses curses,,AC_MSG_ERROR(libcurses and libncurses not found))
 if test $BUILD_readline = no
-then AC_SEARCH_LIBS(add_history,history,,BUILD_readline=yes)
+then AC_SEARCH_LIBS(add_history,history readline,,BUILD_readline=yes)
      AC_SEARCH_LIBS(readline,readline,,BUILD_readline=yes)
      AC_CHECK_HEADER(readline/readline.h,,BUILD_readline=yes)
      if test $BUILD_readline = yes

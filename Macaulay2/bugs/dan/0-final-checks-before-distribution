@@ -2,6 +2,10 @@ things to do manually before release
 
         see 0-final-check-interactive-input-behaviour if changes have been made to top level user interaction
 
+	see whether you can interrupt the printing out the following commands, e.g., in emacs with CTRL-C CTRL-C:
+	    		<< 1..50000
+			1..50000
+
 	fix bugs
 
 	add test files

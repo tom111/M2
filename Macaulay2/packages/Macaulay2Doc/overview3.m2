@@ -440,8 +440,7 @@ document {
 
 document {
      Key => "David Eisenbud",
-     HREF {"http://www.msri.org/~de/", "David Eisenbud "}, " ",
-     HREF {"mailto:de@msri.org", "<de@msri.org>"}, ".",
+     HREF {"http://www.msri.org/~de/", "David Eisenbud "}, " -- ", HREF {"mailto:de@msri.org", "<de@msri.org>"}, ".",
      PARA{
 	  "David Eisenbud received his PhD in mathematics in 1970 at the University of
 	  Chicago under Saunders MacLane and Chris Robson, and was on the faculty at
@@ -479,8 +478,7 @@ document {
 
 document {
      Key => "Daniel R. Grayson",
-     HREF {"http://www.math.uiuc.edu/~dan/", "Daniel R. Grayson"}, " ",
-     HREF {"mailto:dan@math.uiuc.edu", "<dan@math.uiuc.edu>"}, ".",
+     HREF {"http://www.math.uiuc.edu/~dan/", "Daniel R. Grayson"}, " -- ", HREF {"mailto:dan@math.uiuc.edu", "<dan@math.uiuc.edu>"}, ".",
      PARA{
 	  "Daniel Grayson received his PhD in Mathematics from MIT in 1976, taught
 	  at Columbia from 1976 to 1981, and became a faculty member at the University of Illinois at
@@ -496,8 +494,7 @@ document {
 
 document {
      Key => "Michael E. Stillman",
-     HREF { "http://www.math.cornell.edu/~mike/", "Michael E. Stillman"}, " ",
-     HREF {"mailto:mike@math.cornell.edu", "<mike@math.cornell.edu>"}, ".",
+     HREF { "http://www.math.cornell.edu/~mike/", "Michael E. Stillman"}, " -- ", HREF {"mailto:mike@math.cornell.edu", "<mike@math.cornell.edu>"}, ".",
      PARA{
 	  "Michael E. Stillman received his PhD in Mathematics from Harvard in 1983,
 	  taught at University of Chicago 1983-85, was at Brandeis and then MIT 1985-87,

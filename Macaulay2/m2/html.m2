@@ -1279,7 +1279,9 @@ viewHelp = key -> (
      -- we have to rewrite this to check for secondary keys
      checkLoadDocumentation();
      if key === () then {
-	  show new URL from { fix (applicationDirectory() | "index.html") }
+	  i := applicationDirectory() | "index.html";
+	  if not fileExists i then error("missing file (run makePackageIndex() or start M2 without -q): ",i);
+	  show new URL from { fix i }
 	  }
      else (
 	  fn := htmlFilename2(toFinalDocumentTag getPrimary makeDocumentTag key,Layout#1);

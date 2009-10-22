@@ -252,10 +252,12 @@ bool interrupt_jump_set = FALSE;
 
 static void interrupt_handler(int sig)
 {
+#if 0
      int r;
      if (isatty(STDIN) && isatty(STDOUT) && !reading_from_readline) {
         r = write(STDERR,"\n",1);
      }
+#endif
      if (system_interruptedFlag || system_interruptPending) {
 	  if (isatty(STDIN) && isatty(STDOUT)) while (TRUE) {
 	       char buf[10];

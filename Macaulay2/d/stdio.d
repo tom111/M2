@@ -355,24 +355,27 @@ export flushinput(o:file):void := (
      o.bol = true;
      );
 
-simpleflush(o:file):int := (				    -- write to file or enlarge the buffer
+simpleflush(o:file):int := (				    -- write the entire buffer to file or enlarge the buffer
      o.outbol = 0;
      if o.outindex == 0 then return 0;
      if o.outfd != -1 then (
-	  -- why did we not want to flush output while attending to an interrupt?
-	  -- the output might be a relevant message
-	  -- if interruptedFlag then return -1;
-	  if write(o.outfd,o.outbuffer,o.outindex) == -1 then (
+	  off := 0;
+	  n := 0;
+	  while off < o.outindex && !interruptedFlag do (
+	       n = write(o.outfd,o.outbuffer,o.outindex-off,off);
+	       if n > 0 then (
+	       	    off = off + n;
+	       	    o.lastCharOut = int(o.outbuffer.(off-1));
+     	       	    o.bytesWritten = o.bytesWritten + n));
+	  if 0 < off then (
+	       for k from off to o.outindex-1 do o.outbuffer.(k-off) = o.outbuffer.k;
+	       o.outindex = o.outindex - off);
+	  if n == -1 then (
 	       fileErrorMessage(o,"writing");
-	       return -1;
-	       );
-	  o.lastCharOut = int(o.outbuffer.(o.outindex-1));
-     	  o.bytesWritten = o.bytesWritten + o.outindex;
-	  o.outindex = 0;
-	  )
-     else if o.outindex == length(o.outbuffer) then (
-	  o.outbuffer = enlarge(length(o.outbuffer),o.outbuffer);
-	  );
+	       return -1);
+	  if interruptedFlag then return ERROR)
+     else if o.outindex == length(o.outbuffer)
+     then o.outbuffer = enlarge(length(o.outbuffer),o.outbuffer);
      0);
 simpleout(o:file,c:char):int := (
      if o.outindex == length(o.outbuffer) && simpleflush(o) == ERROR then return ERROR;

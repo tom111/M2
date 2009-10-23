@@ -1245,6 +1245,10 @@ doc ///
     Example
       f = gens i
       for a from 0 to 3 do(jhom=ideal (f*random(source f, S^{3-a:-2,a:-3})); print(i^6 == (i^5)*jhom))
+  Caveat
+     It is possible that the ideal returned is not a minimal reduction,
+     due to the probabilistic nature of the routine.  This will be addressed in a future version
+     of the package.  The larger the size of the base field, the less likely this is to happen.
   SeeAlso
     analyticSpread
     reductionNumber
@@ -1290,7 +1294,10 @@ doc ///
       reductionNumber i
   Caveat
      It is possible for the routine to not finish in reasonable time, due to the
-     probabilistic nature of the routine.  This will be addressed in a future version
+     probabilistic nature of the routine.  What happens is that 
+     the routine @TO minimalReduction@ occasionally, but rarely, returns an ideal
+     which is not a minimal reduction.  In this case, the routine goes into an infinite loop.
+     This will be addressed in a future version
      of the package.  In the meantime, simply interrupt the routine, and restart the
      computation.
   SeeAlso

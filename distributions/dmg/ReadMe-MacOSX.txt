@@ -28,7 +28,8 @@ Step 1.  Download Macaulay2.
 
   You can find this information by choosing "About this Mac" under the
   Apple menu.  The versions for 10.4 should run on 10.5, but the
-  versions for 10.5 do not work on 10.4!
+  versions for 10.5 do not work on 10.4! The 10.5 Macaulay2 binary appears to 
+  work fine for 10.6.
 
 Step 2. Important step for 10.5 and 10.6 users!!!
 

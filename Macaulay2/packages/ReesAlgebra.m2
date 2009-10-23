@@ -1311,7 +1311,7 @@ doc ///
     whichGm
     (whichGm, Ideal)
   Headline
-    smallest Gm satisfied by an ideal
+    largest Gm satisfied by an ideal
   Usage
     whichGm I
   Inputs

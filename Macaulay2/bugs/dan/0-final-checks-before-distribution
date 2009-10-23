@@ -6,6 +6,10 @@ things to do manually before release
 	    		<< 1..50000
 			1..50000
 
+	run a benchmark and compare to previous versions to make sure optimization is on:
+		i1 : benchmark "scan(0..10000,i->i^3)"
+		o1 = .0057774305
+
 	fix bugs
 
 	add test files
@@ -78,3 +82,4 @@ things to do manually before release
 		   ../Shared/src/M2/Macaulay2/packages/SCSCP/server.m2:21:22-21:32: --source code:
 				 g := openInOut serverSocket;
 
+ 

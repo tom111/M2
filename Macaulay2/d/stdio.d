@@ -361,7 +361,7 @@ simpleflush(o:file):int := (				    -- write the entire buffer to file or enlarg
      if o.outfd != -1 then (
 	  off := 0;
 	  n := 0;
-	  while off < o.outindex && !interruptedFlag do (
+	  while n >= 0 && off < o.outindex && !interruptedFlag do (
 	       n = write(o.outfd,o.outbuffer,o.outindex-off,off);
 	       if n > 0 then (
 	       	    off = off + n;
@@ -508,14 +508,15 @@ export (o:file) << (n:Net) : file := (
 	  );
      o);
 export (o:file) << (c:char) : file := (
+     if interruptedFlag then return o;
      if o.output then (
 	  if o.hadNet then (
      	       o.hadNet = true;
      	       o.nets = NetList(o.nets,toNet(c));
 	       )
 	  else (
-	       if o.outindex == length(o.outbuffer) 
-	       then flush(o);		  -- possible error ignored!
+	       if o.outindex == length(o.outbuffer)
+	       && ERROR == flush(o) then return o;
 	       o.outbuffer.(o.outindex) = c;
 	       o.outindex = o.outindex + 1;
 	       );

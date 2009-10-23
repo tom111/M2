@@ -8,7 +8,8 @@ things to do manually before release
 
 	run a benchmark and compare to previous versions to make sure optimization is on:
 		i1 : benchmark "scan(0..10000,i->i^3)"
-		o1 = .0057774305
+		loadPackage "Benchmark"
+		runBenchmarks
 
 	fix bugs
 

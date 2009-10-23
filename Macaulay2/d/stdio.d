@@ -373,7 +373,9 @@ simpleflush(o:file):int := (				    -- write the entire buffer to file or enlarg
 	  if n == -1 then (
 	       fileErrorMessage(o,"writing");
 	       return -1);
-	  if interruptedFlag then return ERROR)
+	  if interruptedFlag then (
+	       o.outindex = 0;				    -- erase the output buffer after an interrupt
+	       return ERROR))
      else if o.outindex == length(o.outbuffer)
      then o.outbuffer = enlarge(length(o.outbuffer),o.outbuffer);
      0);

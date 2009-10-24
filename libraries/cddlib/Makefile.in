@@ -2,8 +2,10 @@
 VERSION = 094f
 # http://www.ifor.math.ethz.ch/~fukuda/cdd_home/cdd.html
 URL = ftp://ftp.ifor.math.ethz.ch/pub/fukuda/cdd
-CONFIGOPTIONS = gmpdir=/nowhere
-BUILDOPTIONS = gmpdir=/nowhere
+ALLOPTIONS = SUBDIRS="lib-src lib-src-gmp"
+CONFIGOPTIONS = gmpdir=/nowhere $(ALLOPTIONS)
+BUILDOPTIONS = gmpdir=/nowhere $(ALLOPTIONS)
+INSTALLOPTIONS = $(ALLOPTIONS)
 include ../Makefile.library
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/cddlib/Makefile
 # Local Variables:

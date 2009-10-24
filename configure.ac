@@ -180,10 +180,28 @@ dnl AC_ARG_VAR(CXX,C++ compiler to use)
 AC_PROG_RANLIB()
 AC_PROG_INSTALL()
 AC_PROG_AWK()
-AC_PROG_CC()
-AC_SUBST(GCC) # gets set to yes or no somehow
 
-AC_PROG_CXX()
+AC_SUBST(OPTIMIZE,yes) AC_ARG_ENABLE(optimize, AS_HELP_STRING(--disable-optimize,disable optimization), OPTIMIZE=$enableval)
+AC_SUBST(DEBUG,no)     AC_ARG_ENABLE(debug, AS_HELP_STRING(--enable-debug,enable debugging (and disable stripping)), DEBUG=$enableval)
+AC_SUBST(M2_CPPFLAGS,)
+
+if test "$DEBUG" = yes
+then M2_CPPFLAGS="$M2_CPPFLAGS -DDEBUG"
+else M2_CPPFLAGS="$M2_CPPFLAGS -DNDEBUG"
+fi
+
+if test "$OPTIMIZE" = yes
+then CFLAGS="-O3"
+     CXXFLAGS="-O3"
+else CFLAGS="-g -O0 -fno-inline"
+     CXXFLAGS="-g -O0 -fno-inline"
+     LDFLAGS="$LDFLAGS -g"
+fi
+
+AC_PROG_CC() 			# set CFLAGS before this
+AC_SUBST(GCC)			# gets set to yes or no by AC_PROG_CC
+AC_PROG_CXX()			# set CXXFLAGS before this
+AC_SUBST(GXX)			# gets set to yes or no by AC_PROG_CXX
 AC_PROG_YACC()
 
 dnl this macro is available only in autoconf 2.60, but most systems have 2.59 as the default:
@@ -304,8 +322,6 @@ AC_SUBST(PTHREADS,yes) AC_ARG_ENABLE(pthreads, AS_HELP_STRING(--disable-pthreads
 AC_SUBST(STRIP,yes)    AC_ARG_ENABLE(strip, AS_HELP_STRING(--disable-strip,do not strip the symbol table from the Macaulay 2 binary), STRIP=$enableval)
 AC_SUBST(STATIC,no)    AC_ARG_ENABLE(static, AS_HELP_STRING(--enable-static,enable static linking), STATIC=$enableval)
 AC_SUBST(MEMDEBUG,no)  AC_ARG_ENABLE(memdebug, AS_HELP_STRING(--enable-memdebug,enable memory allocation debugging), MEMDEBUG=$enableval)
-AC_SUBST(OPTIMIZE,yes) AC_ARG_ENABLE(optimize, AS_HELP_STRING(--disable-optimize,disable optimization), OPTIMIZE=$enableval)
-AC_SUBST(DEBUG,no)     AC_ARG_ENABLE(debug, AS_HELP_STRING(--enable-debug,enable debugging (and disable stripping)), DEBUG=$enableval)
 AC_SUBST(ENCAP,no)     AC_ARG_ENABLE(encap, AS_HELP_STRING(--enable-encap,encapsulate all files in a subdirectory at installation time), ENCAP=$enableval)
 AC_SUBST(XCODE,no)     AC_ARG_ENABLE(xcode, AS_HELP_STRING(--enable-xcode,create Macaulay2/d/interpret.a for use with xcode), XCODE=$enableval)
 
@@ -1063,7 +1079,6 @@ M2_CPPFLAGS="$M2_CPPFLAGS $TESTFLAG"
 CFLAGS=$SAVE
 AC_MSG_RESULT($HAVE_NO_STRICT_ALIASING)
 
-AC_SUBST(M2_CPPFLAGS,)
 
 AC_MSG_CHECKING(whether $CC accepts -Wfatal-errors)
 AC_LANG(C)
@@ -1085,19 +1100,6 @@ IS_DECLARED(char **,h_errlist, [
       ])
 
 AC_SUBST(DUMPDATAFILE,Macaulay2-$ARCH-data)
-
-if test "$DEBUG" = yes
-then LDFLAGS="$LDFLAGS -g"
-     M2_CPPFLAGS="$M2_CPPFLAGS -DDEBUG"
-else M2_CPPFLAGS="$M2_CPPFLAGS -DNDEBUG"
-fi
-
-if test "$OPTIMIZE" = yes
-then CFLAGS="$CFLAGS -O3"
-     CXXFLAGS="$CXXFLAGS -O3"
-else CFLAGS="$CFLAGS -O0 -fno-inline"
-     CXXFLAGS="$CXXFLAGS -O0 -fno-inline"
-fi
 
 test "$MEMDEBUG" = yes && M2_CPPFLAGS="$M2_CPPFLAGS -DMEMDEBUG"
 test "$DEBUG" = yes && M2_CPPFLAGS="$M2_CPPFLAGS -DGC_DEBUG"
@@ -1158,6 +1160,9 @@ AC_MSG_NOTICE([using SINGULARLIBS  = $SINGULARLIBS])
 AC_MSG_NOTICE([using LIBS_STATIC   = $LIBS_STATIC])
 AC_MSG_NOTICE([using LIBS_STATIC_OR_DYNAMIC  = $LIBS_STATIC_OR_DYNAMIC])
 AC_MSG_NOTICE([using LIBS_DYNAMIC  = $LIBS_DYNAMIC])
+AC_MSG_NOTICE([using CFLAGS        = $CFLAGS])
+AC_MSG_NOTICE([using CXXFLAGS      = $CXXFLAGS])
+AC_MSG_NOTICE([using LDFLAGS       = $LDFLAGS])
 
 BUILDING=yes
 AC_ARG_ENABLE(building, AS_HELP_STRING(--disable-building,disable automatic building of libraries), BUILDING=$enableval)

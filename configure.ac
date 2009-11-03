@@ -1,4 +1,4 @@
-AC_INIT(Macaulay 2, 1.3.0.1, Macaulay2@math.uiuc.edu, Macaulay2)
+AC_INIT(Macaulay 2, 1.3.1, Macaulay2@math.uiuc.edu, Macaulay2)
 AC_CONFIG_HEADERS(include/M2/config.h)
 AC_CONFIG_FILES(m4_include(config/files))
 AC_SUBST(CONFIGURED_FILES,"$ac_config_files")

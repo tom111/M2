@@ -693,7 +693,11 @@ AC_LANG(C)
 AC_SEARCH_LIBS(tgoto,ncurses curses,,AC_MSG_ERROR(libcurses and libncurses not found))
 if test $BUILD_readline = no
 then AC_CHECK_HEADER(readline/readline.h,,BUILD_readline=yes)
-     AC_SEARCH_LIBS(_rl_comment_begin,readline,,BUILD_readline=yes)
+     dnl This test doesn't work because some linkers distinguish between addresses of functions and addresses of data.
+     dnl We should rewrite it to compile with
+     dnl   extern char _rl_comment_begin[];
+     dnl   _rl_comment_begin[0];
+     dnl AC_SEARCH_LIBS(_rl_comment_begin,readline,,BUILD_readline=yes)
      AC_SEARCH_LIBS(rl_completion_matches,readline,,BUILD_readline=yes)
      AC_SEARCH_LIBS(readline,readline,,BUILD_readline=yes)
      AC_SEARCH_LIBS(add_history,history readline,,BUILD_readline=yes)

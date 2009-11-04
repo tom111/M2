@@ -693,19 +693,40 @@ AC_LANG(C)
 AC_SEARCH_LIBS(tgoto,ncurses curses,,AC_MSG_ERROR(libcurses and libncurses not found))
 if test $BUILD_readline = no
 then AC_CHECK_HEADER(readline/readline.h,,BUILD_readline=yes)
-     dnl This test doesn't work because some linkers distinguish between addresses of functions and addresses of data.
-     dnl We should rewrite it to compile with
-     dnl   extern char _rl_comment_begin[];
-     dnl   _rl_comment_begin[0];
-     dnl AC_SEARCH_LIBS(_rl_comment_begin,readline,,BUILD_readline=yes)
-     AC_SEARCH_LIBS(rl_completion_matches,readline,,BUILD_readline=yes)
-     AC_SEARCH_LIBS(readline,readline,,BUILD_readline=yes)
-     AC_SEARCH_LIBS(add_history,history readline,,BUILD_readline=yes)
-     if test $BUILD_readline = yes
-     then AC_MSG_NOTICE(readline library will be compiled)
-     fi
 fi
-test $BUILD_readline = yes && BUILTLIBS="-lreadline -lhistory $BUILTLIBS"
+if test $BUILD_readline = no
+then AC_MSG_CHECKING([for library containing common symbol _rl_comment_begin and text symbol rl_set_prompt])
+     FOUND=
+     SAVELIBS=$LIBS
+     for lib in "" "-lreadline" "-lreadline -lhistory"
+     do  test "$lib" && LIBS="$lib $LIBS"
+	 AC_LINK_IFELSE(
+	     [[ extern int rl_set_prompt(); extern int _rl_comment_begin; int main () { return rl_set_prompt() + _rl_comment_begin; } ]],
+	     FOUND=yes; break;,
+	     LIBS=$SAVELIBS)
+     done
+     if test "$FOUND"
+     then if test "$lib"
+	 then AC_MSG_RESULT([yes, $lib])
+	 else AC_MSG_RESULT([none required])
+	 fi
+     else AC_MSG_RESULT(no)
+	 BUILD_readline=yes
+     fi 
+fi
+if test $BUILD_readline = no
+then AC_SEARCH_LIBS(rl_completion_matches,readline,,BUILD_readline=yes)
+fi
+if test $BUILD_readline = no
+then AC_SEARCH_LIBS(readline,readline,,BUILD_readline=yes)
+fi
+if test $BUILD_readline = no
+then AC_SEARCH_LIBS(add_history,history readline,,BUILD_readline=yes)
+fi
+if test $BUILD_readline = yes
+then AC_MSG_NOTICE(readline library will be compiled)
+     BUILTLIBS="-lreadline -lhistory $BUILTLIBS"
+fi
 
 dnl We no longer link with gmp.
 dnl if test $BUILD_gmp = no

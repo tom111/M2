@@ -1,4 +1,10 @@
 # -*- Makefile -*-
+
+# sudo apt-get install -y openssh-server xbase-clients subversion make autoconf gcc libc6-dev g++ gfortran flex bison liblapack-dev libgdbm-dev libgc-dev libpari-dev libreadline5-dev patch libmpfr-dev libntl-dev libcdd-dev libxml2-dev
+
+export CC =
+export CXX = 
+
 ifeq ($(DEBUG),yes)
 default: arch-chk all
 INSTALLOPTIONS += prefix=/none
@@ -10,7 +16,7 @@ INSTALLOPTIONS += prefix=/usr/local/encap
 CONFIGOPTIONS += --enable-deb
 CONFIGOPTIONS += --enable-tarfile
 CONFIGOPTIONS += --disable-common-staging-area
-CONFIGOPTIONS += --with-mpir-config-options="ABI=32"
+CONFIGOPTIONS += --with-mpir-config-options="ABI=32 --build=i486-pc-linux-gnu"
 DIRECTORY = ubuntu32.production
 
 # i386 must be the architecture for debian based systems,

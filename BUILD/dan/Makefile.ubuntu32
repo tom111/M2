@@ -14,7 +14,6 @@ else
 default: arch-chk all check
 INSTALLOPTIONS += prefix=$(HOME)/local/encap
 CONFIGOPTIONS += --enable-deb
-CONFIGOPTIONS += --enable-tarfile
 CONFIGOPTIONS += --disable-common-staging-area
 DIRECTORY = ubuntu32.production
 endif

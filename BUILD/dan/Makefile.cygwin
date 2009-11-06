@@ -1,5 +1,8 @@
 #-*- Makefile -*-
 
+# things to install with cygwin setup:
+#   unzip
+
 PRODUCTION = yes
 DEBUG = no
 

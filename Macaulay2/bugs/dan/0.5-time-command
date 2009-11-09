@@ -1,4 +1,4 @@
-under debian "install-info" might not be there: have configure check for it.
+under debian "install-info" might not be there: have configure check for it; it might be in /usr/sbin!
 
 under cygwin all the tests might fail:
 

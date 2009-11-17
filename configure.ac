@@ -685,6 +685,16 @@ AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,list 
        esac
     done])
 
+PROGLIST=" $PROGLIST "
+AC_ARG_WITH(unbuilt-programs, 
+    [AS_HELP_STRING(--with-unbuilt-programs=...,list of programs not to build from downloaded source code (e.g., $PROGLIST))],
+    [for i in $withval
+     do case $PROGLIST in
+	     *" $i "*) eval BUILD_$i=no ;;
+	     *) AC_MSG_ERROR(unrecognized program name: $i) ;;
+	esac
+     done])
+
 AC_SUBST(DOWNLOAD,no)
 AC_ARG_ENABLE(download, AS_HELP_STRING(--enable-download,enable automatic downloading of needed third-party libraries), DOWNLOAD=$enableval)
 

@@ -17,6 +17,10 @@ CC := $(CC) -g
 CXX := $(CXX) -g
 endif
 
+ifeq (@DEBUG@,yes)
+CONFIGOPTIONS += --enable-assert
+endif
+
 COMPILEFLAGS = 
 ifeq (@OS@-@ISSUE@,MicrosoftWindows-Cygwin)
 LDFLAGS += -Wl,--enable-auto-import

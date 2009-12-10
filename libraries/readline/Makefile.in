@@ -21,8 +21,12 @@ endif
 include ../Makefile.library
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/readline/Makefile
 
-PATCHFILES := $(addprefix tarfiles/readline52-,$(PATCHES))
-$(PATCHFILES) :; rm -f $@; cd tarfiles && wget $(PATCHURL)/$(notdir $@)
+PATCHFILES := $(addprefix $(TARFILE_DIR)/readline$(shell echo $(VERSION) | sed 's/\.//g')-,$(PATCHES))
+ifeq (@DOWNLOAD@,yes)
+$(PATCHFILES) :; rm -f $@; cd $(TARFILE_DIR) && wget $(PATCHURL)/$(notdir $@)
+else
+$(PATCHFILES) :; echo "patch file not available, and downloading not enabled: $@" >&2 ; false
+endif
 fetch: $(PATCHFILES)
 
 clean::

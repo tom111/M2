@@ -35,7 +35,7 @@ CONFIGENV     = env \
 	$(COMPILEFLAGS) \
 	CPPFLAGS="$(CPPFLAGS)" \
 	CC="$(CC)" \
-	CXX="@CXX@" \
+	CXX="$(CXX)" \
 	LDFLAGS="$(LDFLAGS)" \
 	LOADLIBES="$(LOADLIBES)" \
 	LDLIBS="$(LDLIBS)"

@@ -2,11 +2,24 @@
 
    Bug in mpir 1.2.1.
 
-   This program demonstrates that mpn_lshift, as implemented on 64 bit intel machines by mpn/lshift.as, gives
-   the wrong answer if the limbs are not aligned to an 8 byte boundary.
+   This program demonstrates that mpn_lshift, as implemented on 64 bit intel
+   machines by mpn/x86_64/core2/lshift.as, gives the wrong answer if the limbs
+   are not aligned to an 8 byte boundary.
 
-   Even if the default allocator always returns 8-byte aligned memory blocks, this is a bug, because the
-   documentation on "Custom Allocation" doesn't require custom memory allocators to obey any alignment requirements.
+   The confusion in the code starts with these lines:
+
+	and     r9, -16
+	movdqa  xmm3, [r9]
+
+   In mpir 1.3.0-rc3, that file is gone, but the same faulty code lingers on in
+   the following files, which may need attention:
+
+	mpn/x86_64/k8/k10/lshift.as
+	mpn/x86_64/atom/lshift.as
+
+   Even if the default allocator always returns 8-byte aligned memory blocks,
+   this is still a bug, because the documentation on "Custom Allocation"
+   doesn't require custom memory allocators to obey any alignment requirements.
   
    Here's the output from the program
 

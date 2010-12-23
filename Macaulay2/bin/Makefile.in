@@ -141,13 +141,11 @@ M2_LIBRARIES +=  $(MAYBESTATIC) @LIBS_EITHER@
 M2_LIBRARIES += -lstdc++
 
 M2_LDFLAGS += @FCLIBS_FLAGS@
-M2_LIBRARIES += @LIBS_DYNAMIC@ $(TOSTATIC) @FCLIBS_STATIC@ $(UNSTATIC) @FCLIBS_DYNAMIC@
+M2_LIBRARIES += $(UNSTATIC)
+ M2_LIBRARIES += @LIBS_DYNAMIC@ $(TOSTATIC) @FCLIBS_STATIC@ $(UNSTATIC) @FCLIBS_DYNAMIC@
 
 ifeq (@MYSQL@,yes)
 M2_LIBRARIES += -L/usr/lib/mysql -lmysqlclient
-endif
-ifeq (@XML@,yes)
-M2_LIBRARIES += -lxml2
 endif
 M2_LIBRARIES += -lm -lc
 ifeq (@CONSTRUCTOR_ORDER_LIB@,LR)
@@ -165,9 +163,14 @@ endif
 clean::; rm -f $(EXEFILE) timestamp.o
 @pre_bindir@ : ; $(MKDIR_P) "$@"
 
+# in ubuntu 10.10, both liblapack.a and libblas.a define xerbla_, and we want the one from libblas.a,
+# so we use this hack early in the command line to get just a wee bit of libblas:
+HACK := $(MAYBESTATIC) -Wl,-u,xerbla_ -lblas $(UNSTATIC)
+# this hack should not hurt anything otherwise
+
 $(EXEFILE): $(M2_OBJECTS) $(M2_LIBDEPS) | @pre_bindir@
 	$(COMPILE.c) @srcdir@/timestamp.c -o timestamp.o
-	time @CC@ $(M2_LDFLAGS) timestamp.o $(M2_OBJECTS) $(M2_LIBRARIES) -o "$@".tmp
+	time @CC@ $(M2_LDFLAGS) timestamp.o $(HACK) $(M2_OBJECTS) $(M2_LIBRARIES) -o "$@".tmp
 	printenv LD_LIBRARY_PATH
 ifneq (@LDD@,)
 	- @LDD@ $@.tmp

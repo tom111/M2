@@ -1194,8 +1194,18 @@ then AC_MSG_CHECKING([whether the vecLib framework is available])
 		  then AC_MSG_ERROR(no fortran compiler found)
 		  else AC_MSG_NOTICE(using fortran compiler $FC)
 		  fi
-		  AC_SEARCH_LIBS(sgemv,blas f77blas,,BUILD_lapack=yes)
-		  AC_SEARCH_LIBS(dgetrf,lapack,,BUILD_lapack=yes)
+		  AC_SEARCH_LIBS(sgemv,blas f77blas,[
+		  	BLASLIB=$ac_cv_search_sgemv
+		  	AC_SEARCH_LIBS(dgetrf,lapack,[
+				LAPACKLIB=$ac_cv_search_dgetrf
+				if test "$BLASLIB" != "none required" -a "$LAPACKLIB" != "none required"
+				then LIBS="$BLASLIB $LIBS"
+				     AC_MSG_NOTICE(searching $BLASLIB an extra time)
+				     # Just in case, we search libblas an extra time, before liblapack.
+				     # See Macaulay2/d/lapack-hack.c for details of this hack.
+				fi
+				],BUILD_lapack=yes)
+			],BUILD_lapack=yes)
 	     fi
 	 ])
 fi

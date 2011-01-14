@@ -111,7 +111,7 @@ tidy_before:
 	rm -rf macaulay2/control.tar.gz macaulay2/data.tar.gz macaulay2/md5sums
 	rm -rf macaulay2-common/control.tar.gz macaulay2-common/data.tar.gz macaulay2-common/md5sums
 tidy tidy_after :
-	rm -rf .prepared tmp tmp-common libraries-really-used
+	rm -rf .prepared tmp tmp-common
 	rm -rf macaulay2/control.tar.gz macaulay2/data.tar.gz macaulay2/md5sums
 	rm -rf macaulay2-common/control.tar.gz macaulay2-common/data.tar.gz macaulay2-common/md5sums
 clean:: tidy
@@ -130,11 +130,25 @@ libraries-used: .prepared tmp@bindir@/M2@EXE@
 clean::; rm -f libraries-used
 libraries-really-used: libraries-used libraries-used-directly
 	egrep `echo \`cat libraries-used-directly\` | sed -e 's=^=.*/=' -e 's= =|.*/=g'` <$< >$@
-packages-used: libraries-really-used
-	cat $^ |								\
-	while read x ;								\
-	do @FIND@ /var/lib/dpkg/info -name \*.list | xargs egrep -l "^$$x";	\
-	done | sort | uniq | sed -e 's=.*/==' -e 's=\.list$$==' >$@
+libraries-really-used-all-links: libraries-really-used
+	cat $< |										\
+	while read x ;										\
+	do echo "$$x" ;										\
+	   while readlink "$$x" >/dev/null ;							\
+	   do x="`dirname "$$x"`/`readlink "$$x"`" ; x=`echo "$$x" | sed 's=.*//=/=' ` ;	\
+	      echo "$$x" ;									\
+	   done ;										\
+	done >$@
+packages-used: libraries-really-used-all-links
+	cat /dev/null >$@.errors
+	cat $^ |															\
+	while read x ;															\
+	do @FIND@ /var/lib/dpkg/info -name \*.list | xargs egrep -l "^$$x" || ( echo package not found for file $$x >> $@.errors ) ;	\
+	done >$@.tmp
+	- ! grep . $@.errors
+	rm $@.errors
+	<$@.tmp sort | uniq | sed -e 's=.*/==' -e 's=\.list$$==' >$@
+	rm $@.tmp
 clean::; rm -f packages-used
 macaulay2/control : macaulay2/control.prelim macaulay2/data.tar.gz packages-used
 	(cat $< &&								\

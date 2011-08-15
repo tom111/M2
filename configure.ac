@@ -152,6 +152,7 @@ case $OS-$REL in
   Darwin-8.*) REL=10.4 ; OS=MacOS ;;
   Darwin-9.*) REL=10.5 ; OS=MacOS ;;
   Darwin-10.*) REL=10.6 ; OS=MacOS ;;
+  Darwin-11.*) REL=10.7 ; OS=MacOS ;;
   Darwin-*) echo "Darwin release number translation needed in configure.ac" >&2 ; exit 1
 esac
 
@@ -220,9 +221,9 @@ else M2_CPPFLAGS="$M2_CPPFLAGS -DNDEBUG"
 fi
 
 [
-CFLAGS=` echo $CFLAGS | sed -e 's/-O[0-9]//g' -e 's/   */ /g' -e 's/^  *//' -e 's/ * $//' `
-CXXFLAGS=` echo $CXXFLAGS | sed -e 's/-O[0-9]//g' -e 's/   */ /g' -e 's/^  *//' -e 's/ * $//' `
-FFLAGS=` echo $FFLAGS | sed -e 's/-O[0-9]//g' -e 's/   */ /g' -e 's/^  *//' -e 's/ * $//' `
+ CFLAGS=` echo $CFLAGS | sed -e 's/-O[0-9]//g' -e 's/   */ /g' -e 's/^  *//' -e 's/ * $//' `
+ CXXFLAGS=` echo $CXXFLAGS | sed -e 's/-O[0-9]//g' -e 's/   */ /g' -e 's/^  *//' -e 's/ * $//' `
+ FFLAGS=` echo $FFLAGS | sed -e 's/-O[0-9]//g' -e 's/   */ /g' -e 's/^  *//' -e 's/ * $//' `
 ]
 
 if test "$OPTIMIZE" = yes
@@ -232,6 +233,13 @@ then CFLAGS="$CFLAGS -O3"
 else CFLAGS="$CFLAGS -O0"
      CXXFLAGS="$CXXFLAGS -O0"
      FFLAGS="$FFLAGS -O0"
+fi
+
+AC_SUBST(GCCVERSION,)
+if test $GCC = yes
+then AC_MSG_CHECKING(for $CC version)
+     GCCVERSION=`$CC --dumpversion 2>&1 | sed 's/.*-\(.*\):.*/\1/'`
+     AC_MSG_RESULT($GCCVERSION)
 fi
 
 dnl this macro is available only in autoconf 2.60, but most systems have 2.59 as the default:

@@ -9,8 +9,8 @@
 VERSION = 3.0.0
 
 RELAX = yes
-URL = http://www.mpfr.org/mpfr-$(VERSION)
-# URL = http://macaulay2.com/Downloads/SourceCode
+# URL = http://www.mpfr.org/mpfr-$(VERSION)
+URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode/1.4
 
 ifeq (@SHARED@,no)
 CONFIGOPTIONS += --disable-shared

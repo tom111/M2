@@ -20,7 +20,8 @@ PATCHFILE = @abs_srcdir@/patch-3.1.1
 TARDIR = factory
 
 TARFILE := factory-$(shell echo $(VERSION) | sed 's/\./-/g').tar.gz
-URL = ftp://www.mathematik.uni-kl.de/pub/Math/Singular/Factory
+# URL = ftp://www.mathematik.uni-kl.de/pub/Math/Singular/Factory
+URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode/1.4
 PRECONFIGURE = autoconf
 # this doesn't work, because autoheader fails with factory
 # PRECONFIGURE = autoreconf -vi

@@ -12,7 +12,7 @@ VPATH = @srcdir@
 VERSION = 2.3.5
 PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 
-URL = http://pari.math.u-bordeaux.fr/pub/pari/unix
+# URL = http://pari.math.u-bordeaux.fr/pub/pari/unix
 URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode/1.4
 
 # disable check, because it fails on various 64 bit machines

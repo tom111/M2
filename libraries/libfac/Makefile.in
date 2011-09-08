@@ -12,7 +12,8 @@ PRECONFIGURE = autoconf
 
 TARDIR = libfac
 TARFILE := libfac-$(shell echo $(VERSION) | sed 's/\./-/g').tar.gz
-URL = ftp://www.mathematik.uni-kl.de/pub/Math/Singular/Libfac
+# URL = ftp://www.mathematik.uni-kl.de/pub/Math/Singular/Libfac
+URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode/1.4
 CONFIGOPTIONS += --enable-NTL
 ifeq (@DEBUG@,yes)
 CONFIGOPTIONS += --with-debug

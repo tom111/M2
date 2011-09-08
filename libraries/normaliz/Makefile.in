@@ -5,7 +5,7 @@ VERSION = 2.5
 # file changed on their web site, probably:
 
 # URL = http://www.mathematik.uni-osnabrueck.de/normaliz
-URL = http://www.math.uiuc.edu/Macaulay2/Extra
+URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode/1.4
 
 # TARFILE = Normaliz$(VERSION)Linux32.zip
 # TARDIR = Normaliz$(VERSION)Linux/source

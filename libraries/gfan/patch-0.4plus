@@ -1,0 +1,12 @@
+diff -ur '--exclude=configure' /home2/dan/src/M2/1.4/BUILD/dan/builds.tmp/ubuntu64.production/libraries/gfan/tmp/gfan0.4plus/linalg.cpp gfan0.4plus/linalg.cpp
+--- /home2/dan/src/M2/1.4/BUILD/dan/builds.tmp/ubuntu64.production/libraries/gfan/tmp/gfan0.4plus/linalg.cpp	2009-10-21 18:25:58.000000000 -0500
++++ gfan0.4plus/linalg.cpp	2011-11-10 19:59:46.811805200 -0600
+@@ -525,7 +525,7 @@
+ }
+ 
+ 
+-FieldMatrix::FieldMatrix FieldMatrix::solver()const
++FieldMatrix FieldMatrix::solver()const
+ {
+   FieldMatrix ret=combineOnTop(*this,theField.zHomomorphism(-1)*identity(theField,getWidth())).transposed();
+ 

@@ -154,11 +154,18 @@ bool pari_ispseudoprime(mpz_t x, long flags) { /* used in pari.d */
 */
 
 #define pari_examine(x) do { fputs(" " #x ": ", stdout); voir(x,-1); } while (0)
+/*
+  outbeaut(), in version 2.3.5, is not in version 2.5.0
+  the replacement, if any, is not immediately obvious
+  fix later if needed for debugging:
 #define pari_display(x) do { fputs(" " #x ": ", stdout); outbeaut(x); } while (0)
+   */
 #define abs(x) ((x)<0?-(x):(x))
 
+static inline int maxint(int a, int b) { return a<b ? b : a; }
+
 static void gmp_examine0(mpz_t z) {
-  int i, n = max(z->_mp_alloc,abs(z->_mp_size));
+  int i, n = maxint(z->_mp_alloc,abs(z->_mp_size));
   printf("alloc %d size %d %s {",z->_mp_alloc,z->_mp_size,z->_mp_size < 0 ? "-" : "+");
   for (i=0; i<n; i++) printf(" %lx",(unsigned long)z->_mp_d[i]);
   printf(" }\n");
@@ -189,7 +196,7 @@ void pari_test() {
   testnum1(x);
   gmp_display(x);
   gmp_examine(x);
-  pari_display(toPari(x));
+  /*  pari_display(toPari(x)); */
   pari_examine(toPari(x));
 
   GEN y = gen_1;
@@ -198,7 +205,7 @@ void pari_test() {
   y = gmulgs(y,3333313);
   y = gmulgs(y,3333313);
   y = gmulgs(y,3333331);
-  pari_display(y);
+  /* pari_display(y); */
   pari_examine(y);
 
   CLOSE;

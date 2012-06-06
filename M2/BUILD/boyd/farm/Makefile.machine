@@ -13,7 +13,7 @@ stop poweroff:; VBoxManage controlvm $(MACHINE) poweroff
 $(ISO):; wget $(URL)
 
 disk.vdi:
-	VBoxManage createhd --filename $(DIR)/disk.vdi --size 5120
+	VBoxManage createhd --filename $(DIR)/disk.vdi --size 16000
 
 $(MACHINE):
 	VBoxManage createvm --name $(MACHINE) --register

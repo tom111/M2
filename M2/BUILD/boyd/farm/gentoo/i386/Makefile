@@ -10,4 +10,4 @@ BUILD = 20120306
 
 ISO = install-$(ARCH)-minimal-$(BUILD).iso
 URL = http://distfiles.gentoo.org/releases/$(ARCH)/current-iso/$(ISO)
-include ../Makefile.machine
+include ../../Makefile.machine

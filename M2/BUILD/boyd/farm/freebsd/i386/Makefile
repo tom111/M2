@@ -5,6 +5,6 @@ RDPPORT = 3391
 
 OS = FreeBSD
 MACHINE = FreeBSD
-ARCH = x86
+ARCH = 
 
-include ../Makefile.machine
+include ../../Makefile.machine

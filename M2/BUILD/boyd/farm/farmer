@@ -1,0 +1,19 @@
+#!/usr/bin/perl -w
+#-*-perl-*-
+
+use strict;
+
+my @machines = ("debian", "ubuntu", "fedora", "gentoo", "freebsd");
+my @machines = ("debian", "ubuntu", "fedora");
+my @arch = ("i386", "x86_64");
+
+my $make = "/usr/bin/make";
+
+for my $i (0...$#machines) {
+    for my $j(0...$#arch) {
+	my $path = "/home/charles/local/src/Macaulay2/release-branches/1.5/M2/BUILD/boyd/farm/$machines[$i]/$arch[$j]";
+	chdir $path;
+	my @make_cmd = ($make,"settings");
+	print system(@make_cmd);
+    }
+}

@@ -9,8 +9,8 @@ DIRECTORY = debian32
 include Makefile.include
 default: check
 arch-chk:
-	grep Debian /etc/issue
-	[ `uname -m` = i686 ]
+#	grep Debian /etc/issue
+#	[ `uname -m` = i686 ]
 
 # using a 33MB iso image: debian-40r6-i386-businesscard.iso (etch)
 #        157MB iso image: debian-502-i386-netinst.iso (lenny)

@@ -4,13 +4,15 @@
 
 export CC =
 export CXX = 
-
-ifeq ($(DEBUG),yes)
+ifneq ($(CROSS),true)
+CFLAGS += -m32
+endif
+ifeq ($(DEBUG),true)
 default: arch-chk all
 INSTALLOPTIONS += prefix=/none
 CONFIGOPTIONS += --enable-debug
-CONFIGOPTIONS += --with-mysql
-CONFIGOPTIONS += --with-python
+#CONFIGOPTIONS += --with-mysql
+#CONFIGOPTIONS += --with-python
 DIRECTORY = ubuntu32.debug
 CONFIGOPTIONS += --disable-tarfile
 else
@@ -36,5 +38,5 @@ include Makefile.include
 pre-install:;	rm -rf /usr/local/encap/Macaulay2-$(PACKAGE_VERSION)
 arch-chk:; grep -q Ubuntu /etc/issue && [ `uname -m` = i686 ]
 # Local Variables:
-# compile-command: "time make -f Makefile.ubuntu32 DEBUG=no rebuild-world "
+# compile-command: "time make -f Makefile.ubuntu32 DEBUG=true rebuild-world "
 # End:

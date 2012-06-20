@@ -1,5 +1,7 @@
 # -*- makefile-gmake -*-
-
+ifneq ($(CROSS),true)
+CFLAGS += -m32
+endif
 DIRECTORY ?= linux32.generic.production
 CONFIGOPTIONS += --build=i486-pc-linux-gnu
 CONFIGOPTIONS += --enable-tarfile

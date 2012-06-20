@@ -1,5 +1,7 @@
 # -*- makefile-gmake -*-
-
+ifneq ($(CROSS),true)
+CFLAGS += -m32
+endif
 CONFIGOPTIONS += --build=i386-pc-linux-gnu
 CONFIGOPTIONS += --with-mpir-config-options="ABI=32 --build=i486-pc-linux-gnu"
 CONFIGOPTIONS += --enable-deb

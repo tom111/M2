@@ -1,5 +1,7 @@
 # -*- makefile-gmake -*-
-
+ifneq ($(CROSS),true)
+CFLAGS += -m32
+endif
 CONFIGOPTIONS += --build=i586-pc-linux-gnu
 INSTALLOPTIONS += prefix=/usr/local/encap
 CONFIGOPTIONS += --enable-deb

@@ -134,7 +134,7 @@ packages-used: libraries-really-used
 	cat $^ |								\
 	while read x ;								\
 	do @FIND@ /var/lib/dpkg/info -name \*.list | xargs egrep -l "^$$x";	\
-	done | sort | uniq | sed -e 's=.*/==' -e 's=\.list$$==' >$@
+	done | sort | uniq | sed -r -e 's=.*/==' -e 's=(:.*)?\.list$$==' >$@
 clean::; rm -f packages-used
 macaulay2/control : macaulay2/control.prelim macaulay2/data.tar.gz packages-used
 	(cat $< &&								\

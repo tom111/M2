@@ -133,6 +133,7 @@ libraries-really-used: libraries-used libraries-used-directly
 packages-used: libraries-really-used
 	cat $^ |								\
 	while read x ;								\
+	x=`readlink -f "$$x"` ;							\
 	do @FIND@ /var/lib/dpkg/info -name \*.list | xargs egrep -l "^$$x";	\
 	done | sort | uniq | sed -r -e 's=.*/==' -e 's=(:.*)?\.list$$==' >$@
 clean::; rm -f packages-used

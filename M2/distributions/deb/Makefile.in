@@ -19,6 +19,14 @@ PKG_DEB = @PACKAGE_TARNAME@-@PACKAGE_VERSION@-$(DEBARCH)-@OS@-@ISSUE@.deb
 PKG_COM_DEB = @PACKAGE_TARNAME@-@PACKAGE_VERSION@-common.deb
 
 all: chk-opts macaulay2/control.prelim tidy_before ../../$(PKG_DEB) ../../$(PKG_COM_DEB) announce maybe-tidy
+
+ifeq ($(SIGN),yes)
+all: sign
+endif
+sign: ../../$(PKG_DEB).sig  ../../$(PKG_COM_DEB).sig 
+%.sig:
+%.sig: %; gpg --local-user Macaulay2 --detach-sign $^
+
 chk-opts: check-prefix-is-slash-usr check-debug-disabled check-optimize-enabled 
 # Debian prefers stripped binaries, but we don't:
 # chk-opts: check-strip-enabled

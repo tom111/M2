@@ -230,9 +230,9 @@ fi
 ]
 
 if test "$OPTIMIZE" = yes
-then CFLAGS="$CFLAGS -O3"
-     CXXFLAGS="$CXXFLAGS -O3"
-     FFLAGS="$FFLAGS -O3"
+then CFLAGS="$CFLAGS -O2"
+     CXXFLAGS="$CXXFLAGS -O2"
+     FFLAGS="$FFLAGS -O2"
 else CFLAGS="$CFLAGS -O0"
      CXXFLAGS="$CXXFLAGS -O0"
      FFLAGS="$FFLAGS -O0"
@@ -295,8 +295,8 @@ cat >unwindtest-monomials.cpp <<EOF
 Monomials::Monomials() {}
 EOF
 if   (  set -x
-	$CXX $CPPFLAGS $CXXFLAGS -O3 -c -o unwindtest-main.$OBJEXT unwindtest-main.cpp &&
-	$CXX $CPPFLAGS $CXXFLAGS -O3 -c -o unwindtest-monomials.$OBJEXT unwindtest-monomials.cpp &&
+	$CXX $CPPFLAGS $CXXFLAGS -O2 -c -o unwindtest-main.$OBJEXT unwindtest-main.cpp &&
+	$CXX $CPPFLAGS $CXXFLAGS -O2 -c -o unwindtest-monomials.$OBJEXT unwindtest-monomials.cpp &&
 	$CC $LDFLAGS unwindtest-main.$OBJEXT unwindtest-monomials.$OBJEXT $LIBS -lstdc++ -o unwindtest-main &&
 	test -f unwindtest-main$EXEEXT
      ) >&AS_MESSAGE_LOG_FD 2>&1
